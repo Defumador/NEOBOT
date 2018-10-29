@@ -2,8 +2,6 @@
 #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Event  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir% 
-
-
 CoordMode, Pixel, Screen
 CoordMode, Mouse, Screen
 #Persistent
@@ -125,10 +123,10 @@ ClickOnWaypoint() ;click on warp button in selection box to warp to waypoint
 		
 	Random, wait2000to10000milis, 2000, 10000
 	Sleep, wait2000to10000milis
-	JumpDock()
+	JumpOrDockDetect()
 	}
 
-JumpDock() ;search for colors indicating either a jump has been made or ship has docked
+JumpOrDockDetect() ;search for colors indicating either a jump has been made or ship has docked
 	{
 	Global
 		;search for evidence of a jump
@@ -138,25 +136,22 @@ JumpDock() ;search for colors indicating either a jump has been made or ship has
 			if ErrorLevel = 0
 				{
 				;Msgbox, found jump!
-				ClickOnWaypoint() ;if a jump has been detected, look for the next waypoint
+				ClickOnWaypoint() ;if a jump has been detected, click on the next waypoint
 				}
 			else
-				Sleep, 200	
-		}
-		MsgBox, cant find evidence of a jump!
-
-		;search for evidence of a dock
-		Loop, 300
-		{
-		PixelSearch, DockMadeX, DockMadeY, 1780, 141, 1794, 147, 0x007997, 5, Fast
-			if ErrorLevel = 0
-				ItemsInInventory() ;if a dock has been detected, place items in inventory
-			else
-				Sleep, 1000	
-		}
-		MsgBox, cant find evidence of a dock!
-	}	
-		
+				{
+				;if a jump has not been detected, search for evidence of a dock
+				PixelSearch, DockMadeX, DockMadeY, 1780, 141, 1794, 147, 0x007997, 3, Fast
+					if ErrorLevel = 0
+						ItemsInInventory() ;if a dock has been detected, place items in inventory
+					else
+						Sleep, 200	
+				}
+		}	
+	Msgbox, cant find dock or jump!
+	}
+	
+	
 ItemsInInventory() ;move items from station hangar to ship cargo bay
 	{
 	Global
