@@ -8,9 +8,11 @@ CoordMode, Mouse, Screen
 
 ;Undock()
 SelectWaypoint()
+;ClickOnWaypoint()
 ;JumpOrDockDetect()
 ;ItemsInInventory()
 ;ReturnToJita()
+;AtJitaCheck
 
 Undock() ;undock from station
 	{
@@ -33,12 +35,11 @@ Undock() ;undock from station
 	SelectWaypoint()
 	}
 
-
 SelectWaypoint() ;click on yellow-tinted icon in overview to select next waypoint
 	{ 
-	;look for waypoint color in overview
+	;look for waypoint in overview
 	Global
-	Loop, 3000
+	Loop, 300
 		{
 		PixelSearch, WaypointX, WaypointY, 1162, 170, 1176, 1074, 0x033535, 12, Fast
 			if ErrorLevel = 0
@@ -59,8 +60,8 @@ SelectWaypoint() ;click on yellow-tinted icon in overview to select next waypoin
 	Random, varyby12, 0, 12
 	Random, mousemove2, 5, 80
 	MouseMove, varyby250+WaypointX, varyby12+WaypointY, mousemove2
-		Random, wait200to500milis, 200, 500
-		Sleep, wait200to500milis+500
+		Random, wait200to2000milis, 200, 2000
+		Sleep, wait200to2000milis
 			Click, down
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
@@ -84,29 +85,31 @@ ClickOnWaypoint() ;click on warp button in selection box to warp to waypoint
 	{
 	;double-check warp button is present		
 	Global
-	Loop, 10
+	Loop, 300
 		{
 		PixelSearch, WarpButtonX, WarpButtonY, 1214, 71, 1229, 85, 0x020202, 1, Fast
 			if ErrorLevel = 0
 				{
-				;Msgbox, found jump!
-				Goto, Warp ;if a jump has been detected, look for the next waypoint
+				Gui, Destroy
+				Gui, Add, Text, ,found warp button
+				Gui, Show, Y15, Msgbox
+				Goto, Warp
 				}
 			else
-				Sleep, 1000	
+				Sleep, 100	
 		}
 	
-	;warp
+	;click on warp button
 	Warp:
-	Random, wait2000to5000milis, 2000, 5000
-	Sleep, wait2000to5000milis
+	Random, wait200to3000milis, 2000, 3000
+	Sleep, wait200to3000milis
 	
 	Random, varyby12, 0, 12
 	Random, varyby11, 0, 11
-	Random, mousemove3, 5, 100
+	Random, mousemove3, 3, 100
 	MouseMove, varyby12+1215, varyby11+70, mousemove3
-		Random, wait200to500milis, 200, 500
-		Sleep, wait200to500milis+500
+		Random, wait200to2000milis, 200, 2000
+		Sleep, wait200to2000milis
 			Click, down
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
@@ -121,26 +124,27 @@ ClickOnWaypoint() ;click on warp button in selection box to warp to waypoint
 							Sleep, wait5to200milis
 						Click, up
 							Random, wait200to500milis, 200, 500
-							Sleep, wait200to500milis+500
+							Sleep, wait200to500milis
 					}	
-				Random, wait200to500milis, 200, 500
-				Sleep, wait200to500milis+500
+				Random, wait200to2000milis, 200, 2000
+				Sleep, wait200to2000milis
 				
 		;move mouse away from button so button can be easily seen
 		Random, varyX, -300, 300
-		Random, varyY, -20, 301
+		Random, varyY, -60, 300
 		Random, mousemove4, 3, 100
 		MouseMove, varyX, varyY, mousemove4, R
-		
-	Random, wait2000to10000milis, 2000, 10000
-	Sleep, wait2000to10000milis
+	
+	;wait a minimum period of time for warp to begin
+	Random, wait2000to15000milis, 2000, 15000
+	Sleep, wait2000to15000milis
 	JumpOrDockDetect()
 	}
 
 JumpOrDockDetect() ;search for colors indicating either a jump has been made or ship has docked
 	{
-	Global
 	;search for evidence of a jump
+	Global
 	Loop, 15000 
 		{
 		PixelSearch, JumpMadeX, JumpMadeY, 1174, 49, 1175, 51, 0x4c4c4c, 10, Fast
@@ -166,32 +170,33 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 						Sleep, 100	
 				}
 		}
-	;if cannot detect jump or dock after timer expires, look for waypoint again
+		
+	;if cannot detect jump or dock after timer expires, look for waypoint again with a larger search area
 	Loop, 3
 		{
-		Loop, 10
+		Loop, 300
 			{
-			PixelSearch, WarpButtonX, WarpButtonY, 1214, 71, 1229, 85, 0x020202, 1, Fast
+			PixelSearch, WaypointX, WaypointY, 1100, 50, 1300, 1080, 0x033535, 16, Fast
 				if ErrorLevel = 0
 					{
-					;Msgbox, found jump!
-					Goto, Warp ;if a jump has been detected, look for the next waypoint
+					Gui, Destroy
+					Gui, Add, Text, ,found waypoint
+					Gui, Show, Y15, Msgbox
+					Goto, ClickWaypointinOverviewBackup
 					}
 				else
-					Sleep, 1000	
+					Sleep, 10
 			}
-		
-		;warp
-		Warp:
-		Random, wait2000to5000milis, 2000, 5000
-		Sleep, wait2000to5000milis
-		
+		MsgBox, cant find waypoint!
+	
+		;click on waypoint in overview to highlight it in selection box
+		ClickWaypointinOverviewBackup:
+		Random, varyby250, 0, 250
 		Random, varyby12, 0, 12
-		Random, varyby11, 0, 11
-		Random, mousemove3, 5, 100
-		MouseMove, varyby12+1215, varyby11+70, mousemove3
-			Random, wait200to500milis, 200, 500
-			Sleep, wait200to500milis+500
+		Random, mousemove12, 5, 80
+		MouseMove, varyby250+WaypointX, varyby12+WaypointY, mousemove12
+			Random, wait200to2000milis, 200, 2000
+			Sleep, wait200to2000milis
 				Click, down
 					Random, wait5to200milis, 5, 200
 					Sleep, wait5to200milis
@@ -205,32 +210,76 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 								Random, wait5to200milis, 5, 200
 								Sleep, wait5to200milis
 							Click, up
-								Random, wait200to500milis, 200, 500
-								Sleep, wait200to500milis+500
 						}	
-					Random, wait200to500milis, 200, 500
-					Sleep, wait200to500milis+500
-					
+					Random, wait5to200milis, 5, 200
+					Sleep, wait5to200milis
+		
+		Loop, 300
+			{
+			PixelSearch, WarpButtonX, WarpButtonY, 1214, 71, 1229, 85, 0x020202, 1, Fast
+				if ErrorLevel = 0
+					{
+					Gui, Destroy
+					Gui, Add, Text, ,found warp button
+					Gui, Show, Y15, Msgbox
+					Goto, WarpBackup
+					}
+				else
+					Sleep, 100	
+			}
+	
+			;click on warp button
+			WarpBackup:
+			Random, wait200to3000milis, 2000, 3000
+			Sleep, wait200to3000milis
+
+			Random, varyby12, 0, 12
+			Random, varyby11, 0, 11
+			Random, mousemove13, 3, 100
+			MouseMove, varyby12+1215, varyby11+70, mousemove13
+				Random, wait200to2000milis, 200, 2000
+				Sleep, wait200to2000milis
+					Click, down
+						Random, wait5to200milis, 5, 200
+						Sleep, wait5to200milis
+					Click, up
+						Random, DoubleClickRoll, 1, 20 ;chance to double-click
+						if DoubleClickRoll = 1
+							{
+							Random, wait90to250milis, 90, 250
+							Sleep, wait90to250milis
+								Click, down
+									Random, wait5to200milis, 5, 200
+									Sleep, wait5to200milis
+								Click, up
+									Random, wait200to500milis, 200, 500
+									Sleep, wait200to500milis
+							}	
+						Random, wait200to2000milis, 200, 2000
+						Sleep, wait200to2000milis
+
 			;move mouse away from button so button can be easily seen
 			Random, varyX, -300, 300
-			Random, varyY, -20, 301
-			Random, mousemove4, 3, 100
-			MouseMove, varyX, varyY, mousemove4, R
-			
-		Random, wait2000to10000milis, 2000, 10000
-		Sleep, wait2000to10000milis
+			Random, varyY, -60, 300
+			Random, mousemove14, 3, 100
+			MouseMove, varyX, varyY, mousemove14, R
+
+			;wait a minimum period of time for warp to begin
+			Random, wait2000to15000milis, 2000, 15000
+			Sleep, wait2000to15000milis
+			JumpOrDockDetect()
 		}
 	Msgbox, cant find dock or jump!
 	}
 		
 ItemsInInventory() ;move items from station hangar to ship cargo bay
 	{
-	;first check if ship has reached jita
+	;first, check if ship has reached jita
 	Global
 	AtJitaCheck()
 	
 	Random, wait2000to5000milis, 2000, 5000
-	Sleep, wait2000to5000milis+2000	
+	Sleep, wait2000to5000milis	
 	
 	;focus inventory window
 	Random, varyby10, 0, 10
@@ -246,8 +295,9 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 				Random, wait200to500milis, 200, 500
 				Sleep, wait200to500milis+500
 	
+	;use hotkey to open station inventory in station
 	SendMode Input
-	Send {Alt down} ;hotkey to open station inventory in station
+	Send {Alt down} 
 		Random, wait20to150milis, 20, 150
 		Sleep, wait20to150milis
 	Send {G down}
@@ -261,7 +311,7 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 		Sleep, wait200to500milis
 	SendMode Event
 	
-	;check to see if items are actually present in station inventory
+	;check to see if any items are present in station hangar inventory
 	Loop, 300 
 		{
 		PixelSearch, StationItemsX, StationItemsY, 550, 145, 1500, 180, 0x939393, 2, Fast
@@ -275,19 +325,21 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 			else
 				Sleep, 100	
 		}
+	
+	;if no items are present in station inventory, undock and continue
 	Gui, Destroy
 	Gui, Add, Text, ,station empty
 	Gui, Show, Y15, Msgbox
-	Undock() ;if no items are present in station inventory, undock
+	Undock() 
 	
-	;right click on left edge of inventory screen to select all
+	;right click on left edge of inventory screen and use drop-down menu to select all items in station hangar inventory
 	SelectInventory:
 	Random, varyby10, 0, 10
 	Random, varyby200, 0, 200
 	Random, mousemove10, 5, 80
 	MouseMove, varyby10+648, varyby200+82, mousemove10
-		Random, wait200to500milis, 200, 500
-		Sleep, wait200to500milis+500
+		Random, wait200to2000milis, 200, 2000
+		Sleep, wait200to2000milis
 			Click, down, right
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
@@ -298,32 +350,32 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 	Random, varyby10, 3, 10
 	Random, mousemove11, 5, 80
 	MouseMove, varyby90, varyby10, mousemove11, R 
-		Random, wait200to500milis, 200, 500
-		Sleep, wait200to500milis+500
+		Random, wait200to1000milis, 200, 1000
+		Sleep, wait200to1000milis
 			Click, down
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
 			Click, up
+				Random, wait200to1000milis, 200, 1000
+				Sleep, wait200to1000milis
 
 	;click and drag items to ship inventory
-	Random, wait200to500milis, 200, 500
-	Sleep, wait200to500milis+500
 	Random, varyby50, 0, 50
 	Random, varyby60, 0, 60
-	Random, mousemove12, 5, 80
+	Random, mousemove12, 5, 100
 	MouseMove, varyby50+663, varyby60+81, mousemove12
-		Random, wait200to500milis, 200, 500
-		Sleep, wait200to500milis+500
+		Random, wait200to1000milis, 200, 1000
+		Sleep, wait200to1000milis
 			Click, down
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
-				Random, varyby28, 0, 28
-				Random, varyby18, 0, 18	
-				Random, mousemove13, 5, 80				
-				MouseMove, varyby28+614, varyby18+46, mousemove13		
+					Random, varyby28, 0, 28
+					Random, varyby18, 0, 18	
+					Random, mousemove13, 5, 100			
+					MouseMove, varyby28+614, varyby18+46, mousemove13		
 			Click, up
-			Random, wait2000to4000milis, 2000, 4000
-			Sleep, wait2000to4000milis+500	
+				Random, wait1000to5000milis, 1000, 5000
+				Sleep, wait1000to5000milis
 		
 		;check to see if 'not enough cargo space' alert appears	
 		Loop, 10 
@@ -331,17 +383,24 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 			PixelSearch, ShipFullX, ShipFullY, 791, 436, 793, 438, 0xCACACA, 3, Fast
 				if ErrorLevel = 0
 					{
+					;if alert appears, return to Jita and stop script
+					;hit enter key
+					Send {ENTER down}
+						Random, wait20to200milis, 20, 200
+						Sleep, wait20to200milis
+					Send {Enter up}
+					
+					;set destination to Jita 4-4
 					Gui, Destroy
 					Gui, Add, Text, ,detected full cargo hold
 					Gui, Show, Y15, Msgbox
-					;if alert appears, return to Jita
 					ReturnToJita()
 					}
 				else
-					Sleep, 100	
+					Sleep, 10	
 			}
 		
-	;close station inventory	
+	;close station inventory with hotkey	
 	SendMode Input
 	Send {Alt down} 
 		Random, wait20to150milis, 20, 150
@@ -355,14 +414,16 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 	Send {Alt up}
 	SendMode Event
 	
-	Random, wait2000to5000milis, 2000, 5000
-	Sleep, wait2000to5000milis+500
+	;undock from station
+	Random, wait1000to5000milis, 1000, 5000
+	Sleep, wait1000to5000milis
 	Undock()
 	}
 
 ReturnToJita() ;open 'people & places' menu and set Jita 4-4 as destination
 	{
 	Global
+	
 	/*
 	;click on 'people and places' icon
 	Random, varyby25, 0, 25
@@ -379,8 +440,8 @@ ReturnToJita() ;open 'people & places' menu and set Jita 4-4 as destination
 	
 	;right click on first entry in 'personal locations'
 	Random, varyby500, 0, 500
-	Random, varyby16, 0, 26
-	Random, mousemove6, 5, 80
+	Random, varyby16, 0, 16
+	Random, mousemove6, 5, 100
 	MouseMove, varyby500+42, varyby16+547, mousemove6
 		Random, wait200to500milis, 200, 500
 		Sleep, wait200to500milis+500
@@ -391,13 +452,13 @@ ReturnToJita() ;open 'people & places' menu and set Jita 4-4 as destination
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
 				
-	;click on 'set destination'
+	;click on 'set destination' in drop-down menu
 	Random, varyby50, 0, 50
 	Random, varyby12, 0, 12
 	Random, mousemove7, 5, 80
 	MouseMove, varyby50+10, varyby12+23, mousemove7, R
-		Random, wait200to500milis, 200, 500
-		Sleep, wait200to500milis+500
+		Random, wait200to1000milis, 200, 1000
+		Sleep, wait200to1000milis
 			Click, down
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
@@ -421,10 +482,12 @@ ReturnToJita() ;open 'people & places' menu and set Jita 4-4 as destination
 				Sleep, wait5to200milis	
 					Undock()
 	*/
+	
 	}
 			
 AtJitaCheck() ;check the 'people & places' menu for color change to determine if ship has arrived at Jita 4-4	
 	{
+	;check if Jita entry in 'people & places' menu has turned green, indicating it is the current system
 	Global
 	Loop, 3
 		{
@@ -432,7 +495,7 @@ AtJitaCheck() ;check the 'people & places' menu for color change to determine if
 			if ErrorLevel = 0
 				{
 				Gui, Destroy
-				Gui, Add, Text, ,arrived at jita station
+				Gui, Add, Text, ,arrived at Jita system
 				Gui, Show, Y15, Msgbox
 				ExitApp 
 				}
