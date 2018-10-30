@@ -7,10 +7,10 @@ CoordMode, Mouse, Screen
 #Persistent
 
 ;Undock()
-;SelectWaypoint()
+SelectWaypoint()
 ;JumpOrDockDetect()
 ;ItemsInInventory()
-ReturnToJita()
+;ReturnToJita()
 
 Undock() ;undock from station
 	{
@@ -126,7 +126,7 @@ ClickOnWaypoint() ;click on warp button in selection box to warp to waypoint
 				Random, wait200to500milis, 200, 500
 				Sleep, wait200to500milis+500
 				
-		;move mouse away from button so color can be easily seen
+		;move mouse away from button so button can be easily seen
 		Random, varyX, -300, 300
 		Random, varyY, -20, 301
 		Random, mousemove4, 3, 100
@@ -140,39 +140,95 @@ ClickOnWaypoint() ;click on warp button in selection box to warp to waypoint
 JumpOrDockDetect() ;search for colors indicating either a jump has been made or ship has docked
 	{
 	Global
-		;search for evidence of a jump
-		Loop, 15000 
+	;search for evidence of a jump
+	Loop, 15000 
+		{
+		PixelSearch, JumpMadeX, JumpMadeY, 1174, 49, 1175, 51, 0x4c4c4c, 10, Fast
+			if ErrorLevel = 0
+				{
+				Gui, Destroy
+				Gui, Add, Text, ,jump detected
+				Gui, Show, Y15, Msgbox
+				ClickOnWaypoint() ;if a jump has been detected, click on the next waypoint
+				}
+			else
+				{
+				;if a jump has not been detected, search for evidence of a dock
+				PixelSearch, DockMadeX, DockMadeY, 1781, 142, 1782, 143, 0x027a98, 15, Fast
+					if ErrorLevel = 0
+						{
+						Gui, Destroy
+						Gui, Add, Text, ,docking detected
+						Gui, Show, Y15, Msgbox	
+						ItemsInInventory() ;if a dock has been detected, place items in inventory
+						}
+					else
+						Sleep, 100	
+				}
+		}
+	;if cannot detect jump or dock after timer expires, look for waypoint again
+	Loop, 3
+		{
+		Loop, 10
 			{
-			PixelSearch, JumpMadeX, JumpMadeY, 1174, 49, 1175, 51, 0x4c4c4c, 10, Fast
+			PixelSearch, WarpButtonX, WarpButtonY, 1214, 71, 1229, 85, 0x020202, 1, Fast
 				if ErrorLevel = 0
 					{
-					Gui, Destroy
-					Gui, Add, Text, ,jump detected
-					Gui, Show, Y15, Msgbox
-					ClickOnWaypoint() ;if a jump has been detected, click on the next waypoint
+					;Msgbox, found jump!
+					Goto, Warp ;if a jump has been detected, look for the next waypoint
 					}
 				else
-					{
-					;if a jump has not been detected, search for evidence of a dock
-					PixelSearch, DockMadeX, DockMadeY, 1781, 142, 1782, 143, 0x027a98, 15, Fast
-						if ErrorLevel = 0
-							{
-							Gui, Destroy
-							Gui, Add, Text, ,docking detected
-							Gui, Show, Y15, Msgbox	
-							ItemsInInventory() ;if a dock has been detected, place items in inventory
-							}
-						else
-							Sleep, 100	
-					}
-			}	
+					Sleep, 1000	
+			}
+		
+		;warp
+		Warp:
+		Random, wait2000to5000milis, 2000, 5000
+		Sleep, wait2000to5000milis
+		
+		Random, varyby12, 0, 12
+		Random, varyby11, 0, 11
+		Random, mousemove3, 5, 100
+		MouseMove, varyby12+1215, varyby11+70, mousemove3
+			Random, wait200to500milis, 200, 500
+			Sleep, wait200to500milis+500
+				Click, down
+					Random, wait5to200milis, 5, 200
+					Sleep, wait5to200milis
+				Click, up
+					Random, DoubleClickRoll, 1, 20 ;chance to double-click
+					if DoubleClickRoll = 1
+						{
+						Random, wait90to250milis, 90, 250
+						Sleep, wait90to250milis
+							Click, down
+								Random, wait5to200milis, 5, 200
+								Sleep, wait5to200milis
+							Click, up
+								Random, wait200to500milis, 200, 500
+								Sleep, wait200to500milis+500
+						}	
+					Random, wait200to500milis, 200, 500
+					Sleep, wait200to500milis+500
+					
+			;move mouse away from button so button can be easily seen
+			Random, varyX, -300, 300
+			Random, varyY, -20, 301
+			Random, mousemove4, 3, 100
+			MouseMove, varyX, varyY, mousemove4, R
+			
+		Random, wait2000to10000milis, 2000, 10000
+		Sleep, wait2000to10000milis
+		}
 	Msgbox, cant find dock or jump!
 	}
-	
-	
+		
 ItemsInInventory() ;move items from station hangar to ship cargo bay
 	{
+	;first check if ship has reached jita
 	Global
+	AtJitaCheck()
+	
 	Random, wait2000to5000milis, 2000, 5000
 	Sleep, wait2000to5000milis+2000	
 	
@@ -306,8 +362,9 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 
 ReturnToJita() ;open 'people & places' menu and set Jita 4-4 as destination
 	{
-	;click on 'people and places' icon
 	Global
+	/*
+	;click on 'people and places' icon
 	Random, varyby25, 0, 25
 	Random, varyby24, 0, 24
 	Random, mousemove5, 5, 80
@@ -318,12 +375,13 @@ ReturnToJita() ;open 'people & places' menu and set Jita 4-4 as destination
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
 			Click, up
+	*/
 	
 	;right click on first entry in 'personal locations'
 	Random, varyby500, 0, 500
 	Random, varyby16, 0, 26
 	Random, mousemove6, 5, 80
-	MouseMove, varyby500+38, varyby16+147, mousemove6
+	MouseMove, varyby500+42, varyby16+547, mousemove6
 		Random, wait200to500milis, 200, 500
 		Sleep, wait200to500milis+500
 			Click, down, right
@@ -346,7 +404,8 @@ ReturnToJita() ;open 'people & places' menu and set Jita 4-4 as destination
 			Click, up	
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
-				
+	
+	/*	
 	;close 'people and places' window
 	Random, varyby5, 0, 5
 	Random, varyby6, 0, 6
@@ -361,10 +420,27 @@ ReturnToJita() ;open 'people & places' menu and set Jita 4-4 as destination
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis	
 					Undock()
+	*/
 	}
 			
-	
-	
+AtJitaCheck() ;check the 'people & places' menu for color change to determine if ship has arrived at Jita 4-4	
+	{
+	Global
+	Loop, 3
+		{
+		PixelSearch, AtJitaX, AtJitaY, 76, 550, 95, 561, 0x53a553, 11, Fast
+			if ErrorLevel = 0
+				{
+				Gui, Destroy
+				Gui, Add, Text, ,arrived at jita station
+				Gui, Show, Y15, Msgbox
+				ExitApp 
+				}
+			else
+				Sleep, 100	
+		}
+	Return
+	}
 	
 MsgBox, end of script
 ExitApp	
