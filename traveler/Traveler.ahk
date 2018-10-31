@@ -15,8 +15,8 @@ DockedCount = 0
 ;ClickOnWaypoint()
 ;JumpOrDockDetect()
 ;ItemsInInventory()
-;ReturnToJita()
-;AtJitaCheck
+;ReturnTo44()
+;At44Check
 
 Undock() ;undock from station
 	{
@@ -48,9 +48,7 @@ SelectWaypoint() ;click on yellow-tinted icon in overview to select next waypoin
 		PixelSearch, WaypointX, WaypointY, 1162, 170, 1176, 1074, 0x033535, 12, Fast
 			if ErrorLevel = 0
 				{
-				Gui, Destroy
-				Gui, Add, Text, ,found waypoint
-				Gui, Show, Y15, Msgbox
+				Guicontrol, Text, vDebugger, found waypoint
 				Goto, ClickWaypointinOverview
 				}
 			else
@@ -94,9 +92,7 @@ ClickOnWaypoint() ;click on warp button in selection box to warp to waypoint
 		PixelSearch, WarpButtonX, WarpButtonY, 1214, 71, 1229, 85, 0x020202, 1, Fast
 			if ErrorLevel = 0
 				{
-				Gui, Destroy
-				Gui, Add, Text, ,found warp button
-				Gui, Show, Y15, Msgbox
+				Guicontrol, Text, vDebugger, found warp button
 				Goto, Warp
 				}
 			else
@@ -154,9 +150,7 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 		PixelSearch, JumpMadeX, JumpMadeY, 1174, 49, 1175, 51, 0x4c4c4c, 10, Fast
 			if ErrorLevel = 0
 				{
-				Gui, Destroy
-				Gui, Add, Text, ,jump detected
-				Gui, Show, Y15, Msgbox
+				Guicontrol, Text, vDebugger, jump detected
 				ClickOnWaypoint() ;if a jump has been detected, click on the next waypoint
 				}
 			else
@@ -165,9 +159,7 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 				PixelSearch, DockMadeX, DockMadeY, 1781, 142, 1782, 143, 0x027a98, 15, Fast
 					if ErrorLevel = 0
 						{
-						Gui, Destroy
-						Gui, Add, Text, ,docking detected
-						Gui, Show, Y15, Msgbox
+						Guicontrol, Text, vDebugger, docking detected
 							DockedCount += 1
 								if StationBreakMin > 0 ;if break parameters have been specified, run function using those parameters
 									{
@@ -192,9 +184,7 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 			PixelSearch, WaypointX, WaypointY, 1100, 50, 1300, 1080, 0x033535, 16, Fast
 				if ErrorLevel = 0
 					{
-					Gui, Destroy
-					Gui, Add, Text, ,found waypoint
-					Gui, Show, Y15, Msgbox
+					Guicontrol, Text, vDebugger, found waypoint
 					Goto, ClickWaypointinOverviewBackup
 					}
 				else
@@ -232,9 +222,7 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 			PixelSearch, WarpButtonX, WarpButtonY, 1214, 71, 1229, 85, 0x020202, 1, Fast
 				if ErrorLevel = 0
 					{
-					Gui, Destroy
-					Gui, Add, Text, ,found warp button
-					Gui, Show, Y15, Msgbox
+					Guicontrol, Text, vDebugger, found warp button
 					Goto, WarpBackup
 					}
 				else
@@ -294,8 +282,9 @@ DockBreakSpecified() ;roll for chance of sleeping script while docked at a stati
 				if StationBreakRoll = 0
 					{
 					Random, StationSleepRoll, (StationBreakSleepMin*60000), (StationBreakSleepMax*60000) ;if roll sucessful, roll for sleep duration as specified in gui
+					Guicontrol, Text, vDebugger, sleeping for %StationSleepRoll%
 					Sleep, StationSleepRoll 
-					DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced when vStationBreakMax is reached
+						DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced when vStationBreakMax is reached
 					Return
 					}
 			}
@@ -303,8 +292,9 @@ DockBreakSpecified() ;roll for chance of sleeping script while docked at a stati
 		if DockedCount >= vStationBreakMax
 			{
 			Random, StationSleepRoll, (StationBreakSleepMin*60000), (StationBreakSleepMax*60000) ;if roll sucessful, roll for sleep duration as specified in gui, convert minutes to miliseconds
+			Guicontrol, Text, vDebugger, sleeping for %StationSleepRoll%
 			Sleep, StationSleepRoll
-			DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced on next dock
+				DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced on next dock
 			Return	
 			}
 	
@@ -320,8 +310,9 @@ DockBreakDefault() ;roll for chance of sleeping script while docked at a station
 				if StationBreakRoll = 0
 					{
 					Random, StationSleepRollDefault, 60000, 120000 ;if roll sucessful, roll for sleep
+					Guicontrol, Text, vDebugger, sleeping for %StationSleepRollDefault%
 					Sleep, StationSleepRollDefault 
-					DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced when 
+						DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced when 
 					Return
 					}
 			}
@@ -329,22 +320,20 @@ DockBreakDefault() ;roll for chance of sleeping script while docked at a station
 		if DockedCount >= 5
 			{
 			Random, StationSleepRollDefault, 60000, 120000 ;if roll sucessful, roll for sleep duration
+			Guicontrol, Text, vDebugger, sleeping for %StationSleepRollDefault%
 			Sleep, StationSleepRollDefault
-			DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced on next dock
+				DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced on next dock
 			Return	
 			}
 	
 	Return
 	}
 
-
-
-
 ItemsInInventory() ;move items from station hangar to ship cargo bay
 	{
 	;first, check if ship has reached jita
 	Global
-	AtJitaCheck()
+	At44Check()
 	
 	Random, wait2000to5000milis, 2000, 5000
 	Sleep, wait2000to5000milis	
@@ -385,9 +374,7 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 		PixelSearch, StationItemsX, StationItemsY, 550, 145, 1500, 180, 0x939393, 2, Fast
 			if ErrorLevel = 0
 				{
-				Gui, Destroy
-				Gui, Add, Text, ,items in station detected
-				Gui, Show, Y15, Msgbox
+				Guicontrol, Text, vDebugger, found items in inventory
 				Goto, SelectInventory
 				}
 			else
@@ -395,9 +382,7 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 		}
 	
 	;if no items are present in station inventory, undock and continue
-	Gui, Destroy
-	Gui, Add, Text, ,station empty
-	Gui, Show, Y15, Msgbox
+	Guicontrol, Text, vDebugger, station empty
 	Undock() 
 	
 	;right click on left edge of inventory screen and use drop-down menu to select all items in station hangar inventory
@@ -451,18 +436,16 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 			PixelSearch, ShipFullX, ShipFullY, 791, 436, 793, 438, 0xCACACA, 3, Fast
 				if ErrorLevel = 0
 					{
-					;if alert appears, return to Jita and stop script
+					;if alert appears, return to 4-4 and stop script
 					;hit enter key
 					Send {ENTER down}
-						Random, wait20to200milis, 20, 200
-						Sleep, wait20to200milis
+						Random, wait15to300milis, 15, 300
+						Sleep, wait15to300milis
 					Send {Enter up}
 					
-					;set destination to Jita 4-4
-					Gui, Destroy
-					Gui, Add, Text, ,detected full cargo hold
-					Gui, Show, Y15, Msgbox
-					ReturnToJita()
+					;set destination to 4-4
+					Guicontrol, Text, vDebugger, detected full cargo hold
+					ReturnTo44()
 					}
 				else
 					Sleep, 10	
@@ -488,7 +471,7 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 	Undock()
 	}
 
-ReturnToJita() ;open 'people & places' menu and set Jita 4-4 as destination
+ReturnTo44() ;open 'people & places' menu and set 4-4 as destination
 	{
 	Global
 	
@@ -550,20 +533,19 @@ ReturnToJita() ;open 'people & places' menu and set Jita 4-4 as destination
 				Sleep, wait5to200milis	
 					Undock()
 	*/
-	
 	}
 			
-AtJitaCheck() ;check the 'people & places' menu for color change to determine if ship has arrived at Jita 4-4	
+At44Check() ;check the 'people & places' menu for color change to determine if ship has arrived at 4-4	
 	{
-	;check if Jita entry in 'people & places' menu has turned green, indicating it is the current system
+	;check if 4-4 entry in 'people & places' menu has turned green, indicating it is the current system
 	Global
 	Loop, 3
 		{
-		PixelSearch, AtJitaX, AtJitaY, 76, 550, 95, 561, 0x53a553, 11, Fast
+		PixelSearch, At44X, At44Y, 76, 550, 95, 561, 0x53a553, 11, Fast
 			if ErrorLevel = 0
 				{
 				Gui, Destroy
-				Gui, Add, Text, ,arrived at Jita system
+				Gui, Add, Text, ,arrived at 4-4 system
 				Gui, Show, Y15, Msgbox
 				ExitApp 
 				}
@@ -572,7 +554,75 @@ AtJitaCheck() ;check the 'people & places' menu for color change to determine if
 		}
 	Return
 	}
-	
+
+
+Gui, Add, Text, x12 y9 w320 h20 +Center, EOBOT
+Gui, Add, Button, x162 y59 w170 h50 , START
+Gui, Add, Button, x72 y59 w80 h50 , STOP 
+
+Gui, Add, GroupBox, x12 y119 w320 h70 , Debugger
+
+Gui, Add, GroupBox, x12 y199 w320 h200 , Accounts
+
+Gui, Add, Button, x22 y229 w20 h30 , +
+Gui, Add, Button, x22 y269 w20 h30 , +
+Gui, Add, Button, x22 y309 w20 h30 , +
+Gui, Add, Button, x22 y349 w20 h30 , +
+Gui, Add, Button, x42 y229 w20 h30 , -
+Gui, Add, Button, x42 y269 w20 h30 , -
+Gui, Add, Button, x42 y309 w20 h30 , -
+Gui, Add, Button, x42 y349 w20 h30 , -
+Gui, Add, Button, x212 y269 w60 h30 , Add Key
+Gui, Add, Button, x212 y229 w60 h30 , Add Key
+Gui, Add, Button, x212 y349 w60 h30 , Add Key
+Gui, Add, Button, x212 y309 w60 h30 , Add Key
+Gui, Add, Button, x282 y269 w40 h30 , View
+Gui, Add, Button, x282 y229 w40 h30 , View
+Gui, Add, Button, x282 y349 w40 h30 , View
+Gui, Add, Button, x282 y309 w40 h30 , View
+
+Gui, Add, Radio, x72 y229 w140 h30 vAccount , Account 1
+Gui, Add, Radio, x72 y269 w140 h30 , Account 2
+Gui, Add, Radio, x72 y309 w140 h30 , Account 3
+Gui, Add, Radio, x72 y349 w140 h30 , Account 4
+
+Gui, Add, GroupBox, x12 y409 w320 h170 , Settings
+
+Gui, Add, CheckBox, x42 y439 w90 h20 vBreaks, Take Breaks
+Gui, Add, ComboBox, x92 y489 w50 h20 vEveryMinutes, ComboBox
+Gui, Add, Text, x102 y459 w130 h20 +Center, Frequency
+Gui, Add, Text, x32 y489 w60 h20 +Center , Every
+Gui, Add, Text, x142 y489 w40 h20 +Center, to
+Gui, Add, ComboBox, x182 y489 w50 h21 , ComboBox
+Gui, Add, Text, x232 y489 w60 h20 +Center, Minutes
+
+Gui, Add, Text, x32 y549 w60 h20 +Center, For
+Gui, Add, Text, x102 y519 w130 h20 +Center, Duration
+Gui, Add, ComboBox, x92 y549 w50 h21 , ComboBox
+Gui, Add, Text, x142 y549 w40 h20 +Center, to
+Gui, Add, ComboBox, x182 y549 w50 h21 , ComboBox
+Gui, Add, Text, x232 y549 w60 h20 +Center, Minutes
+
+Gui, Add, Text, x122 y29 w100 h20 +Center, version %version%
+Return
+
+ButtonSTART:
+Gui, Submit, NoHide
+Gui, Add, Text, x20 y130 w320 h70 +Center vDebugger, starting script
+;Undock()
+msgbox, %EveryMinutes%
+Return
+
+ButtonSTOP:
+ListLines
+Return
+
+ButtonView:
+msgbox %test%
+
+test:
+ExitApp
+
 ;MsgBox, end of script
 ;xitApp	
 /*	
