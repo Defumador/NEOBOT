@@ -6,8 +6,10 @@ CoordMode, Pixel, Screen
 CoordMode, Mouse, Screen
 #Persistent
 
+version = 10.0.01
+
 ;Undock()
-SelectWaypoint()
+;SelectWaypoint()
 ;ClickOnWaypoint()
 ;JumpOrDockDetect()
 ;ItemsInInventory()
@@ -505,9 +507,9 @@ AtJitaCheck() ;check the 'people & places' menu for color change to determine if
 	Return
 	}
 	
-MsgBox, end of script
-ExitApp	
-	
+;MsgBox, end of script
+;xitApp	
+/*	
 shift:: ;manual kill switch
 	{
 	Gui, Destroy
@@ -520,3 +522,4 @@ z:: ;show logs
 	ListLines
 	Pause
 	}
+*/
