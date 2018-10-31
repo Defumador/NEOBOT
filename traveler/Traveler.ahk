@@ -295,7 +295,7 @@ DockBreak() ;roll for chance of sleeping script while docked at a station along 
 		;if ship has docked more than the maximum number of times specified in the gui and script hasn't already slept yet, force the script to sleep
 		if DockedCount >= vStationBreakMax
 			{
-			Random, StationSleepRoll, StationBreakSleepMin, StationBreakSleepMax ;if roll sucessful, roll for sleep duration as specified in gui
+			Random, StationSleepRoll, (StationBreakSleepMin*60000), (StationBreakSleepMax*60000) ;if roll sucessful, roll for sleep duration as specified in gui
 			Sleep, StationSleepRoll
 			DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced on next dock
 			Return	
