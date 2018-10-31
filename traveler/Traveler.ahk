@@ -6,7 +6,9 @@ CoordMode, Pixel, Screen
 CoordMode, Mouse, Screen
 #Persistent
 
+;variable declaration
 version = 10.0.01
+DockedCount = 0
 
 ;Undock()
 ;SelectWaypoint()
@@ -165,7 +167,9 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 						{
 						Gui, Destroy
 						Gui, Add, Text, ,docking detected
-						Gui, Show, Y15, Msgbox	
+						Gui, Show, Y15, Msgbox
+							DockedCount += 1
+						DockBreak()
 						ItemsInInventory() ;if a dock has been detected, place items in inventory
 						}
 					else
@@ -273,7 +277,35 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 		}
 	Msgbox, cant find dock or jump!
 	}
-		
+
+DockBreak() ;roll for chance of sleeping script while docked at a station along route
+	{
+		;if ship has docked at least the minimum number of times specified in the gui, roll to determine if script will sleep
+		if DockedCount >= vStationBreakMin
+			{
+			Random, StationBreakRoll, 0, vStationBreakMax ;roll for chance of sleeping
+				if StationBreakRoll = 0
+					{
+					Random, StationSleepRoll, (StationBreakSleepMin*60000), (StationBreakSleepMax*60000) ;if roll sucessful, roll for sleep duration as specified in gui
+					Sleep, StationSleepRoll 
+					DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced when vStationBreakMax is reached
+					Return
+					}
+			}
+		;if ship has docked more than the maximum number of times specified in the gui and script hasn't already slept yet, force the script to sleep
+		if DockedCount >= vStationBreakMax
+			{
+			Random, StationSleepRoll, StationBreakSleepMin, StationBreakSleepMax ;if roll sucessful, roll for sleep duration as specified in gui
+			Sleep, StationSleepRoll
+			DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced on next dock
+			Return	
+			}
+	
+	Return
+	}
+	
+
+
 ItemsInInventory() ;move items from station hangar to ship cargo bay
 	{
 	;first, check if ship has reached jita
