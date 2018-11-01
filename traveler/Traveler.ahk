@@ -474,8 +474,33 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 ItemsOneAtATime() ;if not all items can be added to ship at once, try adding them one at a time	
 
 ;move mouse over first item slot and check if background has changed color to determine if item is there	
-	
-	
+	Random, varyby600, 0, 600
+	Random, varyby20, 0, 20
+	Random, mousemove12, 5, 100
+	MouseMove, varyby600+693, varyby20+93, mousemove12
+		Random, wait200to1000milis, 200, 1000
+		Sleep, wait200to1000milis
+			PixelSearch, ItemSlot1X, ItemSlot1Y, 1670, 100, 1671, 101, 0x181818, 3, Fast
+				if ErrorLevel = 0
+					{
+					;if item is present in that slot, click and drag it to ship cargo bay
+								Click, down
+						Random, wait5to200milis, 5, 200
+						Sleep, wait5to200milis
+							Random, varyby28, 0, 28
+							Random, varyby11, 0, 11	
+							Random, mousemove13, 5, 100			
+							MouseMove, varyby28+606, varyby11+71, mousemove13		
+					Click, up
+						Random, wait1000to5000milis, 1000, 5000
+						Sleep, wait1000to5000milis
+					
+					;set destination to 4-4
+					Guicontrol, Text, Debugger, detected full cargo hold
+					ReturnTo44()
+					}
+				else
+					Sleep, 10
 	
 	
 ReturnTo44() ;open 'people & places' menu and set 4-4 as destination
