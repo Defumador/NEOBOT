@@ -6,8 +6,7 @@ CoordMode, Pixel, Screen
 CoordMode, Mouse, Screen
 #Persistent
 
-;variable declaration
-version = 0.0.01
+version = 0.0.01 ;variable declaration
 DockedCount := 0
 
 ;Undock()
@@ -291,8 +290,10 @@ DockBreakSpecified() ;roll for chance of sleeping script while docked at a stati
 		Random, StationBreakRoll, StationBreakMin, StationBreakMax ;roll for chance of sleeping
 			if (StationBreakRoll = StationBreakMin)
 				{
-				Random, StationSleepRoll, (StationBreakSleepMin*60000), (StationBreakSleepMax*60000) ;if roll sucessful, roll for sleep duration as specified in gui
-				Guicontrol, Text, Debugger, sleeping for %StationSleepRoll%
+				Random, StationSleepRoll, (StationBreakSleepMin*60*1000), (StationBreakSleepMax*60*1000) ;if roll sucessful, roll for sleep duration as specified in gui, convert minutes to miliseconds
+				StationSleepRollShow = StationSleepRoll ;convert back into seconds for display purposes within gui
+				StationSleepRollShow /= 1000
+				Guicontrol, Text, Debugger, sleeping for %StationSleepRollShow%
 				Sleep, StationSleepRoll 
 					DockedCount := 0 ;after sleeping, reset docked count variable so sleep isn't forced when StationBreakMax is reached
 				Return
@@ -346,8 +347,8 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 	Global
 	AtHomeCheck()
 	
-	Random, wait2000to5000milis, 2000, 5000
-	Sleep, wait2000to5000milis	
+	Random, wait1000to5000milis, 1000, 5000
+	Sleep, wait1000to5000milis	
 	
 	;focus inventory window
 	Random, varyby10, 0, 10
@@ -528,12 +529,10 @@ ItemsOneAtATime() ;if not all items can be added to ship at once, try adding the
 						;if pop-up doesn't appear, repeat loop and continue moving first item in station hangar into ship cargo bay
 		}
 		;if loop finishes without pop-up appearing, the script likely made an error
-		Guicontrol, Text, Debugger, ItemsOneAtATime loop failed
+		Guicontrol, Text, Debugger, ItemsOneAtATime loop finished
 		ListLines
 		Pause
 	}						
-	
-	
 	
 ReturnHome() ;open 'people & places' menu and set whichever item is listed first as the next destination
 	{
@@ -599,7 +598,7 @@ ReturnHome() ;open 'people & places' menu and set whichever item is listed first
 	*/
 	}
 			
-AtHomeCheck() ;check the 'people & places' menu for color change to determine if ship has arrived at set destination
+AtHomeCheck() ;check the 'people & places' menu for color change to determine if ship has arrived at destination
 	{
 	;check if first entry in 'people & places' menu has turned green, indicating it is the current system
 	Global
@@ -617,6 +616,14 @@ AtHomeCheck() ;check the 'people & places' menu for color change to determine if
 		}
 	Return
 	}
+
+Logout() ;logout of client
+	{
+	Global
+		
+	
+	}
+
 
 ShowGUI()
 	{
@@ -675,8 +682,10 @@ ShowGUI()
 
 	ButtonSTART:
 	Guicontrol, Disable, START
-	Gui, Submit, NoHide
+	Gui, Submit, NoHide ;submit parameters specified in the gui
+	Winset, Alwaysontop, , A ;window stays on stop
 	Guicontrol, Text, Debugger, starting script
+	
 		;check if ship is docked when script starts
 		PixelSearch, DockMadeX, DockMadeY, 1781, 142, 1782, 143, 0x027a98, 15, Fast
 			if ErrorLevel = 0
