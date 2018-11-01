@@ -7,8 +7,8 @@ CoordMode, Mouse, Screen
 #Persistent
 
 ;variable declaration
-version = 10.0.01
-DockedCount = 0
+version = 0.0.01
+DockedCount := 0
 
 ;Undock()
 ;SelectWaypoint()
@@ -16,12 +16,13 @@ DockedCount = 0
 ;JumpOrDockDetect()
 ;ItemsInInventory()
 ;ReturnTo44()
-;At44Check
+;At44Check()
+ShowGUI()
 
 Undock() ;undock from station
 	{
-	;click on undocking button in station window
 	Global
+	;click on undocking button in station window
 	Random, varyby40, 0, 40
 	Random, varyby18, 0, 18
 	Random, mousemove1, 5, 80
@@ -34,6 +35,7 @@ Undock() ;undock from station
 			Click, up
 	
 	;wait until undocking finishes
+	Guicontrol, Text, Debugger, undocking
 	Random, wait5to10s, 5000, 10000
 	Sleep, wait5to10s+5000
 	SelectWaypoint()
@@ -48,7 +50,7 @@ SelectWaypoint() ;click on yellow-tinted icon in overview to select next waypoin
 		PixelSearch, WaypointX, WaypointY, 1162, 170, 1176, 1074, 0x033535, 12, Fast
 			if ErrorLevel = 0
 				{
-				Guicontrol, Text, vDebugger, found waypoint
+				Guicontrol, Text, Debugger, found waypoint
 				Goto, ClickWaypointinOverview
 				}
 			else
@@ -89,10 +91,10 @@ ClickOnWaypoint() ;click on warp button in selection box to warp to waypoint
 	Global
 	Loop, 300
 		{
-		PixelSearch, WarpButtonX, WarpButtonY, 1214, 71, 1229, 85, 0x020202, 1, Fast
+		PixelSearch, WarpButtonX, WarpButtonY, 1214, 71, 1229, 85, 0xdbdbdb, 8, Fast
 			if ErrorLevel = 0
 				{
-				Guicontrol, Text, vDebugger, found warp button
+				Guicontrol, Text, Debugger, found warp button
 				Goto, Warp
 				}
 			else
@@ -101,15 +103,15 @@ ClickOnWaypoint() ;click on warp button in selection box to warp to waypoint
 	
 	;click on warp button
 	Warp:
-	Random, wait200to3000milis, 2000, 3000
-	Sleep, wait200to3000milis
+	Random, wait200to2000milis, 200, 2000
+	Sleep, wait200to2000milis
 	
 	Random, varyby12, 0, 12
 	Random, varyby11, 0, 11
 	Random, mousemove3, 3, 100
 	MouseMove, varyby12+1215, varyby11+70, mousemove3
-		Random, wait200to2000milis, 200, 2000
-		Sleep, wait200to2000milis
+		Random, wait200to1600milis, 200, 1600
+		Sleep, wait200to1600milis
 			Click, down
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
@@ -126,8 +128,9 @@ ClickOnWaypoint() ;click on warp button in selection box to warp to waypoint
 							Random, wait200to500milis, 200, 500
 							Sleep, wait200to500milis
 					}	
-				Random, wait200to2000milis, 200, 2000
-				Sleep, wait200to2000milis
+				Guicontrol, Text, Debugger, warping
+					Random, wait200to2000milis, 200, 2000
+					Sleep, wait200to2000milis
 				
 		;move mouse away from button so button can be easily seen
 		Random, varyX, -300, 300
@@ -145,13 +148,16 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 	{
 	;search for evidence of a jump
 	Global
+	Guicontrol, Text, Debugger, looking for dock or warp
 	Loop, 15000 
 		{
-		PixelSearch, JumpMadeX, JumpMadeY, 1174, 49, 1175, 51, 0x4c4c4c, 10, Fast
+		PixelSearch, JumpMadeX, JumpMadeY, 1174, 49, 1175, 51, 0x4c4c4c, 9, Fast
 			if ErrorLevel = 0
 				{
-				Guicontrol, Text, vDebugger, jump detected
-				ClickOnWaypoint() ;if a jump has been detected, click on the next waypoint
+				Guicontrol, Text, Debugger, jump detected
+					Random, wait200to800milis, 200, 800
+					Sleep, wait200to800milis
+					ClickOnWaypoint() ;if a jump has been detected, click on the next waypoint
 				}
 			else
 				{
@@ -159,17 +165,20 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 				PixelSearch, DockMadeX, DockMadeY, 1781, 142, 1782, 143, 0x027a98, 15, Fast
 					if ErrorLevel = 0
 						{
-						Guicontrol, Text, vDebugger, docking detected
+						Guicontrol, Text, Debugger, docking detected
 							DockedCount += 1
-								if StationBreakMin > 0 ;if break parameters have been specified, run function using those parameters
+								if (StationBreakMin > 0) ;if break parameters have been specified, run function using those parameters
 									{
 									DockBreakSpecified()
+									ItemsInInventory()
 									}
-								if StationBreakMin = 0 ;if break parameters have not been specified, run function with default values
+								if (StationBreakMin = 0) ;if break parameters have not been specified, run function with default values
 									{
 									DockBreakDefault()
+									ItemsInInventory()
 									}
-						ItemsInInventory() ;if a dock has been detected, place items in inventory
+								else
+									ItemsInInventory() ;if a dock has been detected, place items in inventory
 						}
 					else
 						Sleep, 100	
@@ -179,12 +188,12 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 	;if cannot detect jump or dock after timer expires, look for waypoint again with a larger search area
 	Loop, 3
 		{
-		Loop, 300
+		Loop, 50
 			{
 			PixelSearch, WaypointX, WaypointY, 1100, 50, 1300, 1080, 0x033535, 16, Fast
 				if ErrorLevel = 0
 					{
-					Guicontrol, Text, vDebugger, found waypoint
+					Guicontrol, Text, Debugger, found waypoint
 					Goto, ClickWaypointinOverviewBackup
 					}
 				else
@@ -217,12 +226,12 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 					Random, wait5to200milis, 5, 200
 					Sleep, wait5to200milis
 		
-		Loop, 300
+		Loop, 50
 			{
 			PixelSearch, WarpButtonX, WarpButtonY, 1214, 71, 1229, 85, 0x020202, 1, Fast
 				if ErrorLevel = 0
 					{
-					Guicontrol, Text, vDebugger, found warp button
+					Guicontrol, Text, Debugger, found warp button
 					Goto, WarpBackup
 					}
 				else
@@ -275,56 +284,58 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 
 DockBreakSpecified() ;roll for chance of sleeping script while docked at a station along route if user has specified break parameters
 	{
-		;if ship has docked at least the minimum number of times specified in the gui, roll to determine if script will sleep
-		if DockedCount >= vStationBreakMin
-			{
-			Random, StationBreakRoll, 0, StationBreakMax ;roll for chance of sleeping
-				if StationBreakRoll = 0
-					{
-					Random, StationSleepRoll, (StationBreakSleepMin*60000), (StationBreakSleepMax*60000) ;if roll sucessful, roll for sleep duration as specified in gui
-					Guicontrol, Text, vDebugger, sleeping for %StationSleepRoll%
-					Sleep, StationSleepRoll 
-						DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced when vStationBreakMax is reached
-					Return
-					}
-			}
-		;if ship has docked equal to or more than the maximum number of times specified in the gui and script hasn't already slept yet, force the script to sleep
-		if DockedCount >= vStationBreakMax
-			{
-			Random, StationSleepRoll, (StationBreakSleepMin*60000), (StationBreakSleepMax*60000) ;if roll sucessful, roll for sleep duration as specified in gui, convert minutes to miliseconds
-			Guicontrol, Text, vDebugger, sleeping for %StationSleepRoll%
-			Sleep, StationSleepRoll
-				DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced on next dock
-			Return	
-			}
-	
-	Return
+	Global
+	;if ship has docked at least the minimum number of times specified in the gui, roll to determine if script will sleep
+	if (DockedCount >= StationBreakMin)
+		{
+		Random, StationBreakRoll, StationBreakMin, StationBreakMax ;roll for chance of sleeping
+			if (StationBreakRoll = StationBreakMin)
+				{
+				Random, StationSleepRoll, (StationBreakSleepMin*60000), (StationBreakSleepMax*60000) ;if roll sucessful, roll for sleep duration as specified in gui
+				Guicontrol, Text, Debugger, sleeping for %StationSleepRoll%
+				Sleep, StationSleepRoll 
+					DockedCount := 0 ;after sleeping, reset docked count variable so sleep isn't forced when StationBreakMax is reached
+				Return
+				}
+		}
+	;if ship has docked equal to or more than the maximum number of times specified in the gui and script hasn't already slept yet, force the script to sleep
+	if (DockedCount >= StationBreakMax)
+		{
+		Random, StationSleepRoll, (StationBreakSleepMin*60*1000), (StationBreakSleepMax*60*1000) ;if roll sucessful, roll for sleep duration as specified in gui, convert minutes to miliseconds
+		Guicontrol, Text, Debugger, sleeping for %StationSleepRoll%
+		Sleep, StationSleepRoll
+			DockedCount := 0 ;after sleeping, reset docked count variable so sleep isn't forced on next dock
+		Return	
+		}
+	else
+		Return
 	}
 
 DockBreakDefault() ;roll for chance of sleeping script while docked at a station along route using default values if user hasn't specified break parameters
 	{
-		;if ship has docked at least the minimum number of times specified in the gui, roll to determine if script will sleep
-		if DockedCount >= 1
-			{
-			Random, StationBreakRollDefault, 0, 10 ;roll for chance of sleeping
-				if StationBreakRoll = 0
-					{
-					Random, StationSleepRollDefault, 60000, 120000 ;if roll sucessful, roll for sleep
-					Guicontrol, Text, vDebugger, sleeping for %StationSleepRollDefault%
-					Sleep, StationSleepRollDefault 
-						DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced when 
-					Return
-					}
-			}
-		;if ship has docked equal to or more than the maximum number of times by default and script hasn't already slept yet, force the script to sleep
-		if DockedCount >= 5
-			{
-			Random, StationSleepRollDefault, 60000, 120000 ;if roll sucessful, roll for sleep duration
-			Guicontrol, Text, vDebugger, sleeping for %StationSleepRollDefault%
-			Sleep, StationSleepRollDefault
-				DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced on next dock
-			Return	
-			}
+	Global
+	;if ship has docked at least the minimum number of times specified in the gui, roll to determine if script will sleep
+	if DockedCount >= 1
+		{
+		Random, StationBreakRollDefault, 0, 10 ;roll for chance of sleeping
+			if StationBreakRoll = 0
+				{
+				Random, StationSleepRollDefault, 60000, 120000 ;if roll sucessful, roll for sleep
+				Guicontrol, Text, Debugger, sleeping for %StationSleepRollDefault%
+				Sleep, StationSleepRollDefault 
+					DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced when 
+				Return
+				}
+		}
+	;if ship has docked equal to or more than the maximum number of times by default and script hasn't already slept yet, force the script to sleep
+	if DockedCount >= 5
+		{
+		Random, StationSleepRollDefault, 60000, 120000 ;if roll sucessful, roll for sleep duration
+		Guicontrol, Text, Debugger, sleeping for %StationSleepRollDefault%
+		Sleep, StationSleepRollDefault
+			DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced on next dock
+		Return	
+		}
 	
 	Return
 	}
@@ -369,63 +380,52 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 	SendMode Event
 	
 	;check to see if any items are present in station hangar inventory
-	Loop, 300 
+	Loop, 50
 		{
-		PixelSearch, StationItemsX, StationItemsY, 550, 145, 1500, 180, 0x939393, 2, Fast
+		PixelSearch, StationItemsX, StationItemsY, 550, 145, 800, 180, 0x939393, 2, Fast
 			if ErrorLevel = 0
 				{
-				Guicontrol, Text, vDebugger, found items in inventory
+				Guicontrol, Text, Debugger, found items in inventory
 				Goto, SelectInventory
 				}
 			else
-				Sleep, 100	
+				Sleep, 80
 		}
 	
 	;if no items are present in station inventory, undock and continue
-	Guicontrol, Text, vDebugger, station empty
-	Undock() 
+	Guicontrol, Text, Debugger, station empty
+	Goto, CloseStationHangar
 	
-	;right click on left edge of inventory screen and use drop-down menu to select all items in station hangar inventory
-	SelectInventory:
-	Random, varyby10, 0, 10
-	Random, varyby200, 0, 200
-	Random, mousemove10, 5, 80
-	MouseMove, varyby10+648, varyby200+82, mousemove10
-		Random, wait200to2000milis, 200, 2000
-		Sleep, wait200to2000milis
-			Click, down, right
-				Random, wait5to200milis, 5, 200
-				Sleep, wait5to200milis
-			Click, up, right
-
-	;click on 'select all'
-	Random, varyby90, 0, 90
-	Random, varyby10, 3, 10
-	Random, mousemove11, 5, 80
-	MouseMove, varyby90, varyby10, mousemove11, R 
-		Random, wait200to1000milis, 200, 1000
-		Sleep, wait200to1000milis
-			Click, down
-				Random, wait5to200milis, 5, 200
-				Sleep, wait5to200milis
-			Click, up
-				Random, wait200to1000milis, 200, 1000
-				Sleep, wait200to1000milis
+	;use hotkey to select all items
+	SendMode Input
+	Send {Ctrl down} 
+		Random, wait20to150milis, 20, 150
+		Sleep, wait20to150milis
+	Send {A down}
+		Random, wait20to150milis, 20, 150
+		Sleep, wait20to150milis
+	Send {A up}
+		Random, wait20to150milis, 20, 150
+		Sleep, wait20to150milis
+	Send {Ctrl up}
+		Random, wait200to500milis, 200, 500
+		Sleep, wait200to500milis
+	SendMode Event
 
 	;click and drag items to ship inventory
+	Random, varyby40, 0, 40
 	Random, varyby50, 0, 50
-	Random, varyby60, 0, 60
 	Random, mousemove12, 5, 100
-	MouseMove, varyby50+663, varyby60+81, mousemove12
+	MouseMove, varyby40+663, varyby50+81, mousemove12
 		Random, wait200to1000milis, 200, 1000
 		Sleep, wait200to1000milis
 			Click, down
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
 					Random, varyby28, 0, 28
-					Random, varyby18, 0, 18	
+					Random, varyby11, 0, 11	
 					Random, mousemove13, 5, 100			
-					MouseMove, varyby28+614, varyby18+46, mousemove13		
+					MouseMove, varyby28+606, varyby11+71, mousemove13		
 			Click, up
 				Random, wait1000to5000milis, 1000, 5000
 				Sleep, wait1000to5000milis
@@ -437,21 +437,21 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 				if ErrorLevel = 0
 					{
 					;if alert appears, return to 4-4 and stop script
-					;hit enter key
 					Send {ENTER down}
 						Random, wait15to300milis, 15, 300
 						Sleep, wait15to300milis
 					Send {Enter up}
 					
 					;set destination to 4-4
-					Guicontrol, Text, vDebugger, detected full cargo hold
+					Guicontrol, Text, Debugger, detected full cargo hold
 					ReturnTo44()
 					}
 				else
 					Sleep, 10	
 			}
-		
+	
 	;close station inventory with hotkey	
+	CloseStationHangar:
 	SendMode Input
 	Send {Alt down} 
 		Random, wait20to150milis, 20, 150
@@ -471,10 +471,16 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 	Undock()
 	}
 
+ItemsOneAtATime() ;if not all items can be added to ship at once, try adding them one at a time	
+
+;move mouse over first item slot and check if background has changed color to determine if item is there	
+	
+	
+	
+	
 ReturnTo44() ;open 'people & places' menu and set 4-4 as destination
 	{
 	Global
-	
 	/*
 	;click on 'people and places' icon
 	Random, varyby25, 0, 25
@@ -544,10 +550,9 @@ At44Check() ;check the 'people & places' menu for color change to determine if s
 		PixelSearch, At44X, At44Y, 76, 550, 95, 561, 0x53a553, 11, Fast
 			if ErrorLevel = 0
 				{
-				Gui, Destroy
-				Gui, Add, Text, ,arrived at 4-4 system
-				Gui, Show, Y15, Msgbox
-				ExitApp 
+				Guicontrol, Text, Debugger, arrived at 4-4
+				ListLines
+				Pause
 				}
 			else
 				Sleep, 100	
@@ -555,87 +560,100 @@ At44Check() ;check the 'people & places' menu for color change to determine if s
 	Return
 	}
 
+ShowGUI()
+	{
+	Global
+	Gui, Add, Text, x12 y9 w320 h20 +Center, NEOBOT TRAVELER
+	Gui, Add, Button, x162 y59 w170 h50 vSTART, START
+	Gui, Add, Button, x72 y59 w80 h50 , STOP 
 
-Gui, Add, Text, x12 y9 w320 h20 +Center, EOBOT
-Gui, Add, Button, x162 y59 w170 h50 , START
-Gui, Add, Button, x72 y59 w80 h50 , STOP 
+	Gui, Add, GroupBox, x12 y119 w320 h70 , Debugger
+	Gui, Add, Text, x20 y145 w250 h20 +Center vDebugger, ready
 
-Gui, Add, GroupBox, x12 y119 w320 h70 , Debugger
+	Gui, Add, GroupBox, x12 y199 w320 h200 , Accounts
 
-Gui, Add, GroupBox, x12 y199 w320 h200 , Accounts
+	Gui, Add, Button, x22 y229 w20 h30 , +
+	Gui, Add, Button, x22 y269 w20 h30 , +
+	Gui, Add, Button, x22 y309 w20 h30 , +
+	Gui, Add, Button, x22 y349 w20 h30 , +
+	Gui, Add, Button, x42 y229 w20 h30 , -
+	Gui, Add, Button, x42 y269 w20 h30 , -
+	Gui, Add, Button, x42 y309 w20 h30 , -
+	Gui, Add, Button, x42 y349 w20 h30 , -
+	Gui, Add, Button, x212 y269 w60 h30 , Add Key
+	Gui, Add, Button, x212 y229 w60 h30 , Add Key
+	Gui, Add, Button, x212 y349 w60 h30 , Add Key
+	Gui, Add, Button, x212 y309 w60 h30 , Add Key
+	Gui, Add, Button, x282 y269 w40 h30 , View
+	Gui, Add, Button, x282 y229 w40 h30 , View
+	Gui, Add, Button, x282 y349 w40 h30 , View
+	Gui, Add, Button, x282 y309 w40 h30 , View
 
-Gui, Add, Button, x22 y229 w20 h30 , +
-Gui, Add, Button, x22 y269 w20 h30 , +
-Gui, Add, Button, x22 y309 w20 h30 , +
-Gui, Add, Button, x22 y349 w20 h30 , +
-Gui, Add, Button, x42 y229 w20 h30 , -
-Gui, Add, Button, x42 y269 w20 h30 , -
-Gui, Add, Button, x42 y309 w20 h30 , -
-Gui, Add, Button, x42 y349 w20 h30 , -
-Gui, Add, Button, x212 y269 w60 h30 , Add Key
-Gui, Add, Button, x212 y229 w60 h30 , Add Key
-Gui, Add, Button, x212 y349 w60 h30 , Add Key
-Gui, Add, Button, x212 y309 w60 h30 , Add Key
-Gui, Add, Button, x282 y269 w40 h30 , View
-Gui, Add, Button, x282 y229 w40 h30 , View
-Gui, Add, Button, x282 y349 w40 h30 , View
-Gui, Add, Button, x282 y309 w40 h30 , View
+	Gui, Add, Radio, x72 y229 w140 h30 vAccount , Account 1
+	Gui, Add, Radio, x72 y269 w140 h30 , Account 2
+	Gui, Add, Radio, x72 y309 w140 h30 , Account 3
+	Gui, Add, Radio, x72 y349 w140 h30 , Account 4
 
-Gui, Add, Radio, x72 y229 w140 h30 vAccount , Account 1
-Gui, Add, Radio, x72 y269 w140 h30 , Account 2
-Gui, Add, Radio, x72 y309 w140 h30 , Account 3
-Gui, Add, Radio, x72 y349 w140 h30 , Account 4
+	Gui, Add, GroupBox, x12 y409 w320 h170 , Settings
 
-Gui, Add, GroupBox, x12 y409 w320 h170 , Settings
+	Gui, Add, CheckBox, x42 y439 w90 h20 vBreaks, Take Breaks
+	Gui, Add, ComboBox, x92 y489 w50 h20 vStationBreakMin, ComboBox
+	Gui, Add, Text, x102 y459 w130 h20 +Center, Frequency
+	Gui, Add, Text, x32 y489 w60 h20 +Center , Every
+	Gui, Add, Text, x142 y489 w40 h20 +Center, to
+	Gui, Add, ComboBox, x182 y489 w50 h21 vStationBreakMax, ComboBox
+	Gui, Add, Text, x232 y489 w60 h20 +Center, Stations
 
-Gui, Add, CheckBox, x42 y439 w90 h20 vBreaks, Take Breaks
-Gui, Add, ComboBox, x92 y489 w50 h20 vEveryMinutes, ComboBox
-Gui, Add, Text, x102 y459 w130 h20 +Center, Frequency
-Gui, Add, Text, x32 y489 w60 h20 +Center , Every
-Gui, Add, Text, x142 y489 w40 h20 +Center, to
-Gui, Add, ComboBox, x182 y489 w50 h21 , ComboBox
-Gui, Add, Text, x232 y489 w60 h20 +Center, Minutes
+	Gui, Add, Text, x32 y549 w60 h20 +Center, For
+	Gui, Add, Text, x102 y519 w130 h20 +Center, Duration
+	Gui, Add, ComboBox, x92 y549 w50 h21 vStationBreakSleepMin, ComboBox
+	Gui, Add, Text, x142 y549 w40 h20 +Center, to
+	Gui, Add, ComboBox, x182 y549 w50 h21 vStationBreakSleepMax, ComboBox
+	Gui, Add, Text, x232 y549 w60 h20 +Center, Minutes
 
-Gui, Add, Text, x32 y549 w60 h20 +Center, For
-Gui, Add, Text, x102 y519 w130 h20 +Center, Duration
-Gui, Add, ComboBox, x92 y549 w50 h21 , ComboBox
-Gui, Add, Text, x142 y549 w40 h20 +Center, to
-Gui, Add, ComboBox, x182 y549 w50 h21 , ComboBox
-Gui, Add, Text, x232 y549 w60 h20 +Center, Minutes
+	Gui, Add, Text, x122 y29 w100 h20 +Center, version %version%
+	Gui, Show, x794 y267 h596 w352, New GUI Window
+	Return
 
-Gui, Add, Text, x122 y29 w100 h20 +Center, version %version%
-Return
+	ButtonSTART:
+	Guicontrol, Disable, START
+	Gui, Submit, NoHide
+	Guicontrol, Text, Debugger, starting script
+	Undock()
+	Return
 
-ButtonSTART:
-Gui, Submit, NoHide
-Gui, Add, Text, x20 y130 w320 h70 +Center vDebugger, starting script
-;Undock()
-msgbox, %EveryMinutes%
-Return
+	ButtonSTOP:
+	Guicontrol, Text, Debugger, stopping script
+	ListLines
+	Pause
+	Return
 
-ButtonSTOP:
-ListLines
-Return
+	ButtonView:
+	msgbox %test%
+	
+	GuiClose:
+	ExitApp
 
-ButtonView:
-msgbox %test%
-
-test:
-ExitApp
-
+	test:
+	ExitApp
+	}
+	
 ;MsgBox, end of script
-;xitApp	
-/*	
+;ExitApp	
+
 shift:: ;manual kill switch
 	{
-	Gui, Destroy
 	ExitApp
 	}	
 
 z:: ;show logs
 	{
-	Gui, Destroy
 	ListLines
 	Pause
 	}
-*/
+
+x:: ;show variables
+	{
+	ListVars
+	Pause
+	}

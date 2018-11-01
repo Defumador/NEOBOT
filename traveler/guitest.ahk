@@ -4,10 +4,11 @@
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir% 
 
-#include Traveler.ahk
+;#include Traveler.ahk
 
 Gui, Add, Text, x12 y9 w320 h20 +Center, EOBOT
 Gui, Add, Button, x162 y59 w170 h50 , START
+
 Gui, Add, Button, x72 y59 w80 h50 , STOP 
 Gui, Add, GroupBox, x12 y119 w320 h70 , Debugger
 
@@ -54,16 +55,16 @@ Gui, Add, Text, x232 y549 w60 h20 +Center, Minutes
 
 Gui, Add, Text, x122 y29 w100 h20 +Center, version %version%
 ; Generated using SmartGUI Creator 4.0
-Gui, Show, x794 y267 h592 w348, 
+;Gui, Show, x794 y267 h592 w348, 
 Return
-
-ButtonSTART:
+/*
+;ButtonSTART:
 Gui, Submit, NoHide
 ;Undock()
 msgbox, %EveryMinutes%
 Return
 
-ButtonSTOP:
+;ButtonSTOP:
 ListLines
 Return
 
@@ -77,7 +78,8 @@ Return
 
 ButtonView:
 msgbox %test%
-
+*/
 
 GuiClose:
 ExitApp
+*/
