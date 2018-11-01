@@ -15,8 +15,8 @@ DockedCount := 0
 ;ClickOnWaypoint()
 ;JumpOrDockDetect()
 ;ItemsInInventory()
-;ReturnTo44()
-;At44Check()
+;ReturnHome()
+;AtHomeCheck()
 ShowGUI()
 
 Undock() ;undock from station
@@ -342,9 +342,9 @@ DockBreakDefault() ;roll for chance of sleeping script while docked at a station
 
 ItemsInInventory() ;move items from station hangar to ship cargo bay
 	{
-	;first, check if ship has reached jita
+	;first, check if ship has reached home
 	Global
-	At44Check()
+	AtHomeCheck()
 	
 	Random, wait2000to5000milis, 2000, 5000
 	Sleep, wait2000to5000milis	
@@ -436,15 +436,16 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 			PixelSearch, ShipFullX, ShipFullY, 791, 436, 793, 438, 0xCACACA, 3, Fast
 				if ErrorLevel = 0
 					{
-					;if alert appears, return to 4-4 and stop script
+					;close alert
 					Send {ENTER down}
 						Random, wait15to300milis, 15, 300
 						Sleep, wait15to300milis
 					Send {Enter up}
-					
-					;set destination to 4-4
-					Guicontrol, Text, Debugger, detected full cargo hold
-					ReturnTo44()
+						Random, wait150to300milis, 150, 300
+						Sleep, wait150to300milis
+						
+					;if not all items will fit at once, try placing items into ship cargo hold one at a time
+					ItemsOneAtATime()
 					}
 				else
 					Sleep, 10	
@@ -471,41 +472,73 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 	Undock()
 	}
 
-ItemsOneAtATime() ;if not all items can be added to ship at once, try adding them one at a time	
+ItemsOneAtATime() ;if not all items can be added to ship at once, try adding them one at a time
+	{
+	;move mouse over first item slot and check if background has changed color to determine if item is there
+	Global
+	Guicontrol, Text, Debugger, moving items one at a time
+	Loop, 100
+		{
+		Random, varyby600, 0, 600
+		Random, varyby20, 0, 20
+		Random, mousemove15, 5, 100
+		MouseMove, varyby600+693, varyby20+93, mousemove15 ;first item slot in station hangar when using list view with icons
+			Random, wait200to1000milis, 200, 1000
+			Sleep, wait200to1000milis
+				PixelSearch, ItemSlot1X, ItemSlot1Y, 1670, 100, 1671, 101, 0x181818, 3, Fast ;far right side of first item slot turning light grey
+					if ErrorLevel = 0
+						{
+						;if item is present in that slot, click and drag it to ship cargo bay
+						Guicontrol, Text, Debugger, found item in first slot
+						Click, down
+							Random, wait5to200milis, 5, 200
+							Sleep, wait5to200milis
+								Random, varyby28, 0, 28
+								Random, varyby11, 0, 11	
+								Random, mousemove16, 5, 100			
+								MouseMove, varyby28+606, varyby11+71, mousemove16 ;ship cargo bay icon in ship hangar sidebar		
+						Click, up
+							Random, wait800to3000milis, 800, 3000
+							Sleep, wait800to3000milis
 
-;move mouse over first item slot and check if background has changed color to determine if item is there	
-	Random, varyby600, 0, 600
-	Random, varyby20, 0, 20
-	Random, mousemove12, 5, 100
-	MouseMove, varyby600+693, varyby20+93, mousemove12
-		Random, wait200to1000milis, 200, 1000
-		Sleep, wait200to1000milis
-			PixelSearch, ItemSlot1X, ItemSlot1Y, 1670, 100, 1671, 101, 0x181818, 3, Fast
-				if ErrorLevel = 0
-					{
-					;if item is present in that slot, click and drag it to ship cargo bay
-								Click, down
-						Random, wait5to200milis, 5, 200
-						Sleep, wait5to200milis
-							Random, varyby28, 0, 28
-							Random, varyby11, 0, 11	
-							Random, mousemove13, 5, 100			
-							MouseMove, varyby28+606, varyby11+71, mousemove13		
-					Click, up
-						Random, wait1000to5000milis, 1000, 5000
-						Sleep, wait1000to5000milis
-					
-					;set destination to 4-4
-					Guicontrol, Text, Debugger, detected full cargo hold
-					ReturnTo44()
-					}
-				else
-					Sleep, 10
+						;wait to see if a pop-up menu appears indicating cargo hold full or not enough space for every item
+						Loop, 15 
+							{
+							PixelSearch, ShipFullX, ShipFullY, 791, 436, 793, 438, 0xCACACA, 3, Fast  ;bright white corner of pop-up window
+								if ErrorLevel = 0
+									{
+									;if alert appears, close pop-up and return home
+									Guicontrol, Text, Debugger, detected full cargo hold
+									SendMode Input
+									Send {ENTER down}
+										Random, wait15to300milis, 15, 300
+										Sleep, wait15to300milis
+									Send {Enter up}
+									SendMode Event
+										Random, wait20to150milis, 20, 150
+										Sleep, wait20to150milis
+
+									;set destination to 'home base' (first item in people & places alphabetically)
+									ReturnHome()
+									}
+								else
+									Guicontrol, Text, Debugger, more items remaining
+									Sleep, 50	
+							}
+						;if pop-up doesn't appear, repeat loop and continue moving first item in station hangar into ship cargo bay
+		}
+		;if loop finishes without pop-up appearing, the script likely made an error
+		Guicontrol, Text, Debugger, ItemsOneAtATime loop failed
+		ListLines
+		Pause
+	}						
 	
 	
-ReturnTo44() ;open 'people & places' menu and set 4-4 as destination
+	
+ReturnHome() ;open 'people & places' menu and set whichever item is listed first as the next destination
 	{
 	Global
+	
 	/*
 	;click on 'people and places' icon
 	Random, varyby25, 0, 25
@@ -566,16 +599,16 @@ ReturnTo44() ;open 'people & places' menu and set 4-4 as destination
 	*/
 	}
 			
-At44Check() ;check the 'people & places' menu for color change to determine if ship has arrived at 4-4	
+AtHomeCheck() ;check the 'people & places' menu for color change to determine if ship has arrived at set destination
 	{
-	;check if 4-4 entry in 'people & places' menu has turned green, indicating it is the current system
+	;check if first entry in 'people & places' menu has turned green, indicating it is the current system
 	Global
 	Loop, 3
 		{
-		PixelSearch, At44X, At44Y, 76, 550, 95, 561, 0x53a553, 11, Fast
+		PixelSearch, AtDestX, AtDestY, 76, 550, 95, 561, 0x53a553, 11, Fast
 			if ErrorLevel = 0
 				{
-				Guicontrol, Text, Debugger, arrived at 4-4
+				Guicontrol, Text, Debugger, arrived at destination
 				ListLines
 				Pause
 				}
@@ -637,7 +670,7 @@ ShowGUI()
 	Gui, Add, Text, x232 y549 w60 h20 +Center, Minutes
 
 	Gui, Add, Text, x122 y29 w100 h20 +Center, version %version%
-	Gui, Show, x794 y267 h596 w352, New GUI Window
+	Gui, Show, x794 y267 h596 w352, NEOBOT TRAVELER v%version%
 	Return
 
 	ButtonSTART:
