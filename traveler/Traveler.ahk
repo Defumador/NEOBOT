@@ -56,7 +56,7 @@ SelectWaypoint() ;click on yellow-tinted icon in overview to select next waypoin
 			else
 				Sleep, 100
 		}
-		MsgBox, cant find waypoint!
+		Guicontrol, Text, Debugger, found waypoint
 	
 	;click on waypoint in overview to highlight it in selection box
 	ClickWaypointinOverview:
@@ -644,11 +644,18 @@ ShowGUI()
 	Guicontrol, Disable, START
 	Gui, Submit, NoHide
 	Guicontrol, Text, Debugger, starting script
-	Undock()
+		;check if ship is docked when script starts
+		PixelSearch, DockMadeX, DockMadeY, 1781, 142, 1782, 143, 0x027a98, 15, Fast
+			if ErrorLevel = 0
+				Undock()
+			else ;if not docked, look for waypoint marker since ship must be in space
+				SelectWaypoint()
+				
 	Return
 
 	ButtonSTOP:
 	Guicontrol, Text, Debugger, stopping script
+	Guicontrol, Enable, START
 	ListLines
 	Pause
 	Return
