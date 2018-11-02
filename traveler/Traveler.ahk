@@ -6,7 +6,7 @@ CoordMode, Pixel, Screen
 CoordMode, Mouse, Screen
 #Persistent
 
-version = 0.0.01 ;variable declaration
+version = 0.01 ;variable declaration
 DockedCount := 0
 
 ;Undock()
@@ -20,12 +20,12 @@ ShowGUI()
 
 Undock() ;undock from station
 	{
-	Global
 	;click on undocking button in station window
+	Global
 	Random, varyby40, 0, 40
 	Random, varyby18, 0, 18
 	Random, mousemove1, 5, 80
-	MouseMove, varyby40+1781, varyby18+142, mousemove1
+	MouseMove, varyby40+1781, varyby18+142, mousemove1 ;undock button in station sidebar
 		Random, wait200to500milis, 200, 500
 		Sleep, wait200to500milis+500
 			Click, down
@@ -35,8 +35,8 @@ Undock() ;undock from station
 	
 	;wait until undocking finishes
 	Guicontrol, Text, Debugger, undocking
-	Random, wait5to10s, 5000, 10000
-	Sleep, wait5to10s+5000
+		Random, wait5to10s, 5000, 10000
+		Sleep, wait5to10s+5000
 	SelectWaypoint()
 	}
 
@@ -46,7 +46,7 @@ SelectWaypoint() ;click on yellow-tinted icon in overview to select next waypoin
 	Global
 	Loop, 300
 		{
-		PixelSearch, WaypointX, WaypointY, 1162, 170, 1176, 1074, 0x033535, 12, Fast
+		PixelSearch, WaypointX, WaypointY, 1162, 170, 1176, 1074, 0x033535, 12, Fast ;overview icons
 			if ErrorLevel = 0
 				{
 				Guicontrol, Text, Debugger, found waypoint
@@ -62,7 +62,7 @@ SelectWaypoint() ;click on yellow-tinted icon in overview to select next waypoin
 	Random, varyby250, 0, 250
 	Random, varyby12, 0, 12
 	Random, mousemove2, 5, 80
-	MouseMove, varyby250+WaypointX, varyby12+WaypointY, mousemove2
+	MouseMove, varyby250+WaypointX, varyby12+WaypointY, mousemove2 ;waypoint icon in overview
 		Random, wait200to2000milis, 200, 2000
 		Sleep, wait200to2000milis
 			Click, down
@@ -72,8 +72,8 @@ SelectWaypoint() ;click on yellow-tinted icon in overview to select next waypoin
 				Random, DoubleClickRoll, 1, 20 ;chance to double-click
 				if DoubleClickRoll = 1
 					{
-					Random, wait90to250milis, 90, 250
-					Sleep, wait90to250milis
+					Random, wait20to250milis, 20, 250
+					Sleep, wait20to250milis
 						Click, down
 							Random, wait5to200milis, 5, 200
 							Sleep, wait5to200milis
@@ -90,7 +90,7 @@ ClickOnWaypoint() ;click on warp button in selection box to warp to waypoint
 	Global
 	Loop, 300
 		{
-		PixelSearch, WarpButtonX, WarpButtonY, 1214, 71, 1229, 85, 0xdbdbdb, 8, Fast
+		PixelSearch, WarpButtonX, WarpButtonY, 1214, 71, 1229, 85, 0xdbdbdb, 8, Fast ;white warp icon in selection box above overview
 			if ErrorLevel = 0
 				{
 				Guicontrol, Text, Debugger, found warp button
@@ -108,7 +108,7 @@ ClickOnWaypoint() ;click on warp button in selection box to warp to waypoint
 	Random, varyby12, 0, 12
 	Random, varyby11, 0, 11
 	Random, mousemove3, 3, 100
-	MouseMove, varyby12+1215, varyby11+70, mousemove3
+	MouseMove, varyby12+1215, varyby11+70, mousemove3 ;warp icon in selection box
 		Random, wait200to1600milis, 200, 1600
 		Sleep, wait200to1600milis
 			Click, down
@@ -127,19 +127,19 @@ ClickOnWaypoint() ;click on warp button in selection box to warp to waypoint
 							Random, wait200to500milis, 200, 500
 							Sleep, wait200to500milis
 					}	
-				Guicontrol, Text, Debugger, warping
-					Random, wait200to2000milis, 200, 2000
-					Sleep, wait200to2000milis
+	Guicontrol, Text, Debugger, warping
+		Random, wait200to2000milis, 200, 2000
+		Sleep, wait200to2000milis
 				
-		;move mouse away from button so button can be easily seen
-		Random, varyX, -300, 300
-		Random, varyY, -60, 300
-		Random, mousemove4, 3, 100
-		MouseMove, varyX, varyY, mousemove4, R
+	;move mouse away from button so button can be easily seen
+	Random, varyX, -300, 300
+	Random, varyY, -60, 300
+	Random, mousemove4, 3, 100
+	MouseMove, varyX, varyY, mousemove4, R
 	
 	;wait a minimum period of time for warp to begin
-	Random, wait2000to15000milis, 2000, 15000
-	Sleep, wait2000to15000milis
+		Random, wait2000to15000milis, 2000, 15000
+		Sleep, wait2000to15000milis
 	JumpOrDockDetect()
 	}
 
@@ -150,7 +150,7 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 	Guicontrol, Text, Debugger, looking for dock or warp
 	Loop, 15000 
 		{
-		PixelSearch, JumpMadeX, JumpMadeY, 1174, 49, 1175, 51, 0x4c4c4c, 9, Fast
+		PixelSearch, JumpMadeX, JumpMadeY, 1174, 49, 1175, 51, 0x4c4c4c, 9, Fast ;grey 'no object selected' text in selection box
 			if ErrorLevel = 0
 				{
 				Guicontrol, Text, Debugger, jump detected
@@ -161,7 +161,7 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 			else
 				{
 				;if a jump has not been detected, search for evidence of a dock
-				PixelSearch, DockMadeX, DockMadeY, 1781, 142, 1782, 143, 0x027a98, 15, Fast
+				PixelSearch, DockMadeX, DockMadeY, 1781, 142, 1782, 143, 0x027a98, 15, Fast ;yellow undock icon
 					if ErrorLevel = 0
 						{
 						Guicontrol, Text, Debugger, docking detected
@@ -171,13 +171,13 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 									DockBreakSpecified()
 									ItemsInInventory()
 									}
-								if (StationBreakMin = 0) ;if break parameters have not been specified, run function with default values
+								if (StationBreakMin = 0) ;if break parameters have not been specified, run function with preset default values
 									{
 									DockBreakDefault()
 									ItemsInInventory()
 									}
 								else
-									ItemsInInventory() ;if a dock has been detected, place items in inventory
+									ItemsInInventory() ;if script doesn't break, continue as normal
 						}
 					else
 						Sleep, 100	
@@ -189,7 +189,7 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 		{
 		Loop, 50
 			{
-			PixelSearch, WaypointX, WaypointY, 1100, 50, 1300, 1080, 0x033535, 16, Fast
+			PixelSearch, WaypointX, WaypointY, 1100, 50, 1300, 1080, 0x033535, 16, Fast ;icons in overview, wider area
 				if ErrorLevel = 0
 					{
 					Guicontrol, Text, Debugger, found waypoint
@@ -205,7 +205,7 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 		Random, varyby250, 0, 250
 		Random, varyby12, 0, 12
 		Random, mousemove12, 5, 80
-		MouseMove, varyby250+WaypointX, varyby12+WaypointY, mousemove12
+		MouseMove, varyby250+WaypointX, varyby12+WaypointY, mousemove12 ;yellow waypoint icon in overview
 			Random, wait200to2000milis, 200, 2000
 			Sleep, wait200to2000milis
 				Click, down
@@ -227,7 +227,7 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 		
 		Loop, 50
 			{
-			PixelSearch, WarpButtonX, WarpButtonY, 1214, 71, 1229, 85, 0x020202, 1, Fast
+			PixelSearch, WarpButtonX, WarpButtonY, 1214, 71, 1229, 85, 0x020202, 1, Fast ;white warp button in selection box
 				if ErrorLevel = 0
 					{
 					Guicontrol, Text, Debugger, found warp button
@@ -245,7 +245,7 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 			Random, varyby12, 0, 12
 			Random, varyby11, 0, 11
 			Random, mousemove13, 3, 100
-			MouseMove, varyby12+1215, varyby11+70, mousemove13
+			MouseMove, varyby12+1215, varyby11+70, mousemove13 ;warp button in selection box
 				Random, wait200to2000milis, 200, 2000
 				Sleep, wait200to2000milis
 					Click, down
@@ -266,7 +266,10 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 							}	
 						Random, wait200to2000milis, 200, 2000
 						Sleep, wait200to2000milis
-
+			Guicontrol, Text, Debugger, warping
+				Random, wait200to2000milis, 200, 2000
+				Sleep, wait200to2000milis
+				
 			;move mouse away from button so button can be easily seen
 			Random, varyX, -300, 300
 			Random, varyY, -60, 300
@@ -274,8 +277,8 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 			MouseMove, varyX, varyY, mousemove14, R
 
 			;wait a minimum period of time for warp to begin
-			Random, wait2000to15000milis, 2000, 15000
-			Sleep, wait2000to15000milis
+				Random, wait2000to15000milis, 2000, 15000
+				Sleep, wait2000to15000milis
 			JumpOrDockDetect()
 		}
 	Msgbox, cant find dock or jump!
@@ -283,17 +286,17 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 
 DockBreakSpecified() ;roll for chance of sleeping script while docked at a station along route if user has specified break parameters
 	{
-	Global
 	;if ship has docked at least the minimum number of times specified in the gui, roll to determine if script will sleep
+	Global
 	if (DockedCount >= StationBreakMin)
 		{
 		Random, StationBreakRoll, StationBreakMin, StationBreakMax ;roll for chance of sleeping
 			if (StationBreakRoll = StationBreakMin)
 				{
 				Random, StationSleepRoll, (StationBreakSleepMin*60*1000), (StationBreakSleepMax*60*1000) ;if roll sucessful, roll for sleep duration as specified in gui, convert minutes to miliseconds
-				StationSleepRollShow = StationSleepRoll ;convert back into seconds for display purposes within gui
-				StationSleepRollShow /= 1000
-				Guicontrol, Text, Debugger, sleeping for %StationSleepRollShow%
+					StationSleepRollShow = StationSleepRoll ;convert back into seconds for display purposes within gui
+					StationSleepRollShow /= 1000
+						Guicontrol, Text, Debugger, sleeping for %StationSleepRollShow% seconds
 				Sleep, StationSleepRoll 
 					DockedCount := 0 ;after sleeping, reset docked count variable so sleep isn't forced when StationBreakMax is reached
 				Return
@@ -303,7 +306,9 @@ DockBreakSpecified() ;roll for chance of sleeping script while docked at a stati
 	if (DockedCount >= StationBreakMax)
 		{
 		Random, StationSleepRoll, (StationBreakSleepMin*60*1000), (StationBreakSleepMax*60*1000) ;if roll sucessful, roll for sleep duration as specified in gui, convert minutes to miliseconds
-		Guicontrol, Text, Debugger, sleeping for %StationSleepRoll%
+			StationSleepRollShow = StationSleepRoll ;convert back into seconds for display purposes within gui
+			StationSleepRollShow /= 1000
+				Guicontrol, Text, Debugger, sleeping for %StationSleepRollShow% seconds
 		Sleep, StationSleepRoll
 			DockedCount := 0 ;after sleeping, reset docked count variable so sleep isn't forced on next dock
 		Return	
@@ -314,16 +319,17 @@ DockBreakSpecified() ;roll for chance of sleeping script while docked at a stati
 
 DockBreakDefault() ;roll for chance of sleeping script while docked at a station along route using default values if user hasn't specified break parameters
 	{
-	Global
 	;if ship has docked at least the minimum number of times specified in the gui, roll to determine if script will sleep
+	Global
 	if DockedCount >= 1
 		{
 		Random, StationBreakRollDefault, 0, 10 ;roll for chance of sleeping
 			if StationBreakRoll = 0
 				{
 				Random, StationSleepRollDefault, 60000, 120000 ;if roll sucessful, roll for sleep
-				Guicontrol, Text, Debugger, sleeping for %StationSleepRollDefault%
-				Sleep, StationSleepRollDefault 
+					StationSleepRollDefaultShow = (StationSleepRollDefault / 1000) ;convert back into seconds for display purposes within gui
+						Guicontrol, Text, Debugger, sleeping for %StationSleepRollDefaultShow% seconds
+				Sleep, StationSleepRollDefault
 					DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced when 
 				Return
 				}
@@ -332,7 +338,8 @@ DockBreakDefault() ;roll for chance of sleeping script while docked at a station
 	if DockedCount >= 5
 		{
 		Random, StationSleepRollDefault, 60000, 120000 ;if roll sucessful, roll for sleep duration
-		Guicontrol, Text, Debugger, sleeping for %StationSleepRollDefault%
+			StationSleepRollDefaultShow = (StationSleepRollDefault / 1000) ;convert back into seconds for display purposes within gui
+				Guicontrol, Text, Debugger, sleeping for %StationSleepRollDefaultShow% seconds
 		Sleep, StationSleepRollDefault
 			DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced on next dock
 		Return	
@@ -343,7 +350,7 @@ DockBreakDefault() ;roll for chance of sleeping script while docked at a station
 
 ItemsInInventory() ;move items from station hangar to ship cargo bay
 	{
-	;first, check if ship has reached home
+	;first, check if ship has reached home station
 	Global
 	AtHomeCheck()
 	
@@ -354,7 +361,7 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 	Random, varyby10, 0, 10
 	Random, varyby200, 0, 200
 	Random, mousemove9, 5, 80
-	MouseMove, varyby10+648, varyby200+82, mousemove9
+	MouseMove, varyby10+648, varyby200+82, mousemove9 ;edge of inventory window (to prevent clicking an item by accident)
 		Random, wait200to500milis, 200, 500
 		Sleep, wait200to500milis+500
 			Click, down
@@ -364,7 +371,7 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 				Random, wait200to500milis, 200, 500
 				Sleep, wait200to500milis+500
 	
-	;use hotkey to open station inventory in station
+	;use hotkey to open station hangar inventory window
 	SendMode Input
 	Send {Alt down} 
 		Random, wait20to150milis, 20, 150
@@ -383,10 +390,10 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 	;check to see if any items are present in station hangar inventory
 	Loop, 50
 		{
-		PixelSearch, StationItemsX, StationItemsY, 550, 145, 800, 180, 0x939393, 2, Fast
+		PixelSearch, StationItemsX, StationItemsY, 550, 145, 800, 180, 0x939393, 2, Fast ;white text label of items in first row of station hangar
 			if ErrorLevel = 0
 				{
-				Guicontrol, Text, Debugger, found items in inventory
+				Guicontrol, Text, Debugger, found items in station hangar
 				Goto, SelectInventory
 				}
 			else
@@ -394,7 +401,7 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 		}
 	
 	;if no items are present in station inventory, undock and continue
-	Guicontrol, Text, Debugger, station empty
+	Guicontrol, Text, Debugger, station hangar empty
 	Goto, CloseStationHangar
 	
 	;use hotkey to select all items
@@ -413,11 +420,11 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 		Sleep, wait200to500milis
 	SendMode Event
 
-	;click and drag items to ship inventory
+	;click and drag items to ship cargo hold
 	Random, varyby40, 0, 40
 	Random, varyby50, 0, 50
 	Random, mousemove12, 5, 100
-	MouseMove, varyby40+663, varyby50+81, mousemove12
+	MouseMove, varyby40+663, varyby50+81, mousemove12 ;first item in station hangar
 		Random, wait200to1000milis, 200, 1000
 		Sleep, wait200to1000milis
 			Click, down
@@ -426,7 +433,7 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 					Random, varyby28, 0, 28
 					Random, varyby11, 0, 11	
 					Random, mousemove13, 5, 100			
-					MouseMove, varyby28+606, varyby11+71, mousemove13		
+					MouseMove, varyby28+606, varyby11+71, mousemove13 ;ship cargo bay icon in inventory sidebar		
 			Click, up
 				Random, wait1000to5000milis, 1000, 5000
 				Sleep, wait1000to5000milis
@@ -434,7 +441,7 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 		;check to see if 'not enough cargo space' alert appears	
 		Loop, 10 
 			{
-			PixelSearch, ShipFullX, ShipFullY, 791, 436, 793, 438, 0xCACACA, 3, Fast
+			PixelSearch, ShipFullX, ShipFullY, 791, 436, 793, 438, 0xCACACA, 3, Fast ;white edge of pop-up window
 				if ErrorLevel = 0
 					{
 					;close alert
@@ -452,7 +459,7 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 					Sleep, 10	
 			}
 	
-	;close station inventory with hotkey	
+	;close station hangar inventory window with hotkey	
 	CloseStationHangar:
 	SendMode Input
 	Send {Alt down} 
@@ -497,7 +504,7 @@ ItemsOneAtATime() ;if not all items can be added to ship at once, try adding the
 								Random, varyby28, 0, 28
 								Random, varyby11, 0, 11	
 								Random, mousemove16, 5, 100			
-								MouseMove, varyby28+606, varyby11+71, mousemove16 ;ship cargo bay icon in ship hangar sidebar		
+								MouseMove, varyby28+606, varyby11+71, mousemove16 ;ship cargo bay icon in inventory sidebar		
 						Click, up
 							Random, wait800to3000milis, 800, 3000
 							Sleep, wait800to3000milis
@@ -509,7 +516,7 @@ ItemsOneAtATime() ;if not all items can be added to ship at once, try adding the
 								if ErrorLevel = 0
 									{
 									;if alert appears, close pop-up and return home
-									Guicontrol, Text, Debugger, detected full cargo hold
+									Guicontrol, Text, Debugger, detected full cargo hold, returning home
 									SendMode Input
 									Send {ENTER down}
 										Random, wait15to300milis, 15, 300
@@ -539,7 +546,7 @@ ReturnHome() ;open 'people & places' menu and set whichever item is listed first
 	Global
 	
 	/*
-	;click on 'people and places' icon
+	;click on 'people & places' icon
 	Random, varyby25, 0, 25
 	Random, varyby24, 0, 24
 	Random, mousemove5, 5, 80
@@ -556,7 +563,7 @@ ReturnHome() ;open 'people & places' menu and set whichever item is listed first
 	Random, varyby500, 0, 500
 	Random, varyby16, 0, 16
 	Random, mousemove6, 5, 100
-	MouseMove, varyby500+42, varyby16+547, mousemove6
+	MouseMove, varyby500+42, varyby16+547, mousemove6 ;first entry in 'personal locations' within 'people & places' window
 		Random, wait200to500milis, 200, 500
 		Sleep, wait200to500milis+500
 			Click, down, right
@@ -570,7 +577,7 @@ ReturnHome() ;open 'people & places' menu and set whichever item is listed first
 	Random, varyby50, 0, 50
 	Random, varyby12, 0, 12
 	Random, mousemove7, 5, 80
-	MouseMove, varyby50+10, varyby12+23, mousemove7, R
+	MouseMove, varyby50+10, varyby12+23, mousemove7, R ;'set destination' entry in right click drop-down menu
 		Random, wait200to1000milis, 200, 1000
 		Sleep, wait200to1000milis
 			Click, down
@@ -581,11 +588,11 @@ ReturnHome() ;open 'people & places' menu and set whichever item is listed first
 				Sleep, wait5to200milis
 	
 	/*	
-	;close 'people and places' window
+	;close 'people & places' window
 	Random, varyby5, 0, 5
 	Random, varyby6, 0, 6
 	Random, mousemove8, 5, 80
-	MouseMove, varyby5+580, varyby6+4, mousemove8
+	MouseMove, varyby5+580, varyby6+4, mousemove8 'x button in top right corner of 'people & places' window
 		Random, wait200to500milis, 200, 500
 		Sleep, wait200to500milis+500
 			Click, down
@@ -604,7 +611,7 @@ AtHomeCheck() ;check the 'people & places' menu for color change to determine if
 	Global
 	Loop, 3
 		{
-		PixelSearch, AtDestX, AtDestY, 76, 550, 95, 561, 0x53a553, 11, Fast
+		PixelSearch, AtDestX, AtDestY, 76, 550, 95, 561, 0x53a553, 11, Fast ;green text of first 'personal locations' entry
 			if ErrorLevel = 0
 				{
 				Guicontrol, Text, Debugger, arrived at destination
@@ -687,7 +694,7 @@ ShowGUI()
 	Guicontrol, Text, Debugger, starting script
 	
 		;check if ship is docked when script starts
-		PixelSearch, DockMadeX, DockMadeY, 1781, 142, 1782, 143, 0x027a98, 15, Fast
+		PixelSearch, DockMadeX, DockMadeY, 1781, 142, 1782, 143, 0x027a98, 15, Fast ;yellow undock icon
 			if ErrorLevel = 0
 				Undock()
 			else ;if not docked, look for waypoint marker since ship must be in space
