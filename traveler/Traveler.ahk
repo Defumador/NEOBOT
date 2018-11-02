@@ -286,9 +286,9 @@ JumpOrDockDetect() ;search for colors indicating either a jump has been made or 
 
 DockBreakSpecified() ;roll for chance of sleeping script while docked at a station along route if user has specified break parameters
 	{
-	;if ship has docked at least the minimum number of times specified in the gui, roll to determine if script will sleep
+	;if ship has docked at least the minimum number of times specified in the gui and taking breaks is enabled, roll to determine if script will sleep
 	Global
-	if (DockedCount >= StationBreakMin)
+	if ((DockedCount >= StationBreakMin) and (Breaks = 1))
 		{
 		Random, StationBreakRoll, StationBreakMin, StationBreakMax ;roll for chance of sleeping
 			if (StationBreakRoll = StationBreakMin)
@@ -301,9 +301,12 @@ DockBreakSpecified() ;roll for chance of sleeping script while docked at a stati
 					DockedCount := 0 ;after sleeping, reset docked count variable so sleep isn't forced when StationBreakMax is reached
 				Return
 				}
+			else
+				Return
 		}
+		
 	;if ship has docked equal to or more than the maximum number of times specified in the gui and script hasn't already slept yet, force the script to sleep
-	if (DockedCount >= StationBreakMax)
+	if ((DockedCount >= StationBreakMax) and (Breaks = 1))
 		{
 		Random, StationSleepRoll, (StationBreakSleepMin*60*1000), (StationBreakSleepMax*60*1000) ;if roll sucessful, roll for sleep duration as specified in gui, convert minutes to miliseconds
 			StationSleepRollShow = StationSleepRoll ;convert back into seconds for display purposes within gui
@@ -321,7 +324,7 @@ DockBreakDefault() ;roll for chance of sleeping script while docked at a station
 	{
 	;if ship has docked at least the minimum number of times specified in the gui, roll to determine if script will sleep
 	Global
-	if DockedCount >= 1
+	if ((DockedCount >= 1) and (Breaks = 1))
 		{
 		Random, StationBreakRollDefault, 0, 10 ;roll for chance of sleeping
 			if StationBreakRoll = 0
@@ -333,9 +336,12 @@ DockBreakDefault() ;roll for chance of sleeping script while docked at a station
 					DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced when 
 				Return
 				}
+			else
+				Return
+				
 		}
 	;if ship has docked equal to or more than the maximum number of times by default and script hasn't already slept yet, force the script to sleep
-	if DockedCount >= 5
+	if ((DockedCount >= 5) and (Breaks = 1))
 		{
 		Random, StationSleepRollDefault, 60000, 120000 ;if roll sucessful, roll for sleep duration
 			StationSleepRollDefaultShow = (StationSleepRollDefault / 1000) ;convert back into seconds for display purposes within gui
@@ -344,8 +350,8 @@ DockBreakDefault() ;roll for chance of sleeping script while docked at a station
 			DockedCount = 0 ;after sleeping, reset docked count variable so sleep isn't forced on next dock
 		Return	
 		}
-	
-	Return
+	else
+		Return
 	}
 
 ItemsInInventory() ;move items from station hangar to ship cargo bay
