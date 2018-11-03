@@ -1,3 +1,8 @@
+;;known bugs
+;setting destination from home station to second entry in people and places sometimes doesn't open the right click menu
+
+;add method for confirming a new destination has been set by pielsearching for a red/yellow/green square in the 'route' gui
+
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 #Warn  ; Enable warnings to assist with detecting common errors.
 SendMode Event  ; Recommended for new scripts due to its superior speed and reliability.
@@ -90,7 +95,7 @@ ClickOnWaypoint() ;click on warp button in selection box to warp to waypoint
 	Global
 	Loop, 300
 		{
-		PixelSearch, WarpButtonX, WarpButtonY, 1214, 71, 1229, 85, 0xdbdbdb, 8, Fast ;white warp icon in selection box above overview
+		PixelSearch, WarpButtonX, WarpButtonY, 1214, 71, 1229, 85, 0xdbdbdb, 7, Fast ;white warp icon in selection box above overview
 			if ErrorLevel = 0
 				{
 				Guicontrol, Text, Debugger, found warp button
@@ -133,7 +138,7 @@ ClickOnWaypoint() ;click on warp button in selection box to warp to waypoint
 				
 	;move mouse away from button so button can be easily seen
 	Random, varyX, -300, 300
-	Random, varyY, -60, 300
+	Random, varyY, 60, 300
 	Random, mousemove4, 3, 100
 	MouseMove, varyX, varyY, mousemove4, R
 	
@@ -294,7 +299,7 @@ DockBreakSpecified() ;roll for chance of sleeping script while docked at a stati
 			if (StationBreakRoll = StationBreakMin)
 				{
 				Random, StationSleepRoll, (StationBreakSleepMin*60*1000), (StationBreakSleepMax*60*1000) ;if roll sucessful, roll for sleep duration as specified in gui, convert minutes to miliseconds
-					StationSleepRollShow = StationSleepRoll ;convert back into seconds for display purposes within gui
+					StationSleepRollShow := StationSleepRoll ;convert back into seconds for display purposes within gui
 					StationSleepRollShow /= 1000
 						Guicontrol, Text, Debugger, sleeping for %StationSleepRollShow% seconds
 				Sleep, StationSleepRoll 
@@ -309,7 +314,7 @@ DockBreakSpecified() ;roll for chance of sleeping script while docked at a stati
 	if ((DockedCount >= StationBreakMax) and (Breaks = 1))
 		{
 		Random, StationSleepRoll, (StationBreakSleepMin*60*1000), (StationBreakSleepMax*60*1000) ;if roll sucessful, roll for sleep duration as specified in gui, convert minutes to miliseconds
-			StationSleepRollShow = StationSleepRoll ;convert back into seconds for display purposes within gui
+			StationSleepRollShow := StationSleepRoll ;convert back into seconds for display purposes within gui
 			StationSleepRollShow /= 1000
 				Guicontrol, Text, Debugger, sleeping for %StationSleepRollShow% seconds
 		Sleep, StationSleepRoll
@@ -362,48 +367,66 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 	
 	Random, wait1000to5000milis, 1000, 5000
 	Sleep, wait1000to5000milis	
-	
-	;focus inventory window
-	Random, varyby10, 0, 10
-	Random, varyby200, 0, 200
-	Random, mousemove9, 5, 80
-	MouseMove, varyby10+648, varyby200+82, mousemove9 ;edge of inventory window (to prevent clicking an item by accident)
-		Random, wait200to500milis, 200, 500
-		Sleep, wait200to500milis+500
-			Click, down
+	Loop, 2 ;open and close station hangar window multiple times to make sure items are/aren't present
+		{
+		;focus main inventory window
+		Random, varyby650, 0, 650
+		Random, varyby20, 0, 20
+		Random, mousemove9, 5, 80
+		MouseMove, varyby650+647, varyby20+1046, mousemove9 ;bottom edge of inventory window
+			Random, wait200to500milis, 200, 500
+			Sleep, wait200to500milis+500
+				Click, down
+					Random, wait5to200milis, 5, 200
+					Sleep, wait5to200milis
+				Click, up
+					Random, wait200to500milis, 200, 500
+					Sleep, wait200to500milis+500
+		
+		;use hotkey to open station hangar inventory window
+		SendMode Input
+		Send {Alt down} 
+			Random, wait20to150milis, 20, 150
+			Sleep, wait20to150milis
+		Send {G down}
+			Random, wait20to150milis, 20, 150
+			Sleep, wait20to150milis
+		Send {G up}
+			Random, wait20to150milis, 20, 150
+			Sleep, wait20to150milis
+		Send {Alt up}
+			Random, wait200to500milis, 200, 500
+			Sleep, wait200to500milis
+		SendMode Event
+		
+		;focus station hangar window	
+		Random, varyby400, 0, 400
+		Random, varyby300, 0, 300	
+		Random, mousemove19, 5, 100			
+		MouseMove, varyby400+1208, varyby300+320, mousemove19 ;random location in station hangar inventory below first item
+			Random, wait200to500milis, 200, 500
+			Sleep, wait200to500milis+500
+		Click, down
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
-			Click, up
+		Click, up
 				Random, wait200to500milis, 200, 500
-				Sleep, wait200to500milis+500
-	
-	;use hotkey to open station hangar inventory window
-	SendMode Input
-	Send {Alt down} 
-		Random, wait20to150milis, 20, 150
-		Sleep, wait20to150milis
-	Send {G down}
-		Random, wait20to150milis, 20, 150
-		Sleep, wait20to150milis
-	Send {G up}
-		Random, wait20to150milis, 20, 150
-		Sleep, wait20to150milis
-	Send {Alt up}
-		Random, wait200to500milis, 200, 500
-		Sleep, wait200to500milis
-	SendMode Event
-	
-	;check to see if any items are present in station hangar inventory
-	Loop, 50
-		{
-		PixelSearch, StationItemsX, StationItemsY, 550, 145, 800, 180, 0x939393, 2, Fast ;white text label of items in first row of station hangar
-			if ErrorLevel = 0
-				{
-				Guicontrol, Text, Debugger, found items in station hangar
-				Goto, SelectInventory
-				}
-			else
-				Sleep, 80
+				Sleep, wait200to500milis+500	
+		
+		;check to see if any items are present in station hangar inventory
+		Loop, 50
+			{
+			PixelSearch, StationItemsX, StationItemsY, 661, 90, 1100, 100, 0xababab, 5, Fast ;white text label of items in first row of station hangar
+				if ErrorLevel = 0
+					{
+					Guicontrol, Text, Debugger, found items in station hangar
+					Random, wait200to500milis, 200, 500
+					Sleep, wait200to500milis
+						Goto, SelectInventory
+					}
+				else
+					Sleep, 10
+			}
 		}
 	
 	;if no items are present in station inventory, undock and continue
@@ -411,6 +434,7 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 	Goto, CloseStationHangar
 	
 	;use hotkey to select all items
+	SelectInventory:
 	SendMode Input
 	Send {Ctrl down} 
 		Random, wait20to150milis, 20, 150
@@ -427,19 +451,21 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 	SendMode Event
 
 	;click and drag items to ship cargo hold
-	Random, varyby40, 0, 40
-	Random, varyby50, 0, 50
+	Random, varyby300, 0, 300
+	Random, varyby16, 0, 16
 	Random, mousemove12, 5, 100
-	MouseMove, varyby40+663, varyby50+81, mousemove12 ;first item in station hangar
+	MouseMove, varyby300+663, varyby16+85, mousemove12 ;first item in station hangar
 		Random, wait200to1000milis, 200, 1000
 		Sleep, wait200to1000milis
 			Click, down
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
-					Random, varyby28, 0, 28
-					Random, varyby11, 0, 11	
+					Random, varyby38, 0, 38
+					Random, varyby13, 0, 13	
 					Random, mousemove13, 5, 100			
-					MouseMove, varyby28+606, varyby11+71, mousemove13 ;ship cargo bay icon in inventory sidebar		
+					MouseMove, varyby38+599, varyby13+67, mousemove13 ;ship ore cargo bay icon in inventory sidebar		
+						Random, wait200to1000milis, 200, 1000
+						Sleep, wait200to1000milis
 			Click, up
 				Random, wait1000to5000milis, 1000, 5000
 				Sleep, wait1000to5000milis
@@ -447,7 +473,7 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 		;check to see if 'not enough cargo space' alert appears	
 		Loop, 10 
 			{
-			PixelSearch, ShipFullX, ShipFullY, 791, 436, 793, 438, 0xCACACA, 3, Fast ;white edge of pop-up window
+			PixelSearch, ShipFullX, ShipFullY, 1782, 142, 1789, 150, 0x014555, 3, Fast ;check if undock icon becomes darker due to pop-up window
 				if ErrorLevel = 0
 					{
 					;close alert
@@ -457,7 +483,20 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 					Send {Enter up}
 						Random, wait150to300milis, 150, 300
 						Sleep, wait150to300milis
-						
+					
+					;deselect items
+					Random, varyby400, 0, 400
+					Random, varyby300, 0, 300	
+					Random, mousemove19, 5, 100			
+					MouseMove, varyby400+1208, varyby300+320, mousemove19 ;random location in station hangar inventory below first item
+						Random, wait200to500milis, 200, 500
+						Sleep, wait200to500milis+500
+					Click, down
+							Random, wait5to200milis, 5, 200
+							Sleep, wait5to200milis
+					Click, up
+							Random, wait200to500milis, 200, 500
+							Sleep, wait200to500milis+500			
 					;if not all items will fit at once, try placing items into ship cargo hold one at a time
 					ItemsOneAtATime()
 					}
@@ -488,18 +527,32 @@ ItemsInInventory() ;move items from station hangar to ship cargo bay
 
 ItemsOneAtATime() ;if not all items can be added to ship at once, try adding them one at a time
 	{
-	;move mouse over first item slot and check if background has changed color to determine if item is there
+	;double-check items are still present
 	Global
+	Loop, 50
+	{
+	PixelSearch, StationItemsX, StationItemsY, 661, 90, 1177, 100, 0xababab, 5, Fast ;white text label of items in first row of station hangar
+		if ErrorLevel = 0
+			{
+			Guicontrol, Text, Debugger, found items in station hangar
+			Goto, SelectInventoryOneAtATime
+			}
+		else
+			Sleep, 80
+	}
+	
+	;move mouse over first item slot and check if background has changed color to determine if item is there
+	SelectInventoryOneAtATime:
 	Guicontrol, Text, Debugger, moving items one at a time
 	Loop, 100
 		{
 		Random, varyby600, 0, 600
-		Random, varyby20, 0, 20
+		Random, varyby13, 0, 20
 		Random, mousemove15, 5, 100
-		MouseMove, varyby600+693, varyby20+93, mousemove15 ;first item slot in station hangar when using list view with icons
+		MouseMove, varyby600+652, varyby13+87, mousemove15 ;first item slot in station hangar when using list view with icons
 			Random, wait200to1000milis, 200, 1000
 			Sleep, wait200to1000milis
-				PixelSearch, ItemSlot1X, ItemSlot1Y, 1670, 100, 1671, 101, 0x181818, 3, Fast ;far right side of first item slot turning light grey
+				PixelSearch, ItemSlot1X, ItemSlot1Y, 1653, 86, 1686, 102, 0x1c1c1c, 1, Fast ;far right side of first item slot turning light grey
 					if ErrorLevel = 0
 						{
 						;if item is present in that slot, click and drag it to ship cargo bay
@@ -507,10 +560,12 @@ ItemsOneAtATime() ;if not all items can be added to ship at once, try adding the
 						Click, down
 							Random, wait5to200milis, 5, 200
 							Sleep, wait5to200milis
-								Random, varyby28, 0, 28
-								Random, varyby11, 0, 11	
+								Random, varyby40, 0, 40
+								Random, varyby16, 0, 16	
 								Random, mousemove16, 5, 100			
-								MouseMove, varyby28+606, varyby11+71, mousemove16 ;ship cargo bay icon in inventory sidebar		
+								MouseMove, varyby40+598, varyby16+67, mousemove16 ;ship cargo bay icon in inventory sidebar	
+									Random, wait200to1000milis, 200, 1000
+									Sleep, wait200to1000milis								
 						Click, up
 							Random, wait800to3000milis, 800, 3000
 							Sleep, wait800to3000milis
@@ -518,7 +573,7 @@ ItemsOneAtATime() ;if not all items can be added to ship at once, try adding the
 						;wait to see if a pop-up menu appears indicating cargo hold full or not enough space for every item
 						Loop, 15 
 							{
-							PixelSearch, ShipFullX, ShipFullY, 791, 436, 793, 438, 0xCACACA, 3, Fast  ;bright white corner of pop-up window
+							PixelSearch, ShipFullX, ShipFullY, 1782, 142, 1789, 150, 0x014555, 3, Fast ;yellow undock icon becoming darker
 								if ErrorLevel = 0
 									{
 									;if alert appears, close pop-up and return home
@@ -540,12 +595,13 @@ ItemsOneAtATime() ;if not all items can be added to ship at once, try adding the
 									Sleep, 50	
 							}
 						;if pop-up doesn't appear, repeat loop and continue moving first item in station hangar into ship cargo bay
+						}
 		}
 		;if loop finishes without pop-up appearing, the script likely made an error
 		Guicontrol, Text, Debugger, ItemsOneAtATime loop finished
 		ListLines
 		Pause
-	}						
+	}
 	
 ReturnHome() ;open 'people & places' menu and set whichever item is listed first as the next destination
 	{
@@ -573,8 +629,8 @@ ReturnHome() ;open 'people & places' menu and set whichever item is listed first
 		Random, wait200to500milis, 200, 500
 		Sleep, wait200to500milis+500
 			Click, down, right
-				Random, wait5to200milis, 5, 200
-				Sleep, wait5to200milis
+				Random, wait150to200milis, 150, 200
+				Sleep, wait150to200milis
 			Click, up, right
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
@@ -584,8 +640,8 @@ ReturnHome() ;open 'people & places' menu and set whichever item is listed first
 	Random, varyby12, 0, 12
 	Random, mousemove7, 5, 80
 	MouseMove, varyby50+10, varyby12+23, mousemove7, R ;'set destination' entry in right click drop-down menu
-		Random, wait200to1000milis, 200, 1000
-		Sleep, wait200to1000milis
+		Random, wait800to1500milis, 800, 1500
+		Sleep, wait800to1500milis
 			Click, down
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
@@ -605,10 +661,12 @@ ReturnHome() ;open 'people & places' menu and set whichever item is listed first
 				Random, wait5to200milis, 5, 200
 				Sleep, wait5to200milis
 			Click, up	
-				Random, wait5to200milis, 5, 200
-				Sleep, wait5to200milis	
+				Random, wait5to800milis, 5, 800
+				Sleep, wait5to800milis	
 					Undock()
 	*/
+	
+	Undock()
 	}
 			
 AtHomeCheck() ;check the 'people & places' menu for color change to determine if ship has arrived at destination
@@ -621,8 +679,7 @@ AtHomeCheck() ;check the 'people & places' menu for color change to determine if
 			if ErrorLevel = 0
 				{
 				Guicontrol, Text, Debugger, arrived at destination
-				ListLines
-				Pause
+				UnloadCargoBay()
 				}
 			else
 				Sleep, 100	
@@ -630,13 +687,140 @@ AtHomeCheck() ;check the 'people & places' menu for color change to determine if
 	Return
 	}
 
+UnloadCargoBay() ;unload items from ship cargo bay and place items into station hangar
+	{
+	;focus main inventory window
+	Global
+	Random, varyby650, 0, 650
+	Random, varyby20, 0, 20
+	Random, mousemove9, 5, 80
+	MouseMove, varyby650+647, varyby20+1046, mousemove9 ;bottom edge of inventory window
+		Random, wait200to500milis, 200, 500
+		Sleep, wait200to500milis+500
+			Click, down
+				Random, wait5to200milis, 5, 200
+				Sleep, wait5to200milis
+			Click, up
+				Random, wait200to500milis, 200, 500
+				Sleep, wait200to500milis+500
+				
+	;make sure ship cargo bay is selected
+	Random, varyby25, 0, 25
+	Random, varyby19, 0, 19
+	Random, mousemove9, 5, 80
+	MouseMove, varyby25+611, varyby19+68, mousemove9 ;ship ore bay icon in inventory sidebar
+		Random, wait200to500milis, 200, 500
+		Sleep, wait200to500milis+500
+			Click, down
+				Random, wait5to200milis, 5, 200
+				Sleep, wait5to200milis
+			Click, up
+				Random, wait200to500milis, 200, 500
+				Sleep, wait200to500milis+500
+	
+	;focus window	
+	Random, varyby400, 0, 400
+	Random, varyby300, 0, 300	
+	Random, mousemove19, 5, 100			
+	MouseMove, varyby400+1208, varyby300+320, mousemove19 ;random location in inventory below first item
+		Random, wait200to500milis, 200, 500
+		Sleep, wait200to500milis+500
+	Click, down
+			Random, wait5to200milis, 5, 200
+			Sleep, wait5to200milis
+	Click, up
+			Random, wait200to500milis, 200, 500
+			Sleep, wait200to500milis+500	
+	
+	;select all items in ship cargo bay
+	SendMode Input
+	Send {Ctrl down} 
+		Random, wait20to150milis, 20, 150
+		Sleep, wait20to150milis
+	Send {A down}
+		Random, wait20to150milis, 20, 150
+		Sleep, wait20to150milis
+	Send {A up}
+		Random, wait20to150milis, 20, 150
+		Sleep, wait20to150milis
+	Send {Ctrl up}
+		Random, wait200to500milis, 200, 500
+		Sleep, wait200to500milis
+	SendMode Event
+
+	;drag items to station hangar
+	Random, varyby300, 0, 300
+	Random, varyby16, 0, 16
+	Random, mousemove12, 5, 100
+	MouseMove, varyby300+663, varyby16+85, mousemove12 ;first item in ship cargo bay
+		Random, wait200to1000milis, 200, 1000
+		Sleep, wait200to1000milis
+			Click, down
+				Random, wait5to200milis, 5, 200
+				Sleep, wait5to200milis
+					Random, varyby38, 0, 38
+					Random, varyby13, 0, 13	
+					Random, mousemove13, 5, 100			
+					MouseMove, varyby38+599, varyby13+119, mousemove13					;station hangar icon in inventory sidebar		
+						Random, wait200to1000milis, 200, 1000
+						Sleep, wait200to1000milis
+			Click, up
+				Random, wait1000to5000milis, 1000, 5000
+				Sleep, wait1000to5000milis
+	
+	;return to second entry in personal locations to create loop
+	
+	;focus 'people & places window'
+	Random, varyby500, 0, 500
+	Random, varyby14, 0, 14
+	Random, mousemove6, 5, 100
+	MouseMove, varyby500+42, varyby14+569, mousemove6 ;second entry in 'personal locations' within 'people & places' window
+		Random, wait200to500milis, 200, 500
+		Sleep, wait200to500milis+500
+			Click, down
+				Random, wait5to200milis, 5, 200
+				Sleep, wait5to200milis
+			Click, up
+				Random, wait5to200milis, 5, 200
+				Sleep, wait5to200milis
+				
+	;right click on first entry in 'personal locations'
+	Random, varyby500, 0, 500
+	Random, varyby13, 0, 16
+	Random, mousemove6, 5, 100
+	MouseMove, varyby500+42, varyby13+569, mousemove6 ;second entry in 'personal locations' within 'people & places' window
+		Random, wait900to1500milis, 900, 1500
+		Sleep, wait900to1500milis+500
+			Click, down, right
+				Random, wait150to200milis, 150, 200
+				Sleep, wait150to200milis
+			Click, up, right
+				Random, wait5to200milis, 5, 200
+				Sleep, wait5to200milis
+				
+	;click on 'set destination' in drop-down menu
+	Random, varyby50, 0, 50
+	Random, varyby12, 0, 12
+	Random, mousemove7, 5, 80
+	MouseMove, varyby50+10, varyby12+23, mousemove7, R ;'set destination' entry in right click drop-down menu
+		Random, wait200to1000milis, 200, 1000
+		Sleep, wait200to1000milis
+			Click, down
+				Random, wait50to200milis, 50, 200
+				Sleep, wait50to200milis
+			Click, up	
+				Random, wait200to1000milis, 200, 1000
+				Sleep, wait200to1000milis
+			Undock()
+	ExitApp
+	}
+	
 Logout() ;logout of client
 	{
 	Global
 		
 	
 	}
-
 
 ShowGUI()
 	{
@@ -698,14 +882,15 @@ ShowGUI()
 	Gui, Submit, NoHide ;submit parameters specified in the gui
 	Winset, Alwaysontop, , A ;window stays on stop
 	Guicontrol, Text, Debugger, starting script
-	
+	;AtHomeCheck()
+	;/*
 		;check if ship is docked when script starts
-		PixelSearch, DockMadeX, DockMadeY, 1781, 142, 1782, 143, 0x027a98, 15, Fast ;yellow undock icon
+		PixelSearch, DockMadeX, DockMadeY, 1781, 142, 1834, 171, 0x027a98, 15, Fast ;yellow undock icon
 			if ErrorLevel = 0
 				Undock()
 			else ;if not docked, look for waypoint marker since ship must be in space
 				SelectWaypoint()
-				
+	;*/		
 	Return
 
 	ButtonSTOP:
@@ -721,6 +906,9 @@ ShowGUI()
 	GuiClose:
 	ExitApp
 
+	;ButtonTake\ Breaks:
+	
+	
 	test:
 	ExitApp
 	}
@@ -730,7 +918,8 @@ ShowGUI()
 
 shift:: ;manual kill switch
 	{
-	ExitApp
+	ListLines
+	Pause
 	}	
 
 z:: ;show logs
