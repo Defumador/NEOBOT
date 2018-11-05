@@ -4,10 +4,10 @@ import pyautogui #import pyautogui
 pyautogui.PAUSE = 2.5
 
 def click(): #click the mouse for a randomized period of time
-    pyautogui.PAUSE = (random.randint(0,1000) / 1000) #wait up to 1 second before clicking
-    pyautogui.mouseDown()
+    pyautogui.PAUSE = (random.randint(0,1000) / 1000) #wait up to 1 second before clicking, divide by 1000 to convert from miliseconds to seconds
+    pyautogui.mouseDown() #click mouse button down
     pyautogui.PAUSE = (random.randint(0,250) / 1000) #hold down mouse button for up to 250ms                       
-    pyautogui.mouseUp()
+    pyautogui.mouseUp() #release mouse button
     pyautogui.PAUSE = (random.randint(0,1000) / 1000) #wait up to 1 second after clicking
     return
 
