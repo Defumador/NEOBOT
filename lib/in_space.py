@@ -1,7 +1,7 @@
 import sys #import module to allow for Random command in ahk
 from mouse import *
 import pyautogui #import pyautogui
-pyautogui.PAUSE = 2.5
+pyautogui.PAUSE = 2.5554
 os.chdir('D:\OneDrive\Documents\Scripts\Python\PY-NEOBOT-GitHub\lib')
 
 def select_waypoint():
