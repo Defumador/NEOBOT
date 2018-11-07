@@ -10,7 +10,7 @@ def select_waypoint(): #click on current waypoint in overview by looking for eit
     while station_waypoint_icon == None:
         loopnum = loopnum + 1 #increment loop number by one if icon not found
         print('cant find station_waypoint_icon' loopnum) #print loop number
-        pyautogui.PAUSE = 1 #wait 1 secondw before rerunning loop
+        pyautogui.PAUSE = 1 #wait 1 second before rerunning loop
         stargate_waypoint_icon = pyautogui.locateCenterOnScreen('stargate_waypoint_icon.png') #if station icon not found, look for stargate icon
         if stargate_waypoint_icon == None:
             print('cant find stargate_waypoint_icon' loopnum)
@@ -21,14 +21,16 @@ def select_waypoint(): #click on current waypoint in overview by looking for eit
             (stargate_waypoint_iconx, stargate_waypoint_icony) = stargate_waypoint_icon #separate x and y coordinates of location
             pyautogui.moveTo(stargate_waypoint_iconx, stargate_waypoint_icony, move_time(), mouse_path())  # clicks the center of where the button was found
             click()
-            return found_stargate
+            waypointfound = 'stargate' #tell the function's caller that a stargate was found
+            return waypointfound 
     else:
         loopnum = 0
         print('found station_waypoint_icon')
         (station_waypoint_iconx, station_waypoint_icony) = station_waypoint_icon
         pyautogui.moveTo(station_waypoint_iconx, station_waypoint_icony, move_time(), mouse_path())  # clicks the center of where the button was found
         click()
-        return found_station
+        waypointfound = 'station' #tell the function's caller that a station was found
+        return waypointfound
 
 def select_jump_button(): #locate jump button in selection box if stargate icon was found
     jump_button = pyautogui.locateCenterOnScreen('jump_button.png')
