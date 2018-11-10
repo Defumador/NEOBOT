@@ -19,23 +19,23 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
             select_waypoint()  # if stargate icon not found, repeat loop
         else:
             loopnum = 0  # reset loop number to 0 if icon found
+            print('found startgate_waypoint_icon', loopnum)
             (stargate_waypoint_iconx, stargate_waypoint_icony) = stargate_waypoint_icon  # separate x and y coordinates of location
-            pyautogui.moveTo(stargate_waypoint_iconx, stargate_waypoint_icony, move_time(), mouse_path())  # clicks the center of where the button was found
+            pyautogui.moveTo((stargate_waypoint_iconx + (random.randint(-10,10))), (stargate_waypoint_icony + (random.randint(-10,10))), move_time(), mouse_path())  # clicks the center of where the button was found
             click()
-            waypointfound = 'stargate'  # tell the function's caller that a stargate was found
-            return waypointfound
+            select_jump_button()
+
     else:
         loopnum = 0
         print('found station_waypoint_icon')
         (station_waypoint_iconx, station_waypoint_icony) = station_waypoint_icon
         pyautogui.moveTo(station_waypoint_iconx, station_waypoint_icony, move_time(), mouse_path())  # clicks the center of where the button was found
         click()
-        waypointfound = 'station'  # tell the function's caller that a station was found
-        return waypointfound
+        select_dock_button()
 
 
 def select_jump_button():  # locate jump button in selection box if stargate icon was found
-    jump_button = pyautogui.locateCenterOnScreen('jump_button.png')
+    jump_button = pyautogui.locateCenterOnScreen('jump_button_icon.png')
     if jump_button is None:
         print('cant find jump_button')
         sys.exit()
@@ -43,18 +43,20 @@ def select_jump_button():  # locate jump button in selection box if stargate ico
         (jump_buttonx, jump_buttony) = jump_button
         pyautogui.moveTo(jump_buttonx, jump_buttony, move_time(), mouse_path())
         click()
-        return
+        pyautogui.PAUSE = 10  # wait for warp to start before starting to search for new waypoints
+        detect_dock_or_jump()
 
 
 def select_dock_button():  # locate dock button in selection box if station icon was found
-    dock_button = pyautogui.locateCenterOnScreen('dock_button.png')
+    dock_button = pyautogui.locateCenterOnScreen('dock_button_icon.png')
     if dock_button is None:
         print('cant find dock_button')
         sys.exit()
     else:
         (dock_buttonx, dock_buttony) = dock_button
-        pyautogui.moveTo(dock_buttonx, dock_buttony, move_time(), mouse_path())
+        pyautogui.moveTo(dock_buttonx , dock_buttony, move_time(), mouse_path())
         click()
+        pyautogui.PAUSE = 10
         return
 
 
@@ -72,16 +74,8 @@ def detect_dock_or_jump():  # check if client has docked or jumped
         else:
             loopnum = 0  # reset loop number to 0 if icon found
             print('detected jump')
-            pyautogui.PAUSE = 1
-            (no_object_selected_iconx, no_object_selected_icony) = no_object_selected_icon
-            pyautogui.moveTo(no_object_selected_iconx, no_object_selected_icony, move_time(), mouse_path())
-            click()
-            return
+            select_jump_button()
     else:
         loopnum = 0
         print('detected dock!')
-        pyautogui.PAUSE = 1
-        (undock_iconx, undock_icony) = undock_icon
-        pyautogui.moveTo(undock_iconx, undock_icony, move_time(), mouse_path())
-        click()
-        return
+        select_dock_button()

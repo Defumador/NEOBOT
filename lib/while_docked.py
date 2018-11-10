@@ -62,6 +62,6 @@ def undock():
     else:
         print('undocking')
         (undock_iconx, undock_icony) = undock_icon
-        pyautogui.moveTo(undock_iconx, undock_icony, move_time(), mouse_path())  # clicks the center of where the button was found
+        pyautogui.moveTo((undock_iconx + (random.randint(-10,10))), (undock_icony + (random.randint(-10,10))), move_time(), mouse_path())  # clicks the center of where the button was found
         click()
         return
