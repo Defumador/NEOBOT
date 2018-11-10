@@ -9,6 +9,7 @@ pyautogui.PAUSE = 2.5  # set default wait time
 os.chdir('D:\OneDrive\Documents\Scripts\Python\PY-NEOBOT-GitHub\lib')
 
 
+
 #while_docked.undock()  # undock from station
 pyautogui.PAUSE = 15  # wait for undock to complete
 in_space.select_waypoint()  # look for and click on waypoint, then jump to waypoint destination
