@@ -2,13 +2,14 @@ import os, time, random, sys
 import pyautogui
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 2.5  # set default wait time
-from lib import in_space, while_docked, keyboard
-os.chdir('C:\\Program Files (x86)\\Python37-32\Lib\\site-packages\\')  # change directory in order
-                                                                        # to locate pyautogui module
+from lib import while_docked, keyboard, mouse
+# change directory in orde to locate pyautogui module
+os.chdir('C:\\Program Files (x86)\\Python37-32\Lib\\site-packages\\')
 os.chdir('D:\OneDrive\Documents\Scripts\Python\PY-NEOBOT-GitHub\lib')
 sys.setrecursionlimit(100000)
-while_docked.docked_check()
 
+
+while_docked.docked_check()
 
 
 """
