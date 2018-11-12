@@ -11,7 +11,6 @@ conf = 0.95
 
 # check if ship is docked
 def docked_check():
-    print('test')
     undock_icon = pyautogui.locateCenterOnScreen('undock_icon.png', confidence=conf)
     if undock_icon is None:
         print('not docked')
@@ -198,14 +197,14 @@ def drag_items_to_special_hold():
 # look for the warning indicating selected items aren't compatible with ship's special hold parameters
 def look_for_special_hold_warning():
     os.chdir('c:/users/austin/desktop/icons')
-    special_hold_warning = pyautogui.locateCenterOnScreen('special_hold_warning.png', confidence=.8)
+    special_hold_warning = pyautogui.locateCenterOnScreen('special_hold_warning.png', confidence=conf)
     if special_hold_warning is None:
         print('no special hold warning')
         drag_items_to_cargo_bay()
     else:
         # if special hold warning appears, try dragging item to cargo bay instead
         print('found special hold warning')
-        drag_items_to_special_hold()
+        drag_items_to_cargo_bay()
 
 
 # drag items from inventory into ship cargo bay
@@ -250,7 +249,7 @@ def drag_items_to_cargo_bay():
                                                confidence=conf)
             if set_quantity_to_deposit_in_cargo_bay_popup is None:
                 print('cant find set_quantity_to_deposit_in_cargo_bay_popup')
-                drag_items_to_cargo_bay()  # if popup doesn't appear, continue moving items to cargo bay
+                drag_items_to_special_hold()  # if popup doesn't appear, continue moving items to cargo bay
             else:
                 print('found set_quantity_to_deposit_in_cargo_bay_popup')
                 keyboard.enter()  # confirm dialog box and undock
@@ -285,5 +284,7 @@ def undock():
                          (undock_icony + (random.randint(-15, 15))),
                          mouse.move_time(), mouse.mouse_path())
         mouse.click()
+        pyautogui.moveRel((-1 * (random.randint(10, 1000))), (random.randint(40, 1000)),
+                          mouse.move_time(), mouse.mouse_path())  # move mouse away from button
         time.sleep(10)  # wait for undock to complete
         navigation.select_waypoint()
