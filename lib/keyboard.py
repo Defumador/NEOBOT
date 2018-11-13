@@ -1,11 +1,7 @@
-from lib import mouse, keyboard, traveler, unload_ship, navigation
 import sys, pyautogui, os, time, random, ctypes
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 2.5
-import os, random, time
-# change directory in order to locate pyautogui module
-os.chdir('C:\\Program Files (x86)\\Python37-32\Lib\\site-packages\\')
 
 
 def enter():  # hit enter key to confirm pop-up

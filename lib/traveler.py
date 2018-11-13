@@ -1,12 +1,14 @@
-from lib import mouse, keyboard, traveler, unload_ship, navigation
 import sys, pyautogui, os, time, random, ctypes
+os.chdir('D:\OneDrive\Documents\personal_documents\scripting\PY-NEOBOT-GitHub')
+from lib import mouse, keyboard, traveler, load_ship, navigation, while_docked
+os.chdir('D:\OneDrive\Documents\personal_documents\scripting\PY-NEOBOT-GitHub\lib')
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 2.5  # set default wait time
 from lib import while_docked, keyboard, mouse
 # change directory in orde to locate pyautogui module
-os.chdir('C:\\Program Files (x86)\\Python37-32\Lib\\site-packages\\')
-os.chdir('D:\OneDrive\Documents\Scripts\Python\PY-NEOBOT-GitHub\lib')
+#os.chdir('C:\\Program Files (x86)\\Python37-32\Lib\\site-packages\\')
+#os.chdir('D:\OneDrive\Documents\Scripts\Python\PY-NEOBOT-GitHub\lib')
 sys.setrecursionlimit(100000)
 
 

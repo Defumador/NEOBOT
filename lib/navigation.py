@@ -1,9 +1,10 @@
-from lib import mouse, keyboard, traveler, unload_ship, navigation
 import sys, pyautogui, os, time, random, ctypes
+from lib import mouse, unload_ship, while_docked
+
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 2.5
-os.chdir('D:\OneDrive\Documents\Scripts\Python\PY-NEOBOT-GitHub\lib')
+
 
 sys.setrecursionlimit(100000)
 conf = 0.95
@@ -39,7 +40,7 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
             pyautogui.moveTo((station_waypoint_iconx + (random.randint(-8, 220))),
                              (station_waypoint_icony + (random.randint(-8, 8))),
                              mouse.move_time(), mouse.mouse_path())
-            pyautogui.click()
+            mouse.click()
             select_warp_button()
 
     else:

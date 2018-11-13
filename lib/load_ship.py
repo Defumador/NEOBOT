@@ -1,9 +1,9 @@
-from lib import mouse, keyboard, traveler, unload_ship, navigation
 import sys, pyautogui, os, time, random, ctypes
+from lib import mouse, keyboard, while_docked
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 2.5
-os.chdir('D:\OneDrive\Documents\Scripts\Python\PY-NEOBOT-GitHub\lib')
+#os.chdir('D:\OneDrive\Documents\Scripts\Python\PY-NEOBOT-GitHub\lib')
 
 
 sys.setrecursionlimit(100000)
