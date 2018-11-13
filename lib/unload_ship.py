@@ -1,6 +1,5 @@
-# drag items from inventory into ship cargo bay
-import pyautogui, os, sys, time, random
-from lib import mouse, keyboard, while_docked, navigation, load_ship
+from lib import mouse, keyboard, traveler, unload_ship, navigation
+import sys, pyautogui, os, time, random, ctypes
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 2.5
@@ -9,8 +8,6 @@ os.chdir('D:\OneDrive\Documents\Scripts\Python\PY-NEOBOT-GitHub\lib')
 
 sys.setrecursionlimit(100000)
 conf = 0.95
-
-
 
 
 def drag_items_from_cargo_bay():
@@ -99,6 +96,7 @@ def drag_items_from_special_hold():
         return
     else:
         return
+
 
 def unload_ship():
     print('unloading ship')

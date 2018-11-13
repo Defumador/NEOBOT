@@ -1,4 +1,6 @@
-import random, os, time
+from lib import mouse, keyboard, traveler, unload_ship, navigation
+import sys, pyautogui, os, time, random, ctypes
+
 os.chdir('C:\\Program Files (x86)\\Python37-32\Lib\\site-packages\\')
 import pyautogui  # import pyautogui
 pyautogui.FAILSAFE = True

@@ -1,4 +1,6 @@
-import pyautogui  # import pyautogui
+from lib import mouse, keyboard, traveler, unload_ship, navigation
+import sys, pyautogui, os, time, random, ctypes
+
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 2.5
 import os, random, time

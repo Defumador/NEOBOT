@@ -1,10 +1,9 @@
-from lib import while_docked, mouse
+from lib import mouse, keyboard, traveler, unload_ship, navigation
 import sys, pyautogui, os, time, random, ctypes
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 2.5
 os.chdir('D:\OneDrive\Documents\Scripts\Python\PY-NEOBOT-GitHub\lib')
-
 
 sys.setrecursionlimit(100000)
 conf = 0.95
@@ -22,13 +21,13 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
     os.chdir('c:/users/austin/desktop/icons')
     # search right half of screen only for stargate icon
     stargate_waypoint_icon = pyautogui.locateCenterOnScreen('stargate_waypoint_icon.png', confidence=conf,
-                                                           region=(halfscreenwidth, 0, screenwidth, screenheight))
+                                                            region=(halfscreenwidth, 0, screenwidth, screenheight))
     while stargate_waypoint_icon is None:
         print('cant find stargate_waypoint_icon')
         time.sleep(1)  # wait 1 second before rerunning loop
         # if stargate icon not found, look for station icon
         station_waypoint_icon = pyautogui.locateCenterOnScreen('station_waypoint_icon.png', confidence=conf,
-                                                                region=(halfscreenwidth, 0, screenwidth, screenheight))
+                                                               region=(halfscreenwidth, 0, screenwidth, screenheight))
         if station_waypoint_icon is None:
             print('cant find station_waypoint_icon')
             select_waypoint()
@@ -180,4 +179,4 @@ def return_to_dest():
     pyautogui.moveRel((0 + (random.randint(10, 50))), (0 + (random.randint(20, 25))),
                       mouse.move_time(), mouse.mouse_path())
     mouse.click()  # click set destination in drop down
-    while_docked.unload_ship()
+    unload_ship.unload_ship()

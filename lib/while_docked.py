@@ -1,6 +1,5 @@
-import sys, time, pyautogui, os, random
-from lib import mouse, keyboard, navigation
-import numpy
+from lib import mouse, keyboard, traveler, unload_ship, navigation
+import sys, pyautogui, os, time, random, ctypes
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 2.5
@@ -20,7 +19,7 @@ def docked_check():
         navigation.at_home_check()
 
 
-def open_ship_cargo_bay
+def open_ship_cargo_bay():
 
 
 def open_station_hangar():  # click on station hangar button in inventory window while docked

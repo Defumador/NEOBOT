@@ -1,6 +1,5 @@
-# drag items from inventory into ship cargo bay
-import pyautogui, os, sys, time, random
-from lib import mouse, keyboard, while_docked, navigation
+from lib import mouse, keyboard, traveler, unload_ship, navigation
+import sys, pyautogui, os, time, random, ctypes
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 2.5
@@ -83,7 +82,8 @@ def look_for_special_hold():
 # look for the warning indicating selected items aren't compatible with ship's special hold parameters
 def look_for_special_hold_warning():
     os.chdir('c:/users/austin/desktop/icons')
-    special_hold_warning = pyautogui.locateCenterOnScreen('special_hold_warning.png', confidence=conf)
+    # special hold warning is partially transparent so confidence rating must be slightly lower than normal
+    special_hold_warning = pyautogui.locateCenterOnScreen('special_hold_warning.png', confidence=0.8)
     if special_hold_warning is None:
         print('no special hold warning')
         return 0
@@ -139,6 +139,7 @@ def drag_items_to_special_hold():
                     return
             else:
                 return
+
 
 def load_ship():
     print('loading ship')

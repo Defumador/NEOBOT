@@ -1,5 +1,6 @@
-import os, time, random, sys
-import pyautogui
+from lib import mouse, keyboard, traveler, unload_ship, navigation
+import sys, pyautogui, os, time, random, ctypes
+
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 2.5  # set default wait time
 from lib import while_docked, keyboard, mouse
