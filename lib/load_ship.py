@@ -3,7 +3,7 @@ from lib import mouse, keyboard, while_docked
 
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 2.5
-#os.chdir('D:\OneDrive\Documents\Scripts\Python\PY-NEOBOT-GitHub\lib')
+os.chdir('D:\OneDrive\Documents\personal_documents\scripting\PY-NEOBOT-GitHub\lib')
 
 
 sys.setrecursionlimit(100000)
@@ -42,22 +42,19 @@ def drag_items_to_cargo_bay():
                              mouse.move_time(), mouse.mouse_path())
             pyautogui.mouseUp()
             # check if 'set quantity' popup appears indicating not enough room in cargo bay
-            set_quantity_popup()
-            not_enough_room_popup()
-            if set_quantity_popup() == 0:
-                drag_items_to_cargo_bay()
-            elif set_quantity_popup() == 1:
-                look_for_special_hold()
-                if look_for_special_hold() == 1:
-                    drag_items_to_special_hold()
-                    return
-                else:
-                    while_docked.undock()
-
+            #set_quantity_popup()
             if not_enough_room_popup() == 0:
-                drag_items_to_cargo_bay()
-            elif not_enough_room_popup() == 1:
-                look_for_special_hold()
+                if set_quantity_popup() == 0:
+                    drag_items_to_cargo_bay()
+                else:
+                    print('looking for special holdd')
+                    if look_for_special_hold() == 1:
+                        drag_items_to_special_hold()
+                        return
+                    else:
+                        while_docked.undock()
+            else:
+                print('looking for special holdd')
                 if look_for_special_hold() == 1:
                     drag_items_to_special_hold()
                     return
@@ -66,35 +63,33 @@ def drag_items_to_cargo_bay():
 
 
 def set_quantity_popup():
-    os.chdir('c:/users/austin/desktop/icons')
     # check if 'set quantity' popup appears indicating not enough room in cargo bay
     set_quantity_to_deposit_in_cargo_bay_popup = \
         pyautogui.locateCenterOnScreen('set_quantity_to_deposit_in_cargo_bay_popup.png', confidence=conf)
     if set_quantity_to_deposit_in_cargo_bay_popup is None:
         print('no set quantity popup')
-        return 0  # if popup doesn't appear, continue moving items to cargo bay
+        return '0'  # if popup doesn't appear, continue moving items to cargo bay
     else:
         print('found set quantity popup')
-        keyboard.enter()  # confirm dialog box and undock
-        return 1
+        keyboard.enter()  # confirm dialog box
+        return '1'
 
 
 def not_enough_room_popup():
+    print('not enough room popup running')
     os.chdir('c:/users/austin/desktop/icons')
-    # check if 'not enough room' popup appears indicating not enough room in cargo bay
     not_enough_room_in_hold = pyautogui.locateCenterOnScreen('not_enough_room_in_hold.png', confidence=conf)
     if not_enough_room_in_hold is None:
         print('enough room for more items')
-        return 0  # if popup doesn't appear, continue moving items to cargo bay
+        return 0
     else:
         print('found not enough room popup')
-        keyboard.enter()  # confirm dialog box and undock
+        keyboard.enter()  # confirm dialog box
         return 1
 
 
 # if ship has a specialized hold for specific items, try dragging station hangar inventory into it first
 def look_for_special_hold():
-    os.chdir('c:/users/austin/desktop/icons')
     # look for drop down arrow next to ship indicating it has a special hold
     special_hold_dropown_arrow = pyautogui.locateCenterOnScreen('hold.png', confidence=conf)
     if special_hold_dropown_arrow is None:
@@ -107,7 +102,6 @@ def look_for_special_hold():
 
 # look for the warning indicating selected items aren't compatible with ship's special hold parameters
 def special_hold_warning():
-    os.chdir('c:/users/austin/desktop/icons')
     # special hold warning is partially transparent so confidence rating must be slightly lower than normal
     special_hold_warning = pyautogui.locateCenterOnScreen('special_hold_warning.png', confidence=0.8)
     if special_hold_warning is None:
@@ -121,7 +115,6 @@ def special_hold_warning():
 
 # drag items from inventory into ship special hold bay
 def drag_items_to_special_hold():
-    os.chdir('c:/users/austin/desktop/icons')
     # look for 'name' column header at top of inventory window and offset mouse
     namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar_icon.png',
                                                                    confidence=conf)
@@ -156,11 +149,12 @@ def drag_items_to_special_hold():
             pyautogui.mouseUp()
             time.sleep((random.randint(0, 10) / 10))
             # check if 'set quantity' popup appears indicating not enough room in cargo bay
-            set_quantity_popup()
-            if set_quantity_popup() == 0:
-                special_hold_warning()
-                if special_hold_warning() == 0:
-                    drag_items_to_special_hold()
+            if not_enough_room_popup() == 0:
+                if set_quantity_popup() == 0:
+                    if special_hold_warning() == 0:
+                        drag_items_to_special_hold()
+                    else:
+                        return
                 else:
                     return
             else:

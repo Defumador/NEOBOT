@@ -14,6 +14,7 @@ sys.setrecursionlimit(100000)
 
 
 load_ship.load_ship()
+while_docked.undock()
 #while_docked.docked_check()
 
 
