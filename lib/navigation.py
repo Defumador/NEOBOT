@@ -1,5 +1,5 @@
 import sys, pyautogui, os, time, random, ctypes
-from lib import mouse, unload_ship, while_docked
+from lib import mouse, unload_ship, load_ship, while_docked
 
 
 pyautogui.FAILSAFE = True
@@ -167,7 +167,9 @@ def return_home():
                       mouse.move_time(), mouse.mouse_path())
     mouse.click()  # click set destination in drop down
     while_docked.open_station_hangar()
-
+    while_docked.focus_inventory_window()
+    load_ship.load_ship()
+    while_docked.undock()
 
 def return_to_dest():
     os.chdir('c:/users/austin/desktop/icons')

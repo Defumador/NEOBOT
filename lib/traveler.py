@@ -12,7 +12,9 @@ from lib import while_docked, keyboard, mouse
 sys.setrecursionlimit(100000)
 
 
-while_docked.docked_check()
+
+load_ship.load_ship()
+#while_docked.docked_check()
 
 
 """

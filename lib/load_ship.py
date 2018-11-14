@@ -42,17 +42,30 @@ def drag_items_to_cargo_bay():
                              mouse.move_time(), mouse.mouse_path())
             pyautogui.mouseUp()
             # check if 'set quantity' popup appears indicating not enough room in cargo bay
-            set_quantity()
-            if set_quantity() == 0:
+            set_quantity_popup()
+            not_enough_room_popup()
+            if set_quantity_popup() == 0:
                 drag_items_to_cargo_bay()
-            else:
+            elif set_quantity_popup() == 1:
                 look_for_special_hold()
                 if look_for_special_hold() == 1:
                     drag_items_to_special_hold()
                     return
+                else:
+                    while_docked.undock()
+
+            if not_enough_room_popup() == 0:
+                drag_items_to_cargo_bay()
+            elif not_enough_room_popup() == 1:
+                look_for_special_hold()
+                if look_for_special_hold() == 1:
+                    drag_items_to_special_hold()
+                    return
+                else:
+                    while_docked.undock()
 
 
-def set_quantity():
+def set_quantity_popup():
     os.chdir('c:/users/austin/desktop/icons')
     # check if 'set quantity' popup appears indicating not enough room in cargo bay
     set_quantity_to_deposit_in_cargo_bay_popup = \
@@ -62,6 +75,19 @@ def set_quantity():
         return 0  # if popup doesn't appear, continue moving items to cargo bay
     else:
         print('found set quantity popup')
+        keyboard.enter()  # confirm dialog box and undock
+        return 1
+
+
+def not_enough_room_popup():
+    os.chdir('c:/users/austin/desktop/icons')
+    # check if 'not enough room' popup appears indicating not enough room in cargo bay
+    not_enough_room_in_hold = pyautogui.locateCenterOnScreen('not_enough_room_in_hold.png', confidence=conf)
+    if not_enough_room_in_hold is None:
+        print('enough room for more items')
+        return 0  # if popup doesn't appear, continue moving items to cargo bay
+    else:
+        print('found not enough room popup')
         keyboard.enter()  # confirm dialog box and undock
         return 1
 
@@ -80,7 +106,7 @@ def look_for_special_hold():
 
 
 # look for the warning indicating selected items aren't compatible with ship's special hold parameters
-def look_for_special_hold_warning():
+def special_hold_warning():
     os.chdir('c:/users/austin/desktop/icons')
     # special hold warning is partially transparent so confidence rating must be slightly lower than normal
     special_hold_warning = pyautogui.locateCenterOnScreen('special_hold_warning.png', confidence=0.8)
@@ -130,10 +156,10 @@ def drag_items_to_special_hold():
             pyautogui.mouseUp()
             time.sleep((random.randint(0, 10) / 10))
             # check if 'set quantity' popup appears indicating not enough room in cargo bay
-            set_quantity()
-            if set_quantity() == 0:
-                look_for_special_hold_warning()
-                if look_for_special_hold_warning() == 0:
+            set_quantity_popup()
+            if set_quantity_popup() == 0:
+                special_hold_warning()
+                if special_hold_warning() == 0:
                     drag_items_to_special_hold()
                 else:
                     return
@@ -147,8 +173,4 @@ def load_ship():
     while_docked.focus_inventory_window()
     drag_items_to_cargo_bay()
     print('ship loaded')
-    while_docked.undock()
     return
-
-
-
