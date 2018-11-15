@@ -1,10 +1,8 @@
 import sys, pyautogui, os, time, random, ctypes
 from lib import mouse, unload_ship, load_ship, while_docked
 
-
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 2.5
-
 
 sys.setrecursionlimit(100000)
 conf = 0.95
@@ -19,21 +17,22 @@ halfscreenheight = (int(screenheight / 2))
 
 def select_waypoint():  # click on current waypoint in overview by looking for either station or stargate icons
     # look for station icon
+    print('looking for waypoints')
     os.chdir('c:/users/austin/desktop/icons')
     # search right half of screen only for stargate icon
     stargate_waypoint_icon = pyautogui.locateCenterOnScreen('stargate_waypoint_icon.png', confidence=conf,
                                                             region=(halfscreenwidth, 0, screenwidth, screenheight))
     while stargate_waypoint_icon is None:
-        print('cant find stargate_waypoint_icon')
+        print('cant find stargate waypoint')
         time.sleep(1)  # wait 1 second before rerunning loop
         # if stargate icon not found, look for station icon
         station_waypoint_icon = pyautogui.locateCenterOnScreen('station_waypoint_icon.png', confidence=conf,
                                                                region=(halfscreenwidth, 0, screenwidth, screenheight))
         if station_waypoint_icon is None:
-            print('cant find station_waypoint_icon')
+            print('cant find station waypoint')
             select_waypoint()
         else:
-            print('found station_waypoint_icon')
+            print('found station waypoint')
             # separate x and y coordinates of location
             (station_waypoint_iconx, station_waypoint_icony) = station_waypoint_icon
             # clicks the center of where the button was found
@@ -42,9 +41,8 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
                              mouse.move_time(), mouse.mouse_path())
             mouse.click()
             select_warp_button()
-
     else:
-        print('found stargate_waypoint_icon')
+        print('found stargate waypoint')
         (stargate_waypoint_iconx, stargate_waypoint_icony) = stargate_waypoint_icon
         # clicks the center of where the button was found
         pyautogui.moveTo((stargate_waypoint_iconx + (random.randint(-8, 220))),
@@ -56,19 +54,20 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
 
 def select_warp_button():  # locate jump button in selection box if stargate icon was found
     os.chdir('c:/users/austin/desktop/icons')
+    print('looking for warp buttons')
     # search right half of screen only
     jump_button = pyautogui.locateCenterOnScreen('jump_button_icon.png', confidence=conf,
                                                  region=(halfscreenwidth, 0, screenwidth, screenheight))
     while jump_button is None:
-        print('cant find jump_button_icon')
+        print('cant find jump button')
         time.sleep(1)
         dock_button = pyautogui.locateCenterOnScreen('dock_button_icon.png', confidence=conf,
                                                      region=(halfscreenwidth, 0, screenwidth, screenheight))
         if dock_button is None:
-            print('cant find dock_button_icon')
+            print('cant find dock button')
             select_warp_button()
         else:
-            print('found dock_button_icon')
+            print('found dock button')
             (dock_buttonx, dock_buttony) = dock_button
             pyautogui.moveTo((dock_buttonx + (random.randint(-8, 8))),
                              (dock_buttony + (random.randint(-8, 8))),
@@ -80,7 +79,7 @@ def select_warp_button():  # locate jump button in selection box if stargate ico
             time.sleep(20)
             detect_dock_or_jump()
     else:
-        print('found jump_button_icon')
+        print('found jump button')
         (jump_buttonx, jump_buttony) = jump_button
         pyautogui.moveTo((jump_buttonx + (random.randint(-8, 8))),
                          (jump_buttony + (random.randint(-8, 8))),
@@ -116,7 +115,7 @@ def detect_dock_or_jump():  # check if client has docked or jumped
             spedometer = pyautogui.locateCenterOnScreen('spedometer.png', confidence=0.99,
                                                         region=(0, halfscreenheight, screenwidth, screenheight))
             if spedometer is None:
-                print('jump double check denied')
+                print('jump check denied')
                 detect_dock_or_jump()
             else:
                 print('jump confirmed')
@@ -134,10 +133,10 @@ def at_home_check():
     at_home = pyautogui.locateCenterOnScreen('at_home.png', confidence=conf,
                                              region=(0, 0, halfscreenwidth, screenheight))
     if at_home is None:
-        print('not at_home')
+        print('not at home station')
         at_dest_check()
     elif at_home is not None:
-        print('at home')
+        print('at home station')
         return_to_dest()
 
 
@@ -147,15 +146,16 @@ def at_dest_check():
     at_dest = pyautogui.locateCenterOnScreen('at_dest.png', confidence=conf,
                                              region=(0, 0, halfscreenwidth, screenheight))
     if at_dest is None:
-        print('not at_dest')
+        print('not at destination station')
         while_docked.open_station_hangar()
     else:
-        print('at dest')
+        print('at destination station')
         return_home()
 
 
 # set waypoint back to home station before undocking from destination station
 def return_home():
+    print('at destination station, returning home')
     os.chdir('c:/users/austin/desktop/icons')
     home = pyautogui.locateCenterOnScreen('home.png', confidence=conf,
                                           region=(0, 0, halfscreenwidth, screenheight))
@@ -166,12 +166,10 @@ def return_home():
     pyautogui.moveRel((0 + (random.randint(10, 50))), (0 + (random.randint(20, 25))),
                       mouse.move_time(), mouse.mouse_path())
     mouse.click()  # click set destination in drop down
-    while_docked.open_station_hangar()
-    while_docked.focus_inventory_window()
-    load_ship.load_ship()
-    while_docked.undock()
+    return
 
 def return_to_dest():
+    print('at home station, returning to destination')
     os.chdir('c:/users/austin/desktop/icons')
     dest = pyautogui.locateCenterOnScreen('dest.png', confidence=conf,
                                           region=(0, 0, halfscreenwidth, screenheight))
@@ -182,4 +180,4 @@ def return_to_dest():
     pyautogui.moveRel((0 + (random.randint(10, 50))), (0 + (random.randint(20, 25))),
                       mouse.move_time(), mouse.mouse_path())
     mouse.click()  # click set destination in drop down
-    unload_ship.unload_ship()
+    return
