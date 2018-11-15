@@ -1,7 +1,6 @@
 import sys, pyautogui, os, time, random, ctypes
 from lib import mouse, keyboard, while_docked, load_ship
 
-
 pyautogui.FAILSAFE = True
 pyautogui.PAUSE = 2.5
 
@@ -11,6 +10,7 @@ conf = 0.95
 
 def drag_items_from_cargo_bay():
     # first select ship inventory
+    print('moving all item stacks from cargo bay')
     os.chdir('c:/users/austin/desktop/icons')
     ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold_icon.png',
                                                                  confidence=conf)
@@ -52,54 +52,59 @@ def drag_items_from_cargo_bay():
         pyautogui.mouseUp()
         time.sleep((random.randint(0, 10) / 10))
         # after unloading main cargo hold, look for special cargo hold
-        drag_items_from_special_hold()
+        print('moved all item stacks from cargo bay')
+        return
 
 
 # drag items from inventory into ship special hold bay
 def drag_items_from_special_hold():
     # check if ship has specialized bay that needs to be unloaded
-    load_ship.look_for_special_hold()
-    if load_ship.look_for_special_hold() == 1:
-        print('unloading special hold')
-        ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold_icon.png',
-                                                                     confidence=conf)
-        (ship_cargo_hold_iconx, ship_cargo_hold_icony) = ship_cargo_hold_icon
-        pyautogui.moveTo((ship_cargo_hold_iconx + (random.randint(-10, 60))),
-                         (ship_cargo_hold_icony + (random.randint(14, 24))),
-                         mouse.move_time(), mouse.mouse_path())
+    print('moving all item stacks from special hold')
+    ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold_icon.png',
+                                                                 confidence=conf)
+    (ship_cargo_hold_iconx, ship_cargo_hold_icony) = ship_cargo_hold_icon
+    pyautogui.moveTo((ship_cargo_hold_iconx + (random.randint(-10, 60))),
+                     (ship_cargo_hold_icony + (random.randint(14, 24))),
+                     mouse.move_time(), mouse.mouse_path())
 
-        mouse.click()
-        while_docked.focus_inventory_window()
-        keyboard.select_all()  # select all items in special bay
+    mouse.click()
+    while_docked.focus_inventory_window()
+    keyboard.select_all()  # select all items in special bay
 
-        namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar_icon.png',
-                                                                       confidence=conf)
-        (namefield_station_hangar_iconx, namefield_station_hangar_icony) = namefield_station_hangar_icon
-        pyautogui.moveTo((namefield_station_hangar_iconx + (random.randint(-5, 200))),
-                         (namefield_station_hangar_icony + (random.randint(10, 20))),
-                         mouse.move_time(), mouse.mouse_path())
-        # wait up to 1 second before clicking, divide by 1000 to convert from miliseconds to seconds
-        time.sleep((random.randint(0, 10) / 10))
-        pyautogui.mouseDown()
-        time.sleep((random.randint(0, 10) / 10))
-        inventory_station_hangar_icon = pyautogui.locateCenterOnScreen('inventory_station_hangar_icon.png',
-                                                                       confidence=conf)
-        (inventory_station_hangar_iconx, inventory_station_hangar_icony) = inventory_station_hangar_icon
-        pyautogui.moveTo((inventory_station_hangar_iconx + (random.randint(-15, 40))),
-                         (inventory_station_hangar_icony + (random.randint(-10, 10))),
-                         mouse.move_time(), mouse.mouse_path())
-        time.sleep((random.randint(0, 10) / 10))
-        pyautogui.mouseUp()
-        print('special hold unloaded')
-        time.sleep((random.randint(0, 10) / 10))
-        return
-    else:
-        return
+    namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar_icon.png',
+                                                                   confidence=conf)
+    (namefield_station_hangar_iconx, namefield_station_hangar_icony) = namefield_station_hangar_icon
+    pyautogui.moveTo((namefield_station_hangar_iconx + (random.randint(-5, 200))),
+                     (namefield_station_hangar_icony + (random.randint(10, 20))),
+                     mouse.move_time(), mouse.mouse_path())
+    # wait up to 1 second before clicking, divide by 1000 to convert from miliseconds to seconds
+    pyautogui.mouseDown()
+    inventory_station_hangar_icon = pyautogui.locateCenterOnScreen('inventory_station_hangar_icon.png',
+                                                                   confidence=conf)
+    (inventory_station_hangar_iconx, inventory_station_hangar_icony) = inventory_station_hangar_icon
+    pyautogui.moveTo((inventory_station_hangar_iconx + (random.randint(-15, 40))),
+                     (inventory_station_hangar_icony + (random.randint(-10, 10))),
+                     mouse.move_time(), mouse.mouse_path())
+    pyautogui.mouseUp()
+    print('moved all item stacks from special hold')
+    return
 
 
 def unload_ship():
-    print('unloading ship')
-    drag_items_from_cargo_bay()
-    print('ship unloaded')
-    while_docked.undock()
-    return
+    print('began unloading procedure')
+    while_docked.open_station_hangar()
+    while_docked.focus_inventory_window()
+    load_ship.look_for_items()
+    while look_for_items = 1
+        drag_items_from_cargo_bay()
+        load_ship.look_for_items()
+    elif look_for_items = 0
+        load_ship.look_for_special_hold
+        if look_for_special_hold = 1
+            load_ship.look_for_items
+            while look_for_items = 1
+            drag_items_from_special_hold()
+            load_ship.look_for_special_hold
+        elif look_for_special_hold = 0
+            print('finished unloading procedure')
+            return
