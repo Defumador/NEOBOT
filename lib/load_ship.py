@@ -172,6 +172,34 @@ def load_ship():
             set_quantity_popup()
             if set_quantity_popup = 0
                 load_ship()
+            elif set_quantity_popup = 1
+                look_for_special_hold()
+                if look_for_special_hold = 1
+                    drag_items_to_special_hold()
+                    special_hold_warning()
+                    while special_hold_warning = 0
+                        set_quantity_popup()
+                        if set_quantity_popup = 0
+                            not_enough_room()
+                            if not_enough_room = 0
+                                drag_items_to_special_hold()
+                                special_hold_warning()
+                            elif special_hold warning = 1
+                                load_ship = 1
+                                print('ending loading procedure')
+                                return load_ship
+                        elif set_quantity_popup = 1
+                            load_ship = 1
+                            print('ending loading procedure')
+                            return load_ship
+                    elif not_enough_room_popup = 1
+                        load_ship = 1
+                        print('ending loading procedure')
+                        return load_ship
+                elif look_for_special_hold = 0
+                    load_ship = 1
+                    print('ending loading procedure')
+                    return load_ship
         elif not_enough_room_popup = 1
             look_for_special_hold()
             if look_for_special_hold = 1
