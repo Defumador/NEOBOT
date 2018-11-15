@@ -8,51 +8,54 @@ os.chdir('D:\OneDrive\Documents\personal_documents\scripting\PY-NEOBOT-GitHub\li
 
 sys.setrecursionlimit(100000)
 conf = 0.95
+x = 1
 
+
+def check_for_items():
+    global namefield_station_hangar_icon
+    namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar_icon.png',
+                                                                   confidence=conf)
+    if namefield_station_hangar_icon is None:
+        print('cant find namefield_station_hangar_icon')
+        global x
+        while x < 10: #try 10 times to locate icon
+            x += 1
+            print(x)
+            check_for_items()
+        else:
+            x = 1
+            print('all out of items')
+            while_docked.undock()
+    else:
+        drag_items_to_cargo_bay()
 
 def drag_items_to_cargo_bay():
     print('loading cargo bay')
     # look for 'name' column header at top of inventory window and offset mouse
     os.chdir('c:/users/austin/desktop/icons')
-    namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar_icon.png',
-                                                                   confidence=conf)
-    while namefield_station_hangar_icon is None:
-        print('cant find namefield_station_hangar_icon')
-        namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar_icon.png',
-                                                                       confidence=conf)
-    else:
-        print('found namefield_station_hangar_icon')
-        # if icon found, look for ship cargo bay icon in inventory sidebar
-        inventory_current_ship_icon = pyautogui.locateCenterOnScreen('inventory_current_ship_icon.png',
+    ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold_icon.png',
+                                                                 confidence=conf)
+    while ship_cargo_hold_icon is None:
+        print('cant find ship_cargo_hold_icon')
+        ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold_icon.png',
                                                                      confidence=conf)
-        while inventory_current_ship_icon is None:
-            print('cant find inventory_current_ship_icon')
-            inventory_current_ship_icon = pyautogui.locateCenterOnScreen('inventory_current_ship_icon.png',
-                                                                         confidence=conf)
-        else:  # if found icons, click on first item in station hangar and drag mouse to ship cargo bay
-            print('found inventory_current_ship_icon')
-            (namefield_station_hangar_iconx, namefield_station_hangar_icony) = namefield_station_hangar_icon
-            (inventory_current_ship_iconx, inventory_current_ship_icony) = inventory_current_ship_icon
-            pyautogui.moveTo((namefield_station_hangar_iconx + (random.randint(-5, 200))),
-                             (namefield_station_hangar_icony + (random.randint(10, 20))),
-                             mouse.move_time(), mouse.mouse_path())
-            pyautogui.mouseDown()
-            pyautogui.moveTo((inventory_current_ship_iconx + (random.randint(-5, 20))),
-                             (inventory_current_ship_icony + (random.randint(-5, 5))),
-                             mouse.move_time(), mouse.mouse_path())
-            pyautogui.mouseUp()
-            # check if 'set quantity' popup appears indicating not enough room in cargo bay
-            #set_quantity_popup()
-            if not_enough_room_popup() == 0:
-                if set_quantity_popup() == 0:
-                    drag_items_to_cargo_bay()
-                else:
-                    print('looking for special holdd')
-                    if look_for_special_hold() == 1:
-                        drag_items_to_special_hold()
-                        return
-                    else:
-                        while_docked.undock()
+    else:  # if found icons, click on first item in station hangar and drag mouse to ship cargo bay
+        print('found ship_cargo_hold_icon')
+        (namefield_station_hangar_iconx, namefield_station_hangar_icony) = namefield_station_hangar_icon
+        (ship_cargo_hold_iconx, ship_cargo_hold_icony) = ship_cargo_hold_icon
+        pyautogui.moveTo((namefield_station_hangar_iconx + (random.randint(-5, 250))),
+                         (namefield_station_hangar_icony + (random.randint(10, 25))),
+                         mouse.move_time(), mouse.mouse_path())
+        pyautogui.mouseDown()
+        pyautogui.moveTo((ship_cargo_hold_iconx + (random.randint(-5, 60))),
+                         (ship_cargo_hold_icony + (random.randint(-8, 8))),
+                         mouse.move_time(), mouse.mouse_path())
+        pyautogui.mouseUp()
+        # check if 'set quantity' popup appears indicating not enough room in cargo bay
+        #set_quantity_popup()
+        if not_enough_room_popup() == 0:
+            if set_quantity_popup() == 0:
+                check_for_items()
             else:
                 print('looking for special holdd')
                 if look_for_special_hold() == 1:
@@ -60,6 +63,13 @@ def drag_items_to_cargo_bay():
                     return
                 else:
                     while_docked.undock()
+        else:
+            print('looking for special holdd')
+            if look_for_special_hold() == 1:
+                drag_items_to_special_hold()
+                return
+            else:
+                while_docked.undock()
 
 
 def set_quantity_popup():
@@ -125,25 +135,25 @@ def drag_items_to_special_hold():
     else:
         print('found namefield_station_hangar_icon, moving items to special hold')
         # if icon found, look for ship cargo bay icon in inventory sidebar
-        inventory_current_ship_icon = pyautogui.locateCenterOnScreen('inventory_current_ship_icon.png',
+        ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold_icon.png',
                                                                      confidence=conf)
-        while inventory_current_ship_icon is None:
-            print('cant find inventory_current_ship_icon, moving items to special hold')
-            inventory_current_ship_icon = pyautogui.locateCenterOnScreen('inventory_current_ship_icon.png',
+        while ship_cargo_hold_icon is None:
+            print('cant find ship_cargo_hold_icon, moving items to special hold')
+            ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold_icon.png',
                                                                          confidence=conf)
         else:  # if found icons, click on first item in station hangar and drag mouse to ship cargo bay
-            print('found inventory_current_ship_icon, moving items to special hold')
+            print('found ship_cargo_hold_icon, moving items to special hold')
             (namefield_station_hangar_iconx, namefield_station_hangar_icony) = namefield_station_hangar_icon
-            (inventory_current_ship_iconx, inventory_current_ship_icony) = inventory_current_ship_icon
-            pyautogui.moveTo((namefield_station_hangar_iconx + (random.randint(-5, 200))),
-                             (namefield_station_hangar_icony + (random.randint(10, 20))),
+            (ship_cargo_hold_iconx, ship_cargo_hold_icony) = ship_cargo_hold_icon
+            pyautogui.moveTo((namefield_station_hangar_iconx + (random.randint(-5, 250))),
+                             (namefield_station_hangar_icony + (random.randint(10, 25))),
                              mouse.move_time(), mouse.mouse_path())
             # wait up to 1 second before clicking, divide by 1000 to convert from miliseconds to seconds
             time.sleep((random.randint(0, 10) / 10))
             pyautogui.mouseDown()
             time.sleep((random.randint(0, 10) / 10))
-            pyautogui.moveTo((inventory_current_ship_iconx + (random.randint(-15, 40))),
-                             (inventory_current_ship_icony + (random.randint(14, 24))),
+            pyautogui.moveTo((ship_cargo_hold_iconx + (random.randint(-15, 40))),
+                             (ship_cargo_hold_icony + (random.randint(14, 24))),
                              mouse.move_time(), mouse.mouse_path())
             time.sleep((random.randint(0, 10) / 10))
             pyautogui.mouseUp()
@@ -163,8 +173,8 @@ def drag_items_to_special_hold():
 
 def load_ship():
     print('loading ship')
+    check_for_items()
     while_docked.open_station_hangar()
     while_docked.focus_inventory_window()
-    drag_items_to_cargo_bay()
     print('ship loaded')
     return

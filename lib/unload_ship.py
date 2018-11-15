@@ -12,18 +12,18 @@ conf = 0.95
 def drag_items_from_cargo_bay():
     # first select ship inventory
     os.chdir('c:/users/austin/desktop/icons')
-    inventory_current_ship_icon = pyautogui.locateCenterOnScreen('inventory_current_ship_icon.png',
+    ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold_icon.png',
                                                                  confidence=conf)
-    while inventory_current_ship_icon is None:
-        print('cant find inventory_current_ship_icon')
-        inventory_current_ship_icon = pyautogui.locateCenterOnScreen('inventory_current_ship_icon.png',
+    while ship_cargo_hold_icon is None:
+        print('cant find ship_cargo_hold_icon')
+        ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold_icon.png',
                                                                      confidence=conf)
     else:
         print('unloading cargo bay')
-        (inventory_current_ship_iconx, inventory_current_ship_icony) = inventory_current_ship_icon
+        (ship_cargo_hold_iconx, ship_cargo_hold_icony) = ship_cargo_hold_icon
         # clicks the center of where the button was found
-        pyautogui.moveTo((inventory_current_ship_iconx + (random.randint(-6, 6))),
-                         (inventory_current_ship_icony + (random.randint(-6, 6))),
+        pyautogui.moveTo((ship_cargo_hold_iconx + (random.randint(-6, 6))),
+                         (ship_cargo_hold_icony + (random.randint(-6, 6))),
                          mouse.move_time(), mouse.mouse_path())
 
         mouse.click()
@@ -35,8 +35,8 @@ def drag_items_from_cargo_bay():
         namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar_icon.png',
                                                                        confidence=conf)
         (namefield_station_hangar_iconx, namefield_station_hangar_icony) = namefield_station_hangar_icon
-        pyautogui.moveTo((namefield_station_hangar_iconx + (random.randint(-5, 200))),
-                         (namefield_station_hangar_icony + (random.randint(10, 20))),
+        pyautogui.moveTo((namefield_station_hangar_iconx + (random.randint(-5, 250))),
+                         (namefield_station_hangar_icony + (random.randint(10, 25))),
                          mouse.move_time(), mouse.mouse_path())
         # wait up to 1 second before clicking, divide by 1000 to convert from miliseconds to seconds
         time.sleep((random.randint(0, 10) / 10))
@@ -45,7 +45,7 @@ def drag_items_from_cargo_bay():
         inventory_station_hangar_icon = pyautogui.locateCenterOnScreen('inventory_station_hangar_icon.png',
                                                                        confidence=conf)
         (inventory_station_hangar_iconx, inventory_station_hangar_icony) = inventory_station_hangar_icon
-        pyautogui.moveTo((inventory_station_hangar_iconx + (random.randint(-15, 40))),
+        pyautogui.moveTo((inventory_station_hangar_iconx + (random.randint(-15, 60))),
                          (inventory_station_hangar_icony + (random.randint(-10, 10))),
                          mouse.move_time(), mouse.mouse_path())
         time.sleep((random.randint(0, 10) / 10))
@@ -61,11 +61,11 @@ def drag_items_from_special_hold():
     load_ship.look_for_special_hold()
     if load_ship.look_for_special_hold() == 1:
         print('unloading special hold')
-        inventory_current_ship_icon = pyautogui.locateCenterOnScreen('inventory_current_ship_icon.png',
+        ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold_icon.png',
                                                                      confidence=conf)
-        (inventory_current_ship_iconx, inventory_current_ship_icony) = inventory_current_ship_icon
-        pyautogui.moveTo((inventory_current_ship_iconx + (random.randint(-10, 40))),
-                         (inventory_current_ship_icony + (random.randint(14, 24))),
+        (ship_cargo_hold_iconx, ship_cargo_hold_icony) = ship_cargo_hold_icon
+        pyautogui.moveTo((ship_cargo_hold_iconx + (random.randint(-10, 60))),
+                         (ship_cargo_hold_icony + (random.randint(14, 24))),
                          mouse.move_time(), mouse.mouse_path())
 
         mouse.click()

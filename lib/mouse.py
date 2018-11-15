@@ -22,7 +22,7 @@ def move_time():  # randomize the amount of time mouse takes to move to a new lo
 
 
 def mouse_path():  # randomize the behavior of mouse button as it moves to a location
-    return pyautogui.easeInQuad
+    return pyautogui.easeOutQuad
 
     """
     mousepathvar = (random.randint(1, 15))
