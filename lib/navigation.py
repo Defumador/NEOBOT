@@ -30,7 +30,7 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
                                                                region=(halfscreenwidth, 0, screenwidth, screenheight))
         if station_waypoint_icon is None:
             print('cant find station waypoint')
-            select_waypoint()
+            sys.exit()
         else:
             print('found station waypoint')
             # separate x and y coordinates of location
@@ -40,7 +40,8 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
                              (station_waypoint_icony + (random.randint(-8, 8))),
                              mouse.move_time(), mouse.mouse_path())
             mouse.click()
-            select_warp_button()
+            select_waypoint = 1
+            return select_waypoint
     else:
         print('found stargate waypoint')
         (stargate_waypoint_iconx, stargate_waypoint_icony) = stargate_waypoint_icon
@@ -49,7 +50,8 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
                          (stargate_waypoint_icony + (random.randint(-8, 8))),
                          mouse.move_time(), mouse.mouse_path())
         pyautogui.click()
-        select_warp_button()
+        select_waypoint = 2
+        return select_waypoint
 
 
 def select_warp_button():  # locate jump button in selection box if stargate icon was found
@@ -76,8 +78,9 @@ def select_warp_button():  # locate jump button in selection box if stargate ico
             # move mouse away to prevent tooltips from blocking buttons
             pyautogui.moveRel((-1 * (random.randint(10, 1000))), (random.randint(40, 1000)),
                               mouse.move_time(), mouse.mouse_path())
+            print('warping')
             time.sleep(20)
-            detect_dock_or_jump()
+            return
     else:
         print('found jump button')
         (jump_buttonx, jump_buttony) = jump_button
@@ -89,7 +92,7 @@ def select_warp_button():  # locate jump button in selection box if stargate ico
                           mouse.move_time(), mouse.mouse_path())  # move mouse away from button
         print('warping')
         time.sleep(20)  # wait for warp to start before starting to search for new waypoints
-        detect_dock_or_jump()
+        return
 
 
 def detect_dock_or_jump():  # check if client has docked or jumped
@@ -99,14 +102,15 @@ def detect_dock_or_jump():  # check if client has docked or jumped
     undock_icon = pyautogui.locateCenterOnScreen('undock_icon.png', confidence=conf,
                                                  region=(halfscreenwidth, 0, screenwidth, screenheight))
     # if undock icon is not found, look for 'no object selected' in selection box, indicating a jump has been made
-    if undock_icon is None:
+    while undock_icon is None:
         print('waiting for jump or dock')
         time.sleep(3)
         # search bottom half of screen only
         spedometer = pyautogui.locateCenterOnScreen('spedometer.png', confidence=0.99,
                                                     region=(0, halfscreenheight, screenwidth, screenheight))
         if spedometer is None:  # if jump is not detected, wait and rerun function
-            detect_dock_or_jump()
+            undock_icon = pyautogui.locateCenterOnScreen('undock_icon.png', confidence=conf,
+                                                 region=(halfscreenwidth, 0, screenwidth, screenheight))
         else:
             # if jump detected, warp to next waypoint
             print('jump detected')
@@ -119,11 +123,12 @@ def detect_dock_or_jump():  # check if client has docked or jumped
                 detect_dock_or_jump()
             else:
                 print('jump confirmed')
-                select_waypoint()
-                select_warp_button()
+                detect_dock_or_jump = 1
+                return detect_dock_or_jump
     else:
         print('dock detected')
-        at_home_check()
+        detect_dock_or_jump = 2
+        return detect_dock_or_jump
 
 
 # check if ship has arrived back at its home station by looking for an entry in 'people and places' starting with 3 0's
@@ -134,11 +139,12 @@ def at_home_check():
                                              region=(0, 0, halfscreenwidth, screenheight))
     if at_home is None:
         print('not at home station')
-        at_dest_check()
+        at_home_check = 0
+        return at_home_check
     elif at_home is not None:
         print('at home station')
-        return_to_dest()
-
+        at_home_check = 1
+        return at_home_check
 
 # check if ship has arrived back at its destination by looking for an entry in 'people and places' starting with 3 1's
 def at_dest_check():
@@ -147,10 +153,12 @@ def at_dest_check():
                                              region=(0, 0, halfscreenwidth, screenheight))
     if at_dest is None:
         print('not at destination station')
-        while_docked.open_station_hangar()
+        at_dest_check = 0
+        return at_dest_check
     else:
         print('at destination station')
-        return_home()
+        at_dest_check = 1
+        return at_dest_check
 
 
 # set waypoint back to home station before undocking from destination station
