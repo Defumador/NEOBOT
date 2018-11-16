@@ -43,11 +43,11 @@ def drag_items_to_cargo_hold():
     ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold.bmp',
                                                                  confidence=conf)
     while ship_cargo_hold_icon is None:
-        print('cant find ship_cargo_hold_icon')
+        print('cant find cargo hold')
         ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold.bmp',
                                                                      confidence=conf)
     else:  # if found icons, click on first item in station hangar and drag mouse to ship cargo hold
-        print('found ship_cargo_hold_icon')
+        print('found cargo hold')
         (namefield_station_hangar_iconx, namefield_station_hangar_icony) = namefield_station_hangar_icon
         (ship_cargo_hold_iconx, ship_cargo_hold_icony) = ship_cargo_hold_icon
         pyautogui.moveTo((namefield_station_hangar_iconx + (random.randint(-5, 250))),
@@ -85,7 +85,7 @@ def special_hold_warning():
     print('looking for special hold warning')
     global special_hold_warning_var
     # special hold warning is partially transparent so confidence rating must be slightly lower than normal
-    special_hold_warning = pyautogui.locateCenterOnScreen('special_hold_warning.bmp', confidence=0.9)
+    special_hold_warning = pyautogui.locateCenterOnScreen('special_hold_warning.bmp', confidence=0.8)
     if special_hold_warning is None:
         print('no special hold warning')
         special_hold_warning_var = 0
@@ -119,11 +119,11 @@ def drag_items_to_special_hold():
     namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
                                                                    confidence=conf)
     while namefield_station_hangar_icon is None:
-        print('cant find namefield_station_hangar_icon, moving items to special hold')
+        print('found namefield column header, moving items to special hold')
         namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
                                                                        confidence=conf)
     else:
-        print('found namefield_station_hangar_icon, moving items to special hold')
+        print('found namefield column header, moving items to special hold')
         # if icon found, look for ship cargo hold icon in inventory sidebar
         ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold.bmp',
                                                                      confidence=conf)
@@ -192,13 +192,13 @@ def load_ship_bulk():  # load ship by selecting all item stacks and moving them 
                 set_quantity_popup()
                 not_enough_room_popup()
                 if special_hold_warning_var == 0 and set_quantity_popup_var == 0 and not_enough_room_popup_var == 0:
-                    print('done loading ship carog and special hold by bulk')
+                    print('done loading ship cargo and special hold by bulk')
                     load_ship_bulk_var = 1
                     return
                 else:  # if warning appears, try loading items individually
-                    print('ship cannot be loaded in bulk')
+                    print('ship cannot be fully loaded in bulk')
                     load_ship_bulk_var = 0
-    print('done loading ship')
+    print('ship cannot be fully loaded in bulk')
     return
     
 
