@@ -239,7 +239,7 @@ def load_ship_individually():  # load ship one item stack at a time
                 load_ship_individually_var = 1
                 print('done loading cargo hold')
                 return
-    print('done loading ship')
+    print('finished loading procedure')
     return
 
 
