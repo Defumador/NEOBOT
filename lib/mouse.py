@@ -24,17 +24,3 @@ def move_time():  # randomize the amount of time mouse takes to move to a new lo
 def mouse_path():  # randomize the behavior of mouse button as it moves to a location
     return pyautogui.easeOutQuad
 
-    """
-    mousepathvar = (random.randint(1, 15))
-    # higher chance of easeInQuad and easeOutQuad movement methods than easeInBounce or easeInElastic
-    if mousepathvar == 1:
-        return pyautogui.easeInQuad
-    elif mousepathvar == 2:
-        return pyautogui.easeInQuad
-    elif mousepathvar == 3:
-        return pyautogui.easeOutQuad
-    elif mousepathvar == 4:
-        return pyautogui.easeOutQuad
-    else:
-        return pyautogui.easeOutQuad
-    """

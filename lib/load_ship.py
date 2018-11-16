@@ -7,42 +7,46 @@ os.chdir('D:\OneDrive\Documents\personal_documents\scripting\PY-NEOBOT-GitHub\li
 
 sys.setrecursionlimit(100000)
 conf = 0.95
-x = 1
 
 
+#look for 'name' column header in inventory window to indicate presence of items
 def check_for_items():
     print('looking for item(s) in hangar')
-    global namefield_station_hangar_icon
-    namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar_icon.png',
+    checknum = 1
+    global namefield_station_hangar_icon  # var must be global since it's used in other functions
+    global check_for_items_var  # return var must be global in order for other files to read it
+    namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
                                                                    confidence=conf)
-    if namefield_station_hangar_icon is None:
-        print('looking for item(s) in hangar ...x'x)
-        global x
-        while x < 10: #try 10 times to locate icon
-            x += 1
-            check_for_items()
-        else:
-            x = 1
-            print('no items in hangar')
-            check_for_items = 0
-            return check_for_items
-    else:
+    while namefield_station_hangar_icon is None and checknum < 10:  # look for items at most 10 times
+        print('looking for item(s) in hangar ...x',checknum)
+        checknum += 1
+        namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
+                                                                       confidence=conf)
+        if checknum >= 10:  # if loop expires, break out of loop
+            break
+        elif namefield_station_hangar_icon is not None:  # if found items while looping, return function
+            print('found item(s) in hangar')
+            check_for_items_var = 1
+            return
+    else:  # if found items on first loop, return function
         print('found item(s) in hangar')
-        check_for_items = 1
-        return check_for_items
+        check_for_items_var = 1
+        return
+    print('no items in hangar')  # loop breaks to here
+    check_for_items_var = 0
+    return
 
     
-def drag_items_to_cargo_bay():
-    print('moving item stack to cargo bay')
+def drag_items_to_cargo_hold():
+    print('moving item stack to cargo hold')
     # look for 'name' column header at top of inventory window and offset mouse
-    os.chdir('c:/users/austin/desktop/icons')
-    ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold_icon.png',
+    ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold.bmp',
                                                                  confidence=conf)
     while ship_cargo_hold_icon is None:
         print('cant find ship_cargo_hold_icon')
-        ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold_icon.png',
+        ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold.bmp',
                                                                      confidence=conf)
-    else:  # if found icons, click on first item in station hangar and drag mouse to ship cargo bay
+    else:  # if found icons, click on first item in station hangar and drag mouse to ship cargo hold
         print('found ship_cargo_hold_icon')
         (namefield_station_hangar_iconx, namefield_station_hangar_icony) = namefield_station_hangar_icon
         (ship_cargo_hold_iconx, ship_cargo_hold_icony) = ship_cargo_hold_icon
@@ -54,93 +58,80 @@ def drag_items_to_cargo_bay():
                          (ship_cargo_hold_icony + (random.randint(-8, 8))),
                          mouse.move_time(), mouse.mouse_path())
         pyautogui.mouseUp()
-        # check if 'set quantity' popup appears indicating not enough room in cargo bay
-        print('moved item stack to cargo bay')
+        # check if 'set quantity' popup appears indicating not enough room in cargo hold
+        print('moved item stack to cargo hold')
         return
 
 
 def set_quantity_popup():
-    # check if 'set quantity' popup appears indicating not enough room in cargo bay
+    # check if 'set quantity' popup appears indicating not enough room in cargo hold
     print('looking for set quantity popup')
-    set_quantity_to_deposit_in_cargo_bay_popup = \
-        pyautogui.locateCenterOnScreen('set_quantity_to_deposit_in_cargo_bay_popup.png', confidence=conf)
-    if set_quantity_to_deposit_in_cargo_bay_popup is None:
+    global set_quantity_popup_var
+    set_quantity_to_deposit_in_cargo_hold_popup = \
+        pyautogui.locateCenterOnScreen('set_quantity.bmp', confidence=conf)
+    if set_quantity_to_deposit_in_cargo_hold_popup is None:
         print('no set quantity popup')
-        set_quantity_popup = 0
-        return set_quantity_popup
+        set_quantity_popup_var = 0
+        return
     else:
         print('found set quantity popup')
         keyboard.enter()  # confirm dialog box
-        set_quantity_popup = 1
-        return set_quantity_popup
-
-
-def not_enough_room_popup():
-    print('looking for not enough room popup')
-    os.chdir('c:/users/austin/desktop/icons')
-    not_enough_room_in_hold = pyautogui.locateCenterOnScreen('not_enough_room_in_hold.png', confidence=conf)
-    if not_enough_room_in_hold is None:
-        print('enough room for more items')
-        not_enough_room_popup = 0
-        return not_enough_room_popup
-    else:
-        print('found not enough room popup')
-        keyboard.enter()  # confirm dialog box
-        not_enough_room_popup = 1
-        return not_enough_room_popup
-
-    
-# if ship has a specialized hold for specific items, try dragging station hangar inventory into it first
-def look_for_special_hold():
-    # look for drop down arrow next to ship indicating it has a special hold
-    print('looking for special hold')
-    special_hold_dropown_arrow = pyautogui.locateCenterOnScreen('hold.png', confidence=conf)
-    if special_hold_dropown_arrow is None:
-        print('no special hold')
-        look_for_special_hold = 0
-        return look_for_special_hold
-    else:
-        print('found special hold')
-        look_for_special_hold = 1
-        return look_for_special_hold
+        set_quantity_popup_var = 1
+        return
 
 
 # look for the warning indicating selected items aren't compatible with ship's special hold parameters
 def special_hold_warning():
     print('looking for special hold warning')
+    global special_hold_warning_var
     # special hold warning is partially transparent so confidence rating must be slightly lower than normal
-    special_hold_warning = pyautogui.locateCenterOnScreen('special_hold_warning.png', confidence=0.8)
+    special_hold_warning = pyautogui.locateCenterOnScreen('special_hold_warning.bmp', confidence=0.9)
     if special_hold_warning is None:
         print('no special hold warning')
-        special_hold_warning = 0
-        return special_hold_warning
+        special_hold_warning_var = 0
+        return
     else:
-        # if special hold warning appears, try dragging item to cargo bay instead
+        # if special hold warning appears, try dragging item to cargo hold instead
         print('detected special hold warning')
-        special_hold_warning = 1
-        return special_hold_warning
+        special_hold_warning_var = 1
+        return
 
 
-# drag items from inventory into ship special hold bay
+# if ship has a specialized hold for specific items, try dragging station hangar inventory into it first
+def look_for_special_hold():
+    # look for drop down arrow next to ship indicating it has a special hold
+    print('looking for special hold')
+    global look_for_special_hold_var
+    special_hold_dropown_arrow = pyautogui.locateCenterOnScreen('special_hold.bmp', confidence=conf)
+    if special_hold_dropown_arrow is None:
+        print('no special hold')
+        look_for_special_hold_var = 0
+        return
+    else:
+        print('found special hold')
+        look_for_special_hold_var = 1
+        return
+
+# drag items from inventory into ship special hold hold
 def drag_items_to_special_hold():
     # look for 'name' column header at top of inventory window and offset mouse
     print('moving item stack to special hold')
-    namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar_icon.png',
+    namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
                                                                    confidence=conf)
     while namefield_station_hangar_icon is None:
         print('cant find namefield_station_hangar_icon, moving items to special hold')
-        namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar_icon.png',
+        namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
                                                                        confidence=conf)
     else:
         print('found namefield_station_hangar_icon, moving items to special hold')
-        # if icon found, look for ship cargo bay icon in inventory sidebar
-        ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold_icon.png',
+        # if icon found, look for ship cargo hold icon in inventory sidebar
+        ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold.bmp',
                                                                      confidence=conf)
         while ship_cargo_hold_icon is None:
             print('cant find ship_cargo_hold_icon, moving items to special hold')
-            ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold_icon.png',
+            ship_cargo_hold_icon = pyautogui.locateCenterOnScreen('ship_cargo_hold.bmp',
                                                                          confidence=conf)
-        else:  # if found icons, click on first item in station hangar and drag mouse to ship cargo bay
+        else:  # if found icons, click on first item in station hangar and drag mouse to ship cargo hold
             print('found ship_cargo_hold_icon, moving items to special hold')
             (namefield_station_hangar_iconx, namefield_station_hangar_icony) = namefield_station_hangar_icon
             (ship_cargo_hold_iconx, ship_cargo_hold_icony) = ship_cargo_hold_icon
@@ -157,76 +148,105 @@ def drag_items_to_special_hold():
             return
 
 
-def load_ship():
-    print('beginning loading procedure')
+def not_enough_room_popup():
+    print('looking for not enough room popup')
+    global not_enough_room_popup_var
+    not_enough_room_in_hold = pyautogui.locateCenterOnScreen('not_enough_room.bmp', confidence=conf)
+    if not_enough_room_in_hold is None:
+        print('enough room for more items')
+        not_enough_room_popup_var = 0
+        return
+    else:
+        print('found not enough room popup')
+        keyboard.enter()  # confirm dialog box
+        not_enough_room_popup_var = 1
+        return
+
+
+def load_ship_bulk():  # load ship by selecting all item stacks and moving them all at once
+    #os.chdir('C:/Users/Austin/Desktop/icons')
+    print('beginning bulk loading procedure')
+    global load_ship_bulk_var
     while_docked.open_station_hangar()
     check_for_items()
-    if check_for_items = 0
-        load_ship = 1
-        return load_ship
-    elif check_for_items = 1
+    if check_for_items_var == 0:  # if no items, return function
+        load_ship_bulk_var = 0
+        return
+    elif check_for_items_var == 1:
         while_docked.focus_inventory_window()
-        drag_items_to_cargo_bay()
-        not_enough_room_popup()
-        if not_enough_room_popup = 0
-            set_quantity_popup()
-            if set_quantity_popup = 0
-                load_ship()
-            elif set_quantity_popup = 1
-                look_for_special_hold()
-                if look_for_special_hold = 1
-                    drag_items_to_special_hold()
-                    special_hold_warning()
-                    while special_hold_warning = 0
-                        set_quantity_popup()
-                        if set_quantity_popup = 0
-                            not_enough_room()
-                            if not_enough_room = 0
-                                drag_items_to_special_hold()
-                                special_hold_warning()
-                            elif special_hold warning = 1
-                                load_ship = 1
-                                print('ending loading procedure')
-                                return load_ship
-                        elif set_quantity_popup = 1
-                            load_ship = 1
-                            print('ending loading procedure')
-                            return load_ship
-                    elif not_enough_room_popup = 1
-                        load_ship = 1
-                        print('ending loading procedure')
-                        return load_ship
-                elif look_for_special_hold = 0
-                    load_ship = 1
-                    print('ending loading procedure')
-                    return load_ship
-        elif not_enough_room_popup = 1
+        keyboard.select_all()
+        drag_items_to_cargo_hold()
+        not_enough_room_popup()  # after moving stack to cargo hold, look for warnings
+        set_quantity_popup()
+        if not_enough_room_popup_var == 0 and set_quantity_popup_var == 0:  # if no warnings, keep moving items
+            print('done loading ship cargo hold by bulk')
+            load_ship_bulk_var = 1
+            return
+        else:  # if warning appears, look for additional cargo hold
             look_for_special_hold()
-            if look_for_special_hold = 1
+            if look_for_special_hold_var == 1:
+                while_docked.focus_inventory_window()
+                keyboard.select_all()
                 drag_items_to_special_hold()
                 special_hold_warning()
-                while special_hold_warning = 0
+                set_quantity_popup()
+                not_enough_room_popup()
+                if special_hold_warning_var == 0 and set_quantity_popup_var == 0 and not_enough_room_popup_var == 0:
+                    print('done loading ship carog and special hold by bulk')
+                    load_ship_bulk_var = 1
+                    return
+                else:  # if warning appears, try loading items individually
+                    print('ship cannot be loaded in bulk')
+                    load_ship_bulk_var = 0
+    print('done loading ship')
+    return
+    
+
+def load_ship_individually():  # load ship one item stack at a time
+    print('beginning individual loading procedure')
+    global load_ship_individually_var
+    while_docked.open_station_hangar()
+    check_for_items()
+    if check_for_items_var == 0:  # if no items, return function
+        load_ship_individually_var = 0
+        return
+    elif check_for_items_var == 1:
+        while_docked.focus_inventory_window()
+        drag_items_to_cargo_hold()
+        not_enough_room_popup()  # after moving stack to cargo hold, look for warnings
+        set_quantity_popup()
+        while not_enough_room_popup_var == 0 and set_quantity_popup_var == 0:  # if no warnings, keep moving items
+            drag_items_to_cargo_hold()
+            not_enough_room_popup()
+            set_quantity_popup()
+        else:  # if warning appears, look for additional cargo hold
+            look_for_special_hold()
+            if look_for_special_hold_var == 1:
+                drag_items_to_special_hold()
+                special_hold_warning()
+                set_quantity_popup()
+                not_enough_room_popup()
+                while special_hold_warning_var == 0 and set_quantity_popup_var == 0 and not_enough_room_popup_var == 0:
+                    drag_items_to_special_hold()  # if no warnings, keep moving items to special hold
+                    special_hold_warning()
                     set_quantity_popup()
-                    if set_quantity_popup = 0
-                        not_enough_room()
-                        if not_enough_room = 0
-                            drag_items_to_special_hold()
-                            special_hold_warning()
-                        elif special_hold warning = 1
-                            load_ship = 1
-                            print('ending loading procedure')
-                            return load_ship
-                    elif set_quantity_popup = 1
-                        load_ship = 1
-                        print('ending loading procedure')
-                        return load_ship
-                elif not_enough_room_popup = 1
-                    load_ship = 1
-                    print('ending loading procedure')
-                    return load_ship
-            elif look_for_special_hold = 0
-                load_ship = 1
-                print('ending loading procedure')
-                return load_ship
-    print('done loading ship')        
+                    not_enough_room_popup()
+                else:  # if warning appears, end function
+                    load_ship_individually_var = 1
+                    print('done loading special hold')
+                    return
+            else:  # if warning appears, end function
+                load_ship_individually_var = 1
+                print('done loading cargo hold')
+                return
+    print('done loading ship')
+    return
+
+
+def load_ship():  # use both individual and bulk functions to load ship
+    global load_ship_var
+    load_ship_bulk()
+    if load_ship_bulk_var == 0:
+        load_ship_individually()
+    load_ship_var = 1
     return
