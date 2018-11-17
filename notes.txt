@@ -1,0 +1,4 @@
+collate smaller navigation functions into a single 'traveller' function
+rename traveller to hauler
+add image recognition for yellow-highlighted entries in people & places
+add support for multiple waypoints
