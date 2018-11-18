@@ -2,7 +2,6 @@ import sys, pyautogui, os, time, random, ctypes
 from lib import mouse, keyboard, while_docked, load_ship
 
 pyautogui.FAILSAFE = True
-pyautogui.PAUSE = 2.5
 
 sys.setrecursionlimit(100000)
 conf = 0.95
@@ -18,18 +17,14 @@ def drag_items_from_cargo_hold():
                      (namefield_station_hangar_icony + (random.randint(10, 25))),
                      mouse.move_time(), mouse.mouse_path())
     # wait up to 1 second before clicking, divide by 1000 to convert from miliseconds to seconds
-    time.sleep((random.randint(0, 10) / 10))
     pyautogui.mouseDown()
-    time.sleep((random.randint(0, 10) / 10))
     station_hangar = pyautogui.locateCenterOnScreen('station_hangar.bmp',
                                                                    confidence=conf)
     (station_hangarx, station_hangary) = station_hangar
     pyautogui.moveTo((station_hangarx + (random.randint(-15, 60))),
                      (station_hangary + (random.randint(-10, 10))),
                      mouse.move_time(), mouse.mouse_path())
-    time.sleep((random.randint(0, 10) / 10))
     pyautogui.mouseUp()
-    time.sleep((random.randint(0, 10) / 10))
     # after unloading main cargo hold, look for special cargo hold
     print('moved all item stacks from cargo hold')
     return

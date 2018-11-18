@@ -2,7 +2,6 @@ import sys, pyautogui, os, time, random, ctypes
 from lib import mouse, keyboard, while_docked
 
 pyautogui.FAILSAFE = True
-pyautogui.PAUSE = 2.5
 os.chdir('D:\OneDrive\Documents\personal_documents\scripting\PY-NEOBOT-GitHub\lib')
 
 sys.setrecursionlimit(100000)
@@ -163,5 +162,12 @@ def load_ship():  # use both individual and bulk functions to load ship
     load_ship_bulk()
     if load_ship_bulk_var == 0:
         load_ship_individually()
-    load_ship_var = 1
+        if load_ship_bulk_var == 0 and load_ship_individually_var == 0:
+            load_ship_var = 0
+            return
+        else:
+            load_ship_var = 1
+            return
+    else:
+        load_ship_var = 1
     return

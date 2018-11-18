@@ -1,7 +1,6 @@
 import sys, pyautogui, os, time, random, ctypes
 
 pyautogui.FAILSAFE = True
-pyautogui.PAUSE = 2.5
 
 
 def enter():  # hit enter key to confirm pop-up
@@ -11,12 +10,14 @@ def enter():  # hit enter key to confirm pop-up
     return
 
 
+
 def select_all():  # hotkey to select all items in a menu
     print('selecting all')
     pyautogui.keyDown('ctrl')
     pyautogui.keyDown('a')
     pyautogui.keyUp('a')
     pyautogui.keyUp('ctrl')
+    print('done selecting all')
     return
 
 

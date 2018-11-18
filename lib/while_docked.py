@@ -2,7 +2,6 @@ import sys, pyautogui, os, time, random, ctypes
 from lib import mouse, keyboard, navigation
 
 pyautogui.FAILSAFE = True
-pyautogui.PAUSE = 2.5
 sys.setrecursionlimit(100000)
 conf = 0.95
 
@@ -205,6 +204,6 @@ def undock():
         mouse.click()
         pyautogui.moveRel((-1 * (random.randint(200, 1000))), (random.randint(-600, 600)),
                           mouse.move_time(), mouse.mouse_path())  # move mouse away from button
-        time.sleep(10)  # wait for undock to complete
+        time.sleep((random.randint(10, 250) / 10))  # wait for undock to complete
         print('finished undocking')
         return
