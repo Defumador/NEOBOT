@@ -84,6 +84,7 @@ def load_ship_bulk():  # load ship by selecting all item stacks and moving them 
         while_docked.focus_inventory_window()
         keyboard.select_all()
         drag_items_to_cargo_hold()
+        time.sleep(2)
         while_docked.not_enough_space_popup()  # after moving stack to cargo hold, look for warnings
         while_docked.set_quantity_popup()
         if while_docked.not_enough_space_popup_var == 0 and while_docked.set_quantity_popup_var == 0:  # if no warnings, keep moving items
@@ -96,6 +97,7 @@ def load_ship_bulk():  # load ship by selecting all item stacks and moving them 
                 while_docked.focus_inventory_window()
                 keyboard.select_all()
                 drag_items_to_special_hold()
+                time.sleep(2)
                 while_docked.special_hold_warning()
                 while_docked.set_quantity_popup()
                 while_docked.not_enough_space_popup()
@@ -127,21 +129,25 @@ def load_ship_individually():  # load ship one item stack at a time
     elif while_docked.look_for_items_var == 1:
         while_docked.focus_inventory_window()
         drag_items_to_cargo_hold()
+        time.sleep(2)
         while_docked.not_enough_space_popup()  # after moving stack to cargo hold, look for warnings
         while_docked.set_quantity_popup()
         while while_docked.not_enough_space_popup_var == 0 and while_docked.set_quantity_popup_var == 0:  # if no warnings, keep moving items
             drag_items_to_cargo_hold()
+            time.sleep(2)
             while_docked.not_enough_space_popup()
             while_docked.set_quantity_popup()
         else:  # if warning appears, look for additional cargo hold
             while_docked.look_for_special_hold()
             if while_docked.look_for_special_hold_var == 1:
                 drag_items_to_special_hold()
+                time.sleep(2)
                 while_docked.special_hold_warning()
                 while_docked.set_quantity_popup()
                 while_docked.not_enough_space_popup()
                 while while_docked.special_hold_warning_var == 0 and while_docked.set_quantity_popup_var == 0 and while_docked.not_enough_space_popup_var == 0:
                     drag_items_to_special_hold()  # if no warnings, keep moving items to special hold
+                    time.sleep(2)
                     while_docked.special_hold_warning()
                     while_docked.set_quantity_popup()
                     while_docked.not_enough_space_popup()

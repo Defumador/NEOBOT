@@ -64,11 +64,11 @@ def select_warp_button():  # locate jump button in selection box if stargate ico
     select_warp_button_loop_num = 0
     print('looking for warp buttons')
     # search right half of screen only
-    jump_button = pyautogui.locateCenterOnScreen('jump_button.bmp', confidence=conf,
+    jump_button = pyautogui.locateCenterOnScreen('jump_button.bmp', confidence=0.85,
                                                  region=(halfscreenwidth, 0, screenwidth, screenheight))
     while jump_button is None:
         print('cant find jump button')
-        dock_button = pyautogui.locateCenterOnScreen('dock_button.bmp', confidence=conf,
+        dock_button = pyautogui.locateCenterOnScreen('dock_button.bmp', confidence=0.85,
                                                      region=(halfscreenwidth, 0, screenwidth, screenheight))
         if dock_button is None:
             select_warp_button_loop_num += 1
@@ -103,14 +103,14 @@ def select_warp_button():  # locate jump button in selection box if stargate ico
 def detect_dock_or_jump():  # check if client has docked or jumped
     # look for undock icon to indicate a dock has been made
     global detect_dock_or_jump_var
-    detect_loop_num = 0
+    detect_dock_or_jump_loop_num = 0
     # search right half of screen only
     undock_icon = pyautogui.locateCenterOnScreen('undock.bmp', confidence=conf,
                                                  region=(halfscreenwidth, 0, screenwidth, screenheight))
     # if undock icon is not found, look for 'no object selected' in selection box, indicating a jump has been made
     while undock_icon is None:
-        detect_loop_num += 1
-        print('waiting for jump or dock ...',detect_loop_num)
+        detect_dock_or_jump_loop_num += 1
+        print('waiting for jump or dock ...',detect_dock_or_jump_loop_num)
         time.sleep(3)
         # search bottom half of screen only
         spedometer = pyautogui.locateCenterOnScreen('spedometer.bmp', confidence=0.97,

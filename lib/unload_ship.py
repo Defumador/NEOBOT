@@ -75,7 +75,8 @@ def unload_ship():
                 print('finished unloading procedure')
                 return
         elif while_docked.look_for_special_hold_var == 0:
-            print('finished unloading procedure')
+            print('error, nothing to unload')
+            sys.exit()
             return
     while while_docked.look_for_items_var == 1:
         print('unloading items from cargo hold')
