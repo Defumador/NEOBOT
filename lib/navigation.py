@@ -155,23 +155,7 @@ def at_home_check():
         return
 
 
-# check if ship has arrived back at its destination by looking for an entry in 'people and places' starting with 3 1's
-def at_dest_check():
-    global at_dest_check_var
-    at_dest = pyautogui.locateCenterOnScreen('at_dest.bmp', confidence=conf,
-                                             region=(0, 0, halfscreenwidth, screenheight))
-    if at_dest is None:
-        print('not at destination station')
-        at_dest_check_var = 0
-        return
-    else:
-        print('at destination station')
-        at_dest_check_var = 1
-        return
-
-
-# set waypoint back to home station before undocking from destination station
-def return_home():
+def set_home():  # set station with 000 before name as destination in 'people and places'
     print('at destination station, setting home waypoint')
     home = pyautogui.locateCenterOnScreen('home.bmp', confidence=conf,
                                           region=(0, 0, halfscreenwidth, screenheight))
@@ -185,15 +169,154 @@ def return_home():
     return
 
 
-def return_to_dest():
+# check if ship has arrived back at its destination by looking for an entry in 'people and places' starting with 3 1's
+def at_dest1_check():
+    global at_dest_check_var
+    at_dest1 = pyautogui.locateCenterOnScreen('at_dest1.bmp', confidence=conf,
+                                             region=(0, 0, halfscreenwidth, screenheight))
+    if at_dest1 is None:
+        print('not at destination1 station')
+        at_dest1_check_var = 0
+        return
+    else:
+        print('at destination1 station')
+        at_dest1_check_var = 1
+        return
+
+
+def set_dest1():  # set station with 111 before name as destination in 'people and places'
     print('at home station, setting destination waypoint')
-    dest = pyautogui.locateCenterOnScreen('dest.bmp', confidence=conf,
-                                          region=(0, 0, halfscreenwidth, screenheight))
-    (destx, desty) = dest
-    pyautogui.moveTo((destx + (random.randint(-1, 200))), (desty + (random.randint(-3, 3))),
+    dest1 = pyautogui.locateCenterOnScreen('dest1.bmp', confidence=conf,
+                                           region=(0, 0, halfscreenwidth, screenheight))
+    (dest1x, dest1y) = dest1
+    pyautogui.moveTo((dest1x + (random.randint(-1, 200))), (dest1y + (random.randint(-3, 3))),
                      mouse.move_time(), mouse.mouse_path())
     mouse.click_right()  # right click to open dropdown menu
     pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
                       mouse.move_time(), mouse.mouse_path())
     mouse.click()  # click set destination in drop down
     return
+
+
+# check if ship has arrived back at its 2nd destination by looking for an entry in 'people and places' starting with 3 2's
+def at_dest2_check():
+    global at_dest_check_var
+    at_dest2 = pyautogui.locateCenterOnScreen('at_dest2.bmp', confidence=conf,
+                                             region=(0, 0, halfscreenwidth, screenheight))
+    if at_dest2 is None:
+        print('not at destination2 station')
+        at_dest2_check_var = 0
+        return
+    else:
+        print('at destination2 station')
+        at_dest2_check_var = 1
+        return
+
+
+def set_dest2():  # set station with 111 before name as destination in 'people and places'
+    print('at home station, setting destination waypoint')
+    dest2 = pyautogui.locateCenterOnScreen('dest2.bmp', confidence=conf,
+                                           region=(0, 0, halfscreenwidth, screenheight))
+    (dest2x, dest2y) = dest2
+    pyautogui.moveTo((dest2x + (random.randint(-1, 200))), (dest2y + (random.randint(-3, 3))),
+                     mouse.move_time(), mouse.mouse_path())
+    mouse.click_right()  # right click to open dropdown menu
+    pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
+                      mouse.move_time(), mouse.mouse_path())
+    mouse.click()  # click set destination in drop down
+    return
+
+# check if ship has arrived back at its 3rd destination by looking for an entry in 'people and places' starting with 3 3's
+def at_dest3_check():
+    global at_dest_check_var
+    at_dest3 = pyautogui.locateCenterOnScreen('at_dest3.bmp', confidence=conf,
+                                             region=(0, 0, halfscreenwidth, screenheight))
+    if at_dest3 is None:
+        print('not at destination3 station')
+        at_dest3_check_var = 0
+        return
+    else:
+        print('at destination3 station')
+        at_dest3_check_var = 1
+        return
+
+
+def set_dest3():  # set station with 111 before name as destination in 'people and places'
+    print('at home station, setting destination waypoint')
+    dest3 = pyautogui.locateCenterOnScreen('dest3.bmp', confidence=conf,
+                                           region=(0, 0, halfscreenwidth, screenheight))
+    (dest3x, dest3y) = dest3
+    pyautogui.moveTo((dest3x + (random.randint(-1, 200))), (dest3y + (random.randint(-3, 3))),
+                     mouse.move_time(), mouse.mouse_path())
+    mouse.click_right()  # right click to open dropdown menu
+    pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
+                      mouse.move_time(), mouse.mouse_path())
+    mouse.click()  # click set destination in drop down
+    return
+
+
+# check if ship has arrived back at its 4th destination by looking for an entry in 'people and places' starting with 3 4's
+def at_dest4_check():
+    global at_dest_check_var
+    at_dest4 = pyautogui.locateCenterOnScreen('at_dest4.bmp', confidence=conf,
+                                             region=(0, 0, halfscreenwidth, screenheight))
+    if at_dest4 is None:
+        print('not at destination4 station')
+        at_dest4_check_var = 0
+        return
+    else:
+        print('at destination4 station')
+        at_dest4_check_var = 1
+        return
+
+
+def set_dest4():  # set station with 111 before name as destination in 'people and places'
+    print('at home station, setting destination waypoint')
+    dest4 = pyautogui.locateCenterOnScreen('dest4.bmp', confidence=conf,
+                                           region=(0, 0, halfscreenwidth, screenheight))
+    (dest4x, dest4y) = dest4
+    pyautogui.moveTo((dest4x + (random.randint(-1, 200))), (dest4y + (random.randint(-3, 3))),
+                     mouse.move_time(), mouse.mouse_path())
+    mouse.click_right()  # right click to open dropdown menu
+    pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
+                      mouse.move_time(), mouse.mouse_path())
+    mouse.click()  # click set destination in drop down
+    return
+
+
+# check if ship has arrived back at its 5th destination by looking for an entry in 'people and places' starting with 3 5's
+def at_dest5_check():
+    global at_dest_check_var
+    at_dest5 = pyautogui.locateCenterOnScreen('at_dest2.bmp', confidence=conf,
+                                             region=(0, 0, halfscreenwidth, screenheight))
+    if at_dest5 is None:
+        print('not at destination5 station')
+        at_dest5_check_var = 0
+        return
+    else:
+        print('at destination5 station')
+        at_dest5_check_var = 1
+        return
+
+
+def set_dest5():  # set station with 111 before name as destination in 'people and places'
+    print('at home station, setting destination waypoint')
+    dest5 = pyautogui.locateCenterOnScreen('dest5.bmp', confidence=conf,
+                                           region=(0, 0, halfscreenwidth, screenheight))
+    (dest5x, dest5y) = dest5
+    pyautogui.moveTo((dest5x + (random.randint(-1, 200))), (dest5y + (random.randint(-3, 3))),
+                     mouse.move_time(), mouse.mouse_path())
+    mouse.click_right()  # right click to open dropdown menu
+    pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
+                      mouse.move_time(), mouse.mouse_path())
+    mouse.click()  # click set destination in drop down
+    return
+
+
+def check_all_dest():
+    at_home_check()
+    if at_home_check_var == 1:
+        set_dest1()
+    elif at_home_check_var == 0:
+        at_dest1_check()
+        if at_dest1_check_var == 1 and load
