@@ -69,6 +69,8 @@ def unload_ship():
                 while_docked.focus_inventory_window()
                 keyboard.select_all()
                 drag_items_from_special_hold()
+                time.sleep(2)
+                while_docked.look_for_items()
                 print('finished unloading procedure')
                 return
             if while_docked.look_for_items_var == 0:
@@ -83,16 +85,20 @@ def unload_ship():
         while_docked.focus_inventory_window()
         keyboard.select_all()
         drag_items_from_cargo_hold()
+        time.sleep(2)
         while_docked.look_for_special_hold()
-        if while_docked.look_for_special_hold_var == 1:
-            while_docked.open_special_hold()
+        while_docked.look_for_items()
+    if while_docked.look_for_special_hold_var == 1:
+        while_docked.open_special_hold()
+        while_docked.look_for_items()
+        while while_docked.look_for_items_var == 1:
+            while_docked.focus_inventory_window()
+            keyboard.select_all()
+            drag_items_from_special_hold()
+            time.sleep(2)
             while_docked.look_for_items()
-            while while_docked.look_for_items_var == 1:
-                while_docked.focus_inventory_window()
-                keyboard.select_all()
-                drag_items_from_special_hold()
-                print('finished unloading procedure')
-                return
-        elif while_docked.look_for_special_hold_var == 0:
             print('finished unloading procedure')
             return
+    elif while_docked.look_for_special_hold_var == 0:
+        print('finished unloading procedure')
+        return

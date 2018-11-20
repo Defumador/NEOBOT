@@ -1,8 +1,7 @@
 import sys, pyautogui, os, time, random, ctypes
-from lib import mouse, keyboard, while_docked
+from lib import mouse, keyboard, while_docked, navigation
 
 pyautogui.FAILSAFE = True
-os.chdir('D:\OneDrive\Documents\personal_documents\scripting\PY-NEOBOT-GitHub\lib')
 
 sys.setrecursionlimit(100000)
 conf = 0.95
@@ -103,9 +102,15 @@ def load_ship_bulk():  # load ship by selecting all item stacks and moving them 
                 while_docked.not_enough_space_popup()
                 if while_docked.special_hold_warning_var == 0 and while_docked.set_quantity_popup_var == 0\
                         and while_docked.not_enough_space_popup_var == 0:
-                    print('done loading ship cargo and special hold by bulk')
-                    load_ship_bulk_var = 2  # 2 indicating ship is full and hangar is completley empty
-                    return
+                    while_docked.look_for_items()
+                    if while_docked.look_for_items_var == 0:
+                        print('done loading ship cargo and special hold by bulk')
+                        load_ship_bulk_var = 2  # 2 indicating ship is full and hangar is completley empty
+                        return
+                    else:
+                        print('more items remaining')
+                        load_ship_bulk_var = 0  # 0 indicating ship cannot be fully loaded in bulk
+                        return
                 elif while_docked.special_hold_warning_var == 0 and while_docked.set_quantity_popup_var == 1\
                         and while_docked.not_enough_space_popup_var == 0:
                     print('done loading ship cargo and special hold by bulk but more items remain in station')
@@ -113,7 +118,7 @@ def load_ship_bulk():  # load ship by selecting all item stacks and moving them 
                     return
                 else:  # if warning appears, try loading items individually
                     print('ship cannot be fully loaded in bulk')
-                    load_ship_bulk_var = 0
+                    load_ship_bulk_var = 0  # 0 indicating ship cannot be fully loaded in bulk
     print('ship cannot be fully loaded in bulk')
     return
     
@@ -132,13 +137,21 @@ def load_ship_individually():  # load ship one item stack at a time
         time.sleep(2)
         while_docked.not_enough_space_popup()  # after moving stack to cargo hold, look for warnings
         while_docked.set_quantity_popup()
-        while while_docked.not_enough_space_popup_var == 0 and while_docked.set_quantity_popup_var == 0:  # if no
-            # warnings, keep moving items
+        while_docked.look_for_items()
+        while while_docked.not_enough_space_popup_var == 0 and while_docked.set_quantity_popup_var == 0\
+                and while_docked.look_for_items_var == 1:  # if no warnings, keep moving items
             drag_items_to_cargo_hold()
             time.sleep(2)
             while_docked.not_enough_space_popup()
             while_docked.set_quantity_popup()
-        else:  # if warning appears, look for additional cargo hold
+            while_docked.look_for_items()
+        if while_docked.not_enough_space_popup_var == 0 and while_docked.set_quantity_popup_var == 0\
+                and while_docked.look_for_items_var == 0:
+            load_ship_individually_var = 2  # 2 indicating ship is full and hangar is completley empty
+            print('done loading main hold')
+            return
+        elif (while_docked.not_enough_space_popup_var == 1 or while_docked.set_quantity_popup_var == 1)\
+                and while_docked.look_for_items_var == 1:  # if warning appears, look for additional cargo hold
             while_docked.look_for_special_hold()
             if while_docked.look_for_special_hold_var == 1:
                 drag_items_to_special_hold()
@@ -164,10 +177,10 @@ def load_ship_individually():  # load ship one item stack at a time
                     load_ship_individually_var = 1  # 1 indicating ship is full but more items remain in hangar
                     print('done loading special hold but more items remain in station')
                     return
-            else:
-                load_ship_individually_var = 1  # 1 indicating ship is full but more items remain in hangar
-                print('done loading cargo hold but more items remain in station')
-                return
+        else:
+            load_ship_individually_var = 1  # 1 indicating ship is full but more items remain in hangar
+            print('done loading cargo hold but more items remain in station')
+            return
     print('finished loading procedure')
     return
 
@@ -175,14 +188,21 @@ def load_ship_individually():  # load ship one item stack at a time
 def load_ship():  # use both individual and bulk functions to load ship
     global load_ship_var
     load_ship_bulk()
-    if load_ship_bulk_var == 0:
+    if load_ship_bulk_var == 2:  # if function returns 2, station is empty
+        load_ship_var = 2 # 2 indicating ship is full and hangar is completley empty
+        print('ship loaded entire hangar')
+        return
+    elif load_ship_bulk_var == 1:  # if function returns 2, station is empty
+        load_ship_var = 1 # 2 indicating ship is full and hangar is completley empty
+        print('ship is full but hangar has more items')
+        return
+    elif load_ship_bulk_var == 0:
         load_ship_individually()
-        if load_ship_individually_var == 0:
-            load_ship_var = 0
+        if load_ship_individually_var == 2:
+            print('ship loaded entire hangar')
+            load_ship_var = 2  # 2 indicating ship is full and hangar is completley empty
             return
-        else:
-            load_ship_var = 1
+        elif load_ship_individually_var == 1:
+            print('ship full but more items remain')
+            load_ship_var = 1  # 1 indicating ship is full but hangar still has more items
             return
-    else:
-        load_ship_var = 1
-    return

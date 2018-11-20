@@ -23,12 +23,10 @@ def docked_check():
 
 def open_cargo_hold():  # click on ship cargo hold button in inventory window while docked
     print('opening cargo hold')
-    cargo_hold = pyautogui.locateCenterOnScreen('cargo_hold.bmp',
-                                                                 confidence=conf)
+    cargo_hold = pyautogui.locateCenterOnScreen('cargo_hold.bmp', confidence=conf)
     while cargo_hold is None:
         print('cant find cargo hold')
-        cargo_hold = pyautogui.locateCenterOnScreen('cargo_hold.bmp',
-                                                                     confidence=conf)
+        cargo_hold = pyautogui.locateCenterOnScreen('cargo_hold.bmp', confidence=conf)
     else:
         (cargo_holdx, cargo_holdy) = cargo_hold
         # clicks the center of where the button was found
@@ -42,12 +40,10 @@ def open_cargo_hold():  # click on ship cargo hold button in inventory window wh
 
 def open_special_hold():
     print('opening special hold')
-    special_hold = pyautogui.locateCenterOnScreen('special_hold.bmp',
-                                                confidence=conf)
+    special_hold = pyautogui.locateCenterOnScreen('special_hold.bmp', confidence=conf)
     while special_hold is None:
         print('cant find special hold')
-        special_hold = pyautogui.locateCenterOnScreen('special_hold.bmp',
-                                                    confidence=conf)
+        special_hold = pyautogui.locateCenterOnScreen('special_hold.bmp', confidence=conf)
     else:
         (special_holdx, special_holdy) = special_hold
         # clicks the center of where the button was found
@@ -61,12 +57,10 @@ def open_special_hold():
 
 def open_station_hangar():  # click on station hangar button in inventory window while docked
     print('opening station hangar')
-    station_hangar = pyautogui.locateCenterOnScreen('station_hangar.bmp',
-                                                         confidence=conf)
+    station_hangar = pyautogui.locateCenterOnScreen('station_hangar.bmp', confidence=conf)
     while station_hangar is None:
         print('cant find inventory station hangar icon')
-        station_hangar = pyautogui.locateCenterOnScreen('station_hangar.bmp',
-                                                             confidence=conf)
+        station_hangar = pyautogui.locateCenterOnScreen('station_hangar.bmp', confidence=conf)
     else:
         (station_hangarx, station_hangary) = station_hangar
         # clicks the center of where the button was found
@@ -80,12 +74,10 @@ def open_station_hangar():  # click on station hangar button in inventory window
 def focus_inventory_window():  # click inside the station inventory window to focus it before items are selected
     # look for sorting buttons in top right corner of inventory window and offset mouse
     print('focusing inventory window')
-    sorting_station_hangar = pyautogui.locateCenterOnScreen('sorting_station_hangar.bmp',
-                                                                 confidence=conf)
+    sorting_station_hangar = pyautogui.locateCenterOnScreen('sorting_station_hangar.bmp', confidence=conf)
     while sorting_station_hangar is None:
         print('cant find sorting icon')
-        sorting_station_hangar = pyautogui.locateCenterOnScreen('sorting_station_hangar.bmp',
-                                                                     confidence=conf)
+        sorting_station_hangar = pyautogui.locateCenterOnScreen('sorting_station_hangar.bmp', confidence=conf)
     else:
         (sorting_station_hangarx, sorting_station_hangary) = sorting_station_hangar
         # offset mouse from sorting button to click within inventory window to focus it
@@ -96,8 +88,28 @@ def focus_inventory_window():  # click inside the station inventory window to fo
         return
 
 
-#look for 'name' column header in inventory window to indicate presence of items
+
+
 def look_for_items():
+    global no_items_station_hangar  # var must be global since it's used in other functions
+    global look_for_items_var  # return var must be global in order for other files to read it
+    global namefield_station_hangar
+    no_items_station_hangar = pyautogui.locateCenterOnScreen('no_items_station_hangar.bmp',
+                                                                   confidence=.99)
+    if no_items_station_hangar is None:
+        print('found items')
+        namefield_station_hangar = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
+                                                                  confidence=conf)
+        look_for_items_var = 1
+        return
+    elif no_items_station_hangar is not None:
+        print('no more items')
+        look_for_items_var = 0
+        return
+
+
+#look for 'name' column header in inventory window to indicate presence of items
+def look_for_items_oldfunc():
     print('looking for item(s) in hangar')
     look_for_items_loop_num = 0
     global namefield_station_hangar  # var must be global since it's used in other functions

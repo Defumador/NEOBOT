@@ -18,7 +18,7 @@ def click_right():  # same thing but with right mouse button
 
 
 def move_time():  # randomize the amount of time mouse takes to move to a new location
-    movetimevar = (random.randint(0, 20) / 10)
+    movetimevar = (random.randint(3, 15) / 10)
     return movetimevar
 
 
