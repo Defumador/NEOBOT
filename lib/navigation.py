@@ -146,7 +146,6 @@ def at_home_check():
     at_home = pyautogui.locateCenterOnScreen('at_home.bmp', confidence=conf,
                                              region=(0, 0, halfscreenwidth, screenheight))
     if at_home is None:
-        print('not at home station')
         at_home_check_var = 0
         return
     elif at_home is not None:
@@ -156,7 +155,7 @@ def at_home_check():
 
 
 def set_home():  # return to home station (has 000 in front of name in 'people and places')
-    print('at destination station, setting home waypoint')
+    print('setting home waypoint')
     home = pyautogui.locateCenterOnScreen('home.bmp', confidence=conf,
                                           region=(0, 0, halfscreenwidth, screenheight))
     (homex, homey) = home
@@ -338,6 +337,73 @@ def set_dest5():  # set station with 555 before name as destination in 'people a
     if dest5 is None:
         set_dest5_var = 0
         return
+
+   
+   
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#test dynamic at_dest function
+def at_dest_check_dyn(at_dest_num_dyn):
+    global at_dest(%d)_dyn_var % dest_num
+    'at_dest(%d)' % dest_num = pyautogui.locateCenterOnScreen(('dest(%d).bmp' % dest_num), confidence=conf,
+                                             region=(0, 0, halfscreenwidth, screenheight))
+    if 'at_dest(%d)' % dest_num is None:
+        print('not at destination('at_dest(%d)' % dest_num) station')
+        at_dest('at_dest(%d)' % dest_num)_check_dyn_var = 0
+        return
+    else:
+        print('at destination('at_dest(%d)' % dest_num) station')
+        at_dest('at_dest(%d)' % dest_num)_check_dyn_var = 1
+        return
+
+    
+#test dyanmic set_dest function
+def set_dest_dyn(dest_num_dyn):  # set station with dest_num_dyn before name as destination in 'people and places'
+    print('setting destination waypoint')
+    global set_dest(%d)_var % dest_num
+    'dest(%d)' % dest_num = pyautogui.locateCenterOnScreen(('dest(%d).bmp' % dest_num), confidence=conf,
+                                           region=(0, 0, halfscreenwidth, screenheight))
+    if ('dest(%d)' % dest_num) is not None:
+        (('dest(%d)' % dest_num)x), (('dest(%d)' % dest_num)y) = ('dest(%d)' % dest_num)
+        pyautogui.moveTo(((('dest(%d)' % dest_num)x) + (random.randint(-1, 200))), ((('dest(%d)' % dest_num)x) + (random.randint(-3, 3))),
+                         mouse.move_time(), mouse.mouse_path())
+        mouse.click_right()  # right click to open dropdown menu
+        pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
+                          mouse.move_time(), mouse.mouse_path())
+        mouse.click()  # click set destination in drop down
+        set_dest5_var = 1
+        return
+    if dest5 is None:
+        set_dest5_var = 0
+        return
+ 
+
+#test dynamic blacklist_station function
+def_blacklist_station(at_dest_num_dyn)
+    at_dest_check_dyn(at_dest_num_dyn)
+    if ('at_dest(%d)' % dest_num)_check_dyn_var == 1:
+        'dest(%d)' % dest_num = pyautogui.locateCenterOnScreen(('dest(%d).bmp' % dest_num), confidence=conf,
+                                               region=(0, 0, halfscreenwidth, screenheight))
+        (('dest(%d).bmp' % dest_num)x, ('dest(%d).bmp' % dest_num)y) = dest1
+        pyautogui.moveTo(((('dest(%d).bmp' % dest_num)x) + (random.randint(-1, 200))), ((('dest(%d).bmp' % dest_num)y) + (random.randint(-3, 3))),
+                         mouse.move_time(), mouse.mouse_path())
+        mouse.click_right()  # right click to open dropdown menu
+        pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(56, 67))),
+                          mouse.move_time(), mouse.mouse_path())
+        mouse.click()  # click edit location in drop down
+        time.sleep(1)
+        pyautogui.keyDown('home')
+        pyautogui.keyUp('home')
+        time.sleep(1)
+        pyautogui.keyDown('e')  # an an 'e' to beginning of name indicating station is empty
+        pyautogui.keyUp('e')
+        time.sleep(1)
+        pyautogui.keyDown('enter')
+        pyautogui.keyUp('enter')
+        return
+
+    
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 def blacklist_station():  # change location's name so ship doesn't return to it
