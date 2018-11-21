@@ -143,6 +143,79 @@ def detect_dock_or_jump():  # check if client has docked or jumped
         return
 
 
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+#use a dictionary to dynamically grab destination names
+dict = {0:"0",1:"1",2:"2",3:"3",4:"4",5:"5"}
+         
+# figure out which destination station ship is at
+def at_dest_num_dyn():
+    n = 1
+    at_dest = pyautogui.locateCenterOnScreen(('at_dest' + dict[n]), confidence=conf,
+                                             region=(0, 0, halfscreenwidth, screenheight))
+    while at_dest is None:
+        n = n + 1
+        at_dest = pyautogui.locateCenterOnScreen(('at_dest' + dict[n]), confidence=conf,
+                                             region=(0, 0, halfscreenwidth, screenheight))
+        print('looking for destination' + (dict[n]))
+    if at_dest is not None:
+        print('at dest' + (dict[n]))
+        at_dest_check_dyn_var = n
+        return at_dest_check_dyn_var  # return number of station ship is docked in
+  
+
+# determine which station ship is in and blacklist it by editing its name
+def_blacklist_station()
+    at_dest_check_dyn()
+        print('blacklisting station')
+        dest = pyautogui.locateCenterOnScreen(('dest' + (dict[at_dest_check_dyn_var])), confidence=conf,
+                                               region=(0, 0, halfscreenwidth, screenheight))
+        (destx), (desty) = dest
+        pyautogui.moveTo(((destx) + (random.randint(-1, 200))), ((desty) + (random.randint(-3, 3))),
+                         mouse.move_time(), mouse.mouse_path())
+        mouse.click_right()  # right click to open dropdown menu
+        pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
+                          mouse.move_time(), mouse.mouse_path())
+        mouse.click()  # click edit location in drop down
+        time.sleep(1)
+        pyautogui.keyDown('home')
+        time.sleep(float(random.randint(0, 3000)) / 1000)
+        pyautogui.keyUp('home')
+        time.sleep(float(random.randint(0, 3000)) / 1000)
+        pyautogui.keyDown('e')  # an an 'e' to beginning of name indicating station is empty
+        pyautogui.keyUp('e')
+        time.sleep(float(random.randint(0, 3000)) / 1000)
+        pyautogui.keyDown('enter')
+        time.sleep((random.randint(0, 200)) / 100)
+        pyautogui.keyUp('enter')
+        return
+
+    
+# determine which station ship is currently at, then set destination one number higher
+def set_dest_dyn(): 
+    at_dest_num_dyn()
+    next_dest = pyautogui.locateCenterOnScreen(('dest' + (dict[at_dest_check_dyn_var + 1])), confidence=conf,
+                                           region=(0, 0, halfscreenwidth, screenheight))
+    if next_dest is not None
+        print('setting destination waypoint')
+        (next_destx), (next_desty) = next_dest
+        pyautogui.moveTo(((next_destx) + (random.randint(-1, 200))), ((next_desty) + (random.randint(-3, 3))),
+                         mouse.move_time(), mouse.mouse_path())
+        mouse.click_right()  # right click to open dropdown menu
+        pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
+                          mouse.move_time(), mouse.mouse_path())
+        mouse.click()  # click set destination in drop down
+        set_dest_dyn_var = (dict[at_dest_check_dyn_var + 1])
+        return
+    if next_dest is None
+        print('cant find next destination')
+        traceback.print_exc()
+        traceback.print_stack()
+        sys.exit()
+           
+#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
+    
+    
 # check if ship has arrived back at its home station by looking for an entry in 'people and places' starting with 3 0's
 def at_home_check():
     # search left half of screen only
@@ -341,138 +414,8 @@ def set_dest5():  # set station with 555 before name as destination in 'people a
     if dest5 is None:
         set_dest5_var = 0
         return
-
-   
-   
-#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-'''
-def at_dest_check(n):
-  variable = (dict[n])
-  (dict[n+1]) += '_1'
-  print(dict[n+1])
-  return
-
-at_dest_check(1)
-if dict[1+1] == 'at_dest_check_1':
-  print('good')
-
-
-  variable = (dict[n] + '_check')
-  variable = 0
-  print(variable)
-'''
-
-#use a dictionary to dynamically grab destination names
-dict = {0:"0",1:"1",2:"2",3:"3",4:"4",5:"5"}
-         
-# figure out which destination station ship is at
-def at_dest_num_dyn():
-    n = 1
-    at_dest = pyautogui.locateCenterOnScreen(('at_dest' + dict[n]), confidence=conf,
-                                             region=(0, 0, halfscreenwidth, screenheight))
-    While at_dest is None:
-        n = n + 1
-        at_dest = pyautogui.locateCenterOnScreen(('at_dest' + dict[n]), confidence=conf,
-                                             region=(0, 0, halfscreenwidth, screenheight))
-    if at_dest is not None:
-        print('at dest' + (dict[n]))
-        at_dest_check_dyn_var = n
-        return at_dest_check_dyn_var  # return number of station ship is docked in
-  
-# determine which station ship is currently at, then set destination one number higher
-def set_dest_dyn(): 
-    at_dest_num_dyn()
-    next_dest = pyautogui.locateCenterOnScreen(('dest' + dict[at_dest_check_dyn_var + 1]), confidence=conf,
-                                           region=(0, 0, halfscreenwidth, screenheight))
-    if next_dest is not None
-        print('setting destination waypoint')
-        (destx), (desty) = dest
-        pyautogui.moveTo(((destx) + (random.randint(-1, 200))), ((desty) + (random.randint(-3, 3))),
-                         mouse.move_time(), mouse.mouse_path())
-        mouse.click_right()  # right click to open dropdown menu
-        pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
-                          mouse.move_time(), mouse.mouse_path())
-        mouse.click()  # click set destination in drop down
-        set_dest_dyn_var = 1
-        return
-    if next_dest is None
-        print('cant find next destination')
-        traceback.print_exc()
-        traceback.print_stack()
-        sys.exit()
-
-#test dynamic blacklist_station function
-def_blacklist_station()
-    # check if at dest1. if not at dest1, increment dictionary lookup and check if at dest2, etc
-    n = 1
-    at_dest_check_dyn(n)
-    while at_dest_check_dyn_var == 0:
-        n = n + 1  # if not at dest1, increment dictionary by reference 1 and check again
-        at_dest_check_dyn(n)
-        if at_dest_check_dyn_var == 1: 
-            print('blacklisting station')
-            dest = pyautogui.locateCenterOnScreen(('dest' + dict[n]), confidence=conf,
-                                                   region=(0, 0, halfscreenwidth, screenheight))
-            (destx), (desty) = dest
-            pyautogui.moveTo(((destx) + (random.randint(-1, 200))), ((desty) + (random.randint(-3, 3))),
-                             mouse.move_time(), mouse.mouse_path())
-            mouse.click_right()  # right click to open dropdown menu
-            pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
-                              mouse.move_time(), mouse.mouse_path())
-            mouse.click()  # click edit location in drop down
-            time.sleep(1)
-            pyautogui.keyDown('home')
-            time.sleep(float(random.randint(0, 3000)) / 1000)
-            pyautogui.keyUp('home')
-            time.sleep(float(random.randint(0, 3000)) / 1000)
-            pyautogui.keyDown('e')  # an an 'e' to beginning of name indicating station is empty
-            pyautogui.keyUp('e')
-            time.sleep(float(random.randint(0, 3000)) / 1000)
-            pyautogui.keyDown('enter')
-            time.sleep((random.randint(0, 200)) / 100)
-            pyautogui.keyUp('enter')
-            return
-        else:
-            at_dest_check_dyn(n)
-                
-
-def next_destination():  # set next destination based on station blacklist and current location
     
-        # check if at dest1. if not at dest1, increment dictionary lookup and check if at dest2, etc
-    n = 1
-    at_dest_check_dyn(n)
-    while at_dest_check_dyn_var == 0:
-        n = n + 1  # if not at dest1, increment dictionary by 1 and check again
-        at_dest_check_dyn(n)
-        if at_dest_check_dyn_var == 1: 
-            print('at dest' + (dict[n]))
-            set_dest_dyn(n + 1)
-            return
-        else:
-            at_dest_check_dyn(n)
-
-    # check if at home
-    if at_home_check_var == 1:
-        set_dest1() # set destination only if at home and station is not empty
-        if set_dest1_var == 0:
-            set_dest2()
-            if set_dest2_var == 0:
-                set_dest3()
-                if set_dest3_var == 0:
-                    set_dest4()
-                    if set_dest4_var == 0:
-                        set_dest5()
-                        if set_dest5_var == 0:
-                            print('all done!')
-                            sys.exit()
     
-
-
-    
-#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
 def blacklist_station():  # change location's name so ship doesn't return to it
     at_dest1_check()
     at_dest2_check()
