@@ -1,4 +1,4 @@
-import sys, pyautogui, os, time, random, ctypes
+import sys, pyautogui, os, time, random, ctypes, traceback
 from lib import mouse, keyboard, load_ship, unload_ship, while_docked, navigation
 
 sys.setrecursionlimit(100000)
@@ -9,7 +9,8 @@ pyautogui.PAUSE = 0.1
 # begin script by checking if docked
 def traveler():
     while_docked.docked_check()
-    if while_docked.docked_check_var == 0:  # if not docked, travel through waypoints
+    
+    while while_docked.docked_check_var == 0:  # if not docked, travel through waypoints
         navigation.select_waypoint()
         while navigation.select_waypoint_var == 1:  # if found stargate waypoint (1 means stargate), warp and jump
             navigation.select_warp_button()
@@ -23,28 +24,33 @@ def traveler():
                 while_docked.docked_check()
             else:
                 print('error with at_dest_check_var and at_home_check_var')
+                traceback.print_exc()
+                traceback.print_stack()
                 sys.exit()
+                
     while while_docked.docked_check_var == 1:  # if docked, check if at home station
         navigation.at_home_check()
         if navigation.at_home_check_var == 1:  # if at home station, set destination waypoint and unload cargo from ship
             unload_ship.unload_ship()
-            navigation.next_destination()
+            navigation.set_dest_dyn()
             while_docked.undock()  # undock from station and rerun 'while' loop
-            traveler()
+            while_docked.docked_check()
         elif navigation.at_home_check_var == 0:  # if at destination, set home as waypoint and load ship
             load_ship.load_ship()
             if load_ship.load_ship_var == 2:  # if ship has loaded station, move to next station
-                navigation.next_destination()
+                navigation.set_dest_dyn()
                 navigation.blacklist_station()
                 while_docked.undock()
-                traveler()
+                while_docked.docked_check()
             elif load_ship.load_ship_var == 1:  # if ship is full, return home to unload
                 navigation.set_home()
                 while_docked.undock()
-                traveler()
+                while_docked.docked_check()
         else:
             print('error with at_home_check and at_dest_check')
-            sys.exc_info()
+            traceback.print_exc()
+            traceback.print_stack()
+            sys.exit()
 
 
 traveler()
