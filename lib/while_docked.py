@@ -1,14 +1,13 @@
-import sys, pyautogui, os, time, random, ctypes
+import sys, pyautogui, os, time, random, ctypes, traceback
 from lib import mouse, keyboard, navigation
 
-pyautogui.FAILSAFE = True
-sys.setrecursionlimit(100000)
-conf = 0.95
+pyautogui.FAILSAFE = True  # force script to stop if move mouse into top left corner of screen
+sys.setrecursionlimit(100000)  # set high recursion limit for repeating functions
+conf = 0.95  # set default confidence value for imagesearch  
 
 
 # check if ship is docked
 def docked_check():
-    print('checking if docked')
     global docked_check_var
     undock_icon = pyautogui.locateCenterOnScreen('undock.bmp', confidence=conf)
     if undock_icon is None:
@@ -21,7 +20,8 @@ def docked_check():
         return
 
 
-def open_cargo_hold():  # click on ship cargo hold button in inventory window while docked
+# click on ship cargo hold button in inventory window while docked
+def open_cargo_hold():  
     print('opening cargo hold')
     cargo_hold = pyautogui.locateCenterOnScreen('cargo_hold.bmp', confidence=conf)
     while cargo_hold is None:
@@ -38,6 +38,7 @@ def open_cargo_hold():  # click on ship cargo hold button in inventory window wh
         return
 
 
+# if a special hold was found, click on it in inventory window while docked
 def open_special_hold():
     print('opening special hold')
     special_hold = pyautogui.locateCenterOnScreen('special_hold.bmp', confidence=conf)
@@ -55,7 +56,8 @@ def open_special_hold():
         return
 
 
-def open_station_hangar():  # click on station hangar button in inventory window while docked
+# click on station hangar button in inventory window while docked
+def open_station_hangar():  
     print('opening station hangar')
     station_hangar = pyautogui.locateCenterOnScreen('station_hangar.bmp', confidence=conf)
     while station_hangar is None:
@@ -71,7 +73,8 @@ def open_station_hangar():  # click on station hangar button in inventory window
         return
 
 
-def focus_inventory_window():  # click inside the station inventory window to focus it before items are selected
+# click inside the station inventory window to focus it before any items are selected
+def focus_inventory_window():  
     # look for sorting buttons in top right corner of inventory window and offset mouse
     print('focusing inventory window')
     sorting_station_hangar = pyautogui.locateCenterOnScreen('sorting_station_hangar.bmp', confidence=conf)
@@ -88,16 +91,14 @@ def focus_inventory_window():  # click inside the station inventory window to fo
         return
 
 
-
-
+# look at the bottom-right corner of station inventory window to determine if '0 items found' appears
 def look_for_items():
     global no_items_station_hangar  # var must be global since it's used in other functions
-    global look_for_items_var  # return var must be global in order for other files to read it
+    global look_for_items_var 
     global namefield_station_hangar
     no_items_station_hangar = pyautogui.locateCenterOnScreen('no_items_station_hangar.bmp',
                                                                    confidence=.99)
     if no_items_station_hangar is None:
-        print('found items')
         namefield_station_hangar = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
                                                                   confidence=conf)
         look_for_items_var = 1
@@ -107,8 +108,9 @@ def look_for_items():
         look_for_items_var = 0
         return
 
-
-#look for 'name' column header in inventory window to indicate presence of items
+    
+'''
+#look for 'name' column header in inventory window to indicate presence of items DEPRECATED
 def look_for_items_oldfunc():
     print('looking for item(s) in hangar')
     look_for_items_loop_num = 0
@@ -134,16 +136,14 @@ def look_for_items_oldfunc():
     print('no items in hangar')  # loop breaks to here
     look_for_items_var = 0
     return
+'''
 
 
-# if ship has a specialized hold for specific items, try dragging station hangar inventory into it first
+# look for drop-down arrow next to ship icon in station inventory window to determine if ship has special hold
 def look_for_special_hold():
-    # look for drop down arrow next to ship indicating it has a special hold
-    print('looking for special hold')
     global look_for_special_hold_var
     special_hold = pyautogui.locateCenterOnScreen('special_hold.bmp', confidence=conf)
     if special_hold is None:
-        print('no special hold')
         look_for_special_hold_var = 0
         return
     else:
@@ -152,70 +152,68 @@ def look_for_special_hold():
         return
 
 
-# look for the warning indicating selected items aren't compatible with ship's special hold parameters
+# look for warning indicating selected items aren't compatible with ship's special hold 
 def special_hold_warning():
-    print('looking for special hold warning')
     global special_hold_warning_var
     # special hold warning is partially transparent so confidence rating must be slightly lower than normal
     special_hold_warning = pyautogui.locateCenterOnScreen('special_hold_warning.bmp', confidence=0.8)
     if special_hold_warning is None:
-        print('no special hold warning')
         special_hold_warning_var = 0
         return
     else:
-        # if special hold warning appears, try dragging item to cargo hold instead
         print('detected special hold warning')
         special_hold_warning_var = 1
         return
 
 
+# check if 'set quantity' popup appears indicating not enough space in cargo hold for full item stack
 def set_quantity_popup():
-    # check if 'set quantity' popup appears indicating not enough space in cargo hold
-    print('looking for set quantity popup')
     global set_quantity_popup_var
     set_quantity = \
         pyautogui.locateCenterOnScreen('set_quantity.bmp', confidence=conf)
     if set_quantity is None:
-        print('no set quantity popup')
         set_quantity_popup_var = 0
         return
     else:
         print('found set quantity popup')
-        keyboard.enter()  # confirm dialog box
+        keyboard.enter() 
         set_quantity_popup_var = 1
         return
 
 
+# check if 'not enough space' popup appears indicating not all item stacks will fit into hold or hold is already full
 def not_enough_space_popup():
-    print('looking for not enough space popup')
     global not_enough_space_popup_var
     not_enough_space = pyautogui.locateCenterOnScreen('not_enough_space.bmp', confidence=conf)
     if not_enough_space is None:
-        print("no 'not enough space' popup")
         not_enough_space_popup_var = 0
         return
     else:
         print('found not enough space popup')
-        keyboard.enter()  # confirm dialog box
+        keyboard.enter()  
         not_enough_space_popup_var = 1
         return
 
 
+# undock from station, look for undock button in right half of screen only
 def undock():
     print('began undocking procedure')
     undock = pyautogui.locateCenterOnScreen('undock.bmp', confidence=conf)
-    while undock is None:
+    if undock is None:
         print('cant find undock button')
-        undock = pyautogui.locateCenterOnScreen('undock.bmp', confidence=conf)
-    else:
+        traceback.print_exc()
+        traceback.print_stack()
+        sys.exit()
+    elif undock is not None:
         (undockx, undocky) = undock
         # clicks the center of where the button was found
         pyautogui.moveTo((undockx + (random.randint(-25, 25))),
                          (undocky + (random.randint(-15, 15))),
                          mouse.move_time(), mouse.mouse_path())
         mouse.click()
+        # move mouse away from button to prevent tooltips from blocking other buttons
         pyautogui.moveRel((-1 * (random.randint(200, 1000))), (random.randint(-600, 600)),
-                          mouse.move_time(), mouse.mouse_path())  # move mouse away from button
-        time.sleep((random.randint(10, 250) / 10))  # wait for undock to complete
-        print('finished undocking')
+                          mouse.move_time(), mouse.mouse_path())  
+        # wait a semi-random period of time for undock to complete to mimic human behavior
+        time.sleep((random.randint(10, 250) / 10))
         return
