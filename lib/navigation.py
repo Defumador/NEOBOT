@@ -24,17 +24,17 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
     print('looking for waypoints')
     select_waypoint_look_num = 0
     # search right half of screen only for stargate icon
-    stargate_waypoint = pyautogui.locateCenterOnScreen('stargate_waypoint.bmp', confidence=0.96,
+    stargate_waypoint = pyautogui.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
                                                        region=(halfscreenwidth, 0, screenwidth, screenheight))
     while stargate_waypoint is None and select_waypoint_look_num < 100:  # search for waypoints up to 100 times
         select_waypoint_look_num += 1
         global select_waypoint_var
         # if stargate waypoint not found, look for station waypoint
-        station_waypoint = pyautogui.locateCenterOnScreen('station_waypoint.bmp', confidence=0.96,
+        station_waypoint = pyautogui.locateCenterOnScreen('./img/station_waypoint.bmp', confidence=0.96,
                                                           region=(halfscreenwidth, 0, screenwidth, screenheight))
         # if station waypoint not found, look for stargate waypoint again and restart loop
         if station_waypoint is None:
-            stargate_waypoint = pyautogui.locateCenterOnScreen('stargate_waypoint.bmp', confidence=0.96,
+            stargate_waypoint = pyautogui.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
                                                                region=(halfscreenwidth, 0, screenwidth, screenheight))
             print('looking waypoints ...', select_waypoint_look_num)
             time.sleep(3)
@@ -71,16 +71,16 @@ def select_warp_button():  # locate jump button in selection box if stargate ico
     select_warp_button_loop_num = 0
     print('looking for warp buttons')
     # search right half of screen only
-    jump_button = pyautogui.locateCenterOnScreen('jump_button.bmp', confidence=conf,
+    jump_button = pyautogui.locateCenterOnScreen('./img/jump_button.bmp', confidence=conf,
                                                  region=(halfscreenwidth, 0, screenwidth, screenheight))
     while jump_button is None:
         print('cant find jump button')
-        dock_button = pyautogui.locateCenterOnScreen('dock_button.bmp', confidence=conf,
+        dock_button = pyautogui.locateCenterOnScreen('./img/dock_button.bmp', confidence=conf,
                                                      region=(halfscreenwidth, 0, screenwidth, screenheight))
         if dock_button is None:
             select_warp_button_loop_num += 1
             print('cant find dock button ...', select_warp_button_loop_num)
-            jump_button = pyautogui.locateCenterOnScreen('jump_button.bmp', confidence=conf,
+            jump_button = pyautogui.locateCenterOnScreen('./img/jump_button.bmp', confidence=conf,
                                                          region=(halfscreenwidth, 0, screenwidth, screenheight))
         elif dock_button is not None:
             print('found dock button')
@@ -116,7 +116,7 @@ def detect_dock_or_jump():  # check if client has docked or jumped
     global detect_dock_or_jump_var
     detect_dock_or_jump_loop_num = 0
     # search right half of screen only
-    undock_icon = pyautogui.locateCenterOnScreen('undock.bmp', confidence=conf,
+    undock_icon = pyautogui.locateCenterOnScreen('./img/undock.bmp', confidence=conf,
                                                  region=(halfscreenwidth, 0, screenwidth, screenheight))
     # if undock icon is not found, look for 'no object selected' in selection box, indicating a jump has been made
     while undock_icon is None:
@@ -124,17 +124,17 @@ def detect_dock_or_jump():  # check if client has docked or jumped
         print('waiting for jump or dock ...', detect_dock_or_jump_loop_num)
         time.sleep(3)
         # search bottom half of screen only
-        spedometer = pyautogui.locateCenterOnScreen('spedometer.bmp', confidence=0.98,
+        spedometer = pyautogui.locateCenterOnScreen('./img/spedometer.bmp', confidence=0.98,
                                                     region=(0, halfscreenheight, screenwidth, screenheight))
         if spedometer is None:  # if jump is not detected, wait and rerun function
-            undock_icon = pyautogui.locateCenterOnScreen('undock.bmp', confidence=conf,
+            undock_icon = pyautogui.locateCenterOnScreen('./img/undock.bmp', confidence=conf,
                                                          region=(halfscreenwidth, 0, screenwidth, screenheight))
         else:
             # if jump detected, warp to next waypoint
             print('jump detected')
             time.sleep(float(random.randint(2000, 5000)) / 1000)
             # double-check to make sure ship is not moving
-            spedometer = pyautogui.locateCenterOnScreen('spedometer.bmp', confidence=0.98,
+            spedometer = pyautogui.locateCenterOnScreen('./img/spedometer.bmp', confidence=0.98,
                                                         region=(0, halfscreenheight, screenwidth, screenheight))
             if spedometer is None:
                 print('jump check denied -----------------------------------------')
@@ -158,11 +158,11 @@ destnum = {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7"}
 def at_dest_num_dyn():
     global at_dest_num_dyn_var
     n = 0
-    at_dest = pyautogui.locateCenterOnScreen(('at_dest' + (destnum[n]) + '.bmp'), confidence=conf,
+    at_dest = pyautogui.locateCenterOnScreen(('./dest/at_dest' + (destnum[n]) + '.bmp'), confidence=conf,
                                              region=(0, 0, halfscreenwidth, screenheight))
     while at_dest is None:
         n = n + 1
-        at_dest = pyautogui.locateCenterOnScreen(('at_dest' + (destnum[n]) + '.bmp'), confidence=conf,
+        at_dest = pyautogui.locateCenterOnScreen(('./dest/at_dest' + (destnum[n]) + '.bmp'), confidence=conf,
                                                  region=(0, 0, halfscreenwidth, screenheight))
         print('looking for destination' + (destnum[n]))
         if n > 4:
@@ -178,7 +178,7 @@ def at_dest_num_dyn():
 def blacklist_station():
     at_dest_num_dyn()
     print('blacklisting station')
-    dest = pyautogui.locateCenterOnScreen(('dest' + (destnum[at_dest_num_dyn_var])), confidence=conf,
+    dest = pyautogui.locateCenterOnScreen(('./dest/dest' + (destnum[at_dest_num_dyn_var])), confidence=conf,
                                           region=(0, 0, halfscreenwidth, screenheight))
     (destx), (desty) = dest
     pyautogui.moveTo((destx + (random.randint(-1, 200))), (desty + (random.randint(-3, 3))),
@@ -204,12 +204,12 @@ def blacklist_station():
 # determine which station ship is currently at, then set destination one number higher
 def set_dest_dyn():
     at_dest_num_dyn()
-    next_dest = pyautogui.locateCenterOnScreen(('dest' + (destnum[at_dest_num_dyn_var]) + '.bmp'), confidence=conf,
+    next_dest = pyautogui.locateCenterOnScreen(('./dest/dest' + (destnum[at_dest_num_dyn_var]) + '.bmp'), confidence=conf,
                                                region=(0, 0, halfscreenwidth, screenheight))
     next_dest_var = at_dest_num_dyn_var
     while next_dest is None:
         next_dest_var = next_dest_var + 1
-        next_dest = pyautogui.locateCenterOnScreen(('dest' + (destnum[next_dest_var]) + '.bmp'), confidence=conf,
+        next_dest = pyautogui.locateCenterOnScreen(('./dest/dest' + (destnum[next_dest_var]) + '.bmp'), confidence=conf,
                                                    region=(0, 0, halfscreenwidth, screenheight))
         print('looking for dest' + (destnum[next_dest_var]))
     if next_dest is not None:
@@ -229,7 +229,7 @@ def set_dest_dyn():
 def at_home_check():
     # search left half of screen only
     global at_home_check_var
-    at_home = pyautogui.locateCenterOnScreen('at_dest0.bmp', confidence=conf,
+    at_home = pyautogui.locateCenterOnScreen('./dest/at_dest0.bmp', confidence=conf,
                                              region=(0, 0, halfscreenwidth, screenheight))
     if at_home is None:
         at_home_check_var = 0
@@ -242,7 +242,7 @@ def at_home_check():
 
 def set_home():  # return to home station (has 000 in front of name in 'people and places')
     print('setting home waypoint')
-    home = pyautogui.locateCenterOnScreen('dest0.bmp', confidence=conf,
+    home = pyautogui.locateCenterOnScreen('./dest/dest0.bmp', confidence=conf,
                                           region=(0, 0, halfscreenwidth, screenheight))
     (homex, homey) = home
     pyautogui.moveTo((homex + (random.randint(-1, 200))), (homey + (random.randint(-3, 3))),

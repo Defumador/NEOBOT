@@ -17,7 +17,7 @@ conf = 0.95  # set default confidence value for imagesearch
 # check if ship is docked
 def docked_check():
     global docked_check_var
-    undock_icon = pyautogui.locateCenterOnScreen('undock.bmp', confidence=conf)
+    undock_icon = pyautogui.locateCenterOnScreen('./img/undock.bmp', confidence=conf)
     if undock_icon is None:
         print('not docked')
         docked_check_var = 0
@@ -31,10 +31,10 @@ def docked_check():
 # click on ship cargo hold button in inventory window while docked
 def open_cargo_hold():  
     print('opening cargo hold')
-    cargo_hold = pyautogui.locateCenterOnScreen('cargo_hold.bmp', confidence=conf)
+    cargo_hold = pyautogui.locateCenterOnScreen('./img/cargo_hold.bmp', confidence=conf)
     while cargo_hold is None:
         print('cant find cargo hold')
-        cargo_hold = pyautogui.locateCenterOnScreen('cargo_hold.bmp', confidence=conf)
+        cargo_hold = pyautogui.locateCenterOnScreen('./img/cargo_hold.bmp', confidence=conf)
     else:
         (cargo_holdx, cargo_holdy) = cargo_hold
         pyautogui.moveTo((cargo_holdx + (random.randint(-4, 50))),
@@ -48,10 +48,10 @@ def open_cargo_hold():
 # if a special hold was found, click on it in inventory window while docked
 def open_special_hold():
     print('opening special hold')
-    special_hold = pyautogui.locateCenterOnScreen('special_hold.bmp', confidence=conf)
+    special_hold = pyautogui.locateCenterOnScreen('./img/special_hold.bmp', confidence=conf)
     while special_hold is None:
         print('cant find special hold')
-        special_hold = pyautogui.locateCenterOnScreen('special_hold.bmp', confidence=conf)
+        special_hold = pyautogui.locateCenterOnScreen('./img/special_hold.bmp', confidence=conf)
     else:
         (special_holdx, special_holdy) = special_hold
         pyautogui.moveTo((special_holdx + (random.randint(-4, 50))),
@@ -64,10 +64,10 @@ def open_special_hold():
 # click on station hangar button in inventory window while docked
 def open_station_hangar():  
     print('opening station hangar')
-    station_hangar = pyautogui.locateCenterOnScreen('station_hangar.bmp', confidence=conf)
+    station_hangar = pyautogui.locateCenterOnScreen('./img/station_hangar.bmp', confidence=conf)
     while station_hangar is None:
         print('cant find inventory station hangar icon')
-        station_hangar = pyautogui.locateCenterOnScreen('station_hangar.bmp', confidence=conf)
+        station_hangar = pyautogui.locateCenterOnScreen('./img/station_hangar.bmp', confidence=conf)
     else:
         (station_hangarx, station_hangary) = station_hangar
         pyautogui.moveTo((station_hangarx + (random.randint(-6, 50))),
@@ -81,10 +81,10 @@ def open_station_hangar():
 def focus_inventory_window():  
     # look for sorting buttons in top right corner of inventory window and offset mouse
     print('focusing inventory window')
-    sorting_station_hangar = pyautogui.locateCenterOnScreen('sorting_station_hangar.bmp', confidence=conf)
+    sorting_station_hangar = pyautogui.locateCenterOnScreen('./img/sorting_station_hangar.bmp', confidence=conf)
     while sorting_station_hangar is None:
         print('cant find sorting icon')
-        sorting_station_hangar = pyautogui.locateCenterOnScreen('sorting_station_hangar.bmp', confidence=conf)
+        sorting_station_hangar = pyautogui.locateCenterOnScreen('./img/sorting_station_hangar.bmp', confidence=conf)
     else:
         (sorting_station_hangarx, sorting_station_hangary) = sorting_station_hangar
         # offset mouse from sorting button to click within inventory window to focus it
@@ -101,10 +101,10 @@ def look_for_items():
     global look_for_items_var 
     global namefield_station_hangar
     time.sleep(float(random.randint(800, 1000)) / 1000)
-    no_items_station_hangar = pyautogui.locateCenterOnScreen('no_items_station_hangar.bmp',
+    no_items_station_hangar = pyautogui.locateCenterOnScreen('./img/no_items_station_hangar.bmp',
                                                              confidence=.99)
     if no_items_station_hangar is None:
-        namefield_station_hangar = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
+        namefield_station_hangar = pyautogui.locateCenterOnScreen('./img/namefield_station_hangar.bmp',
                                                                   confidence=conf)
         look_for_items_var = 1
         return
@@ -117,7 +117,7 @@ def look_for_items():
 # look for drop-down arrow next to ship icon in station inventory window to determine if ship has special hold
 def look_for_special_hold():
     global look_for_special_hold_var
-    special_hold = pyautogui.locateCenterOnScreen('special_hold.bmp', confidence=conf)
+    special_hold = pyautogui.locateCenterOnScreen('./img/special_hold.bmp', confidence=conf)
     if special_hold is None:
         look_for_special_hold_var = 0
         return
@@ -131,7 +131,7 @@ def look_for_special_hold():
 def special_hold_warning():
     global special_hold_warning_var
     # special hold warning is partially transparent so confidence rating must be slightly lower than normal
-    special_hold_warning_popup = pyautogui.locateCenterOnScreen('special_hold_warning.bmp', confidence=0.8)
+    special_hold_warning_popup = pyautogui.locateCenterOnScreen('./img/special_hold_warning.bmp', confidence=0.8)
     if special_hold_warning_popup is None:
         special_hold_warning_var = 0
         return
@@ -145,7 +145,7 @@ def special_hold_warning():
 def set_quantity_popup():
     global set_quantity_popup_var
     set_quantity = \
-        pyautogui.locateCenterOnScreen('set_quantity.bmp', confidence=conf)
+        pyautogui.locateCenterOnScreen('./img/set_quantity.bmp', confidence=conf)
     if set_quantity is None:
         set_quantity_popup_var = 0
         return
@@ -159,7 +159,7 @@ def set_quantity_popup():
 # check if 'not enough space' popup appears indicating not all item stacks will fit into hold or hold is already full
 def not_enough_space_popup():
     global not_enough_space_popup_var
-    not_enough_space = pyautogui.locateCenterOnScreen('not_enough_space.bmp', confidence=conf)
+    not_enough_space = pyautogui.locateCenterOnScreen('./img/not_enough_space.bmp', confidence=conf)
     if not_enough_space is None:
         not_enough_space_popup_var = 0
         return
@@ -181,7 +181,7 @@ halfscreenheight = (int(screenheight / 2))
 # undock from station, look for undock button in right half of screen only
 def undock():
     print('began undocking procedure')
-    undock_button = pyautogui.locateCenterOnScreen('undock.bmp', confidence=conf)
+    undock_button = pyautogui.locateCenterOnScreen('./img/undock.bmp', confidence=conf)
     if undock_button is None:
         print('cant find undock button')
         traceback.print_exc()

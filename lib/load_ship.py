@@ -17,7 +17,7 @@ conf = 0.95
 # click and drag first item stack in inventory to ship cargo hold, function assumes cargo hold is already open
 def drag_items_to_cargo_hold():
     print('moving item stack to cargo hold')
-    namefield_station_hangar = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
+    namefield_station_hangar = pyautogui.locateCenterOnScreen('./img/namefield_station_hangar.bmp',
                                                               confidence=conf)
     if namefield_station_hangar is None:
         print('cant find name column')
@@ -26,11 +26,11 @@ def drag_items_to_cargo_hold():
         sys.exit()
     elif namefield_station_hangar is not None:
         # if icon found, look for ship cargo hold icon in inventory sidebar
-        cargo_hold = pyautogui.locateCenterOnScreen('cargo_hold.bmp',
+        cargo_hold = pyautogui.locateCenterOnScreen('./img/cargo_hold.bmp',
                                                     confidence=conf)
         while cargo_hold is None:
             print('cant find ship cargo hold')
-            cargo_hold = pyautogui.locateCenterOnScreen('cargo_hold.bmp',
+            cargo_hold = pyautogui.locateCenterOnScreen('./img/cargo_hold.bmp',
                                                         confidence=conf)
         # if found icons, click on first item in station hangar and drag mouse to ship cargo hold
         if cargo_hold is not None:
@@ -50,7 +50,7 @@ def drag_items_to_cargo_hold():
 # click and drag first item stack in inventory to ship special hold, function assumes special hold is already open
 def drag_items_to_special_hold():
     print('moving item stack to special hold')
-    namefield_station_hangar = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
+    namefield_station_hangar = pyautogui.locateCenterOnScreen('./img/namefield_station_hangar.bmp',
                                                               confidence=conf)
     if namefield_station_hangar is None:
         print('cant find name column')
@@ -59,11 +59,11 @@ def drag_items_to_special_hold():
         sys.exit()
     elif namefield_station_hangar is not None:
         # if icon found, look for ship cargo hold icon in inventory sidebar
-        cargo_hold = pyautogui.locateCenterOnScreen('cargo_hold.bmp',
+        cargo_hold = pyautogui.locateCenterOnScreen('./img/cargo_hold.bmp',
                                                     confidence=conf)
         while cargo_hold is None:
             print('cant find ship cargo hold')
-            cargo_hold = pyautogui.locateCenterOnScreen('cargo_hold.bmp',
+            cargo_hold = pyautogui.locateCenterOnScreen('./img/cargo_hold.bmp',
                                                         confidence=conf)
         if cargo_hold is not None:
             (namefield_station_hangarx, namefield_station_hangary) = namefield_station_hangar

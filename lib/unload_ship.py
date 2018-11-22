@@ -16,14 +16,14 @@ conf = 0.95
 
 def drag_items_from_hold():
     # dragitems to station item hangar
-    namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
+    namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('./img/namefield_station_hangar.bmp',
                                                                    confidence=conf)
     (namefield_station_hangar_iconx, namefield_station_hangar_icony) = namefield_station_hangar_icon
     pyautogui.moveTo((namefield_station_hangar_iconx + (random.randint(-5, 250))),
                      (namefield_station_hangar_icony + (random.randint(10, 25))),
                      mouse.move_time(), mouse.mouse_path())
     pyautogui.mouseDown()
-    station_hangar = pyautogui.locateCenterOnScreen('station_hangar.bmp',
+    station_hangar = pyautogui.locateCenterOnScreen('./img/station_hangar.bmp',
                                                     confidence=conf)
     (station_hangarx, station_hangary) = station_hangar
     pyautogui.moveTo((station_hangarx + (random.randint(-15, 60))),
