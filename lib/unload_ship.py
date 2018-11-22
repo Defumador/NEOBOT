@@ -1,5 +1,13 @@
-import sys, pyautogui, time, random, traceback
-from lib import mouse, keyboard, while_docked
+import sys
+import time
+import random
+import traceback
+
+import pyautogui
+
+from lib import mouse
+from lib import keyboard
+from lib import docked
 
 pyautogui.FAILSAFE = True
 sys.setrecursionlimit(100000)
@@ -16,7 +24,7 @@ def drag_items_from_hold():
                      mouse.move_time(), mouse.mouse_path())
     pyautogui.mouseDown()
     station_hangar = pyautogui.locateCenterOnScreen('station_hangar.bmp',
-                                                                   confidence=conf)
+                                                    confidence=conf)
     (station_hangarx, station_hangary) = station_hangar
     pyautogui.moveTo((station_hangarx + (random.randint(-15, 60))),
                      (station_hangary + (random.randint(-10, 10))),
@@ -29,60 +37,61 @@ def drag_items_from_hold():
 def unload_ship():
     print('began unloading procedure')
     global unload_ship_var
-    while_docked.open_cargo_hold()
-    while_docked.look_for_items()
-    if while_docked.look_for_items_var == 0: 
-        while_docked.look_for_special_hold()
-        if while_docked.look_for_special_hold_var == 1:
-            time.sleep((random.randint(0, 200)) / 100)  # wait between 0 and 2s before actions for increased randomness
-            while_docked.open_special_hold()
-            while_docked.look_for_items()
-            while while_docked.look_for_items_var == 1:
+    docked.open_cargo_hold()
+    docked.look_for_items()
+    if docked.look_for_items_var == 0:
+        docked.look_for_special_hold()
+        if docked.look_for_special_hold_var == 1:
+            # wait between 0 and 2s before actions for increased randomness
+            time.sleep((random.randint(0, 200)) / 100)
+            docked.open_special_hold()
+            docked.look_for_items()
+            while docked.look_for_items_var == 1:
                 time.sleep((random.randint(0, 200)) / 100)
-                while_docked.focus_inventory_window()
+                docked.focus_inventory_window()
                 time.sleep((random.randint(0, 200)) / 100)
                 keyboard.select_all()
                 time.sleep((random.randint(0, 200)) / 100)
                 drag_items_from_hold()
                 time.sleep(2)
-                while_docked.look_for_items()
+                docked.look_for_items()
                 print('finished unloading procedure')
                 unload_ship_var = 1
                 return
-            if while_docked.look_for_items_var == 0:
+            if docked.look_for_items_var == 0:
                 print('finished unloading procedure')
                 unload_ship_var = 1
                 return
-        elif while_docked.look_for_special_hold_var == 0:
+        elif docked.look_for_special_hold_var == 0:
             print('error, nothing to unload')
             unload_ship_var = 0
             traceback.print_exc()
             traceback.print_stack()
             sys.exit()
-    while while_docked.look_for_items_var == 1:
-        while_docked.focus_inventory_window()
+    while docked.look_for_items_var == 1:
+        docked.focus_inventory_window()
         time.sleep((random.randint(0, 200)) / 100)
         keyboard.select_all()
         time.sleep((random.randint(0, 200)) / 100)
         drag_items_from_hold()
         time.sleep(2)
-        while_docked.look_for_special_hold()
-        while_docked.look_for_items()
-    if while_docked.look_for_special_hold_var == 1:
-        while_docked.open_special_hold()
-        while_docked.look_for_items()
-        while while_docked.look_for_items_var == 1:
-            while_docked.focus_inventory_window()
+        docked.look_for_special_hold()
+        docked.look_for_items()
+    if docked.look_for_special_hold_var == 1:
+        docked.open_special_hold()
+        docked.look_for_items()
+        while docked.look_for_items_var == 1:
+            docked.focus_inventory_window()
             time.sleep((random.randint(0, 200)) / 100)
             keyboard.select_all()
             time.sleep((random.randint(0, 200)) / 100)
             drag_items_from_hold()
             time.sleep(2)
-            while_docked.look_for_items()
+            docked.look_for_items()
             print('finished unloading procedure')
             unload_ship_var = 1
             return
-    elif while_docked.look_for_special_hold_var == 0:
+    elif docked.look_for_special_hold_var == 0:
         print('finished unloading procedure')
         unload_ship_var = 1
         return

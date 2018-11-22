@@ -1,4 +1,8 @@
-import pyautogui, time, random
+import time
+import random
+
+import pyautogui
+
 pyautogui.FAILSAFE = True
 
 
@@ -23,4 +27,3 @@ def move_time():  # randomize the amount of time mouse takes to move to a new lo
 
 def mouse_path():  # randomize the behavior of mouse button as it moves to a location
     return pyautogui.easeOutQuad
-

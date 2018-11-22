@@ -1,4 +1,10 @@
-import sys, pyautogui, time, random, ctypes
+import sys
+import time
+import ctypes
+import random
+
+import pyautogui
+
 from lib import mouse
 
 pyautogui.FAILSAFE = True
@@ -19,18 +25,19 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
     select_waypoint_look_num = 0
     # search right half of screen only for stargate icon
     stargate_waypoint = pyautogui.locateCenterOnScreen('stargate_waypoint.bmp', confidence=0.96,
-                                                            region=(halfscreenwidth, 0, screenwidth, screenheight))
+                                                       region=(halfscreenwidth, 0, screenwidth, screenheight))
     while stargate_waypoint is None and select_waypoint_look_num < 100:  # search for waypoints up to 100 times
         select_waypoint_look_num += 1
         global select_waypoint_var
         # if stargate waypoint not found, look for station waypoint
         station_waypoint = pyautogui.locateCenterOnScreen('station_waypoint.bmp', confidence=0.96,
-                                                               region=(halfscreenwidth, 0, screenwidth, screenheight))
+                                                          region=(halfscreenwidth, 0, screenwidth, screenheight))
         # if station waypoint not found, look for stargate waypoint again and restart loop
         if station_waypoint is None:
             stargate_waypoint = pyautogui.locateCenterOnScreen('stargate_waypoint.bmp', confidence=0.96,
                                                                region=(halfscreenwidth, 0, screenwidth, screenheight))
             print('looking waypoints ...', select_waypoint_look_num)
+            time.sleep(3)
             continue
         elif station_waypoint is not None:
             print('found station waypoint')
@@ -56,7 +63,7 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
         mouse.click()
         select_waypoint_var = 1
         return
-    else: # loop breaks to here
+    else:  # loop breaks to here
         print('cant find waypoints')
         select_waypoint_var = 0
         return
@@ -74,7 +81,7 @@ def select_warp_button():  # locate jump button in selection box if stargate ico
                                                      region=(halfscreenwidth, 0, screenwidth, screenheight))
         if dock_button is None:
             select_warp_button_loop_num += 1
-            print('cant find dock button ...',select_warp_button_loop_num)
+            print('cant find dock button ...', select_warp_button_loop_num)
             jump_button = pyautogui.locateCenterOnScreen('jump_button.bmp', confidence=conf,
                                                          region=(halfscreenwidth, 0, screenwidth, screenheight))
         elif dock_button is not None:
@@ -116,14 +123,14 @@ def detect_dock_or_jump():  # check if client has docked or jumped
     # if undock icon is not found, look for 'no object selected' in selection box, indicating a jump has been made
     while undock_icon is None:
         detect_dock_or_jump_loop_num += 1
-        print('waiting for jump or dock ...',detect_dock_or_jump_loop_num)
+        print('waiting for jump or dock ...', detect_dock_or_jump_loop_num)
         time.sleep(3)
         # search bottom half of screen only
         spedometer = pyautogui.locateCenterOnScreen('spedometer.bmp', confidence=0.98,
                                                     region=(0, halfscreenheight, screenwidth, screenheight))
         if spedometer is None:  # if jump is not detected, wait and rerun function
             undock_icon = pyautogui.locateCenterOnScreen('undock.bmp', confidence=conf,
-                                                 region=(halfscreenwidth, 0, screenwidth, screenheight))
+                                                         region=(halfscreenwidth, 0, screenwidth, screenheight))
         else:
             # if jump detected, warp to next waypoint
             print('jump detected')
@@ -145,39 +152,38 @@ def detect_dock_or_jump():  # check if client has docked or jumped
         return
 
 
+# use a dictionary to dynamically grab destination names
+destnum = {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7"}
 
-#use a dictionary to dynamically grab destination names
-dict = {0:"0",1:"1",2:"2",3:"3",4:"4",5:"5",6:"6",7:"7"}
-         
+
 # figure out which destination station ship is at
 def at_dest_num_dyn():
     global at_dest_num_dyn_var
     n = 0
-    at_dest = pyautogui.locateCenterOnScreen(('at_dest' + (dict[n]) + '.bmp'), confidence=conf,
+    at_dest = pyautogui.locateCenterOnScreen(('at_dest' + (destnum[n]) + '.bmp'), confidence=conf,
                                              region=(0, 0, halfscreenwidth, screenheight))
     while at_dest is None:
         n = n + 1
-        at_dest = pyautogui.locateCenterOnScreen(('at_dest' + (dict[n]) + '.bmp'), confidence=conf,
-                                             region=(0, 0, halfscreenwidth, screenheight))
-        print('looking for destination' + (dict[n]))
+        at_dest = pyautogui.locateCenterOnScreen(('at_dest' + (destnum[n]) + '.bmp'), confidence=conf,
+                                                 region=(0, 0, halfscreenwidth, screenheight))
+        print('looking for destination' + (destnum[n]))
         if n > 4:
             print('out of destinations to look for')
             sys.exit()
     if at_dest is not None:
-        print('at dest' + (dict[n]))
+        print('at dest' + (destnum[n]))
         at_dest_num_dyn_var = n
         return at_dest_num_dyn_var  # return number of station ship is docked in
 
-  
 
 # determine which station ship is in and blacklist it by editing its name
 def blacklist_station():
     at_dest_num_dyn()
     print('blacklisting station')
-    dest = pyautogui.locateCenterOnScreen(('dest' + (dict[at_dest_num_dyn_var])), confidence=conf,
-                                           region=(0, 0, halfscreenwidth, screenheight))
+    dest = pyautogui.locateCenterOnScreen(('dest' + (destnum[at_dest_num_dyn_var])), confidence=conf,
+                                          region=(0, 0, halfscreenwidth, screenheight))
     (destx), (desty) = dest
-    pyautogui.moveTo(((destx) + (random.randint(-1, 200))), ((desty) + (random.randint(-3, 3))),
+    pyautogui.moveTo((destx + (random.randint(-1, 200))), (desty + (random.randint(-3, 3))),
                      mouse.move_time(), mouse.mouse_path())
     mouse.click_right()  # right click to open dropdown menu
     pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
@@ -200,26 +206,25 @@ def blacklist_station():
 # determine which station ship is currently at, then set destination one number higher
 def set_dest_dyn():
     at_dest_num_dyn()
-    next_dest = pyautogui.locateCenterOnScreen(('dest' + (dict[at_dest_num_dyn_var]) + '.bmp'), confidence=conf,
-                                           region=(0, 0, halfscreenwidth, screenheight))
+    next_dest = pyautogui.locateCenterOnScreen(('dest' + (destnum[at_dest_num_dyn_var]) + '.bmp'), confidence=conf,
+                                               region=(0, 0, halfscreenwidth, screenheight))
     next_dest_var = at_dest_num_dyn_var
     while next_dest is None:
         next_dest_var = next_dest_var + 1
-        next_dest = pyautogui.locateCenterOnScreen(('dest' + (dict[next_dest_var]) + '.bmp'), confidence=conf,
+        next_dest = pyautogui.locateCenterOnScreen(('dest' + (destnum[next_dest_var]) + '.bmp'), confidence=conf,
                                                    region=(0, 0, halfscreenwidth, screenheight))
-        print('looking for dest' + (dict[next_dest_var]))
+        print('looking for dest' + (destnum[next_dest_var]))
     if next_dest is not None:
         print('setting destination waypoint')
         (next_destx), (next_desty) = next_dest
-        pyautogui.moveTo(((next_destx) + (random.randint(-1, 200))), ((next_desty) + (random.randint(-3, 3))),
+        pyautogui.moveTo((next_destx + (random.randint(-1, 200))), (next_desty + (random.randint(-3, 3))),
                          mouse.move_time(), mouse.mouse_path())
         mouse.click_right()  # right click to open dropdown menu
         pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
                           mouse.move_time(), mouse.mouse_path())
         mouse.click()  # click set destination in drop down
-        set_dest_dyn_var = (dict[at_dest_num_dyn_var + 1])
+        set_dest_dyn_var = (destnum[at_dest_num_dyn_var + 1])
         return
-
 
 
 # check if ship has arrived back at its home station by looking for an entry in 'people and places' starting with 3 0's
@@ -251,11 +256,12 @@ def set_home():  # return to home station (has 000 in front of name in 'people a
     return
 
 
+'''
 # check if ship has arrived back at its destination by looking for a green entry in 'people and places'
 def at_dest1_check():
     global at_dest1_check_var
     at_dest1 = pyautogui.locateCenterOnScreen('at_dest1.bmp', confidence=conf,
-                                             region=(0, 0, halfscreenwidth, screenheight))
+                                              region=(0, 0, halfscreenwidth, screenheight))
     if at_dest1 is None:
         print('not at destination1 station')
         at_dest1_check_var = 0
@@ -280,7 +286,7 @@ def set_dest1():  # set station with 111 before name as destination in 'people a
         mouse.click()  # click set destination in drop down
         set_dest1_var = 1
         return
-    if dest1 is None: # if cannot locate name, then station must be blacklisted
+    if dest1 is None:  # if cannot locate name, then station must be blacklisted
         set_dest1_var = 0
         return
 
@@ -289,7 +295,7 @@ def set_dest1():  # set station with 111 before name as destination in 'people a
 def at_dest2_check():
     global at_dest2_check_var
     at_dest2 = pyautogui.locateCenterOnScreen('at_dest2.bmp', confidence=conf,
-                                             region=(0, 0, halfscreenwidth, screenheight))
+                                              region=(0, 0, halfscreenwidth, screenheight))
     if at_dest2 is None:
         print('not at destination2 station')
         at_dest2_check_var = 0
@@ -323,7 +329,7 @@ def set_dest2():  # set station with 222 before name as destination in 'people a
 def at_dest3_check():
     global at_dest3_check_var
     at_dest3 = pyautogui.locateCenterOnScreen('at_dest3.bmp', confidence=conf,
-                                             region=(0, 0, halfscreenwidth, screenheight))
+                                              region=(0, 0, halfscreenwidth, screenheight))
     if at_dest3 is None:
         print('not at destination3 station')
         at_dest3_check_var = 0
@@ -357,7 +363,7 @@ def set_dest3():  # set station with 333 before name as destination in 'people a
 def at_dest4_check():
     global at_dest4_check_var
     at_dest4 = pyautogui.locateCenterOnScreen('at_dest4.bmp', confidence=conf,
-                                             region=(0, 0, halfscreenwidth, screenheight))
+                                              region=(0, 0, halfscreenwidth, screenheight))
     if at_dest4 is None:
         print('not at destination4 station')
         at_dest4_check_var = 0
@@ -391,7 +397,7 @@ def set_dest4():  # set station with 444 before name as destination in 'people a
 def at_dest5_check():
     global at_dest5_check_var
     at_dest5 = pyautogui.locateCenterOnScreen('at_dest2.bmp', confidence=conf,
-                                             region=(0, 0, halfscreenwidth, screenheight))
+                                              region=(0, 0, halfscreenwidth, screenheight))
     if at_dest5 is None:
         print('not at destination5 station')
         at_dest5_check_var = 0
@@ -420,8 +426,8 @@ def set_dest5():  # set station with 555 before name as destination in 'people a
     if dest5 is None:
         set_dest5_var = 0
         return
-    
-    
+
+
 def blacklist_station():  # change location's name so ship doesn't return to it
     at_dest1_check()
     at_dest2_check()
@@ -543,7 +549,7 @@ def next_destination():  # set next destination based on station blacklist and c
     at_dest5_check()
     # check if at home
     if at_home_check_var == 1:
-        set_dest1() # set destination only if at home and station is not empty
+        set_dest1()  # set destination only if at home and station is not empty
         if set_dest1_var == 0:
             set_dest2()
             if set_dest2_var == 0:
@@ -609,3 +615,4 @@ def next_destination():  # set next destination based on station blacklist and c
                     if set_dest4_var == 0:
                         set_home()
                         return
+'''

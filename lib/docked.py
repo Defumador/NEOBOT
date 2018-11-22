@@ -1,5 +1,13 @@
-import sys, pyautogui, time, random, traceback
-from lib import mouse, keyboard
+import sys
+import time
+import ctypes
+import random
+import traceback
+
+import pyautogui
+
+from lib import mouse
+from lib import keyboard
 
 pyautogui.FAILSAFE = True  # force script to stop if move mouse into top left corner of screen
 sys.setrecursionlimit(100000)  # set high recursion limit for repeating functions
@@ -29,7 +37,6 @@ def open_cargo_hold():
         cargo_hold = pyautogui.locateCenterOnScreen('cargo_hold.bmp', confidence=conf)
     else:
         (cargo_holdx, cargo_holdy) = cargo_hold
-        # clicks the center of where the button was found
         pyautogui.moveTo((cargo_holdx + (random.randint(-4, 50))),
                          (cargo_holdy + (random.randint(-6, 6))),
                          mouse.move_time(), mouse.mouse_path())
@@ -47,7 +54,6 @@ def open_special_hold():
         special_hold = pyautogui.locateCenterOnScreen('special_hold.bmp', confidence=conf)
     else:
         (special_holdx, special_holdy) = special_hold
-        # clicks the center of where the button was found
         pyautogui.moveTo((special_holdx + (random.randint(-4, 50))),
                          (special_holdy + (random.randint(15, 30))),
                          mouse.move_time(), mouse.mouse_path())
@@ -64,7 +70,6 @@ def open_station_hangar():
         station_hangar = pyautogui.locateCenterOnScreen('station_hangar.bmp', confidence=conf)
     else:
         (station_hangarx, station_hangary) = station_hangar
-        # clicks the center of where the button was found
         pyautogui.moveTo((station_hangarx + (random.randint(-6, 50))),
                          (station_hangary + (random.randint(-6, 6))),
                          mouse.move_time(), mouse.mouse_path())
@@ -97,7 +102,7 @@ def look_for_items():
     global namefield_station_hangar
     time.sleep((random.randint(800, 1000) / 1000))
     no_items_station_hangar = pyautogui.locateCenterOnScreen('no_items_station_hangar.bmp',
-                                                                   confidence=.99)
+                                                             confidence=.99)
     if no_items_station_hangar is None:
         namefield_station_hangar = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
                                                                   confidence=conf)
@@ -107,36 +112,6 @@ def look_for_items():
         print('no more items')
         look_for_items_var = 0
         return
-
-    
-'''
-#look for 'name' column header in inventory window to indicate presence of items DEPRECATED ///////////////////////////
-def look_for_items_oldfunc():
-    print('looking for item(s) in hangar')
-    look_for_items_loop_num = 0
-    global namefield_station_hangar  # var must be global since it's used in other functions
-    global look_for_items_var  # return var must be global in order for other files to read it
-    namefield_station_hangar = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
-                                                                   confidence=conf)
-    while namefield_station_hangar is None and look_for_items_loop_num < 10:  # look for items at most 10 times
-        print('looking for item(s) in hangar ...x',look_for_items_loop_num)
-        look_for_items_loop_num += 1
-        namefield_station_hangar = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
-                                                                       confidence=conf)
-        if look_for_items_loop_num >= 10:  # if loop expires, break out of loop
-            break
-        elif namefield_station_hangar is not None:  # if found items while looping, return function
-            print('found item(s) in hangar')
-            look_for_items_var = 1
-            return
-    else:  # if found items on first loop, return function
-        print('found item(s) in hangar')
-        look_for_items_var = 1
-        return
-    print('no items in hangar')  # loop breaks to here
-    look_for_items_var = 0
-    return
-'''
 
 
 # look for drop-down arrow next to ship icon in station inventory window to determine if ship has special hold
@@ -156,8 +131,8 @@ def look_for_special_hold():
 def special_hold_warning():
     global special_hold_warning_var
     # special hold warning is partially transparent so confidence rating must be slightly lower than normal
-    special_hold_warning = pyautogui.locateCenterOnScreen('special_hold_warning.bmp', confidence=0.8)
-    if special_hold_warning is None:
+    special_hold_warning_popup = pyautogui.locateCenterOnScreen('special_hold_warning.bmp', confidence=0.8)
+    if special_hold_warning_popup is None:
         special_hold_warning_var = 0
         return
     else:
@@ -195,31 +170,63 @@ def not_enough_space_popup():
         return
 
 
+# obtain screen dimensions
 user32 = ctypes.windll.user32
 screenwidth = user32.GetSystemMetrics(0)
 screenheight = user32.GetSystemMetrics(1)
 halfscreenwidth = (int(screenwidth / 2))
 halfscreenheight = (int(screenheight / 2))
 
+
 # undock from station, look for undock button in right half of screen only
 def undock():
     print('began undocking procedure')
-    undock = pyautogui.locateCenterOnScreen('undock.bmp', confidence=conf)
-    if undock is None:
+    undock_button = pyautogui.locateCenterOnScreen('undock.bmp', confidence=conf)
+    if undock_button is None:
         print('cant find undock button')
         traceback.print_exc()
         traceback.print_stack()
         sys.exit()
-    elif undock is not None:
-        (undockx, undocky) = undock
-        # clicks the center of where the button was found
+    elif undock_button is not None:
+        (undockx, undocky) = undock_button
         pyautogui.moveTo((undockx + (random.randint(-25, 25))),
                          (undocky + (random.randint(-15, 15))),
                          mouse.move_time(), mouse.mouse_path())
         mouse.click()
         # move mouse away from button to prevent tooltips from blocking other buttons
-        pyautogui.moveTo((random.randint(0, (screenheight - 100))), (random.randint(0, ((screenwidth - 100) / 2))),
-                          mouse.move_time(), mouse.mouse_path())  
+        pyautogui.moveTo((random.randint(0, (screenheight - 100))),
+                         (random.randint(0, ((screenwidth - 100) / 2))),
+                         mouse.move_time(), mouse.mouse_path())
         # wait a semi-random period of time for undock to complete to mimic human behavior
         time.sleep((random.randint(100, 250) / 10))
         return
+
+
+'''
+#look for 'name' column header in inventory window to indicate presence of items DEPRECATED ///////////////////////////
+def look_for_items_oldfunc():
+    print('looking for item(s) in hangar')
+    look_for_items_loop_num = 0
+    global namefield_station_hangar  # var must be global since it's used in other functions
+    global look_for_items_var  # return var must be global in order for other files to read it
+    namefield_station_hangar = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
+                                                                   confidence=conf)
+    while namefield_station_hangar is None and look_for_items_loop_num < 10:  # look for items at most 10 times
+        print('looking for item(s) in hangar ...x',look_for_items_loop_num)
+        look_for_items_loop_num += 1
+        namefield_station_hangar = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
+                                                                       confidence=conf)
+        if look_for_items_loop_num >= 10:  # if loop expires, break out of loop
+            break
+        elif namefield_station_hangar is not None:  # if found items while looping, return function
+            print('found item(s) in hangar')
+            look_for_items_var = 1
+            return
+    else:  # if found items on first loop, return function
+        print('found item(s) in hangar')
+        look_for_items_var = 1
+        return
+    print('no items in hangar')  # loop breaks to here
+    look_for_items_var = 0
+    return
+'''
