@@ -40,18 +40,19 @@ def unload_ship():
     docked.open_cargo_hold()
     docked.look_for_items()
     if docked.look_for_items_var == 0:
+        # if no items in cargo hold, look for special hold
         docked.look_for_special_hold()
         if docked.look_for_special_hold_var == 1:
             # wait between 0 and 2s before actions for increased randomness
-            time.sleep((random.randint(0, 200)) / 100)
+            time.sleep(float(random.randint(0, 2000)) / 1000)
             docked.open_special_hold()
             docked.look_for_items()
             while docked.look_for_items_var == 1:
-                time.sleep((random.randint(0, 200)) / 100)
+                time.sleep(float(random.randint(0, 2000)) / 1000)
                 docked.focus_inventory_window()
-                time.sleep((random.randint(0, 200)) / 100)
+                time.sleep(float(random.randint(0, 2000)) / 1000)
                 keyboard.select_all()
-                time.sleep((random.randint(0, 200)) / 100)
+                time.sleep(float(random.randint(0, 2000)) / 1000)
                 drag_items_from_hold()
                 time.sleep(2)
                 docked.look_for_items()
@@ -70,9 +71,9 @@ def unload_ship():
             sys.exit()
     while docked.look_for_items_var == 1:
         docked.focus_inventory_window()
-        time.sleep((random.randint(0, 200)) / 100)
+        time.sleep(float(random.randint(0, 2000)) / 1000)
         keyboard.select_all()
-        time.sleep((random.randint(0, 200)) / 100)
+        time.sleep(float(random.randint(0, 2000)) / 1000)
         drag_items_from_hold()
         time.sleep(2)
         docked.look_for_special_hold()
@@ -82,9 +83,9 @@ def unload_ship():
         docked.look_for_items()
         while docked.look_for_items_var == 1:
             docked.focus_inventory_window()
-            time.sleep((random.randint(0, 200)) / 100)
+            time.sleep(float(random.randint(0, 2000)) / 1000)
             keyboard.select_all()
-            time.sleep((random.randint(0, 200)) / 100)
+            time.sleep(float(random.randint(0, 2000)) / 1000)
             drag_items_from_hold()
             time.sleep(2)
             docked.look_for_items()

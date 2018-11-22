@@ -100,7 +100,7 @@ def look_for_items():
     global no_items_station_hangar  # var must be global since it's used in other functions
     global look_for_items_var 
     global namefield_station_hangar
-    time.sleep((random.randint(800, 1000) / 1000))
+    time.sleep(float(random.randint(800, 1000)) / 1000)
     no_items_station_hangar = pyautogui.locateCenterOnScreen('no_items_station_hangar.bmp',
                                                              confidence=.99)
     if no_items_station_hangar is None:

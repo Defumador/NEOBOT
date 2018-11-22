@@ -43,7 +43,6 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
             print('found station waypoint')
             # separate x and y coordinates of location
             (station_waypointx, station_waypointy) = station_waypoint
-            # clicks the center of where the button was found
             pyautogui.moveTo((station_waypointx + (random.randint(-8, 220))),
                              (station_waypointy + (random.randint(-8, 8))),
                              mouse.move_time(), mouse.mouse_path())
@@ -55,7 +54,6 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
     if stargate_waypoint is not None and select_waypoint_look_num < 100:
         print('found stargate waypoint')
         (stargate_waypointx, stargate_waypointy) = stargate_waypoint
-        # clicks the center of where the button was found
         pyautogui.moveTo((stargate_waypointx + (random.randint(-8, 220))),
                          (stargate_waypointy + (random.randint(-8, 8))),
                          mouse.move_time(), mouse.mouse_path())
@@ -189,7 +187,7 @@ def blacklist_station():
     pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
                       mouse.move_time(), mouse.mouse_path())
     mouse.click()  # click edit location in drop down
-    time.sleep(1)
+    time.sleep(float(random.randint(1000, 3000)) / 1000)
     pyautogui.keyDown('home')
     time.sleep(float(random.randint(0, 3000)) / 1000)
     pyautogui.keyUp('home')

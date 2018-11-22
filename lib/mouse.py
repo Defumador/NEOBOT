@@ -8,7 +8,7 @@ pyautogui.FAILSAFE = True
 
 def click():  # click the mouse for a randomized period of time
     print('clicking')
-    time.sleep((random.randint(1, 20) / 10))
+    time.sleep(float(random.randint(0, 2000)) / 1000)
     pyautogui.click(duration=(random.randint(5, 20) / 10))
     print('done clicking')
     return
