@@ -1,5 +1,4 @@
-import sys, pyautogui, os, time, random, ctypes
-
+import pyautogui, time, random
 pyautogui.FAILSAFE = True
 
 

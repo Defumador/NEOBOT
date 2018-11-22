@@ -1,15 +1,18 @@
-import sys, pyautogui, os, time, random, ctypes, traceback
-from lib import mouse, keyboard, load_ship, unload_ship, while_docked, navigation
+import sys, pyautogui, traceback
+from lib import load_ship, unload_ship, while_docked, navigation
 
-sys.setrecursionlimit(100000)
+sys.setrecursionlimit(10000000)
 pyautogui.FAILSAFE = True
-pyautogui.PAUSE = 0.1
 
+
+'''
+navigation.set_dest_dyn()
+sys.exit()
+'''
 
 # begin script by checking if docked
 def traveler():
     while_docked.docked_check()
-    
     while while_docked.docked_check_var == 0:  # if not docked, travel through waypoints
         navigation.select_waypoint()
         while navigation.select_waypoint_var == 1:  # if found stargate waypoint (1 means stargate), warp and jump
@@ -34,18 +37,18 @@ def traveler():
             unload_ship.unload_ship()
             navigation.set_dest_dyn()
             while_docked.undock()  # undock from station and rerun 'while' loop
-            while_docked.docked_check()
+            traveler()
         elif navigation.at_home_check_var == 0:  # if at destination, set home as waypoint and load ship
             load_ship.load_ship()
             if load_ship.load_ship_var == 2:  # if ship has loaded station, move to next station
                 navigation.set_dest_dyn()
                 navigation.blacklist_station()
                 while_docked.undock()
-                while_docked.docked_check()
+                traveler()
             elif load_ship.load_ship_var == 1:  # if ship is full, return home to unload
                 navigation.set_home()
                 while_docked.undock()
-                while_docked.docked_check()
+                traveler()
         else:
             print('error with at_home_check and at_dest_check')
             traceback.print_exc()

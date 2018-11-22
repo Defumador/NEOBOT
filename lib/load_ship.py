@@ -1,5 +1,5 @@
-import sys, pyautogui, os, time, random, ctypes
-from lib import mouse, keyboard, while_docked, navigation
+import sys, pyautogui, time, random, traceback
+from lib import mouse, keyboard, while_docked
 
 pyautogui.FAILSAFE = True
 sys.setrecursionlimit(100000)

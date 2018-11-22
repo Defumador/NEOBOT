@@ -1,5 +1,5 @@
-import sys, pyautogui, os, time, random, ctypes
-from lib import mouse, keyboard, while_docked, load_ship
+import sys, pyautogui, time, random, traceback
+from lib import mouse, keyboard, while_docked
 
 pyautogui.FAILSAFE = True
 sys.setrecursionlimit(100000)
@@ -59,7 +59,6 @@ def unload_ship():
             traceback.print_exc()
             traceback.print_stack()
             sys.exit()
-            return
     while while_docked.look_for_items_var == 1:
         while_docked.focus_inventory_window()
         time.sleep((random.randint(0, 200)) / 100)

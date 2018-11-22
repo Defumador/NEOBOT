@@ -1,5 +1,5 @@
-import sys, pyautogui, os, time, random, ctypes, traceback
-from lib import mouse, keyboard, navigation
+import sys, pyautogui, time, random, traceback
+from lib import mouse, keyboard
 
 pyautogui.FAILSAFE = True  # force script to stop if move mouse into top left corner of screen
 sys.setrecursionlimit(100000)  # set high recursion limit for repeating functions
@@ -51,7 +51,6 @@ def open_special_hold():
         pyautogui.moveTo((special_holdx + (random.randint(-4, 50))),
                          (special_holdy + (random.randint(15, 30))),
                          mouse.move_time(), mouse.mouse_path())
-
         mouse.click()
         return
 
@@ -96,6 +95,7 @@ def look_for_items():
     global no_items_station_hangar  # var must be global since it's used in other functions
     global look_for_items_var 
     global namefield_station_hangar
+    time.sleep((random.randint(800, 1000) / 1000))
     no_items_station_hangar = pyautogui.locateCenterOnScreen('no_items_station_hangar.bmp',
                                                                    confidence=.99)
     if no_items_station_hangar is None:
@@ -110,7 +110,7 @@ def look_for_items():
 
     
 '''
-#look for 'name' column header in inventory window to indicate presence of items DEPRECATED
+#look for 'name' column header in inventory window to indicate presence of items DEPRECATED ///////////////////////////
 def look_for_items_oldfunc():
     print('looking for item(s) in hangar')
     look_for_items_loop_num = 0
@@ -195,6 +195,12 @@ def not_enough_space_popup():
         return
 
 
+user32 = ctypes.windll.user32
+screenwidth = user32.GetSystemMetrics(0)
+screenheight = user32.GetSystemMetrics(1)
+halfscreenwidth = (int(screenwidth / 2))
+halfscreenheight = (int(screenheight / 2))
+
 # undock from station, look for undock button in right half of screen only
 def undock():
     print('began undocking procedure')
@@ -212,8 +218,8 @@ def undock():
                          mouse.move_time(), mouse.mouse_path())
         mouse.click()
         # move mouse away from button to prevent tooltips from blocking other buttons
-        pyautogui.moveRel((-1 * (random.randint(200, 1000))), (random.randint(-600, 600)),
+        pyautogui.moveTo((random.randint(0, (screenheight - 100))), (random.randint(0, ((screenwidth - 100) / 2))),
                           mouse.move_time(), mouse.mouse_path())  
         # wait a semi-random period of time for undock to complete to mimic human behavior
-        time.sleep((random.randint(10, 250) / 10))
+        time.sleep((random.randint(100, 250) / 10))
         return

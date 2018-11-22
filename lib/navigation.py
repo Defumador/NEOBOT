@@ -1,5 +1,5 @@
-import sys, pyautogui, os, time, random, ctypes
-from lib import mouse, unload_ship, load_ship, while_docked
+import sys, pyautogui, time, random, ctypes
+from lib import mouse
 
 pyautogui.FAILSAFE = True
 sys.setrecursionlimit(100000)
@@ -66,15 +66,17 @@ def select_warp_button():  # locate jump button in selection box if stargate ico
     select_warp_button_loop_num = 0
     print('looking for warp buttons')
     # search right half of screen only
-    jump_button = pyautogui.locateCenterOnScreen('jump_button.bmp', confidence=0.85,
+    jump_button = pyautogui.locateCenterOnScreen('jump_button.bmp', confidence=conf,
                                                  region=(halfscreenwidth, 0, screenwidth, screenheight))
     while jump_button is None:
         print('cant find jump button')
-        dock_button = pyautogui.locateCenterOnScreen('dock_button.bmp', confidence=0.85,
+        dock_button = pyautogui.locateCenterOnScreen('dock_button.bmp', confidence=conf,
                                                      region=(halfscreenwidth, 0, screenwidth, screenheight))
         if dock_button is None:
             select_warp_button_loop_num += 1
             print('cant find dock button ...',select_warp_button_loop_num)
+            jump_button = pyautogui.locateCenterOnScreen('jump_button.bmp', confidence=conf,
+                                                         region=(halfscreenwidth, 0, screenwidth, screenheight))
         elif dock_button is not None:
             print('found dock button')
             (dock_buttonx, dock_buttony) = dock_button
@@ -117,7 +119,7 @@ def detect_dock_or_jump():  # check if client has docked or jumped
         print('waiting for jump or dock ...',detect_dock_or_jump_loop_num)
         time.sleep(3)
         # search bottom half of screen only
-        spedometer = pyautogui.locateCenterOnScreen('spedometer.bmp', confidence=0.97,
+        spedometer = pyautogui.locateCenterOnScreen('spedometer.bmp', confidence=0.98,
                                                     region=(0, halfscreenheight, screenwidth, screenheight))
         if spedometer is None:  # if jump is not detected, wait and rerun function
             undock_icon = pyautogui.locateCenterOnScreen('undock.bmp', confidence=conf,
@@ -127,7 +129,7 @@ def detect_dock_or_jump():  # check if client has docked or jumped
             print('jump detected')
             time.sleep(float(random.randint(2000, 5000)) / 1000)
             # double-check to make sure ship is not moving
-            spedometer = pyautogui.locateCenterOnScreen('spedometer.bmp', confidence=0.97,
+            spedometer = pyautogui.locateCenterOnScreen('spedometer.bmp', confidence=0.98,
                                                         region=(0, halfscreenheight, screenwidth, screenheight))
             if spedometer is None:
                 print('jump check denied -----------------------------------------')
@@ -143,60 +145,70 @@ def detect_dock_or_jump():  # check if client has docked or jumped
         return
 
 
-#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 #use a dictionary to dynamically grab destination names
-dict = {0:"0",1:"1",2:"2",3:"3",4:"4",5:"5"}
+dict = {0:"0",1:"1",2:"2",3:"3",4:"4",5:"5",6:"6",7:"7"}
          
 # figure out which destination station ship is at
 def at_dest_num_dyn():
-    n = 1
-    at_dest = pyautogui.locateCenterOnScreen(('at_dest' + dict[n]), confidence=conf,
+    global at_dest_num_dyn_var
+    n = 0
+    at_dest = pyautogui.locateCenterOnScreen(('at_dest' + (dict[n]) + '.bmp'), confidence=conf,
                                              region=(0, 0, halfscreenwidth, screenheight))
     while at_dest is None:
         n = n + 1
-        at_dest = pyautogui.locateCenterOnScreen(('at_dest' + dict[n]), confidence=conf,
+        at_dest = pyautogui.locateCenterOnScreen(('at_dest' + (dict[n]) + '.bmp'), confidence=conf,
                                              region=(0, 0, halfscreenwidth, screenheight))
         print('looking for destination' + (dict[n]))
+        if n > 4:
+            print('out of destinations to look for')
+            sys.exit()
     if at_dest is not None:
         print('at dest' + (dict[n]))
-        at_dest_check_dyn_var = n
-        return at_dest_check_dyn_var  # return number of station ship is docked in
+        at_dest_num_dyn_var = n
+        return at_dest_num_dyn_var  # return number of station ship is docked in
+
   
 
 # determine which station ship is in and blacklist it by editing its name
-def_blacklist_station()
-    at_dest_check_dyn()
-        print('blacklisting station')
-        dest = pyautogui.locateCenterOnScreen(('dest' + (dict[at_dest_check_dyn_var])), confidence=conf,
-                                               region=(0, 0, halfscreenwidth, screenheight))
-        (destx), (desty) = dest
-        pyautogui.moveTo(((destx) + (random.randint(-1, 200))), ((desty) + (random.randint(-3, 3))),
-                         mouse.move_time(), mouse.mouse_path())
-        mouse.click_right()  # right click to open dropdown menu
-        pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
-                          mouse.move_time(), mouse.mouse_path())
-        mouse.click()  # click edit location in drop down
-        time.sleep(1)
-        pyautogui.keyDown('home')
-        time.sleep(float(random.randint(0, 3000)) / 1000)
-        pyautogui.keyUp('home')
-        time.sleep(float(random.randint(0, 3000)) / 1000)
-        pyautogui.keyDown('e')  # an an 'e' to beginning of name indicating station is empty
-        pyautogui.keyUp('e')
-        time.sleep(float(random.randint(0, 3000)) / 1000)
-        pyautogui.keyDown('enter')
-        time.sleep((random.randint(0, 200)) / 100)
-        pyautogui.keyUp('enter')
-        return
-
-    
-# determine which station ship is currently at, then set destination one number higher
-def set_dest_dyn(): 
+def blacklist_station():
     at_dest_num_dyn()
-    next_dest = pyautogui.locateCenterOnScreen(('dest' + (dict[at_dest_check_dyn_var + 1])), confidence=conf,
+    print('blacklisting station')
+    dest = pyautogui.locateCenterOnScreen(('dest' + (dict[at_dest_num_dyn_var])), confidence=conf,
                                            region=(0, 0, halfscreenwidth, screenheight))
-    if next_dest is not None
+    (destx), (desty) = dest
+    pyautogui.moveTo(((destx) + (random.randint(-1, 200))), ((desty) + (random.randint(-3, 3))),
+                     mouse.move_time(), mouse.mouse_path())
+    mouse.click_right()  # right click to open dropdown menu
+    pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
+                      mouse.move_time(), mouse.mouse_path())
+    mouse.click()  # click edit location in drop down
+    time.sleep(1)
+    pyautogui.keyDown('home')
+    time.sleep(float(random.randint(0, 3000)) / 1000)
+    pyautogui.keyUp('home')
+    time.sleep(float(random.randint(0, 3000)) / 1000)
+    pyautogui.keyDown('e')  # an an 'e' to beginning of name indicating station is empty
+    pyautogui.keyUp('e')
+    time.sleep(float(random.randint(0, 3000)) / 1000)
+    pyautogui.keyDown('enter')
+    time.sleep((random.randint(0, 200)) / 100)
+    pyautogui.keyUp('enter')
+    return
+
+
+# determine which station ship is currently at, then set destination one number higher
+def set_dest_dyn():
+    at_dest_num_dyn()
+    next_dest = pyautogui.locateCenterOnScreen(('dest' + (dict[at_dest_num_dyn_var]) + '.bmp'), confidence=conf,
+                                           region=(0, 0, halfscreenwidth, screenheight))
+    next_dest_var = at_dest_num_dyn_var
+    while next_dest is None:
+        next_dest_var = next_dest_var + 1
+        next_dest = pyautogui.locateCenterOnScreen(('dest' + (dict[next_dest_var]) + '.bmp'), confidence=conf,
+                                                   region=(0, 0, halfscreenwidth, screenheight))
+        print('looking for dest' + (dict[next_dest_var]))
+    if next_dest is not None:
         print('setting destination waypoint')
         (next_destx), (next_desty) = next_dest
         pyautogui.moveTo(((next_destx) + (random.randint(-1, 200))), ((next_desty) + (random.randint(-3, 3))),
@@ -205,22 +217,16 @@ def set_dest_dyn():
         pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
                           mouse.move_time(), mouse.mouse_path())
         mouse.click()  # click set destination in drop down
-        set_dest_dyn_var = (dict[at_dest_check_dyn_var + 1])
+        set_dest_dyn_var = (dict[at_dest_num_dyn_var + 1])
         return
-    if next_dest is None
-        print('cant find next destination')
-        traceback.print_exc()
-        traceback.print_stack()
-        sys.exit()
-           
-#///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////  
-    
-    
+
+
+
 # check if ship has arrived back at its home station by looking for an entry in 'people and places' starting with 3 0's
 def at_home_check():
     # search left half of screen only
     global at_home_check_var
-    at_home = pyautogui.locateCenterOnScreen('at_home.bmp', confidence=conf,
+    at_home = pyautogui.locateCenterOnScreen('at_dest0.bmp', confidence=conf,
                                              region=(0, 0, halfscreenwidth, screenheight))
     if at_home is None:
         at_home_check_var = 0
@@ -233,7 +239,7 @@ def at_home_check():
 
 def set_home():  # return to home station (has 000 in front of name in 'people and places')
     print('setting home waypoint')
-    home = pyautogui.locateCenterOnScreen('home.bmp', confidence=conf,
+    home = pyautogui.locateCenterOnScreen('dest0.bmp', confidence=conf,
                                           region=(0, 0, halfscreenwidth, screenheight))
     (homex, homey) = home
     pyautogui.moveTo((homex + (random.randint(-1, 200))), (homey + (random.randint(-3, 3))),
