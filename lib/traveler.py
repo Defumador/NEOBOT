@@ -49,14 +49,14 @@ def traveler():
         if navigation.at_home_check_var == 1:
             # if at home station, set destination waypoint and unload cargo from ship
             unload_ship.unload_ship()
-            navigation.set_dest_dyn()
+            navigation.set_dest()
             docked.undock()
             traveler()
         elif navigation.at_home_check_var == 0:
             load_ship.load_ship()
             if load_ship.load_ship_var == 2:
                 # if ship has loaded station, move to next station
-                navigation.set_dest_dyn()
+                navigation.set_dest()
                 navigation.blacklist_station()
                 docked.undock()
                 traveler()

@@ -156,13 +156,13 @@ destnum = {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7"}
 
 # figure out which destination station ship is at
 def at_dest_num_dyn():
-    global at_dest_num_dyn_var
+    global at_dest_num_var
     n = 0
-    at_dest = pyautogui.locateCenterOnScreen(('./dest/at_dest' + (destnum[n]) + '.bmp'), confidence=conf,
+    at_dest = pyautogui.locateCenterOnScreen(('./img/dest/at_dest' + (destnum[n]) + '.bmp'), confidence=conf,
                                              region=(0, 0, halfscreenwidth, screenheight))
     while at_dest is None:
         n = n + 1
-        at_dest = pyautogui.locateCenterOnScreen(('./dest/at_dest' + (destnum[n]) + '.bmp'), confidence=conf,
+        at_dest = pyautogui.locateCenterOnScreen(('./img/dest/at_dest' + (destnum[n]) + '.bmp'), confidence=conf,
                                                  region=(0, 0, halfscreenwidth, screenheight))
         print('looking for destination' + (destnum[n]))
         if n > 4:
@@ -170,15 +170,15 @@ def at_dest_num_dyn():
             sys.exit()
     if at_dest is not None:
         print('at dest' + (destnum[n]))
-        at_dest_num_dyn_var = n
-        return at_dest_num_dyn_var  # return number of station ship is docked in
+        at_dest_num_var = n
+        return at_dest_num_var  # return number of station ship is docked in
 
 
 # determine which station ship is in and blacklist it by editing its name
 def blacklist_station():
     at_dest_num_dyn()
     print('blacklisting station')
-    dest = pyautogui.locateCenterOnScreen(('./dest/dest' + (destnum[at_dest_num_dyn_var])), confidence=conf,
+    dest = pyautogui.locateCenterOnScreen(('./img/dest/dest' + (destnum[at_dest_num_var])), confidence=conf,
                                           region=(0, 0, halfscreenwidth, screenheight))
     (destx), (desty) = dest
     pyautogui.moveTo((destx + (random.randint(-1, 200))), (desty + (random.randint(-3, 3))),
@@ -202,14 +202,16 @@ def blacklist_station():
 
 
 # determine which station ship is currently at, then set destination one number higher
-def set_dest_dyn():
+def set_dest():
     at_dest_num_dyn()
-    next_dest = pyautogui.locateCenterOnScreen(('./dest/dest' + (destnum[at_dest_num_dyn_var]) + '.bmp'), confidence=conf,
+    next_dest = pyautogui.locateCenterOnScreen(('./img/dest/dest' + (destnum[at_dest_num_var + 1]) + '.bmp'),
+                                               confidence=conf,
                                                region=(0, 0, halfscreenwidth, screenheight))
-    next_dest_var = at_dest_num_dyn_var
+    next_dest_var = (at_dest_num_var + 1)
     while next_dest is None:
         next_dest_var = next_dest_var + 1
-        next_dest = pyautogui.locateCenterOnScreen(('./dest/dest' + (destnum[next_dest_var]) + '.bmp'), confidence=conf,
+        next_dest = pyautogui.locateCenterOnScreen(('./img/dest/dest' + (destnum[next_dest_var]) + '.bmp'),
+                                                   confidence=conf,
                                                    region=(0, 0, halfscreenwidth, screenheight))
         print('looking for dest' + (destnum[next_dest_var]))
     if next_dest is not None:
@@ -221,7 +223,7 @@ def set_dest_dyn():
         pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
                           mouse.move_time(), mouse.mouse_path())
         mouse.click()  # click set destination in drop down
-        set_dest_dyn_var = (destnum[at_dest_num_dyn_var + 1])
+        set_dest_dyn_var = (destnum[at_dest_num_var + 1])
         return
 
 
@@ -229,7 +231,7 @@ def set_dest_dyn():
 def at_home_check():
     # search left half of screen only
     global at_home_check_var
-    at_home = pyautogui.locateCenterOnScreen('./dest/at_dest0.bmp', confidence=conf,
+    at_home = pyautogui.locateCenterOnScreen('./img/dest/at_dest0.bmp', confidence=conf,
                                              region=(0, 0, halfscreenwidth, screenheight))
     if at_home is None:
         at_home_check_var = 0
@@ -242,7 +244,7 @@ def at_home_check():
 
 def set_home():  # return to home station (has 000 in front of name in 'people and places')
     print('setting home waypoint')
-    home = pyautogui.locateCenterOnScreen('./dest/dest0.bmp', confidence=conf,
+    home = pyautogui.locateCenterOnScreen('./img/dest/dest0.bmp', confidence=conf,
                                           region=(0, 0, halfscreenwidth, screenheight))
     (homex, homey) = home
     pyautogui.moveTo((homex + (random.randint(-1, 200))), (homey + (random.randint(-3, 3))),
