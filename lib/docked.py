@@ -6,8 +6,8 @@ import traceback
 
 import pyautogui
 
-from lib import mouse
-from lib import keyboard
+from . import mouse
+from . import keyboard
 
 pyautogui.FAILSAFE = True  # force script to stop if move mouse into top left corner of screen
 sys.setrecursionlimit(100000)  # set high recursion limit for repeating functions
@@ -16,16 +16,13 @@ conf = 0.95  # set default confidence value for imagesearch
 
 # check if ship is docked
 def docked_check():
-    global docked_check_var
     undock_icon = pyautogui.locateCenterOnScreen('./img/undock.bmp', confidence=conf)
     if undock_icon is None:
         print('not docked')
-        docked_check_var = 0
-        return
+        return 0
     elif undock_icon is not None:
         print('docked')
-        docked_check_var = 1
-        return
+        return 1
 
 
 # click on ship cargo hold button in inventory window while docked
@@ -98,7 +95,6 @@ def focus_inventory_window():
 # look at the bottom-right corner of station inventory window to determine if '0 items found' appears
 def look_for_items():
     global no_items_station_hangar  # var must be global since it's used in other functions
-    global look_for_items_var 
     global namefield_station_hangar
     time.sleep(float(random.randint(800, 1000)) / 1000)
     no_items_station_hangar = pyautogui.locateCenterOnScreen('./img/no_items_station_hangar.bmp',
@@ -106,68 +102,54 @@ def look_for_items():
     if no_items_station_hangar is None:
         namefield_station_hangar = pyautogui.locateCenterOnScreen('./img/namefield_station_hangar.bmp',
                                                                   confidence=conf)
-        look_for_items_var = 1
-        return
+        return 1
     elif no_items_station_hangar is not None:
         print('no more items')
-        look_for_items_var = 0
-        return
+        return 0
 
 
 # look for drop-down arrow next to ship icon in station inventory window to determine if ship has special hold
 def look_for_special_hold():
-    global look_for_special_hold_var
     special_hold = pyautogui.locateCenterOnScreen('./img/special_hold.bmp', confidence=conf)
     if special_hold is None:
-        look_for_special_hold_var = 0
-        return
+        return 0
     else:
         print('found special hold')
-        look_for_special_hold_var = 1
-        return
+        return 1
 
 
 # look for warning indicating selected items aren't compatible with ship's special hold 
 def special_hold_warning():
-    global special_hold_warning_var
     # special hold warning is partially transparent so confidence rating must be slightly lower than normal
     special_hold_warning_popup = pyautogui.locateCenterOnScreen('./img/special_hold_warning.bmp', confidence=0.8)
     if special_hold_warning_popup is None:
-        special_hold_warning_var = 0
-        return
+        return 0
     else:
         print('detected special hold warning')
-        special_hold_warning_var = 1
-        return
+        return 1
 
 
 # check if 'set quantity' popup appears indicating not enough space in cargo hold for full item stack
 def set_quantity_popup():
-    global set_quantity_popup_var
     set_quantity = \
         pyautogui.locateCenterOnScreen('./img/set_quantity.bmp', confidence=conf)
     if set_quantity is None:
-        set_quantity_popup_var = 0
-        return
+        return 0
     else:
         print('found set quantity popup')
         keyboard.enter() 
-        set_quantity_popup_var = 1
-        return
+        return 1
 
 
 # check if 'not enough space' popup appears indicating not all item stacks will fit into hold or hold is already full
 def not_enough_space_popup():
-    global not_enough_space_popup_var
     not_enough_space = pyautogui.locateCenterOnScreen('./img/not_enough_space.bmp', confidence=conf)
     if not_enough_space is None:
-        not_enough_space_popup_var = 0
-        return
+        return 0
     else:
         print('found not enough space popup')
         keyboard.enter()  
-        not_enough_space_popup_var = 1
-        return
+        return 1
 
 
 # obtain screen dimensions

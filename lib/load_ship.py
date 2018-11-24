@@ -34,7 +34,7 @@ def drag_items_to_cargo_hold():
                                                         confidence=conf)
         # if found icons, click on first item in station hangar and drag mouse to ship cargo hold
         if cargo_hold is not None:
-            (namefield_station_hangarx, namefield_station_hangary) = docked.namefield_station_hangar
+            (namefield_station_hangarx, namefield_station_hangary) = namefield_station_hangar
             (ship_cargo_holdx, ship_cargo_holdy) = cargo_hold
             pyautogui.moveTo((namefield_station_hangarx + (random.randint(-5, 250))),
                              (namefield_station_hangary + (random.randint(10, 25))),
@@ -71,7 +71,6 @@ def drag_items_to_special_hold():
             pyautogui.moveTo((namefield_station_hangarx + (random.randint(-5, 250))),
                              (namefield_station_hangary + (random.randint(10, 25))),
                              mouse.move_time(), mouse.mouse_path())
-            # wait up to 1 second before clicking, divide by 1000 to convert from miliseconds to seconds
             pyautogui.mouseDown()
             pyautogui.moveTo((cargo_holdx + (random.randint(-15, 40))),
                              (cargo_holdy + (random.randint(14, 24))),
@@ -82,148 +81,142 @@ def drag_items_to_special_hold():
 
 def load_ship_bulk():  # load ship by selecting all item stacks and moving them all at once
     print('beginning bulk loading procedure')
-    global load_ship_bulk_var
-    docked.open_station_hangar()
-    docked.look_for_items()
+    ##docked.open_station_hangar()
+    items = docked.look_for_items()
 
-    if docked.look_for_items_var == 0:
-        load_ship_bulk_var = 0  # 0 indicating station is already empty
-        return
+    if items is None:
+        return 0
 
-    elif docked.look_for_items_var == 1:
+    elif items == 1:
         docked.focus_inventory_window()
         keyboard.select_all()
         drag_items_to_cargo_hold()
-        # after moving stack to cargo hold, look for warnings
-        time.sleep(2)
-        docked.not_enough_space_popup()
-        docked.set_quantity_popup()
-        # if no warnings, keep moving items
-        if docked.not_enough_space_popup_var == 0 and docked.set_quantity_popup_var == 0:
-            load_ship_bulk_var = 2  # 2 indicating ship is full and hangar is completley empty
-            return
+        time.sleep(2)  # after moving stack to cargo hold, wait and look for warnings
+        nospace = docked.not_enough_space_popup()
+        setquant = docked.set_quantity_popup()
 
-        # if warning appears, look for additional cargo hold
-        else:
-            docked.look_for_special_hold()
-            if docked.look_for_special_hold_var == 1:
+        if nospace == 0 and setquant == 0:
+            print('no warnings')
+            return 2  # 2 indicating ship is loaded and hangar is completley empty
+
+        else:  # if warning appears, look for additional cargo hold
+            specialhold = docked.look_for_special_hold()
+            if specialhold == 1:
                 docked.focus_inventory_window()
                 keyboard.select_all()
                 drag_items_to_special_hold()
                 time.sleep(2)
-                docked.special_hold_warning()
+                specialholdwarning = docked.special_hold_warning()
                 docked.set_quantity_popup()
                 docked.not_enough_space_popup()
 
-                if docked.special_hold_warning_var == 0 and docked.set_quantity_popup_var == 0 \
-                        and docked.not_enough_space_popup_var == 0:
-                    docked.look_for_items()
-                    if docked.look_for_items_var == 0:
-                        load_ship_bulk_var = 2  # 2 indicating ship is full and hangar is completley empty
-                        return
+                if specialholdwarning == 0 and setquant == 0 and nospace == 0:
+                    docked.look_for_items()  # if no warnings, look for more items
+                    if items == 0:
+                        return 2
                     else:
                         print('more items remaining')
-                        load_ship_bulk_var = 0  # 0 indicating ship cannot be fully loaded in bulk
-                        return
+                        return 0
 
-                elif docked.special_hold_warning_var == 0 and docked.set_quantity_popup_var == 1 \
-                        and docked.not_enough_space_popup_var == 0:
-                    load_ship_bulk_var = 1  # 1 indicating ship is full but more items remain in hangar
-                    return
+                elif specialholdwarning == 0 and setquant == 1 and nospace == 0:
+                    return 1
 
-                # if warning appears, try loading items individually
-                else:
-                    load_ship_bulk_var = 0  # 0 indicating ship cannot be fully loaded in bulk
+                else:  # if warning appears, try loading items individually
+                    return 0  # 0 indicating ship cannot be fully loaded in bulk
+            else:
+                return 1
     return
 
 
 # load ship one item stack at a time
 def load_ship_individually():
     print('beginning individual loading procedure')
-    global load_ship_individually_var
     docked.open_station_hangar()
-    docked.look_for_items()
-    if docked.look_for_items_var == 0:
-        load_ship_individually_var = 2  # 2 indicating ship is full and hangar is completley empty
-        return
+    items = docked.look_for_items()
 
-    elif docked.look_for_items_var == 1:
+    if items is None:
+        return 2  # 2 indicating ship is loaded and hangar is completley empty
+
+    elif items == 1:
         docked.focus_inventory_window()
         drag_items_to_cargo_hold()
         time.sleep(2)
-        docked.not_enough_space_popup()
-        docked.set_quantity_popup()
+        nospace = docked.not_enough_space_popup()
+        setquant = docked.set_quantity_popup()
         docked.look_for_items()
 
-        while docked.not_enough_space_popup_var == 0 and docked.set_quantity_popup_var == 0 \
-                and docked.look_for_items_var == 1:
-            # if no warnings, keep moving items
-            drag_items_to_cargo_hold()
+        while nospace == 0 and setquant == 0 and items == 1:
+            drag_items_to_cargo_hold()  # if no warnings, keep moving items
             time.sleep(2)
             docked.not_enough_space_popup()
             docked.set_quantity_popup()
             docked.look_for_items()
-        if docked.not_enough_space_popup_var == 0 and docked.set_quantity_popup_var == 0 \
-                and docked.look_for_items_var == 0:
-            load_ship_individually_var = 2  # 2 indicating ship is full and hangar is completley empty
-            print('done loading main hold')
-            return
 
-        elif (docked.not_enough_space_popup_var == 1 or docked.set_quantity_popup_var == 1) \
-                and docked.look_for_items_var == 1:  # if warning appears, look for additional cargo hold
-            docked.look_for_special_hold()
-            if docked.look_for_special_hold_var == 1:
+        if nospace == 0 and setquant == 0 and items == 0:
+            print('done loading main hold')
+            return 2  # 2 indicating ship is loaded and hangar is completley empty
+
+        # if warning appears but items are still present, look for additional cargo hold
+        elif (nospace == 1 or setquant == 1) and items == 1:
+            specialhold = docked.look_for_special_hold()
+
+            if specialhold == 1:
                 drag_items_to_special_hold()
                 time.sleep(2)
-                docked.special_hold_warning()
+                specialholdwarning = docked.special_hold_warning()
                 docked.set_quantity_popup()
                 docked.not_enough_space_popup()
                 docked.look_for_items()
 
-                while docked.special_hold_warning_var == 0 and docked.set_quantity_popup_var == 0 \
-                        and docked.not_enough_space_popup_var == 0 and docked.look_for_items_var == 1:
-                    # if no warnings, keep moving items to special hold
+                # if no warnings, keep moving items to special hold
+                while specialholdwarning == 0 and setquant == 0 and nospace == 0 and items == 1:
                     drag_items_to_special_hold()
                     time.sleep(2)
                     docked.special_hold_warning()
                     docked.set_quantity_popup()
                     docked.not_enough_space_popup()
                     docked.look_for_items()
-                if docked.look_for_items_var == 0:
-                    load_ship_individually_var = 2  # 2 indicating ship is full and hangar is completley empty
-                    print('done loading special hold')
-                    return
 
-                elif docked.special_hold_warning_var == 1 or docked.set_quantity_popup_var == 1 \
-                        or docked.not_enough_space_popup_var == 1:
-                    load_ship_individually_var = 1  # 1 indicating ship is full but more items remain in hangar
-                    return
+                if items is None:
+                    print('done loading special hold')
+                    return 2
+
+                elif specialholdwarning == 1 or setquant == 1 or nospace == 1:
+                    return 1  # 1 indicating ship is full but more items remain in hangar
         else:
-            load_ship_individually_var = 1  # 1 indicating ship is full but more items remain in hangar
-            return
+            return 1  # 1 indicating ship is full but more items remain in hangar
     return
 
 
 # use both individual and bulk functions to load ship
 def load_ship():
-    global load_ship_var
-    load_ship_bulk()
-    if load_ship_bulk_var == 2:
-        load_ship_var = 2  # 2 indicating ship is full and hangar is completley empty
-        print('ship loaded entire hangar')
-        return
-    elif load_ship_bulk_var == 1:
-        load_ship_var = 1  # 2 indicating ship is full and hangar is completley empty
-        print('ship is full but hangar has more items')
-        return
-
-    elif load_ship_bulk_var == 0:
-        load_ship_individually()
-        if load_ship_individually_var == 2:
+    docked.open_station_hangar()
+    items = docked.look_for_items()
+    if items == 1:
+        lsb = load_ship_bulk()
+        if lsb == 2:
             print('ship loaded entire hangar')
-            load_ship_var = 2  # 2 indicating ship is full and hangar is completley empty
-            return
-        elif load_ship_individually_var == 1:
-            print('ship full but more items remain')
-            load_ship_var = 1  # 1 indicating ship is full but hangar still has more items
-            return
+            return 2
+        elif lsb == 1:
+            print('ship is full and hangar has more items')
+            return 1
+
+        elif lsb == 0:  # 0 indicating ship cannot be fully loaded in bulk
+            lsi = load_ship_individually()
+            if lsi == 2:
+                print('ship loaded entire hangar')
+                return 2
+            elif lsi == 1:
+                print('ship is full and hangar has more items')
+                return 1
+    elif items == 0:
+        return 0
+
+
+
+
+
+
+
+
+
