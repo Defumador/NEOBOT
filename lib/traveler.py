@@ -1,5 +1,6 @@
 import sys
 import traceback
+import time
 
 import pyautogui
 
@@ -27,15 +28,14 @@ def traveler():
     dockedcheck = docked.docked_check()
     while dockedcheck == 0:
         # if not docked, travel through waypoints
-        selectwaypoint = navigation.select_waypoint()
+        selectwaypoint = navigation.select_waypoint_warp_hotkey()
         while selectwaypoint == 1:
-            navigation.select_warp_button()  # if found stargate waypoint (1 means stargate), warp and jump
+            time.sleep(5)  # wait for warp to start
             detectjump = navigation.detect_jump()
-            if detectjump == 1:
-                selectwaypoint = navigation.select_waypoint()  # if jump detected, look for next waypoint and warp
-                print('here 1', selectwaypoint)
+            if detectjump == 1:  # if jump detected, look for next waypoint and warp
+                selectwaypoint = navigation.select_waypoint_warp_hotkey()
         while selectwaypoint == 2:
-            navigation.select_warp_button()
+            time.sleep(5)
             detectdock = navigation.detect_dock()
             if detectdock == 1:
                 # if dock detected (2 means dock found), load ship (rerun 'while' loop)

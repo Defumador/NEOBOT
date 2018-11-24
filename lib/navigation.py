@@ -20,7 +20,7 @@ halfscreenwidth = (int(screenwidth / 2))
 halfscreenheight = (int(screenheight / 2))
 
 
-def select_waypoint():  # click on current waypoint in overview by looking for either station or stargate icons
+def select_waypoint_warp_hotkey():  # click on current waypoint and hold down warp hotkey to warp to waypoint
     # look for station icon
     print('looking for waypoints')
     select_waypoint_look_num = 0
@@ -44,6 +44,54 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
             # separate x and y coordinates of location
             (station_waypointx, station_waypointy) = station_waypoint
             pyautogui.moveTo((station_waypointx + (random.randint(-8, 220))),
+                             (station_waypointy + (random.randint(-8, 8))),
+                             mouse.move_time(), mouse.mouse_path())
+            pyautogui.keyDown('d')  # hotkey to hold down to warp when clicking on waypoint in overview
+            time.sleep(float(random.randint(200, 1000)) / 1000)
+            mouse.click()
+            pyautogui.keyUp('d')
+            return 2
+    # check if stargate waypoint was found before loop expired
+    if stargate_waypoint is not None and select_waypoint_look_num < 100:
+        print('found stargate waypoint')
+        (stargate_waypointx, stargate_waypointy) = stargate_waypoint
+        pyautogui.moveTo((stargate_waypointx + (random.randint(-8, 220))),
+                         (stargate_waypointy + (random.randint(-8, 8))),
+                         mouse.move_time(), mouse.mouse_path())
+        pyautogui.keyDown('d')
+        time.sleep(float(random.randint(200, 1000)) / 1000)
+        mouse.click()
+        pyautogui.keyUp('d')
+        return 1
+    else:  # loop breaks to here
+        print('cant find waypoints')
+        return -1
+
+
+def select_waypoint():  # click on current waypoint in overview by looking for either station or stargate icons
+    # look for station icon
+    print('looking for waypoints')
+    select_waypoint_look_num = 0
+    # search right half of screen only for stargate icon
+    stargate_waypoint = pyautogui.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
+                                                       region=(halfscreenwidth, 0, screenwidth, screenheight))
+    while stargate_waypoint is None and select_waypoint_look_num < 100:  # search for waypoints up to 100 times
+        select_waypoint_look_num += 1
+        # if stargate waypoint not found, look for station waypoint
+        station_waypoint = pyautogui.locateCenterOnScreen('./img/station_waypoint.bmp', confidence=0.96,
+                                                          region=(halfscreenwidth, 0, screenwidth, screenheight))
+        # if station waypoint not found, look for stargate waypoint again and restart loop
+        if station_waypoint is None:
+            stargate_waypoint = pyautogui.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
+                                                               region=(halfscreenwidth, 0, screenwidth, screenheight))
+            print('looking waypoints ...', select_waypoint_look_num)
+            time.sleep(3)
+            continue
+        elif station_waypoint is not None:
+            print('found station waypoint')
+            # separate x and y coordinates of location
+            (station_waypointx, station_waypointy) = station_waypoint
+            pyautogui.moveTo((station_waypointx + (random.randint(0, 230))),
                              (station_waypointy + (random.randint(-8, 8))),
                              mouse.move_time(), mouse.mouse_path())
             time.sleep(float(random.randint(0, 1000)) / 1000)
@@ -110,28 +158,20 @@ def select_warp_button():  # locate jump button in selection box if stargate ico
 
 def detect_jump():
     detect_jump_loop_num = 0
-    spedometer = pyautogui.locateCenterOnScreen('./img/spedometer.bmp', confidence=0.92,
-                                                region=(0, halfscreenheight, screenwidth, screenheight))
-    while spedometer is None and detect_jump_loop_num < 55:
+    spedometer = pyautogui.locateCenterOnScreen('./img/session_change.bmp', confidence=0.5,
+                                                region=(0, 0, (int(screenwidth / 4)), screenheight))
+    while spedometer is None and detect_jump_loop_num < 150:
         detect_jump_loop_num += 1
         print('waiting for jump...', detect_jump_loop_num)
-        time.sleep(3)
+        time.sleep(2)
         # search bottom half of screen only
-        spedometer = pyautogui.locateCenterOnScreen('./img/spedometer.bmp', confidence=0.92,
-                                                    region=(0, halfscreenheight, screenwidth, screenheight))
-    if spedometer is not None and detect_jump_loop_num < 55:
+        spedometer = pyautogui.locateCenterOnScreen('./img/session_change.bmp', confidence=0.5,
+                                                    region=(0, 0, (int(screenwidth / 4)), screenheight))
+    if spedometer is not None and detect_jump_loop_num < 150:
         # if jump detected, warp to next waypoint
         print('jump detected')
         time.sleep(2)
-        # double-check to make sure ship is not moving
-        spedometer = pyautogui.locateCenterOnScreen('./img/spedometer.bmp', confidence=0.92,
-                                                    region=(0, halfscreenheight, screenwidth, screenheight))
-        if spedometer is None:
-            print('jump check denied -----------------------------------------')
-            detect_jump()
-        else:
-            print('jump confirmed')
-            return 1
+        return 1
     else:
         print('timed out looking for jump')
         traceback.print_stack()
