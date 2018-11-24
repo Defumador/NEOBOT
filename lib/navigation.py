@@ -112,6 +112,7 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
         return -1
 
 
+''' DEPRECATED ////////////////////////////////////////////////////////////////////////////////////////////////////////
 def select_warp_button():  # locate jump button in selection box if stargate icon was found
     select_warp_button_loop_num = 0
     print('looking for warp buttons')
@@ -154,6 +155,7 @@ def select_warp_button():  # locate jump button in selection box if stargate ico
         print('warping to gate')
         time.sleep(10)  # wait for warp to start before starting to search for new waypoints
         return
+'''  # DEPRECATED //////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 def detect_jump():

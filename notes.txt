@@ -1,7 +1,7 @@
 
-variables are writted in a single word, functions have underscores if multiple words
-variable: dockedcheck
-function: docked_check
+#variables are writted in a single word, functions have underscores if multiple words
+#variable: dockedcheck
+#function: docked_check
 
 rename traveller to hauler
 add image recognition for yellow-highlighted entries in people & places
@@ -14,5 +14,3 @@ sometimes when attempting to edit location, 'label' field isn't highlighted/focu
 features:
 if cant find waypoint after 100 tries, logoff --> or re-dock into the station ship just exited from by searching
     center of screen for dock icon
-
-remove need to click warp buttons on selection box, just hold down D hotkey while selecting station/gate in overview
