@@ -6,8 +6,8 @@ import traceback
 
 import pyautogui
 
-from . import mouse
-from . import keyboard
+from lib import mouse
+from lib import keyboard
 
 pyautogui.FAILSAFE = True  # force script to stop if move mouse into top left corner of screen
 sys.setrecursionlimit(100000)  # set high recursion limit for repeating functions
@@ -77,7 +77,6 @@ def open_station_hangar():
 # click inside the station inventory window to focus it before any items are selected
 def focus_inventory_window():  
     # look for sorting buttons in top right corner of inventory window and offset mouse
-    print('focusing inventory window')
     sorting_station_hangar = pyautogui.locateCenterOnScreen('./img/sorting_station_hangar.bmp', confidence=conf)
     while sorting_station_hangar is None:
         print('cant find sorting icon')
@@ -182,33 +181,3 @@ def undock():
         # wait a semi-random period of time for undock to complete to mimic human behavior
         time.sleep((random.randint(100, 250) / 10))
         return
-
-
-'''
-#look for 'name' column header in inventory window to indicate presence of items DEPRECATED ///////////////////////////
-def look_for_items_oldfunc():
-    print('looking for item(s) in hangar')
-    look_for_items_loop_num = 0
-    global namefield_station_hangar  # var must be global since it's used in other functions
-    global look_for_items_var  # return var must be global in order for other files to read it
-    namefield_station_hangar = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
-                                                                   confidence=conf)
-    while namefield_station_hangar is None and look_for_items_loop_num < 10:  # look for items at most 10 times
-        print('looking for item(s) in hangar ...x',look_for_items_loop_num)
-        look_for_items_loop_num += 1
-        namefield_station_hangar = pyautogui.locateCenterOnScreen('namefield_station_hangar.bmp',
-                                                                       confidence=conf)
-        if look_for_items_loop_num >= 10:  # if loop expires, break out of loop
-            break
-        elif namefield_station_hangar is not None:  # if found items while looping, return function
-            print('found item(s) in hangar')
-            look_for_items_var = 1
-            return
-    else:  # if found items on first loop, return function
-        print('found item(s) in hangar')
-        look_for_items_var = 1
-        return
-    print('no items in hangar')  # loop breaks to here
-    look_for_items_var = 0
-    return
-'''

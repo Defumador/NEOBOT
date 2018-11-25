@@ -81,7 +81,6 @@ def drag_items_to_special_hold():
 
 def load_ship_bulk():  # load ship by selecting all item stacks and moving them all at once
     print('beginning bulk loading procedure')
-    ##docked.open_station_hangar()
     items = docked.look_for_items()
 
     if items is None:

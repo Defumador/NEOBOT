@@ -52,10 +52,9 @@ def wtz_autopilot():  # warp-to-zero autopilot, no fancy loading/unloading behav
         dockedcheck = docked.docked_check()
 
 
-def traveler(): # begin script by checking if docked
+def traveler():  # begin script by checking if docked
     dockedcheck = docked.docked_check()
-    while dockedcheck == 0:
-        # if not docked, travel through waypoints
+    while dockedcheck == 0:  # if not docked, travel through waypoints
         selectwaypoint = navigation.select_waypoint_warp_hotkey()
         while selectwaypoint == 1:
             time.sleep(5)  # wait for warp to start
@@ -65,20 +64,17 @@ def traveler(): # begin script by checking if docked
         while selectwaypoint == 2:
             time.sleep(5)
             detectdock = navigation.detect_dock()
-            if detectdock == 1:
-                # if dock detected (2 means dock found), load ship (rerun 'while' loop)
-                traveler()
+            if detectdock == 1:  # if dock detected (2 means dock found), load ship (rerun 'while' loop)
+                selectwaypoint = navigation.select_waypoint_warp_hotkey()
         else:
             print('error with at_dest_check_var and at_home_check_var')
             traceback.print_exc()
             traceback.print_stack()
             sys.exit()
 
-    while dockedcheck == 1:
-        # if docked, check if at home station
+    while dockedcheck == 1:  # if docked, check if at home station
         athomecheck = navigation.at_home_check()
-        if athomecheck == 1:
-            # if at home station, set destination waypoint and unload cargo from ship
+        if athomecheck == 1:  # if at home station, set destination waypoint and unload cargo from ship
             unload_ship.unload_ship()
             navigation.set_dest()
             docked.undock()
@@ -88,7 +84,6 @@ def traveler(): # begin script by checking if docked
             loadship = load_ship.load_ship()
             print('loadship is', loadship)
             if loadship == 2 or loadship == 0 or loadship is None:
-                # if ship not at recognizable station, undock and continue
                 atdestnum = navigation.at_dest_num()
                 if atdestnum == -1:
                     docked.undock()
@@ -98,8 +93,7 @@ def traveler(): # begin script by checking if docked
                     navigation.blacklist_station()
                     docked.undock()
                     traveler()
-            elif loadship == 1:
-                # if ship is full, return home to unload
+            elif loadship == 1:  # if ship is full, return home to unload
                 navigation.set_home()
                 docked.undock()
                 traveler()
