@@ -1,22 +1,17 @@
-#test.py
-try:
-    import tkinter as tk  # for python 3
-except:
-    import Tkinter as tk  # for python 2
+import tkinter as tk  # for python 3
 import pygubu
 
 
 class Application:
     def __init__(self, master):
-
-        #1: Create a builder
         self.builder = builder = pygubu.Builder()
+        builder.add_from_file('gui.ui')
+        self.mainwindow = builder.get_object('main_window', master)
+        builder.connect_callbacks(self)
 
-        #2: Load an ui file
-        builder.add_from_file('helloworld.ui')
+    def start_button_click(self):
+        print('hello world')
 
-        #3: Create the widget using a master as parent
-        self.mainwindow = builder.get_object('mainwindow', master)
 
 
 if __name__ == '__main__':

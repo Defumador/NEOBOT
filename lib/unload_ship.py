@@ -3,33 +3,33 @@ import time
 import random
 import traceback
 
-import pyautogui
+import pyautogui as pag
 
 from lib import mouse
 from lib import keyboard
 from lib import docked
 
-pyautogui.FAILSAFE = True
+pag.FAILSAFE = True
 sys.setrecursionlimit(100000)
 conf = 0.95
 
 
 def drag_items_from_hold():
     # dragitems to station item hangar
-    namefield_station_hangar_icon = pyautogui.locateCenterOnScreen('./img/namefield_station_hangar.bmp',
+    namefield_station_hangar_icon = pag.locateCenterOnScreen('./img/namefield_station_hangar.bmp',
                                                                    confidence=conf)
     (namefield_station_hangar_iconx, namefield_station_hangar_icony) = namefield_station_hangar_icon
-    pyautogui.moveTo((namefield_station_hangar_iconx + (random.randint(-5, 250))),
+    pag.moveTo((namefield_station_hangar_iconx + (random.randint(-5, 250))),
                      (namefield_station_hangar_icony + (random.randint(10, 25))),
                      mouse.move_time(), mouse.mouse_path())
-    pyautogui.mouseDown()
-    station_hangar = pyautogui.locateCenterOnScreen('./img/station_hangar.bmp',
+    pag.mouseDown()
+    station_hangar = pag.locateCenterOnScreen('./img/station_hangar.bmp',
                                                     confidence=conf)
     (station_hangarx, station_hangary) = station_hangar
-    pyautogui.moveTo((station_hangarx + (random.randint(-15, 60))),
+    pag.moveTo((station_hangarx + (random.randint(-15, 60))),
                      (station_hangary + (random.randint(-10, 10))),
                      mouse.move_time(), mouse.mouse_path())
-    pyautogui.mouseUp()
+    pag.mouseUp()
     print('moved all item stacks from hold')
     return
 

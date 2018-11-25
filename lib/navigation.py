@@ -4,11 +4,11 @@ import ctypes
 import random
 import traceback
 
-import pyautogui
+import pyautogui as pag
 
 from lib import mouse
 
-pyautogui.FAILSAFE = True
+pag.FAILSAFE = True
 sys.setrecursionlimit(100000)
 conf = 0.95
 
@@ -25,17 +25,17 @@ def select_waypoint_warp_hotkey():  # click on current waypoint and hold down wa
     print('looking for waypoints')
     select_waypoint_look_num = 0
     # search right half of screen only for stargate icon
-    stargate_waypoint = pyautogui.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
-                                                       region=(halfscreenwidth, 0, screenwidth, screenheight))
+    stargate_waypoint = pag.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
+                                                 region=(halfscreenwidth, 0, screenwidth, screenheight))
     while stargate_waypoint is None and select_waypoint_look_num < 100:  # search for waypoints up to 100 times
         select_waypoint_look_num += 1
         # if stargate waypoint not found, look for station waypoint
-        station_waypoint = pyautogui.locateCenterOnScreen('./img/station_waypoint.bmp', confidence=0.96,
-                                                          region=(halfscreenwidth, 0, screenwidth, screenheight))
+        station_waypoint = pag.locateCenterOnScreen('./img/station_waypoint.bmp', confidence=0.96,
+                                                    region=(halfscreenwidth, 0, screenwidth, screenheight))
         # if station waypoint not found, look for stargate waypoint again and restart loop
         if station_waypoint is None:
-            stargate_waypoint = pyautogui.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
-                                                               region=(halfscreenwidth, 0, screenwidth, screenheight))
+            stargate_waypoint = pag.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
+                                                         region=(halfscreenwidth, 0, screenwidth, screenheight))
             print('looking waypoints ...', select_waypoint_look_num)
             time.sleep(3)
             continue
@@ -43,25 +43,25 @@ def select_waypoint_warp_hotkey():  # click on current waypoint and hold down wa
             print('found station waypoint')
             # separate x and y coordinates of location
             (station_waypointx, station_waypointy) = station_waypoint
-            pyautogui.moveTo((station_waypointx + (random.randint(-8, 220))),
-                             (station_waypointy + (random.randint(-8, 8))),
-                             mouse.move_time(), mouse.mouse_path())
-            pyautogui.keyDown('d')  # hotkey to hold down to warp when clicking on waypoint in overview
+            pag.moveTo((station_waypointx + (random.randint(-8, 220))),
+                       (station_waypointy + (random.randint(-8, 8))),
+                       mouse.move_time(), mouse.mouse_path())
+            pag.keyDown('d')  # hotkey to hold down to warp when clicking on waypoint in overview
             time.sleep(float(random.randint(200, 1000)) / 1000)
             mouse.click()
-            pyautogui.keyUp('d')
+            pag.keyUp('d')
             return 2
     # check if stargate waypoint was found before loop expired
     if stargate_waypoint is not None and select_waypoint_look_num < 100:
         print('found stargate waypoint')
         (stargate_waypointx, stargate_waypointy) = stargate_waypoint
-        pyautogui.moveTo((stargate_waypointx + (random.randint(-8, 220))),
-                         (stargate_waypointy + (random.randint(-8, 8))),
-                         mouse.move_time(), mouse.mouse_path())
-        pyautogui.keyDown('d')
+        pag.moveTo((stargate_waypointx + (random.randint(-8, 220))),
+                   (stargate_waypointy + (random.randint(-8, 8))),
+                   mouse.move_time(), mouse.mouse_path())
+        pag.keyDown('d')
         time.sleep(float(random.randint(200, 1000)) / 1000)
         mouse.click()
-        pyautogui.keyUp('d')
+        pag.keyUp('d')
         return 1
     else:  # loop breaks to here
         print('cant find waypoints')
@@ -73,17 +73,17 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
     print('looking for waypoints')
     select_waypoint_look_num = 0
     # search right half of screen only for stargate icon
-    stargate_waypoint = pyautogui.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
-                                                       region=(halfscreenwidth, 0, screenwidth, screenheight))
+    stargate_waypoint = pag.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
+                                                 region=(halfscreenwidth, 0, screenwidth, screenheight))
     while stargate_waypoint is None and select_waypoint_look_num < 100:  # search for waypoints up to 100 times
         select_waypoint_look_num += 1
         # if stargate waypoint not found, look for station waypoint
-        station_waypoint = pyautogui.locateCenterOnScreen('./img/station_waypoint.bmp', confidence=0.96,
-                                                          region=(halfscreenwidth, 0, screenwidth, screenheight))
+        station_waypoint = pag.locateCenterOnScreen('./img/station_waypoint.bmp', confidence=0.96,
+                                                    region=(halfscreenwidth, 0, screenwidth, screenheight))
         # if station waypoint not found, look for stargate waypoint again and restart loop
         if station_waypoint is None:
-            stargate_waypoint = pyautogui.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
-                                                               region=(halfscreenwidth, 0, screenwidth, screenheight))
+            stargate_waypoint = pag.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
+                                                         region=(halfscreenwidth, 0, screenwidth, screenheight))
             print('looking waypoints ...', select_waypoint_look_num)
             time.sleep(3)
             continue
@@ -91,9 +91,9 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
             print('found station waypoint')
             # separate x and y coordinates of location
             (station_waypointx, station_waypointy) = station_waypoint
-            pyautogui.moveTo((station_waypointx + (random.randint(0, 230))),
-                             (station_waypointy + (random.randint(-8, 8))),
-                             mouse.move_time(), mouse.mouse_path())
+            pag.moveTo((station_waypointx + (random.randint(0, 230))),
+                       (station_waypointy + (random.randint(-8, 8))),
+                       mouse.move_time(), mouse.mouse_path())
             time.sleep(float(random.randint(0, 1000)) / 1000)
             mouse.click()
             return 2
@@ -101,9 +101,9 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
     if stargate_waypoint is not None and select_waypoint_look_num < 100:
         print('found stargate waypoint')
         (stargate_waypointx, stargate_waypointy) = stargate_waypoint
-        pyautogui.moveTo((stargate_waypointx + (random.randint(-8, 220))),
-                         (stargate_waypointy + (random.randint(-8, 8))),
-                         mouse.move_time(), mouse.mouse_path())
+        pag.moveTo((stargate_waypointx + (random.randint(-8, 220))),
+                   (stargate_waypointy + (random.randint(-8, 8))),
+                   mouse.move_time(), mouse.mouse_path())
         time.sleep(float(random.randint(0, 1000)) / 1000)
         mouse.click()
         return 1
@@ -114,15 +114,15 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
 
 def detect_jump():
     detect_jump_loop_num = 0
-    spedometer = pyautogui.locateCenterOnScreen('./img/session_change.bmp', confidence=0.5,
-                                                region=(0, 0, (int(screenwidth / 4)), screenheight))
+    spedometer = pag.locateCenterOnScreen('./img/session_change.bmp', confidence=0.5,
+                                          region=(0, 0, (int(screenwidth / 4)), screenheight))
     while spedometer is None and detect_jump_loop_num < 150:
         detect_jump_loop_num += 1
         print('waiting for jump...', detect_jump_loop_num)
         time.sleep(2)
         # search bottom half of screen only
-        spedometer = pyautogui.locateCenterOnScreen('./img/session_change.bmp', confidence=0.5,
-                                                    region=(0, 0, (int(screenwidth / 4)), screenheight))
+        spedometer = pag.locateCenterOnScreen('./img/session_change.bmp', confidence=0.5,
+                                              region=(0, 0, (int(screenwidth / 4)), screenheight))
     if spedometer is not None and detect_jump_loop_num < 150:
         # if jump detected, warp to next waypoint
         print('jump detected')
@@ -136,15 +136,15 @@ def detect_jump():
 
 def detect_dock():
     detect_dock_loop_num = 0
-    docked = pyautogui.locateCenterOnScreen('./img/undock.bmp', confidence=0.91,
-                                            region=(halfscreenwidth, 0, screenwidth, screenheight))
+    docked = pag.locateCenterOnScreen('./img/undock.bmp', confidence=0.91,
+                                      region=(halfscreenwidth, 0, screenwidth, screenheight))
     while docked is None and detect_dock_loop_num < 80:
         detect_dock_loop_num += 1
         print('waiting for dock...', detect_dock_loop_num)
         time.sleep(3)
         # search bottom half of screen only
-        docked = pyautogui.locateCenterOnScreen('./img/undock.bmp', confidence=0.91,
-                                                region=(halfscreenwidth, 0, screenwidth, screenheight))
+        docked = pag.locateCenterOnScreen('./img/undock.bmp', confidence=0.91,
+                                          region=(halfscreenwidth, 0, screenwidth, screenheight))
     if docked is not None and detect_dock_loop_num < 80:
         # if jump detected, warp to next waypoint
         print('detected dock')
@@ -164,12 +164,12 @@ def at_dest_num():
     global at_dest_num_var
     n = 0
     # confidence must be higher than normal because script frequently mistakes dest3 for dest2
-    at_dest = pyautogui.locateCenterOnScreen(('./img/dest/at_dest' + (destnum[n]) + '.bmp'), confidence=0.98,
-                                             region=(0, 0, halfscreenwidth, screenheight))
+    at_dest = pag.locateCenterOnScreen(('./img/dest/at_dest' + (destnum[n]) + '.bmp'), confidence=0.98,
+                                       region=(0, 0, halfscreenwidth, screenheight))
     while at_dest is None:
         n = n + 1
-        at_dest = pyautogui.locateCenterOnScreen(('./img/dest/at_dest' + (destnum[n]) + '.bmp'), confidence=0.98,
-                                                 region=(0, 0, halfscreenwidth, screenheight))
+        at_dest = pag.locateCenterOnScreen(('./img/dest/at_dest' + (destnum[n]) + '.bmp'), confidence=0.98,
+                                           region=(0, 0, halfscreenwidth, screenheight))
         print('looking if at destination' + (destnum[n]))
         if n > 4:
             print('out of destinations to look for')
@@ -184,50 +184,50 @@ def at_dest_num():
 def blacklist_station():  # determine which station ship is in and blacklist it by editing its name
     at_dest_num()
     print('blacklisting station')
-    at_dest = pyautogui.locateCenterOnScreen(('./img/dest/at_dest' + (destnum[at_dest_num_var]) + '.bmp'),
-                                             confidence=conf,
-                                             region=(0, 0, halfscreenwidth, screenheight))
+    at_dest = pag.locateCenterOnScreen(('./img/dest/at_dest' + (destnum[at_dest_num_var]) + '.bmp'),
+                                       confidence=conf,
+                                       region=(0, 0, halfscreenwidth, screenheight))
     (at_destx), (at_desty) = at_dest
-    pyautogui.moveTo((at_destx + (random.randint(-1, 200))), (at_desty + (random.randint(-3, 3))),
-                     mouse.move_time(), mouse.mouse_path())
+    pag.moveTo((at_destx + (random.randint(-1, 200))), (at_desty + (random.randint(-3, 3))),
+               mouse.move_time(), mouse.mouse_path())
     mouse.click_right()  # right click to open dropdown menu
-    pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(56, 67))),
-                      mouse.move_time(), mouse.mouse_path())
+    pag.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(56, 67))),
+                mouse.move_time(), mouse.mouse_path())
     mouse.click()  # click edit location in drop down
     time.sleep(float(random.randint(3000, 4000)) / 1000)
-    pyautogui.keyDown('home')
+    pag.keyDown('home')
     time.sleep(float(random.randint(0, 500)) / 1000)
-    pyautogui.keyUp('home')
+    pag.keyUp('home')
     time.sleep(float(random.randint(0, 1000)) / 1000)
-    pyautogui.keyDown('e')  # an an 'e' to beginning of name indicating station is empty
-    pyautogui.keyUp('e')
+    pag.keyDown('e')  # an an 'e' to beginning of name indicating station is empty
+    pag.keyUp('e')
     time.sleep(float(random.randint(0, 1000)) / 1000)
-    pyautogui.keyDown('enter')
+    pag.keyDown('enter')
     time.sleep((random.randint(0, 200)) / 100)
-    pyautogui.keyUp('enter')
+    pag.keyUp('enter')
     return
 
 
 # set next destination to the lowest-numbered destination that isnt blacklisted (starting with 1)
 def set_dest():
-    next_dest = pyautogui.locateCenterOnScreen(('./img/dest/dest' + (destnum[1]) + '.bmp'),
-                                               confidence=0.98,
-                                               region=(0, 0, halfscreenwidth, screenheight))
+    next_dest = pag.locateCenterOnScreen(('./img/dest/dest' + (destnum[1]) + '.bmp'),
+                                         confidence=0.98,
+                                         region=(0, 0, halfscreenwidth, screenheight))
     next_dest_var = 1
     while next_dest is None:
         next_dest_var = next_dest_var + 1
-        next_dest = pyautogui.locateCenterOnScreen(('./img/dest/dest' + (destnum[next_dest_var]) + '.bmp'),
-                                                   confidence=0.98,
-                                                   region=(0, 0, halfscreenwidth, screenheight))
+        next_dest = pag.locateCenterOnScreen(('./img/dest/dest' + (destnum[next_dest_var]) + '.bmp'),
+                                             confidence=0.98,
+                                             region=(0, 0, halfscreenwidth, screenheight))
         print('looking for dest' + (destnum[next_dest_var]))
     if next_dest is not None:
         print('setting destination waypoint')
         (next_destx), (next_desty) = next_dest
-        pyautogui.moveTo((next_destx + (random.randint(-1, 200))), (next_desty + (random.randint(-3, 3))),
-                         mouse.move_time(), mouse.mouse_path())
+        pag.moveTo((next_destx + (random.randint(-1, 200))), (next_desty + (random.randint(-3, 3))),
+                   mouse.move_time(), mouse.mouse_path())
         mouse.click_right()  # right click to open dropdown menu
-        pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
-                          mouse.move_time(), mouse.mouse_path())
+        pag.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
+                    mouse.move_time(), mouse.mouse_path())
         mouse.click()  # click set destination in drop down
         # set_dest_dyn_var = (destnum[at_dest_num_var + 1])
         return
@@ -236,8 +236,8 @@ def set_dest():
 # check if ship has arrived back at its home station by looking for an entry in 'people and places' starting with 3 0's
 def at_home_check():
     # search left half of screen only
-    at_home = pyautogui.locateCenterOnScreen('./img/dest/at_dest0.bmp', confidence=conf,
-                                             region=(0, 0, halfscreenwidth, screenheight))
+    at_home = pag.locateCenterOnScreen('./img/dest/at_dest0.bmp', confidence=conf,
+                                       region=(0, 0, halfscreenwidth, screenheight))
     if at_home is None:
         return 0
     elif at_home is not None:
@@ -247,14 +247,13 @@ def at_home_check():
 
 def set_home():  # return to home station (has 000 in front of name in 'people and places')
     print('setting home waypoint')
-    home = pyautogui.locateCenterOnScreen('./img/dest/dest0.bmp', confidence=conf,
-                                          region=(0, 0, halfscreenwidth, screenheight))
+    home = pag.locateCenterOnScreen('./img/dest/dest0.bmp', confidence=conf,
+                                    region=(0, 0, halfscreenwidth, screenheight))
     (homex, homey) = home
-    pyautogui.moveTo((homex + (random.randint(-1, 200))), (homey + (random.randint(-3, 3))),
-                     mouse.move_time(), mouse.mouse_path())
+    pag.moveTo((homex + (random.randint(-1, 200))), (homey + (random.randint(-3, 3))),
+               mouse.move_time(), mouse.mouse_path())
     mouse.click_right()  # right click to open dropdown menu
-    pyautogui.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
-                      mouse.move_time(), mouse.mouse_path())
+    pag.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
+                mouse.move_time(), mouse.mouse_path())
     mouse.click()  # click set destination in drop down
     return
-
