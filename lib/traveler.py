@@ -65,7 +65,7 @@ def traveler():  # begin script by checking if docked
             time.sleep(5)
             detectdock = nav.detect_dock()
             if detectdock == 1:  # if dock detected (2 means dock found), load ship (rerun 'while' loop)
-                selectwaypoint = nav.select_waypoint_warp_hotkey()
+                traveler()
         else:
             print('error with at_dest_check_var and at_home_check_var')
             traceback.print_exc()
@@ -102,9 +102,11 @@ def traveler():  # begin script by checking if docked
             traceback.print_exc()
             traceback.print_stack()
             sys.exit()
+    if dockedcheck is None:
+        traveler()
 
 
-selectscript = 1
+selectscript = 2
 
 if selectscript == 1:
     wtz_autopilot()

@@ -47,9 +47,13 @@ def select_waypoint_warp_hotkey():  # click on current waypoint and hold down wa
                        (station_waypointy + (random.randint(-8, 8))),
                        mouse.move_time(), mouse.mouse_path())
             pag.keyDown('d')  # hotkey to hold down to warp when clicking on waypoint in overview
-            time.sleep(float(random.randint(200, 1000)) / 1000)
+            time.sleep(float(random.randint(600, 1200)) / 1000)
             mouse.click()
             pag.keyUp('d')
+            # move mouse away from button to prevent tooltips from blocking other buttons
+            pag.moveTo((random.randint(0, (screenheight - 100))),
+                       (random.randint(0, ((screenwidth - 100) / 2))),
+                       mouse.move_time(), mouse.mouse_path())
             return 2
     # check if stargate waypoint was found before loop expired
     if stargate_waypoint is not None and select_waypoint_look_num < 100:
@@ -59,15 +63,20 @@ def select_waypoint_warp_hotkey():  # click on current waypoint and hold down wa
                    (stargate_waypointy + (random.randint(-8, 8))),
                    mouse.move_time(), mouse.mouse_path())
         pag.keyDown('d')
-        time.sleep(float(random.randint(200, 1000)) / 1000)
+        time.sleep(float(random.randint(600, 1200)) / 1000)
         mouse.click()
         pag.keyUp('d')
+        # move mouse away from button to prevent tooltips from blocking other buttons
+        pag.moveTo((random.randint(0, (screenheight - 100))),
+                   (random.randint(0, ((screenwidth - 100) / 2))),
+                   mouse.move_time(), mouse.mouse_path())
         return 1
     else:  # loop breaks to here
         print('cant find waypoints')
-        return -1
+        traceback.print_stack()
+        sys.exit()
 
-
+'''
 def select_waypoint():  # click on current waypoint in overview by looking for either station or stargate icons
     # look for station icon
     print('looking for waypoints')
@@ -94,7 +103,7 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
             pag.moveTo((station_waypointx + (random.randint(0, 230))),
                        (station_waypointy + (random.randint(-8, 8))),
                        mouse.move_time(), mouse.mouse_path())
-            time.sleep(float(random.randint(0, 1000)) / 1000)
+            time.sleep(float(random.randint(100, 1000)) / 1000)
             mouse.click()
             return 2
     # check if stargate waypoint was found before loop expired
@@ -110,7 +119,7 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
     else:  # loop breaks to here
         print('cant find waypoints')
         return -1
-
+'''
 
 def detect_jump():
     detect_jump_loop_num = 0
@@ -152,8 +161,8 @@ def detect_dock():
         return 1
     else:
         print('timed out looking for dock')
-        return -1
-
+        traceback.print_stack()
+        sys.exit()
 
 # use a dictionary to dynamically grab destination names
 destnum = {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7"}
