@@ -173,6 +173,7 @@ def undock():
         pag.moveTo((undockx + (random.randint(-25, 25))),
                    (undocky + (random.randint(-15, 15))),
                    mouse.move_time(), mouse.mouse_path())
+        time.sleep(int((random.randint(500, 1200) / 1000)))
         mouse.click()
         # move mouse away from button to prevent tooltips from blocking other buttons
         pag.moveTo((random.randint(150, (int(screenheight - (screenheight / 4))))),
