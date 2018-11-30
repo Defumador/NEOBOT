@@ -27,7 +27,7 @@ def select_waypoint_warp_hotkey():  # click on current waypoint and hold down wa
     # search right half of screen only for stargate icon
     stargate_waypoint = pag.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
                                                  region=(halfscreenwidth, 0, screenwidth, screenheight))
-    while stargate_waypoint is None and select_waypoint_look_num < 100:  # search for waypoints up to 100 times
+    while stargate_waypoint is None and select_waypoint_look_num < 15:
         select_waypoint_look_num += 1
         # if stargate waypoint not found, look for station waypoint
         station_waypoint = pag.locateCenterOnScreen('./img/station_waypoint.bmp', confidence=0.96,
@@ -36,13 +36,12 @@ def select_waypoint_warp_hotkey():  # click on current waypoint and hold down wa
         if station_waypoint is None:
             stargate_waypoint = pag.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
                                                          region=(halfscreenwidth, 0, screenwidth, screenheight))
-            print('looking waypoints ...', select_waypoint_look_num)
-            time.sleep(3)
+            print('looking for waypoints ...', select_waypoint_look_num)
+            time.sleep(float(random.randint(400, 1200)) / 1000)
             continue
         elif station_waypoint is not None:
             print('found station waypoint')
-            # separate x and y coordinates of location
-            (station_waypointx, station_waypointy) = station_waypoint
+            (station_waypointx, station_waypointy) = station_waypoint  # separate x and y coordinates of location
             pag.moveTo((station_waypointx + (random.randint(-8, 220))),
                        (station_waypointy + (random.randint(-8, 8))),
                        mouse.move_time(), mouse.mouse_path())
@@ -56,7 +55,7 @@ def select_waypoint_warp_hotkey():  # click on current waypoint and hold down wa
                        mouse.move_time(), mouse.mouse_path())
             return 2
     # check if stargate waypoint was found before loop expired
-    if stargate_waypoint is not None and select_waypoint_look_num < 100:
+    if stargate_waypoint is not None and select_waypoint_look_num < 15:
         print('found stargate waypoint')
         (stargate_waypointx, stargate_waypointy) = stargate_waypoint
         pag.moveTo((stargate_waypointx + (random.randint(-8, 220))),
@@ -67,14 +66,46 @@ def select_waypoint_warp_hotkey():  # click on current waypoint and hold down wa
         mouse.click()
         pag.keyUp('d')
         # move mouse away from button to prevent tooltips from blocking other buttons
-        pag.moveTo((random.randint(0, (screenheight - 100))),
-                   (random.randint(0, ((screenwidth - 100) / 2))),
-                   mouse.move_time(), mouse.mouse_path())
+        pag.moveTo((random.randint(150, (int(screenheight - (screenheight / 4))))),
+                   (random.randint(150, (int(screenwidth - (screenwidth / 4))))),
+                   mouse.move_time(), mouse.mouse_path())  # 150 min value to prevent mouse from blocking jump check
         return 1
-    else:  # loop breaks to here
-        print('cant find waypoints')
+    else:  # if can't find any waypoints, dock at nearest station
+        print('no waypoints found')
+        emergency_dock()
         traceback.print_stack()
         sys.exit()
+
+
+def emergency_dock():
+    print('emergency docking')
+    emergency_dock_look_num = 0
+    # search right half of screen only for stargate icon
+    emergency_dock_icon = pag.locateCenterOnScreen('./img/emergency_dock.bmp', confidence=0.9,
+                                                   region=(0, 0, screenwidth, screenheight))
+    while emergency_dock_icon is None and emergency_dock_look_num < 25:
+        emergency_dock_look_num += 1
+        time.sleep(1)
+        emergency_dock_icon = pag.locateCenterOnScreen('./img/emergency_dock.bmp', confidence=0.9,
+                                                       region=(0, 0, screenwidth, screenheight))
+    if emergency_dock_icon is not None and emergency_dock_look_num < 25:
+        (emergency_dockx, emergency_docky) = emergency_dock_icon
+        pag.moveTo((emergency_dockx + (random.randint(-2, 50))),
+                   (emergency_docky + (random.randint(-2, 2))),
+                   mouse.move_time(), mouse.mouse_path())
+        pag.keyDown('d')  # hotkey to hold down to warp when clicking on waypoint in overview
+        time.sleep(float(random.randint(600, 1200)) / 1000)
+        mouse.click()
+        pag.keyUp('d')
+        # move mouse away from button to prevent tooltips from blocking other buttons
+        pag.moveTo((random.randint(150, (int(screenheight - (screenheight / 4))))),
+                   (random.randint(150, (int(screenwidth - (screenwidth / 4))))),
+                   mouse.move_time(), mouse.mouse_path())
+        return
+    else:
+        print('cant emergency dock')
+        return
+
 
 '''
 def select_waypoint():  # click on current waypoint in overview by looking for either station or stargate icons
@@ -121,24 +152,26 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
         return -1
 '''
 
+
 def detect_jump():
     detect_jump_loop_num = 0
-    spedometer = pag.locateCenterOnScreen('./img/session_change.bmp', confidence=0.5,
-                                          region=(0, 0, (int(screenwidth / 4)), screenheight))
-    while spedometer is None and detect_jump_loop_num < 150:
+    spedometer = pag.locateCenterOnScreen('./img/session_change.bmp', confidence=0.55,
+                                          region=(0, 0, (int(screenwidth / 5)), screenheight))
+    while spedometer is None and detect_jump_loop_num < 180:
         detect_jump_loop_num += 1
         print('waiting for jump...', detect_jump_loop_num)
-        time.sleep(2)
+        time.sleep(1.5)
         # search bottom half of screen only
-        spedometer = pag.locateCenterOnScreen('./img/session_change.bmp', confidence=0.5,
-                                              region=(0, 0, (int(screenwidth / 4)), screenheight))
-    if spedometer is not None and detect_jump_loop_num < 150:
+        spedometer = pag.locateCenterOnScreen('./img/session_change.bmp', confidence=0.55,
+                                              region=(0, 0, (int(screenwidth / 5)), screenheight))
+    if spedometer is not None and detect_jump_loop_num < 180:
         # if jump detected, warp to next waypoint
         print('jump detected')
-        time.sleep(2)
+        time.sleep(float(random.randint(900, 2400)) / 1000)
         return 1
     else:
         print('timed out looking for jump')
+        emergency_dock()
         traceback.print_stack()
         sys.exit()
 
@@ -161,8 +194,10 @@ def detect_dock():
         return 1
     else:
         print('timed out looking for dock')
+        emergency_dock()
         traceback.print_stack()
         sys.exit()
+
 
 # use a dictionary to dynamically grab destination names
 destnum = {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7"}
@@ -191,30 +226,33 @@ def at_dest_num():
 
 
 def blacklist_station():  # determine which station ship is in and blacklist it by editing its name
-    at_dest_num()
-    print('blacklisting station')
-    at_dest = pag.locateCenterOnScreen(('./img/dest/at_dest' + (destnum[at_dest_num_var]) + '.bmp'),
-                                       confidence=conf,
-                                       region=(0, 0, halfscreenwidth, screenheight))
-    (at_destx), (at_desty) = at_dest
-    pag.moveTo((at_destx + (random.randint(-1, 200))), (at_desty + (random.randint(-3, 3))),
-               mouse.move_time(), mouse.mouse_path())
-    mouse.click_right()  # right click to open dropdown menu
-    pag.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(56, 67))),
-                mouse.move_time(), mouse.mouse_path())
-    mouse.click()  # click edit location in drop down
-    time.sleep(float(random.randint(3000, 4000)) / 1000)
-    pag.keyDown('home')
-    time.sleep(float(random.randint(0, 500)) / 1000)
-    pag.keyUp('home')
-    time.sleep(float(random.randint(0, 1000)) / 1000)
-    pag.keyDown('e')  # an an 'e' to beginning of name indicating station is empty
-    pag.keyUp('e')
-    time.sleep(float(random.randint(0, 1000)) / 1000)
-    pag.keyDown('enter')
-    time.sleep((random.randint(0, 200)) / 100)
-    pag.keyUp('enter')
-    return
+    at_dest = at_dest_num()
+    if at_dest is not None:
+        print('blacklisting station')
+        at_dest = pag.locateCenterOnScreen(('./img/dest/at_dest' + (destnum[at_dest_num_var]) + '.bmp'),
+                                           confidence=conf,
+                                           region=(0, 0, halfscreenwidth, screenheight))
+        (at_destx), (at_desty) = at_dest
+        pag.moveTo((at_destx + (random.randint(-1, 200))), (at_desty + (random.randint(-3, 3))),
+                   mouse.move_time(), mouse.mouse_path())
+        mouse.click_right()  # right click to open dropdown menu
+        pag.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(56, 67))),
+                    mouse.move_time(), mouse.mouse_path())
+        mouse.click()  # click edit location in drop down
+        time.sleep(float(random.randint(3000, 4000)) / 1000)
+        pag.keyDown('home')
+        time.sleep(float(random.randint(0, 500)) / 1000)
+        pag.keyUp('home')
+        time.sleep(float(random.randint(0, 1000)) / 1000)
+        pag.keyDown('e')  # an an 'e' to beginning of name indicating station is empty
+        pag.keyUp('e')
+        time.sleep(float(random.randint(0, 1000)) / 1000)
+        pag.keyDown('enter')
+        time.sleep((random.randint(0, 200)) / 100)
+        pag.keyUp('enter')
+        return
+    else:
+        return
 
 
 # set next destination to the lowest-numbered destination that isnt blacklisted (starting with 1)

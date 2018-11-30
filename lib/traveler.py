@@ -57,12 +57,12 @@ def traveler():  # begin script by checking if docked
     while dockedcheck == 0:  # if not docked, travel through waypoints
         selectwaypoint = nav.select_waypoint_warp_hotkey()
         while selectwaypoint == 1:
-            time.sleep(5)  # wait for warp to start
+            time.sleep(3)  # wait for warp to start
             detectjump = nav.detect_jump()
             if detectjump == 1:  # if jump detected, look for next waypoint and warp
                 selectwaypoint = nav.select_waypoint_warp_hotkey()
         while selectwaypoint == 2:
-            time.sleep(5)
+            time.sleep(3)
             detectdock = nav.detect_dock()
             if detectdock == 1:  # if dock detected (2 means dock found), load ship (rerun 'while' loop)
                 traveler()
