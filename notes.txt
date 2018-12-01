@@ -5,12 +5,9 @@
 
 rename traveller to hauler
 add image recognition for yellow-highlighted entries in people & places
-#add support for multiple waypoints done!
 gui!
 
 bugs:
 sometimes when attempting to edit location, 'label' field isn't highlighted/focused in the 'edit location' popup
 
 features:
-if cant find waypoint after 100 tries, logoff --> or re-dock into the station ship just exited from by searching
-    center of screen for dock icon

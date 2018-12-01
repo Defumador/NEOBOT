@@ -235,10 +235,9 @@ def blacklist_station():  # determine which station ship is in and blacklist it 
         (at_destx), (at_desty) = at_dest
         pag.moveTo((at_destx + (random.randint(-1, 200))), (at_desty + (random.randint(-3, 3))),
                    mouse.move_time(), mouse.mouse_path())
-        mouse.click_right()  # right click to open dropdown menu
-        pag.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(56, 67))),
-                    mouse.move_time(), mouse.mouse_path())
-        mouse.click()  # click edit location in drop down
+        mouse.click()  # double-click entry to open edit menu
+        time.sleep(float(random.randint(5, 400)) / 1000)
+        mouse.click()
         time.sleep(float(random.randint(3000, 4000)) / 1000)
         pag.keyDown('home')
         time.sleep(float(random.randint(0, 500)) / 1000)
@@ -276,7 +275,7 @@ def set_dest():
         pag.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
                     mouse.move_time(), mouse.mouse_path())
         mouse.click()  # click set destination in drop down
-        # set_dest_dyn_var = (destnum[at_dest_num_var + 1])
+        time.sleep(2)
         return
 
 

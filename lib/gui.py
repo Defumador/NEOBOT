@@ -1,6 +1,8 @@
 import tkinter as tk  # for python 3
 import pygubu
 
+from lib import traveler
+
 
 class Application:
     def __init__(self, master):
@@ -10,7 +12,8 @@ class Application:
         builder.connect_callbacks(self)
 
     def start_button_click(self):
-        print('hello world')
+        traveler.traveler()
+
 
 
 

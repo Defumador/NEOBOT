@@ -62,10 +62,8 @@ def unload_ship():
                 print('finished unloading procedure')
                 return 1
         elif specialhold == 0:
-            print('error, nothing to unload')
-            traceback.print_exc()
-            traceback.print_stack()
-            sys.exit()
+            print('nothing to unload')
+            return
     while items == 1:
         docked.focus_inventory_window()
         time.sleep(float(random.randint(0, 2000)) / 1000)

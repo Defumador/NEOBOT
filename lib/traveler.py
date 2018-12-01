@@ -105,14 +105,14 @@ def traveler():  # begin script by checking if docked
     if dockedcheck is None:
         traveler()
 
-
+'''
 selectscript = 2
 
 if selectscript == 1:
     wtz_autopilot()
 elif selectscript == 2:
     traveler()
-
+'''
 
 
 
