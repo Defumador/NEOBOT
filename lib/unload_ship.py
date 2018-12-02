@@ -17,18 +17,18 @@ conf = 0.95
 def drag_items_from_hold():
     # dragitems to station item hangar
     namefield_station_hangar_icon = pag.locateCenterOnScreen('./img/namefield_station_hangar.bmp',
-                                                                   confidence=conf)
+                                                             confidence=conf)
     (namefield_station_hangar_iconx, namefield_station_hangar_icony) = namefield_station_hangar_icon
     pag.moveTo((namefield_station_hangar_iconx + (random.randint(-5, 250))),
-                     (namefield_station_hangar_icony + (random.randint(10, 25))),
-                     mouse.move_time(), mouse.mouse_path())
+               (namefield_station_hangar_icony + (random.randint(10, 25))),
+               mouse.move_time(), mouse.mouse_path())
     pag.mouseDown()
     station_hangar = pag.locateCenterOnScreen('./img/station_hangar.bmp',
-                                                    confidence=conf)
+                                              confidence=conf)
     (station_hangarx, station_hangary) = station_hangar
     pag.moveTo((station_hangarx + (random.randint(-15, 60))),
-                     (station_hangary + (random.randint(-10, 10))),
-                     mouse.move_time(), mouse.mouse_path())
+               (station_hangary + (random.randint(-10, 10))),
+               mouse.move_time(), mouse.mouse_path())
     pag.mouseUp()
     print('moved all item stacks from hold')
     return
@@ -89,7 +89,3 @@ def unload_ship():
     elif specialhold == 0:
         print('finished unloading procedure')
         return 1
-
-
-
-

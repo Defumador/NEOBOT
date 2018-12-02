@@ -20,6 +20,24 @@ halfscreenwidth = (int(screenwidth / 2))
 halfscreenheight = (int(screenheight / 2))
 
 
+def route_set():  # check to see if a route has actually been set
+    route = pag.locateCenterOnScreen('./img/route_set.bmp', confidence=0.9,
+                                     region=(0, 0, (int(screenwidth / 4)), screenheight))
+    if route is None:
+        sys.exit('no route set!')
+    else:
+        return
+
+
+def focus_overview():  # click on overview to focus EVE window
+    pag.moveTo((screenwidth - (random.randint(10, 230))),
+               (75 + (random.randint(0, (screenheight - 10)))),
+               mouse.move_time(), mouse.mouse_path())
+    time.sleep(float(random.randint(50, 500)) / 1000)
+    mouse.click()
+    return
+
+
 def select_waypoint_warp_hotkey():  # click on current waypoint and hold down warp hotkey to warp to waypoint
     # look for station icon
     print('looking for waypoints')
@@ -42,7 +60,7 @@ def select_waypoint_warp_hotkey():  # click on current waypoint and hold down wa
         elif station_waypoint is not None:
             print('found station waypoint')
             (station_waypointx, station_waypointy) = station_waypoint  # separate x and y coordinates of location
-            pag.moveTo((station_waypointx + (random.randint(-8, 220))),
+            pag.moveTo((station_waypointx + (random.randint(-8, 8))),
                        (station_waypointy + (random.randint(-8, 8))),
                        mouse.move_time(), mouse.mouse_path())
             pag.keyDown('d')  # hotkey to hold down to warp when clicking on waypoint in overview
@@ -58,7 +76,7 @@ def select_waypoint_warp_hotkey():  # click on current waypoint and hold down wa
     if stargate_waypoint is not None and select_waypoint_look_num < 15:
         print('found stargate waypoint')
         (stargate_waypointx, stargate_waypointy) = stargate_waypoint
-        pag.moveTo((stargate_waypointx + (random.randint(-8, 220))),
+        pag.moveTo((stargate_waypointx + (random.randint(-8, 8))),
                    (stargate_waypointy + (random.randint(-8, 8))),
                    mouse.move_time(), mouse.mouse_path())
         pag.keyDown('d')

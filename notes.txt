@@ -8,6 +8,7 @@ add image recognition for yellow-highlighted entries in people & places
 gui!
 
 bugs:
-sometimes when attempting to edit location, 'label' field isn't highlighted/focused in the 'edit location' popup
+
 
 features:
+before jump, check if low security system warning appears and hit enter

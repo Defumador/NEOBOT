@@ -1,3 +1,8 @@
+import traceback
+import sys
+import os
+import threading
+
 import tkinter as tk  # for python 3
 import pygubu
 
@@ -12,7 +17,10 @@ class Application:
         builder.connect_callbacks(self)
 
     def start_button_click(self):
-        traveler.traveler()
+        threading.Thread(traveler.traveler())
+
+    def stop_button_click(self):
+        raise SystemExit
 
 
 

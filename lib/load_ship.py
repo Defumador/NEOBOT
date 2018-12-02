@@ -32,6 +32,7 @@ def drag_items_to_cargo_hold():
             print('cant find ship cargo hold')
             cargo_hold = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
                                                   confidence=conf)
+            time.sleep(1)
         # if found icons, click on first item in station hangar and drag mouse to ship cargo hold
         if cargo_hold is not None:
             (namefield_station_hangarx, namefield_station_hangary) = namefield_station_hangar
@@ -65,6 +66,7 @@ def drag_items_to_special_hold():
             print('cant find ship cargo hold')
             cargo_hold = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
                                                   confidence=conf)
+            time.sleep(1)
         if cargo_hold is not None:
             (namefield_station_hangarx, namefield_station_hangary) = namefield_station_hangar
             (cargo_holdx, cargo_holdy) = cargo_hold

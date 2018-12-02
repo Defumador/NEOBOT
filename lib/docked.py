@@ -32,6 +32,7 @@ def open_cargo_hold():
     while cargo_hold is None:
         print('cant find cargo hold')
         cargo_hold = pag.locateCenterOnScreen('./img/cargo_hold.bmp', confidence=conf)
+        time.sleep(1)
     else:
         (cargo_holdx, cargo_holdy) = cargo_hold
         pag.moveTo((cargo_holdx + (random.randint(-4, 50))),
@@ -49,6 +50,7 @@ def open_special_hold():
     while special_hold is None:
         print('cant find special hold')
         special_hold = pag.locateCenterOnScreen('./img/special_hold.bmp', confidence=conf)
+        time.sleep(1)
     else:
         (special_holdx, special_holdy) = special_hold
         pag.moveTo((special_holdx + (random.randint(-4, 50))),
@@ -65,6 +67,7 @@ def open_station_hangar():
     while station_hangar is None:
         print('cant find inventory station hangar icon')
         station_hangar = pag.locateCenterOnScreen('./img/station_hangar.bmp', confidence=conf)
+        time.sleep(1)
     else:
         (station_hangarx, station_hangary) = station_hangar
         pag.moveTo((station_hangarx + (random.randint(-6, 50))),
@@ -81,6 +84,7 @@ def focus_inventory_window():
     while sorting_station_hangar is None:
         print('cant find sorting icon')
         sorting_station_hangar = pag.locateCenterOnScreen('./img/sorting_station_hangar.bmp', confidence=conf)
+        time.sleep(1)
     else:
         (sorting_station_hangarx, sorting_station_hangary) = sorting_station_hangar
         # offset mouse from sorting button to click within inventory window to focus it
@@ -110,11 +114,12 @@ def look_for_items():
 # look for drop-down arrow next to ship icon in station inventory window to determine if ship has special hold
 def look_for_special_hold():
     special_hold = pag.locateCenterOnScreen('./img/special_hold.bmp', confidence=conf)
-    if special_hold is None:
-        return 0
-    else:
+    no_additional_bays = pag.locateCenterOnScreen('./img/no_additional_bays.bmp', confidence=conf)
+    if special_hold is not None and no_additional_bays is None:
         print('found special hold')
         return 1
+    else:
+        return 0
 
 
 # look for warning indicating selected items aren't compatible with ship's special hold 

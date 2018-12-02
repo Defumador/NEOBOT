@@ -25,6 +25,7 @@
       <object class="tk.Button" id="start_button">
         <property name="command">start_button_click</property>
         <property name="default">normal</property>
+        <property name="font">TkCaptionFont</property>
         <property name="height">0</property>
         <property name="justify">left</property>
         <property name="padx">20</property>
@@ -34,13 +35,14 @@
         <property name="takefocus">false</property>
         <property name="text" translatable="yes">Start</property>
         <property name="width">0</property>
+        <bind add="" handler="" sequence="" />
         <layout>
           <property name="column">1</property>
-          <property name="ipadx">3</property>
+          <property name="ipadx">0</property>
           <property name="ipady">0</property>
           <property name="padx">10</property>
           <property name="pady">10</property>
-          <property name="propagate">True</property>
+          <property name="propagate">False</property>
           <property name="row">0</property>
         </layout>
       </object>
@@ -49,8 +51,8 @@
       <object class="tk.Label" id="Label_1">
         <property name="cursor">bottom_left_corner</property>
         <property name="font">TkCaptionFont</property>
-        <property name="padx">30</property>
-        <property name="pady">15</property>
+        <property name="padx">20</property>
+        <property name="pady">5</property>
         <property name="text" translatable="yes">N E O B O T</property>
         <property name="width">0</property>
         <layout>
@@ -62,16 +64,32 @@
       </object>
     </child>
     <child>
-      <object class="tk.Text" id="Text_1">
-        <property name="height">2</property>
-        <property name="padx">5</property>
-        <property name="relief">sunken</property>
-        <property name="text" translatable="yes">Text_1</property>
-        <property name="width">40</property>
+      <object class="tk.Button" id="stop_button">
+        <property name="command">stop_button_click</property>
+        <property name="default">normal</property>
+        <property name="justify">left</property>
+        <property name="padx">20</property>
+        <property name="takefocus">false</property>
+        <property name="text" translatable="yes">Stop</property>
         <layout>
-          <property name="column">0</property>
+          <property name="column">1</property>
+          <property name="ipadx">0</property>
+          <property name="ipady">0</property>
           <property name="padx">10</property>
           <property name="pady">10</property>
+          <property name="propagate">True</property>
+          <property name="row">1</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Radiobutton" id="wtz_autopilot">
+        <property name="state">normal</property>
+        <property name="text" translatable="yes">Warp-to-Zero Autopilot
+</property>
+        <property name="value">1</property>
+        <layout>
+          <property name="column">0</property>
           <property name="propagate">True</property>
           <property name="row">1</property>
         </layout>

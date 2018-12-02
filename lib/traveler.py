@@ -24,13 +24,16 @@ sys.exit()
 
 
 def wtz_autopilot():  # warp-to-zero autopilot, no fancy loading/unloading behaviors
+    nav.route_set()
     dockedcheck = docked.docked_check()
     while dockedcheck == 0:  # if not docked, travel through waypoints
+        nav.focus_overview()
         selectwaypoint = nav.select_waypoint_warp_hotkey()
         while selectwaypoint == 1:  # 1 indicating stargate waypoint
             time.sleep(5)  # wait for warp to start
             detectjump = nav.detect_jump()
             if detectjump == 1:  # if jump detected, look for next waypoint and warp
+                nav.focus_overview()
                 selectwaypoint = nav.select_waypoint_warp_hotkey()
             else:
                 traceback.print_exc()
@@ -55,11 +58,13 @@ def wtz_autopilot():  # warp-to-zero autopilot, no fancy loading/unloading behav
 def traveler():  # begin script by checking if docked
     dockedcheck = docked.docked_check()
     while dockedcheck == 0:  # if not docked, travel through waypoints
+        nav.focus_overview()
         selectwaypoint = nav.select_waypoint_warp_hotkey()
         while selectwaypoint == 1:
             time.sleep(3)  # wait for warp to start
             detectjump = nav.detect_jump()
             if detectjump == 1:  # if jump detected, look for next waypoint and warp
+                nav.focus_overview()
                 selectwaypoint = nav.select_waypoint_warp_hotkey()
         while selectwaypoint == 2:
             time.sleep(3)
@@ -105,14 +110,15 @@ def traveler():  # begin script by checking if docked
     if dockedcheck is None:
         traveler()
 
-'''
+
 selectscript = 2
 
 if selectscript == 1:
     wtz_autopilot()
 elif selectscript == 2:
+    nav.route_set()
     traveler()
-'''
+
 
 
 
