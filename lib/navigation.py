@@ -173,16 +173,26 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
 
 def detect_jump():
     detect_jump_loop_num = 0
-    spedometer = pag.locateCenterOnScreen('./img/session_change.bmp', confidence=0.55,
-                                          region=(0, 0, (int(screenwidth / 5)), screenheight))
-    while spedometer is None and detect_jump_loop_num < 180:
+    session_change = pag.locateCenterOnScreen('./img/session_change.bmp', confidence=0.55,
+                                              region=(0, 0, (int(screenwidth / 5)), screenheight))
+    while session_change is None and detect_jump_loop_num < 180:
         detect_jump_loop_num += 1
         print('waiting for jump...', detect_jump_loop_num)
         time.sleep(1.5)
         # search bottom half of screen only
-        spedometer = pag.locateCenterOnScreen('./img/session_change.bmp', confidence=0.55,
-                                              region=(0, 0, (int(screenwidth / 5)), screenheight))
-    if spedometer is not None and detect_jump_loop_num < 180:
+        session_change = pag.locateCenterOnScreen('./img/session_change.bmp', confidence=0.55,
+                                                  region=(0, 0, (int(screenwidth / 5)), screenheight))
+        if session_change is not None and detect_jump_loop_num > 50:  # after 50 checks, look for 'low sec system' popup
+            low_sec_popup = pag.locateCenterOnScreen('./img/low_security_system.bmp', confidence=0.9,
+                                                     region=(0, 0, screenwidth, screenheight))
+            if low_sec_popup is not None:
+                pag.keyDown('enter')
+                time.sleep(float(random.randint(20, 700)) / 1000)
+                pag.keyDown('enter')
+                continue
+            else:
+                continue
+    if session_change is not None and detect_jump_loop_num < 180:
         # if jump detected, warp to next waypoint
         print('jump detected')
         time.sleep(float(random.randint(900, 2400)) / 1000)
@@ -218,7 +228,7 @@ def detect_dock():
 
 
 # use a dictionary to dynamically grab destination names
-destnum = {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7"}
+destnum = {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9", 10: "10"}
 
 
 # figure out which destination station ship is at
@@ -233,7 +243,7 @@ def at_dest_num():
         at_dest = pag.locateCenterOnScreen(('./img/dest/at_dest' + (destnum[n]) + '.bmp'), confidence=0.98,
                                            region=(0, 0, halfscreenwidth, screenheight))
         print('looking if at destination' + (destnum[n]))
-        if n > 4:
+        if n > 10:
             print('out of destinations to look for')
             # if not at a recognizable station, undock and continue route
             return -1
