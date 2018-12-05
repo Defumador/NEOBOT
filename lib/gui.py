@@ -6,7 +6,7 @@ import threading
 import tkinter as tk  # for python 3
 import pygubu
 
-from lib import traveler
+from lib import main
 
 
 class Application:
@@ -17,7 +17,7 @@ class Application:
         builder.connect_callbacks(self)
 
     def start_button_click(self):
-        threading.Thread(traveler.traveler())
+        threading.Thread(main.collector())
 
     def stop_button_click(self):
         raise SystemExit

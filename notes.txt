@@ -1,11 +1,11 @@
 
 
 bugs:
-
+-script thinks dest10 is actually dest1 because they both start with a "1"; max # of destinations is 9 for now
 
 
 features:
--before jump, check if low security system warning appears and hit enter
+-add player-owned structures support
+-GUI
 -add image recognition for yellow-highlighted entries in people & places
--add support for up to 10 destinations
 -look for session change icon in top left corner to determine when ship has undocked

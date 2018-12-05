@@ -23,7 +23,8 @@ sys.exit()
 '''
 
 
-def wtz_autopilot():  # warp-to-zero autopilot, no fancy loading/unloading behaviors
+def traveller():  # warp-to-zero autopilot, no fancy frills
+    print('running travelller')
     nav.route_set()
     dockedcheck = docked.docked_check()
     while dockedcheck == 0:  # if not docked, travel through waypoints
@@ -52,10 +53,11 @@ def wtz_autopilot():  # warp-to-zero autopilot, no fancy loading/unloading behav
     while dockedcheck == 1:
         docked.undock()
         time.sleep(5)
-        dockedcheck = docked.docked_check()
+        traveller()
 
 
-def traveler():  # begin script by checking if docked
+def collector():  # haul cargo from a predetermined list of stations to a single 'home' station
+    print('running collector')
     dockedcheck = docked.docked_check()
     while dockedcheck == 0:  # if not docked, travel through waypoints
         nav.focus_overview()
@@ -70,7 +72,7 @@ def traveler():  # begin script by checking if docked
             time.sleep(3)
             detectdock = nav.detect_dock()
             if detectdock == 1:  # if dock detected (2 means dock found), load ship (rerun 'while' loop)
-                traveler()
+                collector()
         else:
             print('error with at_dest_check_var and at_home_check_var')
             traceback.print_exc()
@@ -83,7 +85,7 @@ def traveler():  # begin script by checking if docked
             unload_ship.unload_ship()
             nav.set_dest()
             docked.undock()
-            traveler()
+            collector()
         elif athomecheck == 0:
             print('not at home')
             loadship = load_ship.load_ship()
@@ -92,32 +94,32 @@ def traveler():  # begin script by checking if docked
                 atdestnum = nav.at_dest_num()
                 if atdestnum == -1:
                     docked.undock()
-                    traveler()
+                    collector()
                 else:
                     nav.set_dest()
                     nav.blacklist_station()
                     docked.undock()
-                    traveler()
+                    collector()
             elif loadship == 1:  # if ship is full, return home to unload
                 nav.set_home()
                 docked.undock()
-                traveler()
+                collector()
         else:
             print('error with at_home_check and at_dest_check')
             traceback.print_exc()
             traceback.print_stack()
             sys.exit()
     if dockedcheck is None:
-        traveler()
+        collector()
 
 
-selectscript = 2
+selectscript = 1
 
 if selectscript == 1:
-    wtz_autopilot()
+    traveller()
 elif selectscript == 2:
     nav.route_set()
-    traveler()
+    collector()
 
 
 

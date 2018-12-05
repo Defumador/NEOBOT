@@ -185,5 +185,5 @@ def undock():
                    (random.randint(150, (int(screenwidth - (screenwidth / 4))))),
                    mouse.move_time(), mouse.mouse_path())
         # wait a semi-random period of time for undock to complete to mimic human behavior
-        time.sleep(int((random.randint(10000, 25000) / 1000)))
+        time.sleep(int((random.randint(10000, 15000) / 1000)))
         return

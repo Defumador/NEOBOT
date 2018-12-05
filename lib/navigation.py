@@ -243,7 +243,7 @@ def at_dest_num():
         at_dest = pag.locateCenterOnScreen(('./img/dest/at_dest' + (destnum[n]) + '.bmp'), confidence=0.98,
                                            region=(0, 0, halfscreenwidth, screenheight))
         print('looking if at destination' + (destnum[n]))
-        if n > 10:
+        if n == 9 and at_dest is None:
             print('out of destinations to look for')
             # if not at a recognizable station, undock and continue route
             return -1
