@@ -99,7 +99,7 @@ def focus_inventory_window():
 def look_for_items():
     global no_items_station_hangar  # var must be global since it's used in other functions
     global namefield_station_hangar
-    time.sleep(float(random.randint(800, 1000)) / 1000)
+    #time.sleep(float(random.randint(800, 1000)) / 1000)
     no_items_station_hangar = pag.locateCenterOnScreen('./img/no_items_station_hangar.bmp',
                                                        confidence=.99)
     if no_items_station_hangar is None:
@@ -184,6 +184,13 @@ def undock():
         pag.moveTo((random.randint(150, (int(screenheight - (screenheight / 4))))),
                    (random.randint(150, (int(screenwidth - (screenwidth / 4))))),
                    mouse.move_time(), mouse.mouse_path())
-        # wait a semi-random period of time for undock to complete to mimic human behavior
-        time.sleep(int((random.randint(10000, 15000) / 1000)))
-        return
+        # look for cyan ship icon in top left corner with ring around it indicating session change
+        undocked = pag.locateCenterOnScreen('./img/session_change_undocked.bmp', confidence=0.55,
+                                            region=(0, 0, (int(screenwidth / 5)), screenheight))
+        while undocked is None:
+            time.sleep(int((random.randint(1000, 3000) / 1000)))
+            undocked = pag.locateCenterOnScreen('./img/session_change_undocked.bmp', confidence=0.55,
+                                                region=(0, 0, (int(screenwidth / 5)), screenheight))
+        if undocked is not None:
+            time.sleep(int((random.randint(2000, 3000) / 1000)))
+            return

@@ -1,11 +1,11 @@
 
+testing:
+-test situation when ship is at dest9 to see if dest checking loop works fully
 
 bugs:
 -script thinks dest10 is actually dest1 because they both start with a "1"; max # of destinations is 9 for now
-
 
 features:
 -add player-owned structures support
 -GUI
 -add image recognition for yellow-highlighted entries in people & places
--look for session change icon in top left corner to determine when ship has undocked

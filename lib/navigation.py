@@ -173,16 +173,16 @@ def select_waypoint():  # click on current waypoint in overview by looking for e
 
 def detect_jump():
     detect_jump_loop_num = 0
-    session_change = pag.locateCenterOnScreen('./img/session_change.bmp', confidence=0.55,
+    session_change_cloaked = pag.locateCenterOnScreen('./img/session_change_cloaked.bmp', confidence=0.55,
                                               region=(0, 0, (int(screenwidth / 5)), screenheight))
-    while session_change is None and detect_jump_loop_num < 180:
+    while session_change_cloaked is None and detect_jump_loop_num < 180:
         detect_jump_loop_num += 1
         print('waiting for jump...', detect_jump_loop_num)
         time.sleep(1.5)
         # search bottom half of screen only
-        session_change = pag.locateCenterOnScreen('./img/session_change.bmp', confidence=0.55,
+        session_change_cloaked = pag.locateCenterOnScreen('./img/session_change_cloaked.bmp', confidence=0.55,
                                                   region=(0, 0, (int(screenwidth / 5)), screenheight))
-        if session_change is not None and detect_jump_loop_num > 50:  # after 50 checks, look for 'low sec system' popup
+        if session_change_cloaked is not None and detect_jump_loop_num > 50:  # after 50 checks, look for 'low sec system' popup
             low_sec_popup = pag.locateCenterOnScreen('./img/low_security_system.bmp', confidence=0.9,
                                                      region=(0, 0, screenwidth, screenheight))
             if low_sec_popup is not None:
@@ -192,7 +192,7 @@ def detect_jump():
                 continue
             else:
                 continue
-    if session_change is not None and detect_jump_loop_num < 180:
+    if session_change_cloaked is not None and detect_jump_loop_num < 180:
         # if jump detected, warp to next waypoint
         print('jump detected')
         time.sleep(float(random.randint(900, 2400)) / 1000)
@@ -208,14 +208,14 @@ def detect_dock():
     detect_dock_loop_num = 0
     docked = pag.locateCenterOnScreen('./img/undock.bmp', confidence=0.91,
                                       region=(halfscreenwidth, 0, screenwidth, screenheight))
-    while docked is None and detect_dock_loop_num < 80:
+    while docked is None and detect_dock_loop_num < 100:
         detect_dock_loop_num += 1
         print('waiting for dock...', detect_dock_loop_num)
         time.sleep(3)
         # search bottom half of screen only
         docked = pag.locateCenterOnScreen('./img/undock.bmp', confidence=0.91,
                                           region=(halfscreenwidth, 0, screenwidth, screenheight))
-    if docked is not None and detect_dock_loop_num < 80:
+    if docked is not None and detect_dock_loop_num < 100:
         # if jump detected, warp to next waypoint
         print('detected dock')
         time.sleep(float(random.randint(2000, 5000)) / 1000)

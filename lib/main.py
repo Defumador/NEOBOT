@@ -113,7 +113,7 @@ def collector():  # haul cargo from a predetermined list of stations to a single
         collector()
 
 
-selectscript = 1
+selectscript = 2
 
 if selectscript == 1:
     traveller()
