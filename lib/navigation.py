@@ -54,7 +54,7 @@ def select_waypoint_warp_hotkey():  # click on current waypoint and hold down wa
         if station_waypoint is None:
             stargate_waypoint = pag.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
                                                          region=(halfscreenwidth, 0, screenwidth, screenheight))
-            print('looking for waypoints ...', select_waypoint_look_num)
+            print('looking for waypoints...', select_waypoint_look_num)
             time.sleep(float(random.randint(400, 1200)) / 1000)
             continue
         elif station_waypoint is not None:
@@ -263,8 +263,9 @@ def blacklist_station():  # determine which station ship is in and blacklist it 
         (at_destx), (at_desty) = at_dest
         pag.moveTo((at_destx + (random.randint(-1, 200))), (at_desty + (random.randint(-3, 3))),
                    mouse.move_time(), mouse.mouse_path())
+        time.sleep(float(random.randint(500, 1000)) / 1000)
         mouse.click()  # double-click entry to open edit menu
-        time.sleep(float(random.randint(5, 400)) / 1000)
+        time.sleep(float(random.randint(5, 50)) / 1000)
         mouse.click()
         time.sleep(float(random.randint(3000, 4000)) / 1000)
         pag.keyDown('home')

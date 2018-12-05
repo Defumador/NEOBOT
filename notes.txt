@@ -1,11 +1,16 @@
 
 testing:
 -test situation when ship is at dest9 to see if dest checking loop works fully
+-NOT READY FOR TESTING IN LOSEC YET
 
 bugs:
 -script thinks dest10 is actually dest1 because they both start with a "1"; max # of destinations is 9 for now
 
 features:
+-add support for 'icons' style inventory view
+-resize session change icons to only include cyan ring on left side to give script more time to check for image
 -add player-owned structures support
 -GUI
+-add a small change for a semli-long wait after each jump/undock for increased randomness, make sure session change
+timer doesn't expire though as it would leave ship vulnerable in low-sec systems
 -add image recognition for yellow-highlighted entries in people & places
