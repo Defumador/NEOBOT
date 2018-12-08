@@ -263,8 +263,10 @@ def blacklist_station():  # determine which station ship is in and blacklist it 
         (at_destx), (at_desty) = at_dest
         pag.moveTo((at_destx + (random.randint(-1, 200))), (at_desty + (random.randint(-3, 3))),
                    mouse.move_time(), mouse.mouse_path())
-        time.sleep(float(random.randint(500, 1000)) / 1000)
-        mouse.click()  # double-click entry to open edit menu
+        time.sleep(float(random.randint(1000, 2000)) / 1000)
+        mouse.click()  # click once to focus entry, then double-click entry to open edit menu
+        time.sleep(float(random.randint(1000, 2000)) / 1000)
+        mouse.click()
         time.sleep(float(random.randint(5, 50)) / 1000)
         mouse.click()
         time.sleep(float(random.randint(3000, 4000)) / 1000)
