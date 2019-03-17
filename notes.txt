@@ -11,6 +11,6 @@ features:
 -resize session change icons to only include cyan ring on left side to give script more time to check for image
 -add player-owned structures support
 -GUI
--add a small change for a semli-long wait after each jump/undock for increased randomness, make sure session change
+-add a small chance for a semli-long wait after each jump/undock for increased randomness, make sure session change
 timer doesn't expire though as it would leave ship vulnerable in low-sec systems
 -add image recognition for yellow-highlighted entries in people & places
