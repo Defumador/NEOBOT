@@ -7,7 +7,7 @@ import pyautogui as pag
 from lib import docked
 from lib import load_ship
 from lib import mining
-from lib import navigation as nav
+from lib import navigation as navdia
 from lib import unload_ship
 
 sys.setrecursionlimit(10000000)
