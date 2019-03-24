@@ -63,7 +63,7 @@ def unload_ship():
 				return 1
 		elif specialhold == 0:
 			print('nothing to unload')
-			return
+			return 1
 	while items == 1:
 		docked.focus_inventory_window()
 		time.sleep(float(random.randint(0, 2000)) / 1000)
