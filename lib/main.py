@@ -7,7 +7,7 @@ import pyautogui as pag
 from lib import docked
 from lib import load_ship
 from lib import mining
-from lib import navigation as navdia
+from lib import navigation as nav
 from lib import unload_ship
 
 sys.setrecursionlimit(10000000)
@@ -142,6 +142,11 @@ def miner():  # mine ore from a predetermined set of asteroid fields
 			sys.exit()
 	if dockedcheck is None:
 		miner()
+
+
+nav.warp_to_defined_bookmark_in_system(2)
+nav.detect_warp()
+
 
 
 selectscript = 2
