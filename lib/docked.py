@@ -24,19 +24,19 @@ def docked_check():
 	# check if ship is docked
 	undock_icon = pag.locateCenterOnScreen('./img/undock.bmp', confidence=conf)
 	if undock_icon is None:
-		print('not docked')
+		print('docked_check -- not docked')
 		return 0
 	elif undock_icon is not None:
-		print('docked')
+		print('docked_check -- docked')
 		return 1
 
 
 def open_cargo_hold():
 	# click on ship cargo hold button in inventory window while docked
-	print('opening cargo hold')
+	print('open_cargo_hold -- opening cargo hold')
 	cargo_hold = pag.locateCenterOnScreen('./img/cargo_hold.bmp', confidence=conf)
 	while cargo_hold is None:
-		print('cant find cargo hold')
+		print("open_cargo_hold -- can't find cargo hold")
 		cargo_hold = pag.locateCenterOnScreen('./img/cargo_hold.bmp', confidence=conf)
 		time.sleep(1)
 	else:
@@ -50,10 +50,10 @@ def open_cargo_hold():
 
 def open_special_hold():
 	# if a special hold was found, click on it in inventory window while docked
-	print('opening special hold')
+	print('open_special_hold -- opening special hold')
 	special_hold = pag.locateCenterOnScreen('./img/special_hold.bmp', confidence=conf)
 	while special_hold is None:
-		print('cant find special hold')
+		print("open_special_hold -- can't find special hold")
 		special_hold = pag.locateCenterOnScreen('./img/special_hold.bmp', confidence=conf)
 		time.sleep(1)
 	else:
@@ -67,10 +67,10 @@ def open_special_hold():
 
 def open_station_hangar():
 	# click on station hangar button in inventory window while docked
-	print('opening station hangar')
+	print('open_station_hangar -- opening station hangar')
 	station_hangar = pag.locateCenterOnScreen('./img/station_hangar.bmp', confidence=conf)
 	while station_hangar is None:
-		print('cant find inventory station hangar icon')
+		print("open_station_hangar -- can't find inventory station hangar icon")
 		station_hangar = pag.locateCenterOnScreen('./img/station_hangar.bmp', confidence=conf)
 		time.sleep(1)
 	else:
@@ -87,7 +87,7 @@ def focus_inventory_window():
 	# look for sorting buttons in top right corner of inventory window and offset mouse
 	sorting_station_hangar = pag.locateCenterOnScreen('./img/sorting_station_hangar.bmp', confidence=conf)
 	while sorting_station_hangar is None:
-		print('cant find sorting icon')
+		print("focus_inventory_window -- can't find sorting icon")
 		sorting_station_hangar = pag.locateCenterOnScreen('./img/sorting_station_hangar.bmp', confidence=conf)
 		time.sleep(1)
 	else:
@@ -111,7 +111,7 @@ def look_for_items():
 															confidence=conf)
 		return 1
 	elif no_items_station_hangar is not None:
-		print('no more items')
+		print('look_for_items -- no more items')
 		return 0
 
 
@@ -121,7 +121,7 @@ def look_for_special_hold():
 	special_hold = pag.locateCenterOnScreen('./img/special_hold.bmp', confidence=conf)
 	no_additional_bays = pag.locateCenterOnScreen('./img/no_additional_bays.bmp', confidence=conf)
 	if special_hold is not None and no_additional_bays is None:
-		print('found special hold')
+		print('look_for_special_hold -- found special hold')
 		return 1
 	else:
 		return 0
@@ -134,7 +134,7 @@ def special_hold_warning():
 	if special_hold_warning_popup is None:
 		return 0
 	else:
-		print('detected special hold warning')
+		print('special_hold_warning -- detected special hold warning')
 		return 1
 
 
@@ -144,7 +144,7 @@ def set_quantity_popup():
 	if set_quantity is None:
 		return 0
 	else:
-		print('found set quantity popup')
+		print('set_quantity_popup -- found set quantity popup')
 		keyboard.enter()
 		return 1
 
@@ -156,14 +156,14 @@ def not_enough_space_popup():
 	if not_enough_space is None:
 		return 0
 	else:
-		print('found not enough space popup')
+		print('not_enough_space_popup -- found not enough space popup')
 		keyboard.enter()
 		return 1
 
 
 def undock():
 	# undock from station, look for undock button in right half of screen only
-	print('undocking')
+	print('undock -- undocking')
 	pag.keyDown('alt')  # alt+u is default undock hotkey
 	time.sleep(float(random.randint(200, 1200)) / 1000)
 	pag.keyDown('u')
@@ -177,7 +177,7 @@ def undock():
 										region=(0, 0, (int(screenwidth / 5)), screenheight))
 	while undocked is None:
 		time.sleep(int((random.randint(3000, 10000) / 1000)))
-		print('trying undocking second time')
+		print('undock -- trying undocking second time')
 		pag.keyDown('alt')  # alt+u is default undock hotkey
 		time.sleep(float(random.randint(200, 1200)) / 1000)
 		pag.keyDown('u')
