@@ -95,7 +95,7 @@ def warp_to_waypoint():
 		return 1
 	# if can't find any waypoints, dock at nearest station
 	elif stargate_waypoint is None and warp_to_waypoint_tries > 15:
-		print('no waypoints found')
+		print('error with warp_to_waypoint, no waypoints found')
 		emergency_terminate()
 		traceback.print_stack()
 		sys.exit()
@@ -132,26 +132,31 @@ def warp_to_first_bookmark_in_system():
 		return 1
 
 
-def warp_to_defined_bookmark_in_system(bookmark_num):
+def warp_to_defined_bookmark_in_system(gotosite):
 	# warp to a predefined bookmark number in the current system
-	global defined_bookmark_in_system
-	defined_bookmark_in_system = pag.locateCenterOnScreen(('./img/dest/at_dest' + (bookmark_dict[bookmark_num]) + '.bmp'),
-															confidence=0.95,
-															region=(0, 0, halfscreenwidth, screenheight))
-	while defined_bookmark_in_system is None:
-		print('bookmark not found in system')
+	# if ship is already at the requested site, return function
+	if gotosite = atsite:
+		print('already at bookmark',atsite)
 		return 0
-	if defined_bookmark_in_system is not None:
-		print('found bookmark',bookmark_num)
-		(bookmark_in_systemx), (bookmark_in_systemy) = defined_bookmark_in_system
-		pag.moveTo((bookmark_in_systemx + (random.randint(-1, 200))), (bookmark_in_systemy +
-											(random.randint(-3, 3))), mouse.move_time(), mouse.mouse_path())
-		mouse.click_right()
-		pag.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(10, 15))),
-							mouse.move_time(), mouse.mouse_path())
-		mouse.click()
-		time.sleep(2)
-		return 1
+	else:
+		defined_bookmark_in_system = pag.locateCenterOnScreen(('./img/dest/at_dest' + (bookmark_dict[gotosite]) + '.bmp'),
+																confidence=0.95,
+																region=(0, 0, halfscreenwidth, screenheight))
+		# if cant find the site number, return function
+		while defined_bookmark_in_system is None:
+			print('bookmark',gotosite,'not found in system')
+			return 0
+		if defined_bookmark_in_system is not None:
+				print('found bookmark',gotosite)
+				(bookmark_in_systemx), (bookmark_in_systemy) = defined_bookmark_in_system
+				pag.moveTo((bookmark_in_systemx + (random.randint(-1, 200))), (bookmark_in_systemy +
+													(random.randint(-3, 3))), mouse.move_time(), mouse.mouse_path())
+				mouse.click_right()
+				pag.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(10, 15))),
+									mouse.move_time(), mouse.mouse_path())
+				mouse.click()
+				time.sleep(2)
+				return 1
 
 
 def emergency_terminate():
@@ -214,7 +219,9 @@ def emergency_terminate():
 						mouse.move_time(), mouse.mouse_path())
 			time.sleep(180)
 			emergency_logout()
-		emergency_logout()
+		else:
+			print('error with emergency_terminate function, out of celestials to look for')
+			emergency_logout()
 		return 0
 
 
@@ -242,7 +249,7 @@ def detect_warp():
 		print('warp completed')
 		return 1
 	if warp_drive_active is None and warp_time >= 300:
-		print('timed out waiting for warp')
+		print('error with detect_warp, timed out waiting for warp')
 		emergency_terminate()
 		return 0
 
@@ -306,7 +313,7 @@ def detect_jump():
 		time.sleep(float(random.randint(900, 2400)) / 1000)
 		return 1
 	else:
-		print('timed out looking for jump')
+		print('error with detect_jump, timed out looking for jump')
 		emergency_terminate()
 		traceback.print_stack()
 		sys.exit()
@@ -329,7 +336,7 @@ def detect_dock():
 		time.sleep(float(random.randint(2000, 5000)) / 1000)
 		return 1
 	else:
-		print('timed out looking for dock')
+		print('error with detect_dock, timed out looking for dock')
 		emergency_terminate()
 		traceback.print_stack()
 		sys.exit()
@@ -390,7 +397,7 @@ def blacklist_station():
 		return
 
 
-def blacklist_site(site):
+def blacklist_site(atsite):
 	# blacklist the specified bookmark by editing its bookmark name
 	# this will prevent further trips to the blacklisted site
 	print('blacklisting site')
