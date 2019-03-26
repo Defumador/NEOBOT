@@ -23,7 +23,7 @@ print(value)
 sys.exit()
 '''
 def navigator():  # warp-to-zero autopilot, no fancy frills
-	print('running navigator')
+	print('navigator -- running navigator')
 	nav.route_set()
 	dockedcheck = docked.docked_check()
 	while dockedcheck == 0:  # if not docked, travel through waypoints
@@ -39,15 +39,15 @@ def navigator():  # warp-to-zero autopilot, no fancy frills
 				nav.emergency_terminate()
 				traceback.print_exc()
 				traceback.print_stack()
-				sys.exit('error detecting jump')
+				sys.exit('navigator -- error detecting jump')
 		while selectwaypoint == 2:  # 2 indicating station waypoint
 			time.sleep(5)
 			detectdock = nav.detect_dock()
 			if detectdock == 1:
-				print('arrived at destination')
+				print('navigator -- arrived at destination')
 				return 1
 		else:
-			print('likely at destination')
+			print('navigator -- likely at destination')
 			return 1
 	while dockedcheck == 1:
 		docked.undock()
@@ -56,7 +56,7 @@ def navigator():  # warp-to-zero autopilot, no fancy frills
 
 
 def collector():  # haul cargo from a predetermined list of stations to a single 'home' station
-	print('running collector')
+	print('collector -- running collector')
 	dockedcheck = docked.docked_check()
 	while dockedcheck == 0:  # if not docked, travel through waypoints
 		nav.focus_overview()
@@ -73,7 +73,7 @@ def collector():  # haul cargo from a predetermined list of stations to a single
 			if detectdock == 1:  # if dock detected (2 means dock found), load ship (rerun 'while' loop)
 				collector()
 		else:
-			print('error with at_dest_check_var and at_home_check_var')
+			print('collector -- error with at_dest_check_var and at_home_check_var')
 			traceback.print_exc()
 			traceback.print_stack()
 			sys.exit()
@@ -86,9 +86,9 @@ def collector():  # haul cargo from a predetermined list of stations to a single
 			docked.undock()
 			collector()
 		elif athomecheck == 0:
-			print('not at home')
+			print('collector -- not at home')
 			loadship = load_ship.load_ship()
-			print('loadship is', loadship)
+			print('collector -- loadship is', loadship)
 			if loadship == 2 or loadship == 0 or loadship is None:
 				atdestnum = nav.at_dest_num()
 				if atdestnum == -1:
@@ -104,7 +104,7 @@ def collector():  # haul cargo from a predetermined list of stations to a single
 				docked.undock()
 				collector()
 		else:
-			print('error with at_home_check and at_dest_check')
+			print('collector -- error with at_home_check and at_dest_check')
 			traceback.print_exc()
 			traceback.print_stack()
 			sys.exit()
