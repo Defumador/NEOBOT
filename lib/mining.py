@@ -8,11 +8,15 @@ from lib import docked
 from lib import unload_ship
 from lib import main
 
+sys.setrecursionlimit(9999999)
+
 user32 = ctypes.windll.user32
 screenwidth = user32.GetSystemMetrics(0)
 screenheight = user32.GetSystemMetrics(1)
 halfscreenwidth = (int(screenwidth / 2))
 halfscreenheight = (int(screenheight / 2))
+
+mining_lasers = 1
 
 check_for_enemy_frigates = 1
 check_for_enemy_destroyers = 1
@@ -28,42 +32,71 @@ check_for_player_yellows
 check_for_player_greys
 
 def miner():
-	check_hold()
-	if check_hold() == 1:
+	nav.docked_check()
+	while nav.docked_check() == 0:
 		travel_to_site()
 		if travel_to_site() == 1:
-			check_for_ore()
+			# once arrived at site, check for hostile npcs and players. if either exist, warp to next site
+			# if no hostiles npcs or players, check for ore. if no ore, blacklist site and warp to next site
 			check_for_hostiles()
+			if check_for_hostiles() == 1:
+				break
 			check_for_players()
-			# if ore is not present, hostiles are present, or other players are present, find another site
-			if check_for_ore() == 0 or check_for_hostiles() == 0 or check_for_players() == 0:
-				miner()
-			else:
+			if check_for_players() == 1:
+				break
+			check_for_ore()
+			while check_for_ore() == 1:
 				target_ore()
-	elif check_hold() == 0:
-		nav.set_home()
-		main.navigator()
-		if main.navigator() == 1:
-			unload_ship.unload_ship()
-			if unload_ship.unload_ship() == 1:
-				docked.undock()
-				miner()
+				activate_mining_laser()
+				# if cargo isn't full, continue to mine ore and wait for popups or errors
+				check_hold_popup()
+				while check_hold_popup() == 0:
+					check_asteroid_depleted_popup()
+					if check_asteroid_depleted_popup() == 1:
+						check_for_ore()
+						if check_for_ore() == 0:
+							nav.blacklist(site)
+						elif check_for_ore() == 1:
+							target_ore()
+							activate_mining_laser()
+							check_hold_popup()
+							continue
+					check_for_hostiles()
+					if check_for_hostiles() == 1:
+						miner()
+					check_for_players()
+					if check_for_players() == 1:
+						miner()
+					time.sleep(1)
+					check_hold_popup()
+				if check_hold_popup() == 1:
+					# once cargo is full, dock at home station and unload
+					nav.go_home()
+					unload_cargo.unload_cargo()
+					docked.undock()
+					time.sleep(3)		
+			if check_for_ore() == 0:
+				nav.blacklist(site)
+	if nav.docked_check() == 1:
+		# if docked when script starts, undock
+		docked.undock()
+		miner()
 
 def travel_to_site():
-	# find a suitable asteroid field
+	# find a suitable asteroid field by warping to each bookmark in numerical order
 	global site
 	site = 1
+	# check if bookmark 1 is in system. if not, increment bookmark number by 1 and look again
 	nav.warp_to_defined_bookmark_in_system(site)
-	# warp to the first available bookmark in the system
 	while nav.warp_to_defined_bookmark_in_system(site) == 0:
-		site = site + 1
+		site += 1
 		nav.warp_to_defined_bookmark_in_system(site)
 	if nav.warp_to_defined_bookmark_in_system(site) == 1:
-		nav.detect_warp_to_bookmark_in_system()
 		# wait for warp to complete
+		nav.detect_warp()
 		while nav.detect_warp_to_bookmark_in_system() == 0:
 			time.sleep(1)
-			nav.detect_warp_to_bookmark_in_system()
+			nav.detect_warp()
 		if nav.detect_warp_to_bookmark_in_system() == 1:
 			return 1
 
@@ -76,36 +109,35 @@ def check_for_enemy_ships():
 		enemy_frigate = pag.locateCenterOnScreen('./img/enemy_frigate.bmp', confidence=0.90,
 												region=(0, 0, screenwidth, screenheight))
 		if enemy_frigate is not None:
-			return 0
+			return 1
 	if check_for_enemy_destroyers == 1:
 		enemy_destroyer = pag.locateCenterOnScreen('./img/enemy_destroyer.bmp', confidence=0.90,
 													region=(0, 0, screenwidth, screenheight))
 		if enemy_destroyer is not None:
-			return 0
+			return 1
 	if check_for_enemy_cruisers == 1:
 		enemy_cruiser = pag.locateCenterOnScreen('./img/enemy_cruiser.bmp', confidence=0.90,
 												region=(0, 0, screenwidth, screenheight))
 		if enemy_cruiser is not None:
-			return 0
+			return 1
 	if check_for_enemy_battlecruisers == 1:
 		enemy_battlecruiser = pag.locateCenterOnScreen('./img/enemy_battlecruiser.bmp', confidence=0.90,
 														region=(0, 0, screenwidth, screenheight))
 		if enemy_battlecruiser is not None:
-			return 0
+			return 1
 	if check_for_enemy_battleships == 1:
 		enemy_battleship = pag.locateCenterOnScreen('./img/enemy_battleship.bmp', confidence=0.90,
 													region=(0, 0, screenwidth, screenheight))
 		if enemy_battleship is not None:
-			return 0
+			return 1
 	else:
-		return 1
+		return 0
 
 def check_for_players():
 	# check screen for other ship icons
 
 
 def check_for_ore():
-	# if the current site doesn't contain any ore, blacklist it and warp to next site
 	# switch overview to 'mining' tab, check for asteroids, then switch back to 'general' tab
 	mining_overview_tab =
 	general_overview_tab =
@@ -116,30 +148,54 @@ def check_for_ore():
 	asteroid_large = pag.locateCenterOnScreen('./img/asteroid_l.bmp', confidence=0.90,
 												region=(0, 0, screenwidth, screenheight))
 	if asteroid_small is None and asteroid_medium is None and asteroid_large is None:
-		nav.blacklist_site(site)
 		return 0
 	elif asteroid_small is not None or asteroid_medium is not None or asteroid_large is not None:
 		return 1
 
 
-#def target_ore()  # target closest ore in overview, if no ore is found, warp to next bookmark
+#def target_ore()
+	# target closest ore in overview
+	# switch to mining tab, target asteroid, then switch back to general tab
 
-def check_hold():
-	# check cargohold to see if at capacity
+def check_hold_popup():
+	# check for popup indicating cargo hold is full
 	# 'cargo hold full' popup lasts about 5 seconds, so check for this popup once every 3 seconds
-	cargo_hold_check = 1
 	cargo_hold_full = pag.locateCenterOnScreen('./img/cargo_hold_full.bmp', confidence=0.90,
 												region=(0, 0, screenwidth, screenheight))
-	while cargo_hold_full is None and cargo_hold_check < 600:
-		time.sleep(3)
-		cargo_hold_check += 1
-		cargo_hold_full = pag.locateCenterOnScreen('./img/cargo_hold_full.bmp', confidence = 0.90,
-													region = (0, 0, screenwidth, screenheight))
-	if cargo_hold_full is not None and cargo_hold_check <= 600:
+												region = (0, 0, screenwidth, screenheight))
+	if cargo_hold_full is None
+		return 0
+	elif cargo_hold_full is not None
 		return 1
-	else:
-		print('timed out checking for full cargo hold')
-		nav.emergency_terminate()
-		sys.exit(0)
+		
+def check_asteroid_depleted_popup():
+	# check for popup indicating asteroid has been depleted
+	asteroid_depleted = pag.locateCenterOnScreen('./img/asteroid_depleted.bmp', confidence=0.90,
+												region=(0, 0, screenwidth, screenheight))
+												region = (0, 0, screenwidth, screenheight))
+	if asteroid_depleted is None
+		return 0
+	elif asteroid_depleted is not None
+		return 1
+	
 
 #def activate_mining_laser()  # turn on mining lasers to mine ore
+	if mining_lasers == 1:
+		keyboard.keydown('F1')
+	if mining_lasers == 2:
+		keyboard.keydown('F1')
+		keyboard.keydown('F2')
+	if mining_lasers == 3:
+		keyboard.keydown('F1')
+		keyboard.keydown('F2')
+		keyboard.keydown('F3')
+	if mining_lasers == 4:
+		keyboard.keydown('F1')
+		keyboard.keydown('F2')
+		keyboard.keydown('F3')
+		keyboard.keydown('F4')
+	return 1
+		
+	
+	
+	
