@@ -29,12 +29,12 @@ def drag_items_from_hold():
 				(station_hangary + (random.randint(-10, 10))),
 				mouse.move_time(), mouse.mouse_path())
 	pag.mouseUp()
-	print('moved all item stacks from hold')
+	print('drag_items_from_hold -- moved all item stacks from hold')
 	return
 
 
 def unload_ship():
-	print('began unloading procedure')
+	print('unload_ship -- began unloading procedure')
 	docked.open_cargo_hold()
 	specialhold = docked.look_for_special_hold()
 	items = docked.look_for_items()
@@ -55,13 +55,13 @@ def unload_ship():
 				drag_items_from_hold()
 				time.sleep(2)
 				docked.look_for_items()
-				print('finished unloading procedure')
+				print('unload_ship -- finished unloading procedure')
 				return 1
 			if items == 0:
-				print('finished unloading procedure')
+				print('unload_ship -- finished unloading procedure')
 				return 1
 		elif specialhold == 0:
-			print('nothing to unload')
+			print('unload_ship -- nothing to unload')
 			return 1
 	while items == 1:
 		docked.focus_inventory_window()
@@ -83,8 +83,8 @@ def unload_ship():
 			drag_items_from_hold()
 			time.sleep(2)
 			docked.look_for_items()
-			print('finished unloading procedure')
+			print('unload_ship -- finished unloading procedure')
 			return 1
 	elif specialhold == 0:
-		print('finished unloading procedure')
+		print('unload_ship -- finished unloading procedure')
 		return 1
