@@ -14,12 +14,14 @@ conf = 0.95
 alignment_time = 6  # time required before ship begins warp, round up to the nearest second
 
 # get monitor resolution, used to speed up image searching
-
 user32 = ctypes.windll.user32
 screenwidth = user32.GetSystemMetrics(0)
 screenheight = user32.GetSystemMetrics(1)
 halfscreenwidth = (int(screenwidth / 2))
 halfscreenheight = (int(screenheight / 2))
+
+destnum = {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9", 10: "10"}
+bookmark_dict = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9", 10: "10"}
 
 def route_set():
 	# check to see if a route has actually been set
@@ -49,7 +51,6 @@ def warp_to_waypoint():
 	# search right half of screen only for stargate icon
 	stargate_waypoint = pag.locateCenterOnScreen('./img/stargate_waypoint.bmp', confidence=0.96,
 												 region=(halfscreenwidth, 0, screenwidth, screenheight))
-
 	# if stargate waypoint not found, look for station waypoint
 	while stargate_waypoint is None and warp_to_waypoint_tries < 15:
 		warp_to_waypoint_tries += 1
@@ -88,21 +89,16 @@ def warp_to_waypoint():
 		time.sleep(float(random.randint(600, 1200)) / 1000)
 		mouse.click()
 		pag.keyUp('d')
-		# move mouse away from button to prevent tooltips from blocking other buttons
 		pag.moveTo((random.randint(150, (int(screenheight - (screenheight / 4))))),
 				   (random.randint(150, (int(screenwidth - (screenwidth / 4))))),
 				   mouse.move_time(), mouse.mouse_path())
 		return 1
-
 	# if can't find any waypoints, dock at nearest station
 	elif stargate_waypoint is None and warp_to_waypoint_tries > 15:
 		print('no waypoints found')
-		emergency_dock()
+		emergency_terminate()
 		traceback.print_stack()
 		sys.exit()
-
-
-bookmark_dict = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9", 10: "10"}
 
 
 def warp_to_first_bookmark_in_system():
@@ -113,13 +109,13 @@ def warp_to_first_bookmark_in_system():
 	global defined_bookmark_in_system
 	# check if bookmark 1 is in the current system. if so, warp to it. if not, increment by 1 and try again
 	defined_bookmark_in_system = pag.locateCenterOnScreen(('./img/dest/at_dest' + (bookmark_dict[bnum]) + '.bmp'),
-	                                                      confidence=0.98,
-	                                                      region=(0, 0, halfscreenwidth, screenheight))
+														  confidence=0.98,
+														  region=(0, 0, halfscreenwidth, screenheight))
 	while defined_bookmark_in_system is None:
 		bnum = bnum + 1
 		defined_bookmark_in_system = pag.locateCenterOnScreen(('./img/dest/at_dest' + (bookmark_dict[bnum]) + '.bmp'),
-		                                                      confidence=0.98,
-		                                                      region=(0, 0, halfscreenwidth, screenheight))
+															  confidence=0.98,
+															  region=(0, 0, halfscreenwidth, screenheight))
 		if bnum == 9 and defined_bookmark_in_system is None:
 			print('out of bookmarks in system to look for')
 			return 0
@@ -137,11 +133,11 @@ def warp_to_first_bookmark_in_system():
 
 
 def warp_to_defined_bookmark_in_system(bookmark_num):
-	# warp to a predefined bookmark # in the current system
+	# warp to a predefined bookmark number in the current system
 	global defined_bookmark_in_system
 	defined_bookmark_in_system = pag.locateCenterOnScreen(('./img/dest/at_dest' + (bookmark_dict[bookmark_num]) + '.bmp'),
-													confidence=0.95,
-													region=(0, 0, halfscreenwidth, screenheight))
+															confidence=0.95,
+															region=(0, 0, halfscreenwidth, screenheight))
 	while defined_bookmark_in_system is None:
 		print('bookmark not found in system')
 		return 0
@@ -149,83 +145,120 @@ def warp_to_defined_bookmark_in_system(bookmark_num):
 		print('found bookmark',bookmark_num)
 		(bookmark_in_systemx), (bookmark_in_systemy) = defined_bookmark_in_system
 		pag.moveTo((bookmark_in_systemx + (random.randint(-1, 200))), (bookmark_in_systemy +
-										(random.randint(-3, 3))), mouse.move_time(), mouse.mouse_path())
+											(random.randint(-3, 3))), mouse.move_time(), mouse.mouse_path())
 		mouse.click_right()
 		pag.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(10, 15))),
-					mouse.move_time(), mouse.mouse_path())
+							mouse.move_time(), mouse.mouse_path())
 		mouse.click()
 		time.sleep(2)
 		return 1
 
 
-def emergency_dock():
-	print('emergency docking')
-	emergency_dock_look_num = 0
-	# search right half of screen only for stargate icon
-	emergency_dock_icon = pag.locateCenterOnScreen('./img/emergency_dock.bmp', confidence=0.9,
-												   region=(0, 0, screenwidth, screenheight))
-	while emergency_dock_icon is None and emergency_dock_look_num < 25:
-		emergency_dock_look_num += 1
-		time.sleep(1)
-		emergency_dock_icon = pag.locateCenterOnScreen('./img/emergency_dock.bmp', confidence=0.9,
-													   region=(0, 0, screenwidth, screenheight))
-	if emergency_dock_icon is not None and emergency_dock_look_num < 25:
-		(emergency_dockx, emergency_docky) = emergency_dock_icon
-		pag.moveTo((emergency_dockx + (random.randint(-2, 50))),
-				   (emergency_docky + (random.randint(-2, 2))),
-				   mouse.move_time(), mouse.mouse_path())
-		pag.keyDown('d')  # hotkey to hold down to warp when clicking on waypoint in overview
-		time.sleep(float(random.randint(600, 1200)) / 1000)
+def emergency_terminate():
+	# if a certain function breaks or times out while undocked, look for nearest station and dock immediately
+	# incrementally lower confidence required to match station icon each time loop runs
+	# if station cannot be found after 20 loops, warp to nearest celestial instead and immediately logout
+	print('emergency termination called!')
+	tries = 0
+	confidence = 0.99
+	station_icon = pag.locateCenterOnScreen('./img/station_icon.bmp', confidence=confidence,
+											region=(0, 0, screenwidth, screenheight))
+	while station_icon is None and tries <= 20:
+		print('looking for station to emergency dock at')
+		tries += 1
+		confidence -= 0.01
+		station_icon = pag.locateCenterOnScreen('./img/station_icon.bmp', confidence=confidence,
+												region=(0, 0, screenwidth, screenheight))
+	if station_icon is not None and tries <= 20:
+		print('emergency docking')
+		(station_iconx, station_icony) = station_icon
+		pag.moveTo((station_iconx + (random.randint(-2, 50))),
+					(station_icony + (random.randint(-2, 2))),
+					mouse.move_time(), mouse.mouse_path())
 		mouse.click()
+		time.sleep(float(random.randint(600, 1200)) / 1000)
+		pag.keyDown('d')
+		time.sleep(float(random.randint(600, 1200)) / 1000)
 		pag.keyUp('d')
-		# move mouse away from button to prevent tooltips from blocking other buttons
 		pag.moveTo((random.randint(150, (int(screenheight - (screenheight / 4))))),
-				   (random.randint(150, (int(screenwidth - (screenwidth / 4))))),
-				   mouse.move_time(), mouse.mouse_path())
-		return
+					(random.randint(150, (int(screenwidth - (screenwidth / 4))))),
+					mouse.move_time(), mouse.mouse_path())
+		time.sleep(180)
+		emergency_logout()
+		return 1
 	else:
-		print('cant emergency dock')
-		return
+		print("couldn't find station to emergency dock at, warping to celestial instead")
+		tries = 0
+		confidence = 0.99
+		celestial_icon = pag.locateCenterOnScreen('./img/celestial_icon.bmp', confidence=confidence,
+													region=(0, 0, screenwidth, screenheight))
+		while celestial_icon is None and tries <= 40:
+			print('looking for celestial')
+			tries += 1
+			confidence -= 0.01
+			celestial_icon = pag.locateCenterOnScreen('./img/celestial_icon.bmp', confidence=confidence,
+														region=(0, 0, screenwidth, screenheight))
+		if celestial_icon is not None and tries <= 40:
+			print('emergency warping to celestial')
+			(celestial_iconx, celestial_icony) = celestial_icon
+			pag.moveTo((celestial_iconx + (random.randint(-2, 50))),
+						(celestial_icony + (random.randint(-2, 2))),
+						mouse.move_time(), mouse.mouse_path())
+			mouse.click()
+			time.sleep(float(random.randint(600, 1200)) / 1000)
+			pag.keyDown('w')
+			time.sleep(float(random.randint(600, 1200)) / 1000)
+			pag.keyUp('w')
+			pag.moveTo((random.randint(150, (int(screenheight - (screenheight / 4))))),
+						(random.randint(150, (int(screenwidth - (screenwidth / 4))))),
+						mouse.move_time(), mouse.mouse_path())
+			time.sleep(180)
+			emergency_logout()
+		emergency_logout()
+		return 0
 
+
+def emergency_logout():
+	return
 
 def detect_warp():
 	# detect when warp to a bookmark has been completed to a bookmark by checking if the bookmark's right-click
-	print('waiting for warp to complete')
 	# wait for ship to begin warp before checking for 'warping' image, otherwise it will get confused
+	print('waiting for warp to complete')
 	time.sleep(alignment_time)
 	warp_time = 1
 	warp_drive_active = pag.locateCenterOnScreen('./img/warping.bmp',
-													 confidence=0.90,
-													 region=(0, 0, screenwidth, screenheight))
+												 confidence=0.90,
+												 region=(0, 0, screenwidth, screenheight))
 	while warp_drive_active is not None and warp_time < 300:
 		print('warping...')
 		warp_time += 1
 		time.sleep(float(random.randint(1000, 3000)) / 1000)
 		warp_drive_active = pag.locateCenterOnScreen('./img/warping.bmp',
-		                                             confidence = 0.90,
-		                                             region = (0, 0, screenwidth, screenheight))
+													 confidence = 0.90,
+													 region = (0, 0, screenwidth, screenheight))
 	if warp_drive_active is None and warp_time < 300:
 		time.sleep(float(random.randint(1000, 3000)) / 1000)
 		print('warp completed')
 		return 1
 	if warp_drive_active is None and warp_time >= 300:
 		print('timed out waiting for warp')
-		emergency_dock()
+		emergency_terminate()
 		return 0
-	
-	
+
+
 def detect_warp_to_bookmark_in_system():
 	# detect when warp to a bookmark has been completed to a bookmark by checking if the bookmark's right-click
 	# menu still has a 'warp to' option. if the option is not present, ship has arrived at bookmark
 	(defined_bookmark_in_systemx), (defined_bookmark_in_systemy) = defined_bookmark_in_system
 	warp_to_bookmark_tries = 0
 	pag.moveTo((defined_bookmark_in_systemx + (random.randint(-1, 200))), (defined_bookmark_in_systemy +
-										(random.randint(-3, 3))), mouse.move_time(), mouse.mouse_path())
+												(random.randint(-3, 3))), mouse.move_time(), mouse.mouse_path())
 	mouse.click_right()
 	print('waiting for warp')
 	at_bookmark_in_system = pag.locateCenterOnScreen('./img/detect_warp_to_bookmark.bmp',
-													 confidence=0.85,
-													 region=(0, 0, screenwidth, screenheight))
+													confidence=0.85,
+													region=(0, 0, screenwidth, screenheight))
 	while at_bookmark_in_system is None and warp_to_bookmark_tries < 50:
 		time.sleep(float(random.randint(1000, 3000)) / 1000)
 		focus_overview()
@@ -238,7 +271,7 @@ def detect_warp_to_bookmark_in_system():
 														 confidence=0.98,
 														 region=(0, 0, halfscreenwidth, screenheight))
 	if at_bookmark_in_system is None and warp_to_bookmark_tries >= 50:
-		emergency_dock()
+		emergency_terminate()
 		return 0
 	if at_bookmark_in_system is not None and warp_to_bookmark_tries < 50:
 		print('warp completed')
@@ -274,7 +307,7 @@ def detect_jump():
 		return 1
 	else:
 		print('timed out looking for jump')
-		emergency_dock()
+		emergency_terminate()
 		traceback.print_stack()
 		sys.exit()
 
@@ -297,12 +330,9 @@ def detect_dock():
 		return 1
 	else:
 		print('timed out looking for dock')
-		emergency_dock()
+		emergency_terminate()
 		traceback.print_stack()
 		sys.exit()
-
-
-destnum = {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7", 8: "8", 9: "9", 10: "10"}
 
 
 def at_dest_num():
@@ -363,31 +393,32 @@ def blacklist_station():
 def blacklist_site(site):
 	# blacklist the specified bookmark by editing its bookmark name
 	# this will prevent further trips to the blacklisted site
-		print('blacklisting site')
-		site_to_blacklist = pag.locateCenterOnScreen(('./img/dest/at_dest' + site + '.bmp'),
-										   confidence=conf,
-										   region=(0, 0, halfscreenwidth, screenheight))
-		(site_to_blacklistx), (site_to_blacklisty) = site_to_blacklist
-		pag.moveTo((site_to_blacklistx + (random.randint(-1, 200))), (site_to_blacklisty + (random.randint(-3, 3))),
-				   mouse.move_time(), mouse.mouse_path())
-		time.sleep(float(random.randint(1000, 2000)) / 1000)
-		mouse.click()  # click once to focus entry, then double-click entry to open edit menu
-		time.sleep(float(random.randint(1000, 2000)) / 1000)
-		mouse.click()
-		time.sleep(float(random.randint(5, 50)) / 1000)
-		mouse.click()
-		time.sleep(float(random.randint(3000, 4000)) / 1000)
-		pag.keyDown('home')
-		time.sleep(float(random.randint(0, 500)) / 1000)
-		pag.keyUp('home')
-		time.sleep(float(random.randint(0, 1000)) / 1000)
-		pag.keyDown('b')
-		pag.keyUp('b')
-		time.sleep(float(random.randint(0, 1000)) / 1000)
-		pag.keyDown('enter')
-		time.sleep((random.randint(0, 200)) / 100)
-		pag.keyUp('enter')
-		return 1
+	print('blacklisting site')
+	site_to_blacklist = pag.locateCenterOnScreen(('./img/dest/at_dest' + site + '.bmp'),
+												confidence=conf,
+												region=(0, 0, halfscreenwidth, screenheight))
+	(site_to_blacklistx), (site_to_blacklisty) = site_to_blacklist
+	pag.moveTo((site_to_blacklistx + (random.randint(-1, 200))),
+				(site_to_blacklisty + (random.randint(-3, 3))),
+				mouse.move_time(), mouse.mouse_path())
+	time.sleep(float(random.randint(1000, 2000)) / 1000)
+	mouse.click()  # click once to focus entry, then double-click entry to open edit menu
+	time.sleep(float(random.randint(1000, 2000)) / 1000)
+	mouse.click()
+	time.sleep(float(random.randint(5, 50)) / 1000)
+	mouse.click()
+	time.sleep(float(random.randint(3000, 4000)) / 1000)
+	pag.keyDown('home')
+	time.sleep(float(random.randint(0, 500)) / 1000)
+	pag.keyUp('home')
+	time.sleep(float(random.randint(0, 1000)) / 1000)
+	pag.keyDown('b')
+	pag.keyUp('b')
+	time.sleep(float(random.randint(0, 1000)) / 1000)
+	pag.keyDown('enter')
+	time.sleep((random.randint(0, 200)) / 100)
+	pag.keyUp('enter')
+	return 1
 
 
 def set_dest():
@@ -434,7 +465,7 @@ def set_home():
 									region=(0, 0, halfscreenwidth, screenheight))
 	(homex, homey) = home
 	pag.moveTo((homex + (random.randint(-1, 200))), (homey + (random.randint(-3, 3))),
-			   mouse.move_time(), mouse.mouse_path())
+				mouse.move_time(), mouse.mouse_path())
 	mouse.click_right()
 	pag.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
 				mouse.move_time(), mouse.mouse_path())

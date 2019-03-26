@@ -36,7 +36,7 @@ def navigator():  # warp-to-zero autopilot, no fancy frills
 				nav.focus_overview()
 				selectwaypoint = nav.warp_to_waypoint()
 			else:
-				nav.emergency_dock()
+				nav.emergency_terminate()
 				traceback.print_exc()
 				traceback.print_stack()
 				sys.exit('error detecting jump')

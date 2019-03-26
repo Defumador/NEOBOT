@@ -2,7 +2,6 @@ import sys
 import time
 import ctypes
 import random
-import traceback
 
 import pyautogui as pag
 
@@ -13,9 +12,16 @@ pag.FAILSAFE = True  # force script to stop if move mouse into top left corner o
 sys.setrecursionlimit(100000)  # set high recursion limit for repeating functions
 conf = 0.95  # set default confidence value for imagesearch  
 
+# obtain screen dimensions
+user32 = ctypes.windll.user32
+screenwidth = user32.GetSystemMetrics(0)
+screenheight = user32.GetSystemMetrics(1)
+halfscreenwidth = (int(screenwidth / 2))
+halfscreenheight = (int(screenheight / 2))
 
-# check if ship is docked
+
 def docked_check():
+	# check if ship is docked
 	undock_icon = pag.locateCenterOnScreen('./img/undock.bmp', confidence=conf)
 	if undock_icon is None:
 		print('not docked')
@@ -25,8 +31,8 @@ def docked_check():
 		return 1
 
 
-# click on ship cargo hold button in inventory window while docked
 def open_cargo_hold():
+	# click on ship cargo hold button in inventory window while docked
 	print('opening cargo hold')
 	cargo_hold = pag.locateCenterOnScreen('./img/cargo_hold.bmp', confidence=conf)
 	while cargo_hold is None:
@@ -42,8 +48,8 @@ def open_cargo_hold():
 		return
 
 
-# if a special hold was found, click on it in inventory window while docked
 def open_special_hold():
+	# if a special hold was found, click on it in inventory window while docked
 	print('opening special hold')
 	special_hold = pag.locateCenterOnScreen('./img/special_hold.bmp', confidence=conf)
 	while special_hold is None:
@@ -59,8 +65,8 @@ def open_special_hold():
 		return
 
 
-# click on station hangar button in inventory window while docked
 def open_station_hangar():
+	# click on station hangar button in inventory window while docked
 	print('opening station hangar')
 	station_hangar = pag.locateCenterOnScreen('./img/station_hangar.bmp', confidence=conf)
 	while station_hangar is None:
@@ -76,8 +82,8 @@ def open_station_hangar():
 		return
 
 
-# click inside the station inventory window to focus it before any items are selected
 def focus_inventory_window():
+	# click inside the station inventory window to focus it before any items are selected
 	# look for sorting buttons in top right corner of inventory window and offset mouse
 	sorting_station_hangar = pag.locateCenterOnScreen('./img/sorting_station_hangar.bmp', confidence=conf)
 	while sorting_station_hangar is None:
@@ -94,11 +100,10 @@ def focus_inventory_window():
 		return
 
 
-# look at the bottom-right corner of station inventory window to determine if '0 items found' appears
 def look_for_items():
+	# look at the bottom-right corner of station inventory window to determine if '0 items found' appears
 	global no_items_station_hangar  # var must be global since it's used in other functions
 	global namefield_station_hangar
-	# time.sleep(float(random.randint(800, 1000)) / 1000)
 	no_items_station_hangar = pag.locateCenterOnScreen('./img/no_items_station_hangar.bmp',
 														confidence=.99)
 	if no_items_station_hangar is None:
@@ -110,8 +115,9 @@ def look_for_items():
 		return 0
 
 
-# look for drop-down arrow next to ship icon in station inventory window to determine if ship has special hold
 def look_for_special_hold():
+	# look for drop-down arrow next to ship icon in station inventory window to determine if
+	# ship has special hold
 	special_hold = pag.locateCenterOnScreen('./img/special_hold.bmp', confidence=conf)
 	no_additional_bays = pag.locateCenterOnScreen('./img/no_additional_bays.bmp', confidence=conf)
 	if special_hold is not None and no_additional_bays is None:
@@ -121,8 +127,8 @@ def look_for_special_hold():
 		return 0
 
 
-# look for warning indicating selected items aren't compatible with ship's special hold 
 def special_hold_warning():
+	# look for warning indicating selected items aren't compatible with ship's special hold
 	# special hold warning is partially transparent so confidence rating must be slightly lower than normal
 	special_hold_warning_popup = pag.locateCenterOnScreen('./img/special_hold_warning.bmp', confidence=0.8)
 	if special_hold_warning_popup is None:
@@ -132,10 +138,9 @@ def special_hold_warning():
 		return 1
 
 
-# check if 'set quantity' popup appears indicating not enough space in cargo hold for full item stack
 def set_quantity_popup():
-	set_quantity = \
-		pag.locateCenterOnScreen('./img/set_quantity.bmp', confidence=conf)
+	# check if 'set quantity' popup appears indicating not enough space in cargo hold for full item stack
+	set_quantity = pag.locateCenterOnScreen('./img/set_quantity.bmp', confidence=conf)
 	if set_quantity is None:
 		return 0
 	else:
@@ -144,8 +149,9 @@ def set_quantity_popup():
 		return 1
 
 
-# check if 'not enough space' popup appears indicating not all item stacks will fit into hold or hold is already full
 def not_enough_space_popup():
+	# check if 'not enough space' popup appears indicating not all item stacks will
+	# fit into hold or hold is already full
 	not_enough_space = pag.locateCenterOnScreen('./img/not_enough_space.bmp', confidence=conf)
 	if not_enough_space is None:
 		return 0
@@ -155,16 +161,8 @@ def not_enough_space_popup():
 		return 1
 
 
-# obtain screen dimensions
-user32 = ctypes.windll.user32
-screenwidth = user32.GetSystemMetrics(0)
-screenheight = user32.GetSystemMetrics(1)
-halfscreenwidth = (int(screenwidth / 2))
-halfscreenheight = (int(screenheight / 2))
-
-
-# undock from station, look for undock button in right half of screen only
 def undock():
+	# undock from station, look for undock button in right half of screen only
 	print('undocking')
 	pag.keyDown('alt')  # alt+u is default undock hotkey
 	time.sleep(float(random.randint(200, 1200)) / 1000)
@@ -193,23 +191,3 @@ def undock():
 	if undocked is not None:
 		time.sleep(int((random.randint(2000, 3000) / 1000)))
 		return
-"""
-	print('began undocking procedure')
-	undock_button = pag.locateCenterOnScreen('./img/undock.bmp', confidence=conf)
-	if undock_button is None:
-		print('cant find undock button')
-		traceback.print_exc()
-		traceback.print_stack()
-		sys.exit()
-	elif undock_button is not None:
-		(undockx, undocky) = undock_button
-		pag.moveTo((undockx + (random.randint(-25, 25))),
-					(undocky + (random.randint(-15, 15))),
-					mouse.move_time(), mouse.mouse_path())
-		time.sleep(int((random.randint(500, 1200) / 1000)))
-		mouse.click()
-		# move mouse away from button to prevent tooltips from blocking other buttons
-		pag.moveTo((random.randint(150, (int(screenheight - (screenheight / 4))))),
-					(random.randint(150, (int(screenwidth - (screenwidth / 4))))),
-					mouse.move_time(), mouse.mouse_path())
-"""

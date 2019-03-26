@@ -14,8 +14,9 @@ sys.setrecursionlimit(100000)
 conf = 0.95
 
 
-# click and drag first item stack in inventory to ship cargo hold, function assumes cargo hold is already open
 def drag_items_to_cargo_hold():
+	# click and drag first item stack in inventory to ship cargo hold, function assumes
+	# cargo hold is already open
 	print('moving item stack to cargo hold')
 	namefield_station_hangar = pag.locateCenterOnScreen('./img/namefield_station_hangar.bmp',
 														confidence=conf)
@@ -48,8 +49,9 @@ def drag_items_to_cargo_hold():
 			return
 
 
-# click and drag first item stack in inventory to ship special hold, function assumes special hold is already open
 def drag_items_to_special_hold():
+	# click and drag first item stack in inventory to ship special hold, function assumes
+	# special hold is already open
 	print('moving item stack to special hold')
 	namefield_station_hangar = pag.locateCenterOnScreen('./img/namefield_station_hangar.bmp',
 														confidence=conf)
@@ -81,7 +83,8 @@ def drag_items_to_special_hold():
 			return
 
 
-def load_ship_bulk():  # load ship by selecting all item stacks and moving them all at once
+def load_ship_bulk():
+	# load ship by selecting all item stacks and moving them all at once
 	print('beginning bulk loading procedure')
 	items = docked.look_for_items()
 
@@ -130,8 +133,8 @@ def load_ship_bulk():  # load ship by selecting all item stacks and moving them 
 			return 1
 
 
-# load ship one item stack at a time
 def load_ship_individually():
+	# load ship one item stack at a time
 	print('beginning individual loading procedure')
 	docked.open_station_hangar()
 	items = docked.look_for_items()
@@ -184,8 +187,8 @@ def load_ship_individually():
 		return 2  # 2 indicating ship is loaded and hangar is completley empty
 
 
-# use both individual and bulk functions to load ship
 def load_ship():
+	# use both individual and bulk functions to load ship
 	docked.open_station_hangar()
 	items = docked.look_for_items()
 	if items == 1:
@@ -193,16 +196,20 @@ def load_ship():
 		if lsb == 2:
 			print('ship loaded entire hangar')
 			return 2
+
 		elif lsb == 1:  # 1 indicating ship is full but more items remain in hangar
 			print('ship is full and hangar has more items')
 			return 1  # 1 indicating ship is full but more items remain in hangar
+
 		elif lsb == 0:  # 0 indicating ship cannot be fully loaded in bulk
 			lsi = load_ship_individually()
 			if lsi == 2:
 				print('ship loaded entire hangar')
 				return 2
+
 			elif lsi == 1:  # 1 indicating ship is full but more items remain in hangar
 				print('ship is full and hangar has more items')
 				return 1  # 1 indicating ship is full but more items remain in hangar
+
 	elif items == 0:
 		return 0
