@@ -31,6 +31,9 @@ check_for_player_reds
 check_for_player_yellows
 check_for_player_greys
 
+global atsite
+atsite = 0
+
 def miner():
 	nav.docked_check()
 	while nav.docked_check() == 0:
@@ -84,21 +87,23 @@ def miner():
 
 def travel_to_site():
 	# find a suitable asteroid field by warping to each bookmark in numerical order
-	global site
-	site = 1
-	# check if bookmark 1 is in system. if not, increment bookmark number by 1 and look again
-	nav.warp_to_defined_bookmark_in_system(site)
-	while nav.warp_to_defined_bookmark_in_system(site) == 0:
-		site += 1
-		nav.warp_to_defined_bookmark_in_system(site)
-	if nav.warp_to_defined_bookmark_in_system(site) == 1:
+	global gotosite
+	gotosite = 1
+	# try warping to bookmark 1 in system. if bookmark 1 not present or already there, increment bookmark number by 1 and look again
+	nav.warp_to_defined_bookmark_in_system(gotosite)
+	while nav.warp_to_defined_bookmark_in_system(gotosite) == 0 and gotosite <= 10:
+		gotosite += 1
+		nav.warp_to_defined_bookmark_in_system(gotosite)
+	if nav.warp_to_defined_bookmark_in_system(gotosite) == 1 and gotosite <= 10:
+		# save site number as a separate variable so script remembers not to try to warp there
+		atsite = gotosite
 		# wait for warp to complete
 		nav.detect_warp()
-		while nav.detect_warp_to_bookmark_in_system() == 0:
-			time.sleep(1)
-			nav.detect_warp()
-		if nav.detect_warp_to_bookmark_in_system() == 1:
+		if nav.detect_warp() == 1:
 			return 1
+	else:
+		print('travel_to_site error, ran out of sites to check for')
+		nav.emergency_terminate()
 
 def check_for_enemy_ships():
 	# check entire screen for red ship hud icons, indicating hostile npcs
@@ -131,6 +136,7 @@ def check_for_enemy_ships():
 		if enemy_battleship is not None:
 			return 1
 	else:
+		print('check_for_enemy_ships no hostile npcs to avoid')
 		return 0
 
 def check_for_players():
@@ -148,6 +154,7 @@ def check_for_ore():
 	asteroid_large = pag.locateCenterOnScreen('./img/asteroid_l.bmp', confidence=0.90,
 												region=(0, 0, screenwidth, screenheight))
 	if asteroid_small is None and asteroid_medium is None and asteroid_large is None:
+		print('check_for_ore no more asteroids found in field')
 		return 0
 	elif asteroid_small is not None or asteroid_medium is not None or asteroid_large is not None:
 		return 1
@@ -166,6 +173,7 @@ def check_hold_popup():
 	if cargo_hold_full is None
 		return 0
 	elif cargo_hold_full is not None
+		print('cargo_hold_popup found popup')
 		return 1
 		
 def check_asteroid_depleted_popup():
@@ -176,10 +184,11 @@ def check_asteroid_depleted_popup():
 	if asteroid_depleted is None
 		return 0
 	elif asteroid_depleted is not None
+		print('asteroid_depleted_popup found popup')
 		return 1
 	
 
-#def activate_mining_laser()  # turn on mining lasers to mine ore
+def activate_mining_laser():  # turn on mining lasers to mine ore
 	if mining_lasers == 1:
 		keyboard.keydown('F1')
 	if mining_lasers == 2:
@@ -194,6 +203,7 @@ def check_asteroid_depleted_popup():
 		keyboard.keydown('F2')
 		keyboard.keydown('F3')
 		keyboard.keydown('F4')
+	print('activate_mining_laser activated lasers')
 	return 1
 		
 	
