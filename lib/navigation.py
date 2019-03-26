@@ -13,6 +13,9 @@ sys.setrecursionlimit(100000)
 conf = 0.95
 alignment_time = 6  # time required before ship begins warp, round up to the nearest second
 
+global atsite
+atsite = 0
+
 # get monitor resolution, used to speed up image searching
 user32 = ctypes.windll.user32
 screenwidth = user32.GetSystemMetrics(0)
@@ -138,7 +141,7 @@ def warp_to_first_bookmark_in_system():
 def warp_to_defined_bookmark_in_system(gotosite):
 	# warp to a predefined bookmark number in the current system
 	# if ship is already at the requested site, return function
-	if gotosite = atsite:
+	if gotosite == atsite:
 		print('warp_to_defined_bookmark_in_system -- already at bookmark',atsite)
 		return 0
 	else:
@@ -147,7 +150,7 @@ def warp_to_defined_bookmark_in_system(gotosite):
 																region=(0, 0, halfscreenwidth, screenheight))
 		# if cant find the site number, return function
 		while defined_bookmark_in_system is None:
-			print('warp_to_defined_bookmark_in_system -- bookmark',gotosite,'not found in system')
+			print('warp_to_defined_bookmark_in_system -- bookmark', gotosite, 'not found in system')
 			return 0
 		if defined_bookmark_in_system is not None:
 				print('warp_to_defined_bookmark_in_system -- found bookmark',gotosite)
@@ -231,6 +234,7 @@ def emergency_terminate():
 def emergency_logout():
 	return
 
+
 def detect_warp():
 	# detect when warp to a bookmark has been completed to a bookmark by checking if the bookmark's right-click
 	# wait for ship to begin warp before checking for 'warping' image, otherwise it will get confused
@@ -245,8 +249,8 @@ def detect_warp():
 		warp_time += 1
 		time.sleep(float(random.randint(1000, 3000)) / 1000)
 		warp_drive_active = pag.locateCenterOnScreen('./img/warping.bmp',
-													 confidence = 0.90,
-													 region = (0, 0, screenwidth, screenheight))
+													 confidence=0.90,
+													 region=(0, 0, screenwidth, screenheight))
 	if warp_drive_active is None and warp_time < 300:
 		time.sleep(float(random.randint(1000, 3000)) / 1000)
 		print('detect_warp warp completed')
@@ -404,7 +408,7 @@ def blacklist_site(atsite):
 	# blacklist the specified bookmark by editing its bookmark name
 	# this will prevent further trips to the blacklisted site
 	print('blacklist_site -- blacklisting site')
-	site_to_blacklist = pag.locateCenterOnScreen(('./img/dest/at_dest' + site + '.bmp'),
+	site_to_blacklist = pag.locateCenterOnScreen(('./img/dest/at_dest' + (bookmark_dict[atsite]) + '.bmp'),
 												confidence=conf,
 												region=(0, 0, halfscreenwidth, screenheight))
 	(site_to_blacklistx), (site_to_blacklisty) = site_to_blacklist

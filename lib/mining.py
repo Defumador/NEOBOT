@@ -6,7 +6,7 @@ import pyautogui as pag
 from lib import navigation as nav
 from lib import docked
 from lib import unload_ship
-from lib import main
+from lib import keyboard
 
 sys.setrecursionlimit(9999999)
 
@@ -34,9 +34,10 @@ check_for_player_greys
 global atsite
 atsite = 0
 
+
 def miner():
-	nav.docked_check()
-	while nav.docked_check() == 0:
+	docked.docked_check()
+	while docked.docked_check() == 0:
 		travel_to_site()
 		if travel_to_site() == 1:
 			# once arrived at site, check for hostile npcs and players. if either exist, warp to next site
@@ -58,7 +59,7 @@ def miner():
 					if check_asteroid_depleted_popup() == 1:
 						check_for_ore()
 						if check_for_ore() == 0:
-							nav.blacklist(site)
+							nav.blacklist_site(atsite)
 						elif check_for_ore() == 1:
 							target_ore()
 							activate_mining_laser()
@@ -75,15 +76,16 @@ def miner():
 				if check_hold_popup() == 1:
 					# once cargo is full, dock at home station and unload
 					nav.go_home()
-					unload_cargo.unload_cargo()
+					unload_ship.unload_ship()
 					docked.undock()
 					time.sleep(3)		
 			if check_for_ore() == 0:
-				nav.blacklist(site)
-	if nav.docked_check() == 1:
+				nav.blacklist_site(atsite)
+	if docked.docked_check() == 1:
 		# if docked when script starts, undock
 		docked.undock()
 		miner()
+
 
 def travel_to_site():
 	# find a suitable asteroid field by warping to each bookmark in numerical order
@@ -102,10 +104,11 @@ def travel_to_site():
 		if nav.detect_warp() == 1:
 			return 1
 	else:
-		print('travel_to_site error, ran out of sites to check for')
+		print('travel_to_site -- ran out of sites to check for')
 		nav.emergency_terminate()
 
-def check_for_enemy_ships():
+
+def check_for_hostiles():
 	# check entire screen for red ship hud icons, indicating hostile npcs
 	# only avoid the hostile ship classes specified by the player
 	# script will look for these icons on the default 'general' overview tab
@@ -136,11 +139,13 @@ def check_for_enemy_ships():
 		if enemy_battleship is not None:
 			return 1
 	else:
-		print('check_for_enemy_ships no hostile npcs to avoid')
+		print('check_for_enemy_ships -- no hostile npcs to avoid')
 		return 0
+
 
 def check_for_players():
 	# check screen for other ship icons
+	return
 
 
 def check_for_ore():
@@ -154,39 +159,40 @@ def check_for_ore():
 	asteroid_large = pag.locateCenterOnScreen('./img/asteroid_l.bmp', confidence=0.90,
 												region=(0, 0, screenwidth, screenheight))
 	if asteroid_small is None and asteroid_medium is None and asteroid_large is None:
-		print('check_for_ore no more asteroids found in field')
+		print('check_for_ore -- no more asteroids found at site')
 		return 0
 	elif asteroid_small is not None or asteroid_medium is not None or asteroid_large is not None:
 		return 1
 
 
-#def target_ore()
+def target_ore():
 	# target closest ore in overview
 	# switch to mining tab, target asteroid, then switch back to general tab
+	return
+
 
 def check_hold_popup():
 	# check for popup indicating cargo hold is full
 	# 'cargo hold full' popup lasts about 5 seconds, so check for this popup once every 3 seconds
 	cargo_hold_full = pag.locateCenterOnScreen('./img/cargo_hold_full.bmp', confidence=0.90,
 												region=(0, 0, screenwidth, screenheight))
-												region = (0, 0, screenwidth, screenheight))
-	if cargo_hold_full is None
+	if cargo_hold_full is None:
 		return 0
-	elif cargo_hold_full is not None
-		print('cargo_hold_popup found popup')
+	elif cargo_hold_full is not None:
+		print('cargo_hold_popup -- found popup')
 		return 1
-		
+
+
 def check_asteroid_depleted_popup():
 	# check for popup indicating asteroid has been depleted
 	asteroid_depleted = pag.locateCenterOnScreen('./img/asteroid_depleted.bmp', confidence=0.90,
 												region=(0, 0, screenwidth, screenheight))
-												region = (0, 0, screenwidth, screenheight))
-	if asteroid_depleted is None
+	if asteroid_depleted is None:
 		return 0
-	elif asteroid_depleted is not None
-		print('asteroid_depleted_popup found popup')
+	elif asteroid_depleted is not None:
+		print('asteroid_depleted_popup -- found popup')
 		return 1
-	
+
 
 def activate_mining_laser():  # turn on mining lasers to mine ore
 	if mining_lasers == 1:
@@ -203,9 +209,5 @@ def activate_mining_laser():  # turn on mining lasers to mine ore
 		keyboard.keydown('F2')
 		keyboard.keydown('F3')
 		keyboard.keydown('F4')
-	print('activate_mining_laser activated lasers')
+	print('activate_mining_laser -- activated lasers')
 	return 1
-		
-	
-	
-	
