@@ -147,7 +147,7 @@ def warp_to_defined_bookmark_in_system(gotosite):
 	else:
 		defined_bookmark_in_system = pag.locateCenterOnScreen(('./img/dest/at_dest' + (bookmark_dict[gotosite]) + '.bmp'),
 																confidence=0.95,
-																region=(0, 0, halfscreenwidth, screenheight))
+																region=(0, 0, screenwidth, screenheight))
 		# if cant find the site number, return function
 		while defined_bookmark_in_system is None:
 			print('warp_to_defined_bookmark_in_system -- bookmark', gotosite, 'not found in system')

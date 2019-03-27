@@ -1,6 +1,7 @@
 import sys
 import traceback
 import time
+import win32
 
 import pyautogui as pag
 
@@ -111,12 +112,12 @@ def collector():  # haul cargo from a predetermined list of stations to a single
 	if dockedcheck is None:
 		collector()
 
-
+'''
 def miner():  # mine ore from a predetermined set of asteroid fields
 	print('running miner')
 	dockedcheck = docked.docked_check()
 	while dockedcheck == 0:  # if not docked, check cargohold capacity
-		cargohold = mining.check_cargohold()
+		cargohold = check_cargohold()
 		if cargohold == 1:  # if cargohold over 90%, dock and unload at home station, then rerun function
 			nav.set_home()
 		elif cargohold == 0:  # if cargohold less than 90%, go to first asteroid field
@@ -142,17 +143,17 @@ def miner():  # mine ore from a predetermined set of asteroid fields
 			sys.exit()
 	if dockedcheck is None:
 		miner()
+'''
 
 
-nav.warp_to_defined_bookmark_in_system(2)
-nav.detect_warp()
+win32.findwindow()
 
 
 
-selectscript = 2
-
-if selectscript == 1:
-	navigator()
-elif selectscript == 2:
-	nav.route_set()
-	collector()
+#selectscript = 2
+#
+#if selectscript == 1:
+#	navigator()
+#elif selectscript == 2:
+#	nav.route_set()
+#	collector()
