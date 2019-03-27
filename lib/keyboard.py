@@ -3,7 +3,15 @@ import random
 
 import pyautogui
 
-pyautogui.FAILSAFE = True
+
+def keypress(key)
+	# hold down key for random period of time rather than just pressing it once
+	time.sleep(float(random.randint(0, 500)) / 1000)
+	pyautogui.keyDown(key)
+	time.sleep(float(random.randint(5, 200)) / 1000)
+	pyautogui.keyUp(key)
+	time.sleep(float(random.randint(0, 500)) / 1000)
+	return
 
 
 def enter():
