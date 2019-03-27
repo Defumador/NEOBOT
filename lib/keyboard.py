@@ -4,45 +4,45 @@ import random
 import pyautogui
 
 
-def keypress(key)
-	# hold down key for random period of time rather than just pressing it once
-	time.sleep(float(random.randint(0, 500)) / 1000)
-	pyautogui.keyDown(key)
-	time.sleep(float(random.randint(5, 200)) / 1000)
-	pyautogui.keyUp(key)
-	time.sleep(float(random.randint(0, 500)) / 1000)
-	return
+def keypress(key):
+    # hold down key for random period of time rather than just pressing it once
+    time.sleep(float(random.randint(0, 500)) / 1000)
+    pyautogui.keyDown(key)
+    time.sleep(float(random.randint(5, 200)) / 1000)
+    pyautogui.keyUp(key)
+    time.sleep(float(random.randint(0, 500)) / 1000)
+    return
 
 
 def enter():
-	# hit enter key to confirm pop-up
-	print('hitting enter')
-	pyautogui.keyDown('enter')
-	time.sleep(float(random.randint(0, 500)) / 1000)
-	pyautogui.keyUp('enter')
-	return
+    # hit enter key to confirm pop-up
+    print('hitting enter')
+    pyautogui.keyDown('enter')
+    time.sleep(float(random.randint(0, 500)) / 1000)
+    pyautogui.keyUp('enter')
+    return
 
 
 def select_all():
-	# hotkey to select all items in a menu
-	print('selecting all')
-	pyautogui.keyDown('ctrl')
-	time.sleep(float(random.randint(0, 800)) / 1000)
+    # hotkey to select all items in a menu
+    print('selecting all')
+    pyautogui.keyDown('ctrl')
+    time.sleep(float(random.randint(0, 800)) / 1000)
 
-	pyautogui.keyDown('a')
-	time.sleep(float(random.randint(0, 800)) / 1000)
-	pyautogui.keyUp('a')
+    pyautogui.keyDown('a')
+    time.sleep(float(random.randint(0, 800)) / 1000)
+    pyautogui.keyUp('a')
 
-	time.sleep(float(random.randint(0, 800)) / 1000)
-	pyautogui.keyUp('ctrl')
-	return
+    time.sleep(float(random.randint(0, 800)) / 1000)
+    pyautogui.keyUp('ctrl')
+    return
 
 
 def open_station_hangar():
-	# hotkey to open station hangar inventory window when docked
-	print('alt a')
-	pyautogui.keyDown('alt')
-	pyautogui.keyDown('g')
-	pyautogui.keyUp('g')
-	pyautogui.keyUp('alt')
-	return
+    # hotkey to open station hangar inventory window when docked
+    print('alt a')
+    pyautogui.keyDown('alt')
+    pyautogui.keyDown('g')
+    pyautogui.keyUp('g')
+    pyautogui.keyUp('alt')
+    return
