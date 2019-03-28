@@ -23,7 +23,7 @@ halfscreeny = (int(screeny / 2))
 
 
 def docked_check():
-    # check if ship is docked
+    # Check if the ship is currently docked by looking for the undock icon.
     undock_icon = pag.locateCenterOnScreen('./img/undock.bmp',
                                            confidence = conf)
     if undock_icon is None:
@@ -35,7 +35,7 @@ def docked_check():
 
 
 def open_cargo_hold():
-    # click on ship cargo hold button in inventory window while docked
+    # Click on the ship's cargo hold button in inventory window while docked.
     print('open_cargo_hold -- opening cargo hold')
     cargo_hold = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
                                           confidence = conf)
@@ -54,7 +54,8 @@ def open_cargo_hold():
 
 
 def open_special_hold():
-    # if a special hold was found, click on it in inventory window while docked
+    # If a special hold was found (ore hold, mineral hold, etc.) click on it in
+    # inventory window while docked.
     print('open_special_hold -- opening special hold')
     special_hold = pag.locateCenterOnScreen('./img/special_hold.bmp',
                                             confidence = conf)
@@ -73,7 +74,7 @@ def open_special_hold():
 
 
 def open_station_hangar():
-    # click on station hangar button in inventory window while docked
+    # Click on the station hangar button within inventory window while docked.
     print('open_station_hangar -- opening station hangar')
     station_hangar = pag.locateCenterOnScreen('./img/station_hangar.bmp',
                                               confidence = conf)
@@ -93,10 +94,10 @@ def open_station_hangar():
 
 
 def focus_inventory_window():
-    # click inside the station inventory window to focus it before any items
-    # are selected
-    # look for sorting buttons in top right corner of inventory window and
-    # offset mouse
+    # Click somewhere inside the station inventory window to focus it before
+    # any items are selected. Look for the sorting buttons in top right corner
+    # of the inventory window and position the mouse cursor relative to those
+    # buttons to click a non-interactive area within the inventory window.
     sorting_station_hangar = pag.locateCenterOnScreen(
         './img/sorting_station_hangar.bmp', confidence = conf)
     while sorting_station_hangar is None:
@@ -107,8 +108,6 @@ def focus_inventory_window():
     else:
         (sorting_station_hangarx,
          sorting_station_hangary) = sorting_station_hangar
-        # offset mouse from sorting button to click within inventory window
-        # to focus it
         pag.moveTo((sorting_station_hangarx - (random.randint(0, 250))),
                    (sorting_station_hangary + (random.randint(50, 300))),
                    mouse.move_time(), mouse.mouse_path())
@@ -117,10 +116,10 @@ def focus_inventory_window():
 
 
 def look_for_items():
-    # look at the bottom-right corner of station inventory window to
-    # determine if '0 items found' appears
-    global no_items_station_hangar  # var must be global since it's used in
-    # other functions
+    # Look at the bottom-right corner of the station inventory window for the
+    # '0 items found' text. If it isn't present, there must be items in the
+    # station's inventory.
+    global no_items_station_hangar
     global namefield_station_hangar
     no_items_station_hangar = pag.locateCenterOnScreen(
         './img/no_items_station_hangar.bmp',
@@ -136,9 +135,8 @@ def look_for_items():
 
 
 def look_for_special_hold():
-    # look for drop-down arrow next to ship icon in station inventory window
-    # to determine if
-    # ship has special hold
+    # Look for a drop-down arrow next to your ship icon in the station
+    # inventory window, indicating the ship has a special cargo hold.
     special_hold = pag.locateCenterOnScreen('./img/special_hold.bmp',
                                             confidence = conf)
     no_additional_bays = pag.locateCenterOnScreen(
@@ -151,10 +149,9 @@ def look_for_special_hold():
 
 
 def special_hold_warning():
-    # look for warning indicating selected items aren't compatible with
-    # ship's special hold
-    # special hold warning is partially transparent so confidence rating
-    # must be slightly lower than normal
+    # Look for a popup indicating the selected inventory items aren't
+    # compatible with the ship's special hold. This warning is partially
+    # transparent so confidence rating must be slightly lower than normal.
     special_hold_warning_popup = pag.locateCenterOnScreen(
         './img/special_hold_warning.bmp', confidence = 0.8)
     if special_hold_warning_popup is None:
@@ -165,8 +162,8 @@ def special_hold_warning():
 
 
 def set_quantity_popup():
-    # check if 'set quantity' popup appears indicating not enough space in
-    # cargo hold for full item stack
+    # Check if a 'set quantity' window appears, indicating there isn't enough
+    # space in the ship's hold for a full item stack.
     set_quantity = pag.locateCenterOnScreen('./img/set_quantity.bmp',
                                             confidence = conf)
     if set_quantity is None:
@@ -178,9 +175,8 @@ def set_quantity_popup():
 
 
 def not_enough_space_popup():
-    # check if 'not enough space' popup appears indicating not all item
-    # stacks will
-    # fit into hold or hold is already full
+    # Check if a 'not enough space' popup appears, indicating the item stacks
+    # selected will not fit into the ship's hold, or hold is already full.
     not_enough_space = pag.locateCenterOnScreen('./img/not_enough_space.bmp',
                                                 confidence = conf)
     if not_enough_space is None:
@@ -192,26 +188,26 @@ def not_enough_space_popup():
 
 
 def undock():
-    # undock from station, look for undock button in right half of screen only
+    # Undock from the station with the default hotkey. The undock has been
+    # completed once the script sees the cyan ship icon in the top left corner
+    # of the client window, indicating a session change has just ocurred.
     print('undock -- undocking')
-    pag.keyDown('alt')  # alt+u is default undock hotkey
+    pag.keyDown('alt')  # alt+u
     time.sleep(float(random.randint(200, 1200)) / 1000)
     pag.keyDown('u')
     time.sleep(float(random.randint(200, 1200)) / 1000)
     pag.keyUp('u')
     time.sleep(float(random.randint(200, 1200)) / 1000)
     pag.keyUp('alt')
-    # look for cyan ship icon in top left corner with ring around it
-    # indicating session change
     time.sleep(int((random.randint(5000, 10000) / 1000)))
     undocked = pag.locateCenterOnScreen('./img/session_change_undocked.bmp',
                                         confidence = 0.55,
                                         region = (
-                                        0, 0, (int(screenx / 5)), screeny))
+                                            0, 0, (int(screenx / 5)), screeny))
     while undocked is None:
         time.sleep(int((random.randint(3000, 10000) / 1000)))
         print('undock -- trying undocking second time')
-        pag.keyDown('alt')  # alt+u is default undock hotkey
+        pag.keyDown('alt')
         time.sleep(float(random.randint(200, 1200)) / 1000)
         pag.keyDown('u')
         time.sleep(float(random.randint(200, 1200)) / 1000)

@@ -5,7 +5,8 @@ import pyautogui
 
 
 def keypress(key):
-    # hold down key for random period of time rather than just pressing it once
+    # Hold down the specified key for a random period of time rather than just
+    # pressing it momentarily.
     time.sleep(float(random.randint(0, 500)) / 1000)
     pyautogui.keyDown(key)
     time.sleep(float(random.randint(5, 200)) / 1000)
@@ -15,8 +16,7 @@ def keypress(key):
 
 
 def enter():
-    # hit enter key to confirm pop-up
-    print('hitting enter')
+    print('enter -- called')
     pyautogui.keyDown('enter')
     time.sleep(float(random.randint(0, 500)) / 1000)
     pyautogui.keyUp('enter')
@@ -24,8 +24,7 @@ def enter():
 
 
 def select_all():
-    # hotkey to select all items in a menu
-    print('selecting all')
+    print('select_all -- called')
     pyautogui.keyDown('ctrl')
     time.sleep(float(random.randint(0, 800)) / 1000)
 
@@ -35,14 +34,4 @@ def select_all():
 
     time.sleep(float(random.randint(0, 800)) / 1000)
     pyautogui.keyUp('ctrl')
-    return
-
-
-def open_station_hangar():
-    # hotkey to open station hangar inventory window when docked
-    print('alt a')
-    pyautogui.keyDown('alt')
-    pyautogui.keyDown('g')
-    pyautogui.keyUp('g')
-    pyautogui.keyUp('alt')
     return

@@ -9,8 +9,7 @@ from lib import mouse
 from lib import keyboard
 from lib import docked
 
-pag.FAILSAFE = True
-sys.setrecursionlimit(100000)
+sys.setrecursionlimit(9999999)
 conf = 0.95
 
 

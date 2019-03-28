@@ -1,7 +1,6 @@
 import sys
 import traceback
 import time
-import win32
 
 import pyautogui as pag
 
@@ -11,32 +10,23 @@ from lib import mining
 from lib import navigation as nav
 from lib import unload_ship
 
-sys.setrecursionlimit(10000000)
+sys.setrecursionlimit(9999999)
 pag.FAILSAFE = True
 
-'''
-if docked.docked_check == 1:
-	print('good')
-if docked.docked_check == 0:
-	print('not docked')
-value = docked.docked_check()
-print(value)
-sys.exit()
-'''
 
-
-def navigator():  # warp-to-zero autopilot, no fancy frills
+def navigator():
+    # A standard warp-to-zero autopilot script. Warp to the destination, then
+    # terminate.
     print('navigator -- running navigator')
     nav.route_set()
     dockedcheck = docked.docked_check()
-    while dockedcheck == 0:  # if not docked, travel through waypoints
+    while dockedcheck == 0:
         nav.focus_overview()
         selectwaypoint = nav.warp_to_waypoint()
-        while selectwaypoint == 1:  # 1 indicating stargate waypoint
-            time.sleep(5)  # wait for warp to start
+        while selectwaypoint == 1:  # Value of 1 indicates stargate waypoint.
+            time.sleep(5)  # Wait for jump to begin.
             detectjump = nav.detect_jump()
-            if detectjump == 1:  # if jump detected, look for next waypoint
-                # and warp
+            if detectjump == 1:
                 nav.focus_overview()
                 selectwaypoint = nav.warp_to_waypoint()
             else:
@@ -44,7 +34,7 @@ def navigator():  # warp-to-zero autopilot, no fancy frills
                 traceback.print_exc()
                 traceback.print_stack()
                 sys.exit('navigator -- error detecting jump')
-        while selectwaypoint == 2:  # 2 indicating station waypoint
+        while selectwaypoint == 2:  # Value of 2 indicates a station waypoint.
             time.sleep(5)
             detectdock = nav.detect_dock()
             if detectdock == 1:
@@ -59,25 +49,27 @@ def navigator():  # warp-to-zero autopilot, no fancy frills
         navigator()
 
 
-def collector():  # haul cargo from a predetermined list of stations to a
-    # single 'home' station
+def collector():
+    # Haul all items from a predetermined list of stations to a single 'home'
+    # station, as specified by the user. The home station is identified by a
+    # station bookmark beginning with '000', while the remote stations are any
+    # station bookmark beginning with the numbers 1-9. This means up to 10
+    # remote stations are supported.
     print('collector -- running collector')
     dockedcheck = docked.docked_check()
-    while dockedcheck == 0:  # if not docked, travel through waypoints
+    while dockedcheck == 0:
         nav.focus_overview()
         selectwaypoint = nav.warp_to_waypoint()
         while selectwaypoint == 1:
-            time.sleep(3)  # wait for warp to start
+            time.sleep(3)  # Wait for warp to start.
             detectjump = nav.detect_jump()
-            if detectjump == 1:  # if jump detected, look for next waypoint
-                # and warp
+            if detectjump == 1:
                 nav.focus_overview()
                 selectwaypoint = nav.warp_to_waypoint()
         while selectwaypoint == 2:
             time.sleep(3)
             detectdock = nav.detect_dock()
-            if detectdock == 1:  # if dock detected (2 means dock found),
-                # load ship (rerun 'while' loop)
+            if detectdock == 1:
                 collector()
         else:
             print(
@@ -87,10 +79,11 @@ def collector():  # haul cargo from a predetermined list of stations to a
             traceback.print_stack()
             sys.exit()
 
-    while dockedcheck == 1:  # if docked, check if at home station
+    while dockedcheck == 1:
         athomecheck = nav.at_home_check()
-        if athomecheck == 1:  # if at home station, set destination waypoint
-            # and unload cargo from ship
+        # If docked at home station, set a destination waypoint to a remote
+        # station and unload cargo from ship into home station inventory.
+        if athomecheck == 1:
             unload_ship.unload_ship()
             nav.set_dest()
             docked.undock()
@@ -109,7 +102,7 @@ def collector():  # haul cargo from a predetermined list of stations to a
                     nav.blacklist_station()
                     docked.undock()
                     collector()
-            elif loadship == 1:  # if ship is full, return home to unload
+            elif loadship == 1:  # Value of 1 indicates ship is full.
                 nav.set_home()
                 docked.undock()
                 collector()
@@ -122,7 +115,18 @@ def collector():  # haul cargo from a predetermined list of stations to a
         collector()
 
 
+# Method for determining which script to run, as yet to be implemented by gui.
+# selectscript = 2
+#
+# if selectscript == 1:
+#	navigator()
+# elif selectscript == 2:
+#	nav.route_set()
+#	collector()
+
+
 '''
+##### old original miner script #####
 def miner():  # mine ore from a predetermined set of asteroid fields
 	print('running miner')
 	dockedcheck = docked.docked_check()
@@ -135,7 +139,7 @@ def miner():  # mine ore from a predetermined set of asteroid fields
 		asteroid field
 			nav.set_dest()
 			navigator()
-					
+
 	while dockedcheck == 1:  # if docked, check if at home station
 		athomecheck = nav.at_home_check()
 		if athomecheck == 1:  # if at home station, set destination waypoint 
@@ -157,14 +161,14 @@ def miner():  # mine ore from a predetermined set of asteroid fields
 			sys.exit()
 	if dockedcheck is None:
 		miner()
+
+
+if docked.docked_check == 1:
+	print('good')
+if docked.docked_check == 0:
+	print('not docked')
+    value = docked.docked_check()
+    print(value)
+    sys.exit()
+
 '''
-
-win32.findwindow()
-
-# selectscript = 2
-#
-# if selectscript == 1:
-#	navigator()
-# elif selectscript == 2:
-#	nav.route_set()
-#	collector()

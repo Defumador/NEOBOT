@@ -8,13 +8,12 @@ from lib import mouse
 from lib import keyboard
 from lib import docked
 
-pag.FAILSAFE = True
-sys.setrecursionlimit(100000)
+sys.setrecursionlimit(9999999)
 conf = 0.95
 
 
 def drag_items_from_hold():
-    # dragitems to station item hangar
+    # Click and drag all items from ship inventory to station hangar.
     namefield_station_hangar_icon = pag.locateCenterOnScreen(
         './img/namefield_station_hangar.bmp',
         confidence = conf)
@@ -41,10 +40,9 @@ def unload_ship():
     specialhold = docked.look_for_special_hold()
     items = docked.look_for_items()
     if docked.look_for_items() == 0:
-        # if no items in cargo hold, look for special hold
         docked.look_for_special_hold()
         if specialhold == 1:
-            # wait between 0 and 2s before actions for increased randomness
+            # Wait between 0 and 2s before actions for increased randomness.
             time.sleep(float(random.randint(0, 2000)) / 1000)
             docked.open_special_hold()
             items = docked.look_for_items()
