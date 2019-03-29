@@ -11,6 +11,8 @@ from lib import unload_ship
 from lib import keyboard
 from lib import mouse
 
+atsite = 0
+gotosite = 0
 sys.setrecursionlimit(9999999)
 
 user32 = ctypes.windll.user32
@@ -19,18 +21,8 @@ screeny = user32.GetSystemMetrics(1)
 halfscreenx = (int(screenx / 2))
 halfscreeny = (int(screeny / 2))
 
-window_resolutionx = 1024
-window_resolutiony = 768
-
-# get coordinates of EVE client window and restrict image searching to
-# within these boundaries.
-# search for EVE logo in top left of client window, this will be the origin
-# of the coordinate system
-origin = pag.locateCenterOnScreen('./img/origin.bmp', confidence = 0.95,
-                                  region = (0, 0, screenx, screeny))
-(originx, originy) = origin
-windowx = originx + window_resolutionx
-windowy = originy + window_resolutiony
+###############################################################################
+# User-specified variables.
 
 mining_lasers = 1
 
@@ -47,61 +39,73 @@ check_for_enemy_battleships = 1
 # check_for_player_yellows = 1
 # check_for_player_greys = 1
 
-atsite = 0
-gotosite = 0
+window_resolutionx = 1024
+window_resolutiony = 768
+
+###############################################################################
+
+# get the coordinates of the eve client window and restrict image searching to
+# within these boundaries.
+# search for the eve neocom logo in top left corner of the eve client window.
+# This will become the origin of the coordinate system.
+origin = pag.locateCenterOnScreen('./img/origin.bmp', confidence = 0.95,
+                                  region = (0, 0, screenx, screeny))
+(originx, originy) = origin
+windowx = originx + window_resolutionx
+windowy = originy + window_resolutiony
 
 
 def miner():
     while docked.docked_check() == 0:
-        if travel_to_site() == 1:
+        if travel_to_bookmark() == 1:
             # Once arrived at site, check for hostile npcs and human players.
             # If either exist, warp to a different site.
             # If no hostiles npcs or players are present, check for asteroids.
             # If no asteroids, blacklist site and warp to next site.
-            if check_for_hostiles() == 1:
+            if check_for_enemy_npcs() == 1:
                 break
             # if check_for_players() == 1:
             #   break
-            while check_for_ore() == 1:
-                target_ore()
+            while check_for_asteroids() == 1:
+                target_asteroid()
                 activate_mining_laser()
-                # if cargo isn't full, continue to mine ore and wait for popups
-                # or errors
-                while check_hold_popup() == 0:
-                    if check_asteroid_depleted_popup() == 1:
-                        if check_for_ore() == 0:
-                            nav.blacklist_site(atsite)
+                # If ship inventory isn't full, continue to mine ore and wait
+                # for popups or errors.
+                while inv_full_popup() == 0:
+                    if asteroid_depleted_popup() == 1:
+                        if check_for_asteroids() == 0:
+                            nav.blacklist_bookmark(atsite)
                             miner()
-                        elif check_for_ore() == 1:
-                            target_ore()
+                        elif check_for_asteroids() == 1:
+                            target_asteroid()
                             activate_mining_laser()
-                            check_hold_popup()
+                            inv_full_popup()
                             continue
-                    if check_for_hostiles() == 1:
+                    if check_for_enemy_npcs() == 1:
                         miner()
                     # check_for_players()
                     # if check_for_players() == 1:
                     # miner()
                     time.sleep(1)
-                if check_hold_popup() == 1:
-                    # once cargo is full, dock at home station and unload
+                if inv_full_popup() == 1:
+                    # Once inventory is full, dock at home station and unload.
                     nav.go_home()
                     unload_ship.unload_ship()
                     docked.undock()
                     time.sleep(3)
                     miner()
-            if check_for_ore() == 0:
-                nav.blacklist_site(atsite)
-        elif travel_to_site() == 0:
+            if check_for_asteroids() == 0:
+                nav.blacklist_bookmark(atsite)
+        elif travel_to_bookmark() == 0:
             nav.emergency_terminate()
             sys.exit(0)
     if docked.docked_check() == 1:
-        # if docked when script starts, undock
+        # If docked when script starts, undock.
         docked.undock()
         miner()
 
 
-def travel_to_site():
+def travel_to_bookmark():
     # Find a suitable asteroid field by warping to each bookmark in
     # numerical order.
     global gotosite
@@ -110,11 +114,11 @@ def travel_to_site():
     # Try warping to bookmark 1 in the system. If bookmark 1 doesn't exist,
     # is not in the current system, or your ship is already there, increment
     # bookmark number by 1 and try again.
-    while nav.warp_to_defined_bookmark_in_system(
+    while nav.warp_to_specific_system_bookmark(
             gotosite) == 0 and gotosite <= 10:
         gotosite += 1
         continue
-    if nav.warp_to_defined_bookmark_in_system(
+    if nav.warp_to_specific_system_bookmark(
             gotosite) == 1 and gotosite <= 10:
         # Once a valid site is found, remember the site number the ship is
         # warping to so script doesn't try warping there again.
@@ -122,18 +126,18 @@ def travel_to_site():
         if nav.detect_warp() == 1:
             return 1
     else:
-        print('travel_to_site -- ran out of sites to check for')
+        print('travel_to_bookmark -- ran out of sites to check for')
         return 0
 
 
-def check_for_hostiles():
+def check_for_enemy_npcs():
     # Check entire window for red ship hud icons, indicating hostile npcs.
     # Only avoid the hostile ship classes specified by the user in the
     # global variables above. Script will try looking for these icons on the
     # default 'general' overview tab. Script will keep the 'general' overview
     # tab visible by default until switching tabs in required to locate another
     # asteroid.
-    print('check_for_hostiles called')
+    print('check_for_enemy_npcs called')
     if check_for_enemy_frigates == 1:
         enemy_frigate = pag.locateCenterOnScreen('./img/enemy_frigate.bmp',
                                                  confidence = 0.80,
@@ -141,7 +145,7 @@ def check_for_hostiles():
                                                      0, 0, screenx,
                                                      screeny))
         if enemy_frigate is not None:
-            print('check_for_hostiles -- found hostile frigate')
+            print('check_for_enemy_npcs -- found hostile npc frigate')
             return 1
     # elif check_for_enemy_destroyers == 1:
     #	enemy_destroyer = pag.locateCenterOnScreen(
@@ -180,7 +184,8 @@ def check_for_hostiles():
 
 
 def check_for_players():
-    # Same as check_for_hostiles function, except check for certain classes of
+    # Same as check_for_enemy_npcs function, except check for certain
+    # classes of
     # human players as specified by the user.
     # if check_for_player_war_targets == 1:
     #	player_war_target = pag.locateCenterOnScreen(
@@ -232,7 +237,7 @@ def check_for_players():
     return 0
 
 
-def check_for_ore():
+def check_for_asteroids():
     # Switch overview to 'mining' tab, check for asteroids, then switch back to
     # the 'general' tab. Prioritize larger asteroids by searching for them
     # first.
@@ -268,11 +273,11 @@ def check_for_ore():
     if asteroid_s is not None:
         return 1
     else:
-        print('check_for_ore -- no more asteroids found at site')
+        print('check_for_asteroids -- no more asteroids found at site')
     return 0
 
 
-def target_ore():
+def target_asteroid():
     # Target the closest large-sized asteroid in overview, assuming overview is
     # sorted by distance, with closest objects at the top.
     # Switch to mining tab, target asteroid, then switch back to general tab.
@@ -305,26 +310,26 @@ def target_ore():
         time.sleep(float(random.randint(500, 1500)) / 1000)
         return 1
     else:
-        print('target_ore -- no asteroids to target')
+        print('target_asteroid -- no asteroids to target')
         return 0
 
 
-def check_hold_popup():
+def inv_full_popup():
     # Check for momentary popup indicating cargo/ore hold is full.
     # This popup lasts about 5 seconds.
-    cargo_hold_full = pag.locateCenterOnScreen('./img/cargo_hold_full.bmp',
-                                               confidence = 0.90,
-                                               region = (
-                                                   0, 0, screenx,
-                                                   screeny))
-    if cargo_hold_full is None:
+    inv_full_popup = pag.locateCenterOnScreen('./img/cargo_hold_full.bmp',
+                                              confidence = 0.90,
+                                              region = (
+                                                  0, 0, screenx,
+                                                  screeny))
+    if inv_full_popup is None:
         return 0
-    elif cargo_hold_full is not None:
-        print('cargo_hold_popup -- found popup')
+    elif inv_full_popup is not None:
+        print('inv_full_popup -- detected')
         return 1
 
 
-def check_asteroid_depleted_popup():
+def asteroid_depleted_popup():
     # Check for popup indicating the asteroid currently being mined has been
     # depleted.
     asteroid_depleted = pag.locateCenterOnScreen('./img/asteroid_depleted.bmp',
@@ -335,7 +340,7 @@ def check_asteroid_depleted_popup():
     if asteroid_depleted is None:
         return 0
     elif asteroid_depleted is not None:
-        print('asteroid_depleted_popup -- found popup')
+        print('asteroid_depleted_popup -- detected')
         return 1
 
 
@@ -355,5 +360,5 @@ def activate_mining_laser():
         keyboard.keypress('f2')
         keyboard.keypress('f3')
         keyboard.keypress('f4')
-    print('activate_mining_laser -- activated lasers')
+    print('activate_mining_laser -- called')
     return 1

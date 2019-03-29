@@ -11,7 +11,7 @@ from lib import keyboard
 
 sys.setrecursionlimit(9999999)
 conf = 0.95
-alignment_time = 6  # Seconds (rounded up) ship takes to begin a warp.
+alignment_time = 6  # Seconds (rounded up) current ship takes to begin a warp.
 
 atsite = 0
 
@@ -44,7 +44,7 @@ def route_set():
 
 def focus_overview():
     # Click on the overview window to focus the eve client window.
-    print('focus_overview -- focusing overview')
+    print('focus_overview -- called')
     pag.moveTo((screenx - (random.randint(10, 230))),
                (75 + (random.randint(0, (screeny - 10)))),
                mouse.move_time(), mouse.mouse_path())
@@ -121,30 +121,30 @@ def warp_to_waypoint():
         sys.exit()
 
 
-def warp_to_defined_bookmark_in_system(gotosite):
+def warp_to_specific_system_bookmark(gotosite):
     # Try warping to a specific bookmark in the current system
     # If the ship is already at the requested site, return function.
     global atsite
     if gotosite == atsite:
-        print('warp_to_defined_bookmark_in_system -- already at bookmark',
+        print('warp_to_specific_system_bookmark -- already at bookmark',
               atsite)
         return 0
     else:
-        defined_bookmark_in_system = pag.locateCenterOnScreen(
+        specific_system_bookmark = pag.locateCenterOnScreen(
             ('./img/dest/at_dest' + (bookmark_dict[gotosite]) + '.bmp'),
             confidence = 0.90,
             region = (0, 0, screenx, screeny))
-        while defined_bookmark_in_system is None:
-            print('warp_to_defined_bookmark_in_system -- bookmark', gotosite,
+        while specific_system_bookmark is None:
+            print('warp_to_specific_system_bookmark -- bookmark', gotosite,
                   'not found in system')
             return 0
-        if defined_bookmark_in_system is not None:
-            print('warp_to_defined_bookmark_in_system -- found bookmark',
+        if specific_system_bookmark is not None:
+            print('warp_to_specific_system_bookmark -- found bookmark',
                   gotosite)
-            (bookmark_in_systemx), (
-                bookmark_in_systemy) = defined_bookmark_in_system
-            pag.moveTo((bookmark_in_systemx + (random.randint(-1, 200))),
-                       (bookmark_in_systemy +
+            (specific_system_bookmarkx), (
+                specific_system_bookmarky) = specific_system_bookmark
+            pag.moveTo((specific_system_bookmarkx + (random.randint(-1, 200))),
+                       (specific_system_bookmarky +
                         (random.randint(-3, 3))), mouse.move_time(),
                        mouse.mouse_path())
             mouse.click_right()
@@ -401,17 +401,17 @@ def blacklist_station():
         return
 
 
-def blacklist_site(atsite):
+def blacklist_bookmark(atsite):
     # Blacklist a specific bookmark instead of the first green one the script
     # happens to see.
-    print('blacklist_site -- blacklisting site')
-    site_to_blacklist = pag.locateCenterOnScreen(
+    print('blacklist_bookmark -- blacklisting bookmark')
+    bookmark_to_blacklist = pag.locateCenterOnScreen(
         ('./img/dest/at_dest' + (bookmark_dict[atsite]) + '.bmp'),
         confidence = conf,
         region = (0, 0, halfscreenx, screeny))
-    (site_to_blacklistx), (site_to_blacklisty) = site_to_blacklist
-    pag.moveTo((site_to_blacklistx + (random.randint(-1, 200))),
-               (site_to_blacklisty + (random.randint(-3, 3))),
+    (bookmark_to_blacklistx), (bookkmark_to_blacklisty) = bookmark_to_blacklist
+    pag.moveTo((bookmark_to_blacklistx + (random.randint(-1, 200))),
+               (bookkmark_to_blacklisty + (random.randint(-3, 3))),
                mouse.move_time(), mouse.mouse_path())
     time.sleep(float(random.randint(1000, 2000)) / 1000)
     mouse.click()

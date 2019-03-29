@@ -90,7 +90,7 @@ def collector():
             collector()
         elif athomecheck == 0:
             print('collector -- not at home')
-            loadship = load_ship.load_ship()
+            loadship = load_ship.load_ship_full()
             print('collector -- loadship is', loadship)
             if loadship == 2 or loadship == 0 or loadship is None:
                 atdestnum = nav.at_dest_num()
