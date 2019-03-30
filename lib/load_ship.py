@@ -9,8 +9,17 @@ from lib import mouse
 from lib import keyboard
 from lib import docked
 
+global screenx
+global screeny
+global halfscreenx
+global halfscreeny
+global windowx
+global windowy
+global originx
+global originy
+global conf
+
 sys.setrecursionlimit(9999999)
-conf = 0.95
 
 
 # A return value of 2 indicates the ship has been loaded and the station's
@@ -28,19 +37,23 @@ def drag_to_ship_inv():
     print('drag_to_ship_inv -- moving item stack to ship inventory')
     namefield_station_inv = pag.locateCenterOnScreen(
         './img/namefield_station_station inventory.bmp',
-        confidence = conf)
+        confidence=conf)
+
     if namefield_station_inv is None:
         print("drag_to_ship_inv -- can't find name column")
         traceback.print_exc()
         traceback.print_stack()
         sys.exit()
+
     elif namefield_station_inv is not None:
         ship_inv = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
-                                            confidence = conf)
+                                            confidence=conf)
+
         while ship_inv is None:
             print("drag_to_ship_inv -- can't find ship inventory")
             ship_inv = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
-                                                confidence = conf)
+                                                confidence=conf)
+
             time.sleep(1)
         if ship_inv is not None:
             (namefield_station_invx,
@@ -63,7 +76,7 @@ def drag_to_ship_spec_inv():
     print('drag_to_ship_spec_inv -- moving item stack to special inventory')
     namefield_station_inv = pag.locateCenterOnScreen(
         './img/namefield_station_station inventory.bmp',
-        confidence = conf)
+        confidence=conf)
     if namefield_station_inv is None:
         print("drag_to_ship_spec_inv -- can't find name column")
         traceback.print_exc()
@@ -71,11 +84,11 @@ def drag_to_ship_spec_inv():
         sys.exit()
     elif namefield_station_inv is not None:
         ship_inv = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
-                                            confidence = conf)
+                                            confidence=conf)
         while ship_inv is None:
             print("drag_to_ship_spec_inv -- can't find ship inventory")
             ship_inv = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
-                                                confidence = conf)
+                                                confidence=conf)
             time.sleep(1)
         if ship_inv is not None:
             (namefield_station_invx,
@@ -141,8 +154,10 @@ def load_ship_bulk():
                 else:  # If a warning appears, try loading item stacks
                     # individually.
                     return 0
+
             elif specinv == 0:
                 return 0
+
         elif setquant == 1:
             return 1
 
@@ -152,6 +167,7 @@ def load_ship_individually():
     print('load_ship_individually -- beginning individual loading procedure')
     docked.open_station_inv()
     items = docked.look_for_items()
+
     while items == 1:
         docked.focus_inv_window()
         drag_to_ship_inv()
@@ -170,8 +186,7 @@ def load_ship_individually():
         elif nospace == 0 and setquant == 1:
             return 1
 
-            # If a warning appears but item stacks are still present,
-            # check if ship
+        # If a warning appears but item stacks are still present, check if ship
         # has a special inventory.
         elif nospace == 1 and setquant == 0:
             traceback.print_stack()
@@ -184,23 +199,25 @@ def load_ship_individually():
                 setquant = docked.set_quant_popup()
                 docked.look_for_items()
 
-                while specinvwarning == 0 and setquant == 0 and nospace \
-                        == 0:
+                while specinvwarning == 0 and setquant == 0 and nospace == 0:
                     drag_to_ship_spec_inv()
                     time.sleep(2)
                     specinvwarning = docked.spec_inv_warning()
                     nospace = docked.not_enough_space_popup()
                     setquant = docked.set_quant_popup()
                     docked.look_for_items()
+
                 if items is None:
                     print(
                         'load_ship_individually -- done loading special '
                         'inventory')
                     return 2
+
                 elif specinvwarning == 1 or setquant == 1 or nospace == 1:
                     return 1
             else:
                 return 1
+
     if items is None:
         return 2
 
@@ -209,6 +226,7 @@ def load_ship_full():
     # Utilize both individual and bulk loading functions to load ship.
     docked.open_station_inv()
     items = docked.look_for_items()
+
     if items == 1:
         lsb = load_ship_bulk()
         if lsb == 2:
