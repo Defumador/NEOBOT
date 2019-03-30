@@ -11,15 +11,18 @@ from lib import unload_ship
 from lib import keyboard
 from lib import mouse
 
-atsite = 0
-gotosite = 0
-sys.setrecursionlimit(9999999)
+global screenx
+global screeny
+global halfscreenx
+global halfscreeny
+global windowx
+global windowy
+global originx
+global originy
+global conf
+global alignment_time
 
-user32 = ctypes.windll.user32
-screenx = user32.GetSystemMetrics(0)
-screeny = user32.GetSystemMetrics(1)
-halfscreenx = (int(screenx / 2))
-halfscreeny = (int(screeny / 2))
+sys.setrecursionlimit(9999999)
 
 ###############################################################################
 # User-specified variables.
@@ -39,20 +42,7 @@ check_for_enemy_battleships = 1
 # check_for_player_yellows = 1
 # check_for_player_greys = 1
 
-window_resolutionx = 1024
-window_resolutiony = 768
-
 ###############################################################################
-
-# get the coordinates of the eve client window and restrict image searching to
-# within these boundaries.
-# search for the eve neocom logo in top left corner of the eve client window.
-# This will become the origin of the coordinate system.
-origin = pag.locateCenterOnScreen('./img/origin.bmp', confidence = 0.95,
-                                  region = (0, 0, screenx, screeny))
-(originx, originy) = origin
-windowx = originx + window_resolutionx
-windowy = originy + window_resolutiony
 
 
 def miner():
@@ -66,6 +56,7 @@ def miner():
                 break
             # if check_for_players() == 1:
             #   break
+
             while check_for_asteroids() == 1:
                 target_asteroid()
                 activate_mining_laser()
@@ -87,6 +78,7 @@ def miner():
                     # if check_for_players() == 1:
                     # miner()
                     time.sleep(1)
+
                 if inv_full_popup() == 1:
                     # Once inventory is full, dock at home station and unload.
                     nav.go_home()
@@ -94,6 +86,7 @@ def miner():
                     docked.undock()
                     time.sleep(3)
                     miner()
+
             if check_for_asteroids() == 0:
                 nav.blacklist_bookmark(atsite)
         elif travel_to_bookmark() == 0:
@@ -108,6 +101,8 @@ def miner():
 def travel_to_bookmark():
     # Find a suitable asteroid field by warping to each bookmark in
     # numerical order.
+    # Currently only mining in a single system with at least one station is
+    # supported
     global gotosite
     global atsite
     gotosite = 1
@@ -140,8 +135,8 @@ def check_for_enemy_npcs():
     print('check_for_enemy_npcs called')
     if check_for_enemy_frigates == 1:
         enemy_frigate = pag.locateCenterOnScreen('./img/enemy_frigate.bmp',
-                                                 confidence = 0.80,
-                                                 region = (
+                                                 confidence=0.80,
+                                                 region=(
                                                      0, 0, screenx,
                                                      screeny))
         if enemy_frigate is not None:
@@ -252,22 +247,22 @@ def check_for_asteroids():
     global asteroid_m
     global asteroid_l
     asteroid_l = pag.locateCenterOnScreen('./img/asteroid_l.bmp',
-                                          confidence = 0.80,
-                                          region = (
+                                          confidence=0.80,
+                                          region=(
                                               0, 0, screenx,
                                               screeny))
     if asteroid_l is not None:
         return 1
     asteroid_m = pag.locateCenterOnScreen('./img/asteroid_m.bmp',
-                                          confidence = 0.80,
-                                          region = (
+                                          confidence=0.80,
+                                          region=(
                                               0, 0, screenx,
                                               screeny))
     if asteroid_m is not None:
         return 1
     asteroid_s = pag.locateCenterOnScreen('./img/asteroid_s.bmp',
-                                          confidence = 0.80,
-                                          region = (
+                                          confidence=0.80,
+                                          region=(
                                               originx, originy, windowx,
                                               windowy))
     if asteroid_s is not None:
@@ -318,8 +313,8 @@ def inv_full_popup():
     # Check for momentary popup indicating cargo/ore hold is full.
     # This popup lasts about 5 seconds.
     inv_full_popup = pag.locateCenterOnScreen('./img/cargo_hold_full.bmp',
-                                              confidence = 0.90,
-                                              region = (
+                                              confidence=0.90,
+                                              region=(
                                                   0, 0, screenx,
                                                   screeny))
     if inv_full_popup is None:
@@ -333,8 +328,8 @@ def asteroid_depleted_popup():
     # Check for popup indicating the asteroid currently being mined has been
     # depleted.
     asteroid_depleted = pag.locateCenterOnScreen('./img/asteroid_depleted.bmp',
-                                                 confidence = 0.90,
-                                                 region = (
+                                                 confidence=0.90,
+                                                 region=(
                                                      0, 0, screenx,
                                                      screeny))
     if asteroid_depleted is None:
