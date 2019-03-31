@@ -134,42 +134,46 @@ def check_for_enemy_npcs():
     # asteroid.
     print('check_for_enemy_npcs called')
     if check_for_enemy_frigates == 1:
-        enemy_frigate = pag.locateCenterOnScreen('./img/enemy_frigate.bmp',
-                                                 confidence=0.80,
-                                                 region=(
-                                                     0, 0, screenx,
-                                                     screeny))
+        enemy_frigate = pag.locateCenterOnScreen(
+            './img/overview/enemy_frigate.bmp',
+            confidence=0.80,  # Lower confidence than normal so script will
+            # detect icon in both overview and on grid.
+            region=(originx, originy, windowx, windowy))
         if enemy_frigate is not None:
             print('check_for_enemy_npcs -- found hostile npc frigate')
             return 1
     # elif check_for_enemy_destroyers == 1:
     #	enemy_destroyer = pag.locateCenterOnScreen(
-    #	'./img/enemy_destroyer.bmp',
+    #	'./img/overview/enemy_destroyer.bmp',
     #	confidence=0.90,
-    #												region=(0, 0, screenwidth,
+    #												region=(originx, originy,
+    #												screenwidth,
     #												screenheight))
     #	if enemy_destroyer is not None:
     #		return 1
     # elif check_for_enemy_cruisers == 1:
-    #	enemy_cruiser = pag.locateCenterOnScreen('./img/enemy_cruiser.bmp',
+    #	enemy_cruiser = pag.locateCenterOnScreen('./img/overview/enemy_cruiser.bmp',
     #	confidence=0.90,
-    #											region=(0, 0, screenwidth,
+    #											region=(originx, originy,
+    #											screenwidth,
     #											screenheight))
     #	if enemy_cruiser is not None:
     #		return 1
     # elif check_for_enemy_battlecruisers == 1:
     #	enemy_battlecruiser = pag.locateCenterOnScreen(
-    #	'./img/enemy_battlecruiser.bmp', confidence=0.90,
-    #													region=(0, 0,
+    #	'./img/overview/enemy_battlecruiser.bmp', confidence=0.90,
+    #													region=(originx,
+    #													originy,
     #													screenwidth,
     #													screenheight))
     #	if enemy_battlecruiser is not None:
     #		return 1
     # elif check_for_enemy_battleships == 1:
     #	enemy_battleship = pag.locateCenterOnScreen(
-    #	'./img/enemy_battleship.bmp',
+    #	'./img/overview/enemy_battleship.bmp',
     #	confidence=0.90,
-    #												region=(0, 0, screenwidth,
+    #												region=(originx, originy,
+    #												screenwidth,
     #												screenheight))
     #	if enemy_battleship is not None:
     #		return 1
@@ -184,9 +188,10 @@ def check_for_players():
     # human players as specified by the user.
     # if check_for_player_war_targets == 1:
     #	player_war_target = pag.locateCenterOnScreen(
-    #	'./img/player_war_target.bmp',
+    #	'./img/overview/player_war_target.bmp',
     #	confidence=0.80,
-    #											region=(0, 0, screenwidth,
+    #											region=(originx, originy,
+    #											screenwidth,
     #											screenheight))
     #	if player_war_target is not None:
     #		print('check_for_players -- found war target')
@@ -195,7 +200,8 @@ def check_for_players():
     #	player_war_target = pag.locateCenterOnScreen(
     #	'./img/player_war_target.bmp',
     #	confidence=0.80,
-    #											region=(0, 0, screenwidth,
+    #											region=(originx, originy,
+    #											screenwidth,
     #											screenheight))
     #	if player_war_target is not None:
     #		print('check_for_players -- found war target')
@@ -205,7 +211,8 @@ def check_for_players():
     #	player_criminal = pag.locateCenterOnScreen(
     #	'./img/player_criminal.bmp',
     #	confidence=0.80,
-    #											region=(0, 0, screenwidth,
+    #											region=(originx, originy,
+    #											screenwidth,
     #											screenheight))
     #	if player_criminal is not None:
     #		print('check_for_players -- found criminal')
@@ -214,7 +221,8 @@ def check_for_players():
     # elif check_for_player_neutrals == 1:
     #	player_neutral = pag.locateCenterOnScreen('./img/player_neutral.bmp',
     #	confidence=0.80,
-    #											region=(0, 0, screenwidth,
+    #											region=(originx, originy,
+    #											screenwidth,
     #											screenheight))
     #	if player_neutral is not None:
     #		print('check_for_players -- found neutral')
@@ -224,7 +232,8 @@ def check_for_players():
     #	player_war_target = pag.locateCenterOnScreen(
     #	'./img/player_war_target.bmp',
     #	confidence=0.80,
-    #											region=(0, 0, screenwidth,
+    #											region=(originx, originy,
+    #											screenwidth,
     #											screenheight))
     #	if player_war_target is not None:
     #		print('check_for_players -- found war target')
@@ -239,32 +248,29 @@ def check_for_asteroids():
     # mining_overview_tab = pag.locateCenterOnScreen(
     # './img/mining_overview_tab.bmp',
     # confidence=0.90,
-    # region=(0, 0, screenwidth, screenheight))
+    # region=(originx, originy, screenwidth, screenheight))
     # general_overview_tab = pag.locateCenterOnScreen(
     # './img/general_overview_tab.bmp', confidence=0.90,
-    # region=(0, 0, screenwidth, screenheight))
+    # region=(originx, originy, screenwidth, screenheight))
     global asteroid_s
     global asteroid_m
     global asteroid_l
-    asteroid_l = pag.locateCenterOnScreen('./img/asteroid_l.bmp',
+    asteroid_l = pag.locateCenterOnScreen('./img/overview/asteroid_l.bmp',
                                           confidence=0.80,
-                                          region=(
-                                              0, 0, screenx,
-                                              screeny))
+                                          region=(originx, originy,
+                                                  windowx, windowy))
     if asteroid_l is not None:
         return 1
-    asteroid_m = pag.locateCenterOnScreen('./img/asteroid_m.bmp',
+    asteroid_m = pag.locateCenterOnScreen('./img/overview/asteroid_m.bmp',
                                           confidence=0.80,
-                                          region=(
-                                              0, 0, screenx,
-                                              screeny))
+                                          region=(originx, originy,
+                                                  windowx, windowy))
     if asteroid_m is not None:
         return 1
-    asteroid_s = pag.locateCenterOnScreen('./img/asteroid_s.bmp',
+    asteroid_s = pag.locateCenterOnScreen('./img/overview/asteroid_s.bmp',
                                           confidence=0.80,
-                                          region=(
-                                              originx, originy, windowx,
-                                              windowy))
+                                          region=(originx, originy,
+                                                  windowx, windowy))
     if asteroid_s is not None:
         return 1
     else:
@@ -283,7 +289,7 @@ def target_asteroid():
         (asteroid_largex, asteroid_largey) = asteroid_l
         pag.moveTo((asteroid_largex + (random.randint(-2, 200))),
                    (asteroid_largey + (random.randint(-3, 3))),
-                   mouse.move_time(), mouse.mouse_path())
+                   mouse.duration(), mouse.path())
         mouse.click()
         keyboard.keypress('ctrl')
         return 1
@@ -291,7 +297,7 @@ def target_asteroid():
         (asteroid_mediumx, asteroid_mediumy) = asteroid_m
         pag.moveTo((asteroid_mediumx + (random.randint(-2, 200))),
                    (asteroid_mediumy + (random.randint(-3, 3))),
-                   mouse.move_time(), mouse.mouse_path())
+                   mouse.duration(), mouse.path())
         mouse.click()
         keyboard.keypress('ctrl')
         return 1
@@ -299,7 +305,7 @@ def target_asteroid():
         (asteroid_smallx, asteroid_smally) = asteroid_s
         pag.moveTo((asteroid_smallx + (random.randint(-2, 200))),
                    (asteroid_smally + (random.randint(-3, 3))),
-                   mouse.move_time(), mouse.mouse_path())
+                   mouse.duration(), mouse.path())
         mouse.click()
         keyboard.keypress('ctrl')
         time.sleep(float(random.randint(500, 1500)) / 1000)
@@ -312,11 +318,9 @@ def target_asteroid():
 def inv_full_popup():
     # Check for momentary popup indicating cargo/ore hold is full.
     # This popup lasts about 5 seconds.
-    inv_full_popup = pag.locateCenterOnScreen('./img/cargo_hold_full.bmp',
-                                              confidence=0.90,
-                                              region=(
-                                                  0, 0, screenx,
-                                                  screeny))
+    inv_full_popup = pag.locateCenterOnScreen(
+        './img/popups/ship_inv_full.bmp',
+        confidence=0.90, region=(originx, originy, windowx, windowy))
     if inv_full_popup is None:
         return 0
     elif inv_full_popup is not None:
@@ -327,11 +331,10 @@ def inv_full_popup():
 def asteroid_depleted_popup():
     # Check for popup indicating the asteroid currently being mined has been
     # depleted.
-    asteroid_depleted = pag.locateCenterOnScreen('./img/asteroid_depleted.bmp',
-                                                 confidence=0.90,
-                                                 region=(
-                                                     0, 0, screenx,
-                                                     screeny))
+    asteroid_depleted = pag.locateCenterOnScreen(
+        './img/overview/asteroid_depleted.bmp',
+        confidence=0.90,
+        region=(originx, originy, windowx, windowy))
     if asteroid_depleted is None:
         return 0
     elif asteroid_depleted is not None:

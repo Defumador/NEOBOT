@@ -24,21 +24,25 @@ sys.setrecursionlimit(9999999)
 def drag_items_from_ship_inv():
     # Click and drag all items from ship inventory to station inventory.
     namefield_station_inv_icon = pag.locateCenterOnScreen(
-        './img/namefield_station_hangar.bmp',
-        confidence=conf)
+        './img/indicators/station_inv_name.bmp',
+        confidence=conf,
+        region=(originx, originy, windowx, windowy))
+
     (namefield_station_inv_iconx,
      namefield_station_inv_icony) = namefield_station_inv_icon
     pag.moveTo((namefield_station_inv_iconx + (random.randint(-5, 250))),
                (namefield_station_inv_icony + (random.randint(10, 25))),
-               mouse.move_time(), mouse.mouse_path())
+               mouse.duration(), mouse.path())
 
     pag.mouseDown()
-    station_inv = pag.locateCenterOnScreen('./img/station_hangar.bmp',
-                                           confidence=conf)
+    station_inv = pag.locateCenterOnScreen('./img/buttons/station_inv.bmp',
+                                           confidence=conf,
+                                           region=(originx, originy,
+                                                   windowx, windowy))
     (station_invx, station_invy) = station_inv
     pag.moveTo((station_invx + (random.randint(-15, 60))),
                (station_invy + (random.randint(-10, 10))),
-               mouse.move_time(), mouse.mouse_path())
+               mouse.duration(), mouse.path())
     pag.mouseUp()
     print(
         'drag_items_from_ship_inv -- moved all item stacks from ship '
@@ -104,6 +108,7 @@ def unload_ship():
             docked.look_for_items()
             print('unload_ship -- finished unloading procedure')
             return 1
+
     elif specinv == 0:
         print('unload_ship -- finished unloading procedure')
         return 1

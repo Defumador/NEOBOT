@@ -23,8 +23,10 @@ sys.setrecursionlimit(9999999)
 
 def docked_check():
     # Check if the ship is currently docked by looking for the undock icon.
-    undock_icon = pag.locateCenterOnScreen('./img/undock.bmp',
-                                           confidence=conf)
+    undock_icon = pag.locateCenterOnScreen('./img/buttons/undock.bmp',
+                                           confidence=conf,
+                                           region=(originx, originy,
+                                                   windowx, windowy))
     if undock_icon is None:
         print('docked_check -- not docked')
         return 0
@@ -38,19 +40,23 @@ def open_ship_inv():
     # docked.
     print('open_ship_inv -- opening ship inventory')
     tries = 1
-    ship_inv = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
-                                        confidence=conf)
+    ship_inv = pag.locateCenterOnScreen('./img/buttons/ship_inv.bmp',
+                                        confidence=conf,
+                                        region=(originx, originy,
+                                                windowx, windowy))
     while ship_inv is None and tries <= 25:
         print("open_ship_inv -- can't find ship inventory")
         tries += 1
-        ship_inv = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
-                                            confidence=conf)
+        ship_inv = pag.locateCenterOnScreen('./img/buttons/ship_inv.bmp',
+                                            confidence=conf,
+                                            region=(originx, originy,
+                                                    windowx, windowy))
         time.sleep(1)
     if ship_inv is not None and tries <= 25:
         (ship_invx, ship_invy) = ship_inv
         pag.moveTo((ship_invx + (random.randint(-4, 50))),
                    (ship_invy + (random.randint(-6, 6))),
-                   mouse.move_time(), mouse.mouse_path())
+                   mouse.duration(), mouse.path())
         mouse.click()
         return 1
     else:
@@ -63,19 +69,23 @@ def open_spec_inv():
     # inventory window while docked.
     print('open_spec_inv -- opening special inventory')
     tries = 1
-    spec_inv = pag.locateCenterOnScreen('./img/special_hold.bmp',
-                                        confidence=conf)
+    spec_inv = pag.locateCenterOnScreen('./img/buttons/spec_inv.bmp',
+                                        confidence=conf,
+                                        region=(originx, originy,
+                                                windowx, windowy))
     while spec_inv is None and tries <= 25:
         print("open_spec_inv -- can't find special hold")
         tries += 1
-        spec_inv = pag.locateCenterOnScreen('./img/special_hold.bmp',
-                                            confidence=conf)
+        spec_inv = pag.locateCenterOnScreen('./img/buttons/spec_in.bmp',
+                                            confidence=conf,
+                                            region=(originx, originy,
+                                                    windowx, windowy))
         time.sleep(1)
     if spec_inv is not None and tries <= 25:
         (spec_invx, spec_invy) = spec_inv
         pag.moveTo((spec_invx + (random.randint(-4, 50))),
                    (spec_invy + (random.randint(15, 30))),
-                   mouse.move_time(), mouse.mouse_path())
+                   mouse.duration(), mouse.path())
         mouse.click()
         return 1
     else:
@@ -87,20 +97,24 @@ def open_station_inv():
     # while docked.
     print('open_station_inv -- opening station inventory')
     tries = 1
-    station_inv = pag.locateCenterOnScreen('./img/station_hangar.bmp',
-                                           confidence=conf)
+    station_inv = pag.locateCenterOnScreen('./img/buttons/station_inv.bmp',
+                                           confidence=conf,
+                                           region=(originx, originy,
+                                                   windowx, windowy))
     while station_inv is None and tries <= 25:
         print(
             "open_station_inv -- can't find station inventory icon")
         tries += 1
-        station_inv = pag.locateCenterOnScreen('./img/station_hangar.bmp',
-                                               confidence=conf)
+        station_inv = pag.locateCenterOnScreen('./img/buttons/station_inv.bmp',
+                                               confidence=conf,
+                                               region=(originx, originy,
+                                                       windowx, windowy))
         time.sleep(1)
     if station_inv is not None and tries <= 25:
         (station_inv, station_invy) = station_inv
         pag.moveTo((station_inv + (random.randint(-6, 50))),
                    (station_invy + (random.randint(-6, 6))),
-                   mouse.move_time(), mouse.mouse_path())
+                   mouse.duration(), mouse.path())
         mouse.click()
         return 1
     else:
@@ -114,19 +128,24 @@ def focus_inv_window():
     # buttons to click a non-interactive area within the inventory window.
     tries = 1
     sort_station_inv = pag.locateCenterOnScreen(
-        './img/sorting_station_hangar.bmp', confidence=conf)
+        './img/buttons/station_sorting.bmp',
+        confidence=conf,
+        region=(originx, originy, windowx, windowy))
+
     while sort_station_inv is None and tries <= 25:
         print("focus_inv_window -- can't find sorting icon")
         tries += 1
         sort_station_inv = pag.locateCenterOnScreen(
-            './img/sorting_station_hangar.bmp', confidence=conf)
+            './img/buttons/station_sorting.bmp',
+            confidence=conf,
+            region=(originx, originy, windowx, windowy))
         time.sleep(1)
     if sort_station_inv is not None and tries <= 25:
         (sort_station_invx,
          sort_station_invy) = sort_station_inv
         pag.moveTo((sort_station_invx - (random.randint(0, 250))),
                    (sort_station_invy + (random.randint(50, 300))),
-                   mouse.move_time(), mouse.mouse_path())
+                   mouse.duration(), mouse.path())
         mouse.click()
         return 1
     else:
@@ -140,12 +159,15 @@ def look_for_items():
     global no_items_station_inv
     global namefield_station_inv
     no_items_station_inv = pag.locateCenterOnScreen(
-        './img/no_items_station_hangar.bmp',
-        confidence=.99)
+        './img/indicators/station_inv_0_items.bmp',
+        confidence=.99,
+        region=(originx, originy, windowx, windowy))
+
     if no_items_station_inv is None:
         namefield_station_inv = pag.locateCenterOnScreen(
-            './img/namefield_station_hangar.bmp',
-            confidence=conf)
+            './img/indicators/station_inv_name.bmp',
+            confidence=conf,
+            region=(originx, originy, windowx, windowy))
         return 1
     elif no_items_station_inv is not None:
         print('look_for_items -- no more items')
@@ -155,10 +177,13 @@ def look_for_items():
 def look_for_spec_inv():
     # Look for a drop-down arrow next to your ship icon in the station
     # inventory window, indicating the ship has a special inventory.
-    spec_inv = pag.locateCenterOnScreen('./img/special_hold.bmp',
-                                        confidence=conf)
+    spec_inv = pag.locateCenterOnScreen('./img/buttons/spec_inv.bmp',
+                                        confidence=conf,
+                                        region=(originx, originy,
+                                                windowx, windowy))
     no_additional_invs = pag.locateCenterOnScreen(
-        './img/no_additional_bays.bmp', confidence=conf)
+        './img/indicators/no_additional_bays.bmp',
+        confidence=conf, region=(originx, originy, windowx, windowy))
     if spec_inv is not None and no_additional_invs is None:
         print('look_for_spec_inv -- found special inventory')
         return 1
@@ -171,7 +196,9 @@ def spec_inv_warning():
     # compatible with the ship's special inventory. This warning is partially
     # transparent so confidence rating must be slightly lower than normal.
     spec_inv_warning = pag.locateCenterOnScreen(
-        './img/special_hold_warning.bmp', confidence=0.8)
+        './img/popups/spec_inv.bmp',
+        confidence=0.8,
+        region=(originx, originy, windowx, windowy))
     if spec_inv_warning is None:
         return 0
     else:
@@ -179,29 +206,33 @@ def spec_inv_warning():
         return 1
 
 
-def set_quant_popup():
+def set_quant_warning():
     # Check if a 'set quantity' window appears, indicating there isn't enough
     # space in the ship's inventory for a full item stack.
-    set_quant = pag.locateCenterOnScreen('./img/set_quantity.bmp',
-                                         confidence=conf)
+    set_quant = pag.locateCenterOnScreen('./img/warnings/set_quant.bmp',
+                                         confidence=conf,
+                                         region=(originx, originy,
+                                                 windowx, windowy))
     if set_quant is None:
         return 0
     else:
-        print('set_quant_popup -- detected')
+        print('set_quant_warning -- detected')
         keyboard.enter()
         return 1
 
 
-def not_enough_space_popup():
-    # Check if a 'not enough space' popup appears, indicating the item stacks
+def not_enough_space_warning():
+    # Check if a 'not enough space' warning appears, indicating the item stacks
     # selected will not fit into the ship's inventory, or inventory is
     # already full.
-    not_enough_space = pag.locateCenterOnScreen('./img/not_enough_space.bmp',
-                                                confidence=conf)
+    not_enough_space = pag.locateCenterOnScreen(
+        './img/warnings/not_enough_space.bmp',
+        confidence=conf,
+        region=(originx, originy, windowx, windowy))
     if not_enough_space is None:
         return 0
     else:
-        print('not_enough_space_popup -- detected')
+        print('not_enough_space_warning -- detected')
         keyboard.enter()
         return 1
 
@@ -219,10 +250,11 @@ def undock():
     time.sleep(float(random.randint(200, 1200)) / 1000)
     pag.keyUp('alt')
     time.sleep(int((random.randint(5000, 10000) / 1000)))
-    undocked = pag.locateCenterOnScreen('./img/session_change_undocked.bmp',
-                                        confidence=0.55,
-                                        region=(
-                                            0, 0, (int(screenx / 5)), screeny))
+    undocked = pag.locateCenterOnScreen(
+        './img/indicators/session_change_undocked.bmp',
+        confidence=0.55,
+        region=(originx, originy, windowx, windowy))
+
     while undocked is None:
         time.sleep(int((random.randint(3000, 10000) / 1000)))
         print('undock -- trying undocking second time')
@@ -235,8 +267,10 @@ def undock():
         pag.keyUp('alt')
         time.sleep(int((random.randint(5000, 10000) / 1000)))
         undocked = pag.locateCenterOnScreen(
-            './img/session_change_undocked.bmp', confidence=0.55,
-            region=(0, 0, (int(screenx / 5)), screeny))
+            './img/indicators/session_change_undocked.bmp',
+            confidence=0.55,
+            region=(originx, originy, windowx, windowy))
+
     if undocked is not None:
         time.sleep(int((random.randint(2000, 3000) / 1000)))
         return
