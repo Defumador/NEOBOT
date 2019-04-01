@@ -5,13 +5,10 @@ import sys
 import pyautogui as pag
 
 from lib import navigation as nav
-from lib import keyboard
-from lib import mouse
+from lib import keyboard, mouse
 
-from lib.vars import originx
-from lib.vars import originy
-from lib.vars import windowx
-from lib.vars import windowy
+from lib.vars import originx, originy, windowx, windowy
+
 
 sys.setrecursionlimit(9999999)
 
@@ -37,6 +34,7 @@ check_for_enemy_battleships = 1
 
 
 def travel_to_bookmark():
+    from lib.vars import atsite, gotosite
     # Find a suitable asteroid field by warping to each bookmark in
     # numerical order.
     # Currently only mining in a single system with at least one station is
@@ -44,18 +42,23 @@ def travel_to_bookmark():
     global gotosite
     global atsite
     gotosite = 1
+    print('1 atsite, gotosite', atsite, gotosite)
     # Try warping to bookmark 1 in the system. If bookmark 1 doesn't exist,
     # is not in the current system, or your ship is already there, increment
     # bookmark number by 1 and try again.
-    while nav.warp_to_specific_system_bookmark(
-            gotosite) == 0 and gotosite <= 10:
+    travel = nav.warp_to_specific_system_bookmark(gotosite)
+    while travel == 0 and gotosite <= 10:
+        print('2 atsite, gotosite', atsite, gotosite)
         gotosite += 1
+        print('3 atsite, gotosite', atsite, gotosite)
+        travel = nav.warp_to_specific_system_bookmark(gotosite)
         continue
-    if nav.warp_to_specific_system_bookmark(
-            gotosite) == 1 and gotosite <= 10:
+    if travel == 1 and gotosite <= 10:
+        print('4 atsite, gotosite', atsite, gotosite)
         # Once a valid site is found, remember the site number the ship is
         # warping to so script doesn't try warping there again.
         atsite = gotosite
+        print('5 atsite, gotosite', atsite, gotosite)
         if nav.detect_warp() == 1:
             return 1
     else:
@@ -64,6 +67,7 @@ def travel_to_bookmark():
 
 
 def check_for_enemy_npcs():
+    from lib.vars import atsite, gotosite
     # Check entire window for red ship hud icons, indicating hostile npcs.
     # Only avoid the hostile ship classes specified by the user in the
     # global variables above. Script will try looking for these icons on the
@@ -79,6 +83,7 @@ def check_for_enemy_npcs():
             region=(originx, originy, windowx, windowy))
         if enemy_frigate is not None:
             print('check_for_enemy_npcs -- found hostile npc frigate')
+            print('10 atsite, gotosite', atsite, gotosite)
             return 1
     # elif check_for_enemy_destroyers == 1:
     #	enemy_destroyer = pag.locateCenterOnScreen(

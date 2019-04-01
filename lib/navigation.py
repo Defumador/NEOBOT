@@ -121,6 +121,9 @@ def focus_overview():
     return 1
 
 
+
+
+
 def warp_to_waypoint():
     # Click on the current waypoint and use warp hotkey to warp to waypoint.
     # Currently supports warping to stargate and station waypoints.
@@ -190,24 +193,71 @@ def warp_to_waypoint():
         sys.exit()
 
 
-def warp_to_specific_system_bookmark(gotosite):
+
+'''
+(defined_bookmark_in_systemx), (defined_bookmark_in_systemy) =
+	defined_bookmark_in_system
+	tries = 0
+	pag.moveTo((defined_bookmark_in_systemx + (random.randint(-1, 200))),
+	(defined_bookmark_in_systemy +
+												(random.randint(-3, 3))),
+												mouse.duration(),
+												mouse.path())
+	mouse.click_right()
+	print('detect_warp_to_bookmark_in_system -- waiting for warp')
+	at_bookmark_in_system = pag.locateCenterOnScreen(
+	'./img/detect_warp_to_bookmark.bmp',
+													confidence=0.85,
+													region=(originx, originy,
+													screenwidth,
+													screenheight))
+	while at_bookmark_in_system is None and tries <= 50:
+		time.sleep(float(random.randint(1000, 3000)) / 1000)
+		focus_overview()
+		time.sleep(float(random.randint(5000, 10000)) / 1000)
+		warp_to_bookmark_tries += 1
+		pag.moveTo((defined_bookmark_in_systemx + (random.randint(-1, 200))),
+		(defined_bookmark_in_systemy +
+										(random.randint(-3, 3))),
+										mouse.duration(), mouse.path())
+		mouse.click_right()
+		at_bookmark_in_system = pag.locateCenterOnScreen(
+		'./img/detect_warp_to_bookmark.bmp',
+														 confidence=0.98,
+														 region=(originx,
+														 originy,
+														 halfscreenwidth,
+														 screenheight))
+	if at_bookmark_in_system is None and warp_to_bookmark_tries >= 50:
+		emergency_terminate()
+		return 0
+	if at_bookmark_in_system is not None and warp_to_bookmark_tries < 50:
+		print('detect_warp_to_bookmark_in_system -- warp completed')
+		return 1
+'''
+
+
+
+def warp_to_specific_system_bookmark(gohere):
+    print('5 atsite, gotosite, gohere', atsite, gotosite, gohere)
     # Try warping to a specific bookmark in the current system
     # If the ship is already at the requested site, return function.
-    if gotosite == atsite:
+    if gohere == atsite:
         print('warp_to_specific_system_bookmark -- already at bookmark',
               atsite)
         return 0
     else:
         specific_system_bookmark = pag.locateCenterOnScreen(
-            ('./img/dest/at_dest' + (bookmark_dict[gotosite]) + '.bmp'),
+            ('./img/dest/at_dest' + (bookmark_dict[gohere]) + '.bmp'),
             confidence=0.90, region=(originx, originy, windowx, windowy))
         if specific_system_bookmark is None:
-            print('warp_to_specific_system_bookmark -- bookmark', gotosite,
+            print('warp_to_specific_system_bookmark -- bookmark', gohere,
                   'not found in system')
+            print('6 atsite, gotosite', atsite, gohere)
             return 0
         else:
             print('warp_to_specific_system_bookmark -- found bookmark',
-                  gotosite)
+                  gohere)
             (specific_system_bookmarkx), (
                 specific_system_bookmarky) = specific_system_bookmark
             pag.moveTo((specific_system_bookmarkx + (random.randint(-1, 200))),
@@ -220,6 +270,7 @@ def warp_to_specific_system_bookmark(gotosite):
                         mouse.duration(), mouse.path())
             mouse.click()
             time.sleep(2)
+            print('7 atsite, gotosite', atsite, gotosite)
             return 1
 
 
