@@ -19,11 +19,6 @@ sys.setrecursionlimit(9999999)  # set high recursion limit for functions that
 conf = 0.95
 alignment_time = 6  # Seconds (rounded up) current ship takes to begin a warp.
 
-user32 = ctypes.windll.user32
-screenx = user32.GetSystemMetrics(0)
-screeny = user32.GetSystemMetrics(1)
-halfscreenx = (int(screenx / 2))
-halfscreeny = (int(screeny / 2))
 
 window_resolutionx = 1024
 window_resolutiony = 768
@@ -32,17 +27,20 @@ window_resolutiony = 768
 # within these boundaries.
 # search for the eve neocom logo in top left corner of the eve client window.
 # This will become the origin of the coordinate system.
-origin = pag.locateCenterOnScreen('./img/origin.bmp', confidence=0.95)
+origin = pag.locateCenterOnScreen('./img/buttons/neocom.bmp', confidence=0.90)
 (originx, originy) = origin
 
 # move the origin up and to the left slightly to get it to the exact top
 # left corner of the eve client window. This is necessary  because the image
 # searching algorithm returns coordinates to the center of the image rather
 # than its top right corner.
-originx -= 50
-originy -= 50
+#originx -= 10
+#originy -= 10
 windowx = originx + window_resolutionx
 windowy = originy + window_resolutiony
+
+#print(originx, originy, windowx, windowy)
+#sys.exit()
 
 # TERMINOLOGY #######################
 
@@ -55,6 +53,7 @@ windowy = originy + window_resolutiony
 
 #####################################
 
+mining.target_asteroid()
 
 def miner():
     while docked.docked_check() == 0:
@@ -64,7 +63,7 @@ def miner():
             # If no hostiles npcs or players are present, check for asteroids.
             # If no asteroids, blacklist site and warp to next site.
             if mining.check_for_enemy_npcs() == 1:
-                break
+                miner()
             # if check_for_players() == 1:
             #   break
 
@@ -217,6 +216,7 @@ def collector():
         collector()
 
 
+#miner()
 # Method for determining which script to run, as yet to be implemented by gui.
 # selectscript = 2
 #

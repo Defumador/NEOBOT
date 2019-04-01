@@ -7,25 +7,15 @@ import pyautogui as pag
 
 from lib import mouse
 from lib import keyboard
-
-global screenx
-global screeny
-global halfscreenx
-global halfscreeny
-global windowx
-global windowy
-global originx
-global originy
-global conf
-
-sys.setrecursionlimit(9999999)
+from lib import vars as v
 
 
 def docked_check():
     # Check if the ship is currently docked by looking for the undock icon.
+    print(v.originx, v.originy, v.windowx, v.windowy)
     undock_icon = pag.locateCenterOnScreen('./img/buttons/undock.bmp',
                                            confidence=conf,
-                                           region=(originx, originy,
+                                           region=(0, 0,
                                                    windowx, windowy))
     if undock_icon is None:
         print('docked_check -- not docked')

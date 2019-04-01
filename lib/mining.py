@@ -2,6 +2,7 @@ import time
 import sys
 import ctypes
 import random
+import ctypes
 
 import pyautogui as pag
 
@@ -22,7 +23,6 @@ global originy
 global conf
 global alignment_time
 
-sys.setrecursionlimit(9999999)
 
 ###############################################################################
 # User-specified variables.
