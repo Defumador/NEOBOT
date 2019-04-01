@@ -7,6 +7,7 @@ import pyautogui as pag
 
 from lib import docked
 from lib import load_ship
+from lib import mining
 from lib import navigation as nav
 from lib import unload_ship
 
@@ -53,6 +54,60 @@ windowy = originy + window_resolutiony
 # main play area for about five seconds.
 
 #####################################
+
+
+def miner():
+    while docked.docked_check() == 0:
+        if mining.travel_to_bookmark() == 1:
+            # Once arrived at site, check for hostile npcs and human players.
+            # If either exist, warp to a different site.
+            # If no hostiles npcs or players are present, check for asteroids.
+            # If no asteroids, blacklist site and warp to next site.
+            if mining.check_for_enemy_npcs() == 1:
+                break
+            # if check_for_players() == 1:
+            #   break
+
+            while mining.check_for_asteroids() == 1:
+                mining.target_asteroid()
+                mining.activate_mining_laser()
+                # If ship inventory isn't full, continue to mine ore and wait
+                # for popups or errors.
+                while mining.inv_full_popup() == 0:
+                    if mining.asteroid_depleted_popup() == 1:
+                        if mining.check_for_asteroids() == 0:
+                            nav.blacklist_bookmark(atsite)
+                            miner()
+                        elif mining.check_for_asteroids() == 1:
+                            mining.target_asteroid()
+                            mining.activate_mining_laser()
+                            mining.inv_full_popup()
+                            continue
+                    if mining.check_for_enemy_npcs() == 1:
+                        miner()
+                    # check_for_players()
+                    # if check_for_players() == 1:
+                    # miner()
+                    time.sleep(1)
+
+                if mining.inv_full_popup() == 1:
+                    # Once inventory is full, dock at home station and unload.
+                    if nav.set_home() == 1:
+                        if navigator() == 1:
+                            unload_ship.unload_ship()
+                            docked.undock()
+                            time.sleep(3)
+                            miner()
+
+            if mining.check_for_asteroids() == 0:
+                nav.blacklist_bookmark(atsite)
+        elif mining.travel_to_bookmark() == 0:
+            nav.emergency_terminate()
+            sys.exit(0)
+    if docked.docked_check() == 1:
+        # If docked when script starts, undock.
+        docked.undock()
+        miner()
 
 
 def navigator():
