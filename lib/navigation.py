@@ -40,7 +40,75 @@ def route_set():
         return
 
 
-# !! needs work to transition to windowx,windowy
+def set_dest():
+    # Issue a 'set destination' command for the lowest-numbered bookmark that
+    # isn't blacklisted (starting with 1).
+    next_dest = pag.locateCenterOnScreen(
+        ('./img/dest/dest' + (destnum[1]) + '.bmp'),
+        confidence=0.98,
+        region=(originx, originy, windowx, windowy))
+
+    next_dest_var = 1
+    while next_dest is None:
+        next_dest_var += 1
+        next_dest = pag.locateCenterOnScreen(
+            ('./img/dest/dest' + (destnum[next_dest_var]) + '.bmp'),
+            confidence=0.98,
+            region=(originx, originy, windowx, windowy))
+        print('set_dest -- looking for dest' + (destnum[next_dest_var]))
+
+    if next_dest is not None:
+        print('set_dest -- setting destination waypoint')
+        (next_destx), (next_desty) = next_dest
+        pag.moveTo((next_destx + (random.randint(-1, 200))),
+                   (next_desty + (random.randint(-3, 3))),
+                   mouse.duration(), mouse.path())
+        mouse.click_right()
+        pag.moveRel((0 + (random.randint(10, 80))),
+                    (0 + (random.randint(20, 25))),
+                    mouse.duration(), mouse.path())
+        mouse.click()
+        time.sleep(2)
+        return
+
+
+def at_home_check():
+    # Check if the ship is at its home station by looking for a bookmark
+    # starting with '000'.
+    at_home = pag.locateCenterOnScreen('./img/dest/at_dest0.bmp',
+                                       confidence=conf,
+                                       region=(originx, originy,
+                                               windowx, windowy))
+    if at_home is None:
+        return 0
+    elif at_home is not None:
+        print('at_home_check -- at home station')
+        return 1
+
+
+def set_home():
+    # Set destination as the bookmark beginning with '000'.
+    print('set_home -- setting home waypoint')
+    home = pag.locateCenterOnScreen('./img/dest/dest0.bmp',
+                                    confidence=conf,
+                                    region=(originx, originy,
+                                            windowx, windowy))
+    if home is not None:
+        (homex, homey) = home
+        pag.moveTo((homex + (random.randint(-1, 200))),
+                   (homey + (random.randint(-3, 3))),
+                   mouse.duration(), mouse.path())
+        mouse.click_right()
+        pag.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
+                    mouse.duration(), mouse.path())
+        mouse.click()
+        return 1
+    else:
+        print("set_home -- couldn't find home waypoint")
+        return 0
+
+
+    # !! needs work to transition to windowx,windowy
 def focus_overview():
     # Click on the overview window to focus the eve client window.
     print('focus_overview -- called')
@@ -153,94 +221,6 @@ def warp_to_specific_system_bookmark(gotosite):
             mouse.click()
             time.sleep(2)
             return 1
-
-
-def emergency_terminate():
-    # If a function breaks or times out while undocked, look for nearest
-    # station and dock immediately. Incrementally lower the confidence required
-    # to match station icon each time the loop runs. If a station cannot be
-    # found after 20 loops, warp to the nearest celestial body at 100+ km
-    # instead and immediately force an unsafe logout in space.
-    print('emergency_terminate -- emergency termination called!')
-    tries = 1
-    confidence = 0.99
-    station_icon = pag.locateCenterOnScreen('./img/overview/station.bmp',
-                                            confidence=confidence,
-                                            region=(originx, originy,
-                                                    windowx, windowy))
-    while station_icon is None and tries <= 25:
-        print(
-            'emergency_terminate -- looking for station to emergency dock at')
-        tries += 1
-        confidence -= 0.01
-        station_icon = pag.locateCenterOnScreen('./img/station_icon.bmp',
-                                                confidence=confidence,
-                                                region=(originx, originy,
-                                                        windowx, windowy))
-    if station_icon is not None and tries <= 25:
-        print('emergency_terminate -- emergency docking')
-        (station_iconx, station_icony) = station_icon
-        pag.moveTo((station_iconx + (random.randint(-2, 50))),
-                   (station_icony + (random.randint(-2, 2))),
-                   mouse.duration(), mouse.path())
-        mouse.click()
-        time.sleep(float(random.randint(600, 1200)) / 1000)
-        pag.keyDown('d')
-        time.sleep(float(random.randint(600, 1200)) / 1000)
-        pag.keyUp('d')
-        pag.moveTo(
-            (random.randint(150, (int(windowy - (windowy / 4))))),
-            (random.randint(150, (int(windowx - (windowx / 4))))),
-            mouse.duration(), mouse.path())
-        detect_dock()
-        emergency_logout()
-        return 1
-    else:
-        print(
-            "emergency_terminate -- couldn't find station to emergency dock "
-            "at, warping to celestial instead")
-        tries = 0
-        confidence = 0.99
-        celestial_icon = pag.locateCenterOnScreen(
-            './img/overview/celestial.bmp',
-            confidence=confidence,
-            region=(originx, originy, windowx, windowy))
-        while celestial_icon is None and tries <= 50:
-            print('emergency_terminate -- looking for celestial')
-            tries += 1
-            confidence -= 0.01
-            celestial_icon = pag.locateCenterOnScreen(
-                './img/overview/celestial_icon.bmp',
-                confidence=confidence,
-                region=(originx, originy, windowx, windowy))
-        if celestial_icon is not None and tries <= 50:
-            print('emergency_terminate -- emergency warping to celestial')
-            (celestial_iconx, celestial_icony) = celestial_icon
-            pag.moveTo((celestial_iconx + (random.randint(-2, 50))),
-                       (celestial_icony + (random.randint(-2, 2))),
-                       mouse.duration(), mouse.path())
-            mouse.click()
-            time.sleep(float(random.randint(600, 1200)) / 1000)
-            pag.keyDown('w')
-            time.sleep(float(random.randint(600, 1200)) / 1000)
-            pag.keyUp('w')
-            pag.moveTo((random.randint(150, (
-                int(windowy - (windowy / 4))))),
-                       (random.randint(150, (
-                           int(windowx - (windowx / 4))))),
-                       mouse.duration(), mouse.path())
-            detect_warp()
-            emergency_logout()
-        else:
-            print('emergency_terminate -- out of celestials to look for')
-            emergency_logout()
-        return 0
-
-
-def emergency_logout():
-    # use hotkey to forcefully kill client session, don't use the 'log off
-    # safely' feature
-    return
 
 
 def detect_warp():
@@ -440,68 +420,90 @@ def blacklist_bookmark(atsite):
     keyboard.keypress('enter')
     return 1
 
-
-def set_dest():
-    # Issue a 'set destination' command for the lowest-numbered bookmark that
-    # isn't blacklisted (starting with 1).
-    next_dest = pag.locateCenterOnScreen(
-        ('./img/dest/dest' + (destnum[1]) + '.bmp'),
-        confidence=0.98,
-        region=(originx, originy, windowx, windowy))
-
-    next_dest_var = 1
-    while next_dest is None:
-        next_dest_var += 1
-        next_dest = pag.locateCenterOnScreen(
-            ('./img/dest/dest' + (destnum[next_dest_var]) + '.bmp'),
-            confidence=0.98,
-            region=(originx, originy, windowx, windowy))
-        print('set_dest -- looking for dest' + (destnum[next_dest_var]))
-
-    if next_dest is not None:
-        print('set_dest -- setting destination waypoint')
-        (next_destx), (next_desty) = next_dest
-        pag.moveTo((next_destx + (random.randint(-1, 200))),
-                   (next_desty + (random.randint(-3, 3))),
+def emergency_terminate():
+    # If a function breaks or times out while undocked, look for nearest
+    # station and dock immediately. Incrementally lower the confidence required
+    # to match station icon each time the loop runs. If a station cannot be
+    # found after 20 loops, warp to the nearest celestial body at 100+ km
+    # instead and immediately force an unsafe logout in space.
+    print('emergency_terminate -- emergency termination called!')
+    tries = 1
+    confidence = 0.99
+    station_icon = pag.locateCenterOnScreen('./img/overview/station.bmp',
+                                            confidence=confidence,
+                                            region=(originx, originy,
+                                                    windowx, windowy))
+    while station_icon is None and tries <= 25:
+        print(
+            'emergency_terminate -- looking for station to emergency dock at')
+        tries += 1
+        confidence -= 0.01
+        station_icon = pag.locateCenterOnScreen('./img/station_icon.bmp',
+                                                confidence=confidence,
+                                                region=(originx, originy,
+                                                        windowx, windowy))
+    if station_icon is not None and tries <= 25:
+        print('emergency_terminate -- emergency docking')
+        (station_iconx, station_icony) = station_icon
+        pag.moveTo((station_iconx + (random.randint(-2, 50))),
+                   (station_icony + (random.randint(-2, 2))),
                    mouse.duration(), mouse.path())
-        mouse.click_right()
-        pag.moveRel((0 + (random.randint(10, 80))),
-                    (0 + (random.randint(20, 25))),
-                    mouse.duration(), mouse.path())
         mouse.click()
-        time.sleep(2)
-        return
-
-
-def at_home_check():
-    # Check if the ship is at its home station by looking for a bookmark
-    # starting with '000'.
-    at_home = pag.locateCenterOnScreen('./img/dest/at_dest0.bmp',
-                                       confidence=conf,
-                                       region=(originx, originy,
-                                               windowx, windowy))
-    if at_home is None:
-        return 0
-    elif at_home is not None:
-        print('at_home_check -- at home station')
+        time.sleep(float(random.randint(600, 1200)) / 1000)
+        pag.keyDown('d')
+        time.sleep(float(random.randint(600, 1200)) / 1000)
+        pag.keyUp('d')
+        pag.moveTo(
+            (random.randint(150, (int(windowy - (windowy / 4))))),
+            (random.randint(150, (int(windowx - (windowx / 4))))),
+            mouse.duration(), mouse.path())
+        detect_dock()
+        emergency_logout()
         return 1
+    else:
+        print(
+            "emergency_terminate -- couldn't find station to emergency dock "
+            "at, warping to celestial instead")
+        tries = 0
+        confidence = 0.99
+        celestial_icon = pag.locateCenterOnScreen(
+            './img/overview/celestial.bmp',
+            confidence=confidence,
+            region=(originx, originy, windowx, windowy))
+        while celestial_icon is None and tries <= 50:
+            print('emergency_terminate -- looking for celestial')
+            tries += 1
+            confidence -= 0.01
+            celestial_icon = pag.locateCenterOnScreen(
+                './img/overview/celestial_icon.bmp',
+                confidence=confidence,
+                region=(originx, originy, windowx, windowy))
+        if celestial_icon is not None and tries <= 50:
+            print('emergency_terminate -- emergency warping to celestial')
+            (celestial_iconx, celestial_icony) = celestial_icon
+            pag.moveTo((celestial_iconx + (random.randint(-2, 50))),
+                       (celestial_icony + (random.randint(-2, 2))),
+                       mouse.duration(), mouse.path())
+            mouse.click()
+            time.sleep(float(random.randint(600, 1200)) / 1000)
+            pag.keyDown('w')
+            time.sleep(float(random.randint(600, 1200)) / 1000)
+            pag.keyUp('w')
+            pag.moveTo((random.randint(150, (
+                int(windowy - (windowy / 4))))),
+                       (random.randint(150, (
+                           int(windowx - (windowx / 4))))),
+                       mouse.duration(), mouse.path())
+            detect_warp()
+            emergency_logout()
+        else:
+            print('emergency_terminate -- out of celestials to look for')
+            emergency_logout()
+        return 0
 
-
-def set_home():
-    # Set destination as the bookmark beginning with '000'.
-    print('set_home -- setting home waypoint')
-    home = pag.locateCenterOnScreen('./img/dest/dest0.bmp',
-                                    confidence=conf,
-                                    region=(originx, originy,
-                                            windowx, windowy))
-    (homex, homey) = home
-    pag.moveTo((homex + (random.randint(-1, 200))),
-               (homey + (random.randint(-3, 3))),
-               mouse.duration(), mouse.path())
-    mouse.click_right()
-    pag.moveRel((0 + (random.randint(10, 80))), (0 + (random.randint(20, 25))),
-                mouse.duration(), mouse.path())
-    mouse.click()
+def emergency_logout():
+    # use hotkey to forcefully kill client session, don't use the 'log off
+    # safely' feature
     return
 
 
