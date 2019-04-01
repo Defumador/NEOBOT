@@ -37,7 +37,7 @@ def drag_to_ship_inv():
     print('drag_to_ship_inv -- moving item stack to ship inventory')
     namefield_station_inv = pag.locateCenterOnScreen(
         './img/namefield_station_station inventory.bmp',
-        confidence=conf)
+        confidence=conf, region=(originx, originy, windowx, windowy))
 
     if namefield_station_inv is None:
         print("drag_to_ship_inv -- can't find name column")
@@ -47,13 +47,15 @@ def drag_to_ship_inv():
 
     elif namefield_station_inv is not None:
         ship_inv = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
-                                            confidence=conf)
-
+                                            confidence=conf,
+                                            region=(originx, originy,
+                                                    windowx, windowy))
         while ship_inv is None:
             print("drag_to_ship_inv -- can't find ship inventory")
             ship_inv = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
-                                                confidence=conf)
-
+                                                confidence=conf,
+                                                region=(originx, originy,
+                                                        windowx, windowy))
             time.sleep(1)
         if ship_inv is not None:
             (namefield_station_invx,
@@ -61,11 +63,11 @@ def drag_to_ship_inv():
             (ship_invx, ship_invy) = ship_inv
             pag.moveTo((namefield_station_invx + (random.randint(-5, 250))),
                        (namefield_station_invy + (random.randint(10, 25))),
-                       mouse.move_time(), mouse.mouse_path())
+                       mouse.duration(), mouse.path())
             pag.mouseDown()
             pag.moveTo((ship_invx + (random.randint(-5, 60))),
                        (ship_invy + (random.randint(-8, 8))),
-                       mouse.move_time(), mouse.mouse_path())
+                       mouse.duration(), mouse.path())
             pag.mouseUp()
             return
 
@@ -76,7 +78,8 @@ def drag_to_ship_spec_inv():
     print('drag_to_ship_spec_inv -- moving item stack to special inventory')
     namefield_station_inv = pag.locateCenterOnScreen(
         './img/namefield_station_station inventory.bmp',
-        confidence=conf)
+        confidence=conf, region=(originx, originy, windowx, windowy))
+
     if namefield_station_inv is None:
         print("drag_to_ship_spec_inv -- can't find name column")
         traceback.print_exc()
@@ -84,11 +87,15 @@ def drag_to_ship_spec_inv():
         sys.exit()
     elif namefield_station_inv is not None:
         ship_inv = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
-                                            confidence=conf)
+                                            confidence=conf,
+                                            region=(originx, originy,
+                                                    windowx, windowy))
         while ship_inv is None:
             print("drag_to_ship_spec_inv -- can't find ship inventory")
             ship_inv = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
-                                                confidence=conf)
+                                                confidence=conf,
+                                                region=(originx, originy,
+                                                        windowx, windowy))
             time.sleep(1)
         if ship_inv is not None:
             (namefield_station_invx,
@@ -96,11 +103,11 @@ def drag_to_ship_spec_inv():
             (ship_invx, ship_invy) = ship_inv
             pag.moveTo((namefield_station_invx + (random.randint(-5, 250))),
                        (namefield_station_invy + (random.randint(10, 25))),
-                       mouse.move_time(), mouse.mouse_path())
+                       mouse.duration(), mouse.path())
             pag.mouseDown()
             pag.moveTo((ship_invx + (random.randint(-15, 40))),
                        (ship_invy + (random.randint(14, 24))),
-                       mouse.move_time(), mouse.mouse_path())
+                       mouse.duration(), mouse.path())
             pag.mouseUp()
             return
 
@@ -119,8 +126,8 @@ def load_ship_bulk():
         drag_to_ship_inv()
         time.sleep(
             2)  # After moving stack, wait and look for warnings.
-        nospace = docked.not_enough_space_popup()
-        setquant = docked.set_quant_popup()
+        nospace = docked.not_enough_space_warning()
+        setquant = docked.set_quant_warning()
 
         if nospace == 0 and setquant == 0:
             print('load_ship_bulk -- no warnings')
@@ -135,8 +142,8 @@ def load_ship_bulk():
                 drag_to_ship_spec_inv()
                 time.sleep(2)
                 specinvwarning = docked.spec_inv_warning()
-                nospace = docked.not_enough_space_popup()
-                setquant = docked.set_quant_popup()
+                nospace = docked.not_enough_space_warning()
+                setquant = docked.set_quant_warning()
 
                 if specinvwarning == 0 and setquant == 0 and nospace == 0:
                     docked.look_for_items()  # If no warnings appear, look for
@@ -172,15 +179,15 @@ def load_ship_individually():
         docked.focus_inv_window()
         drag_to_ship_inv()
         time.sleep(2)
-        nospace = docked.not_enough_space_popup()
-        setquant = docked.set_quant_popup()
+        nospace = docked.not_enough_space_warning()
+        setquant = docked.set_quant_warning()
         print(nospace, setquant)
 
         if nospace == 0 and setquant == 0:
             drag_to_ship_inv()
             time.sleep(2)
-            nospace = docked.not_enough_space_popup()
-            setquant = docked.set_quant_popup()
+            nospace = docked.not_enough_space_warning()
+            setquant = docked.set_quant_warning()
             docked.look_for_items()
 
         elif nospace == 0 and setquant == 1:
@@ -195,16 +202,16 @@ def load_ship_individually():
                 drag_to_ship_spec_inv()
                 time.sleep(2)
                 specinvwarning = docked.spec_inv_warning()
-                nospace = docked.not_enough_space_popup()
-                setquant = docked.set_quant_popup()
+                nospace = docked.not_enough_space_warning()
+                setquant = docked.set_quant_warning()
                 docked.look_for_items()
 
                 while specinvwarning == 0 and setquant == 0 and nospace == 0:
                     drag_to_ship_spec_inv()
                     time.sleep(2)
                     specinvwarning = docked.spec_inv_warning()
-                    nospace = docked.not_enough_space_popup()
-                    setquant = docked.set_quant_popup()
+                    nospace = docked.not_enough_space_warning()
+                    setquant = docked.set_quant_warning()
                     docked.look_for_items()
 
                 if items is None:

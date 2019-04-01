@@ -16,20 +16,20 @@ def click():
 def click_right():
     time.sleep(float(random.randint(0, 500)) / 1000)
     pag.click(
-        button = 'right')  # duration=(float(random.randint(500, 2500) /
+        button='right')  # duration=(float(random.randint(500, 2500) /
     # 1000)))
     time.sleep(float(random.randint(0, 500)) / 1000)
     return
 
 
-def move_time():
+def duration():
     # Randomize the amount of time the mouse cursor takes to move to a
     # new location.
     movetimevar = (float(random.randint(200, 1500) / 1000))
     return movetimevar
 
 
-def mouse_path():
+def path():
     # Randomize the movement behavior of the mouse cursor as it moves to a
     # new location.
     rand = random.randint(1, 2)

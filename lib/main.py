@@ -31,11 +31,28 @@ window_resolutiony = 768
 # within these boundaries.
 # search for the eve neocom logo in top left corner of the eve client window.
 # This will become the origin of the coordinate system.
-origin = pag.locateCenterOnScreen('./img/origin.bmp', confidence=0.95,
-                                  region=(0, 0, screenx, screeny))
+origin = pag.locateCenterOnScreen('./img/origin.bmp', confidence=0.95)
 (originx, originy) = origin
+
+# move the origin up and to the left slightly to get it to the exact top
+# left corner of the eve client window. This is necessary  because the image
+# searching algorithm returns coordinates to the center of the image rather
+# than its top right corner.
+originx -= 50
+originy -= 50
 windowx = originx + window_resolutionx
 windowy = originy + window_resolutiony
+
+# TERMINOLOGY #######################
+
+# A 'warning' is a persistent dialogue window that appears in the center of
+# the screen and dims the rest of the screen. Warnings can only be dismissed
+# with an explicit keystroke or button click from the user.
+
+# A 'popup' is a partially transparent block of text that appears in the
+# main play area for about five seconds.
+
+#####################################
 
 
 def navigator():
