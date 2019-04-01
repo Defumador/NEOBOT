@@ -1,6 +1,5 @@
 import sys
 import time
-import ctypes
 import random
 import traceback
 
@@ -9,48 +8,14 @@ import pyautogui as pag
 from lib import mouse
 from lib import keyboard
 
-global windowx
-global windowy
-global originx
-global originy
-global conf
-global alignment_time
-import ctypes
-
-
-
-atsite = 0
-gotosite = 0
-sys.setrecursionlimit(9999999)  # set high recursion limit for functions that
-# call themselves.
-
-conf = 0.95
-alignment_time = 6  # Seconds (rounded up) current ship takes to begin a warp.
-
-user32 = ctypes.windll.user32
-screenx = user32.GetSystemMetrics(0)
-screeny = user32.GetSystemMetrics(1)
-halfscreenx = (int(screenx / 2))
-halfscreeny = (int(screeny / 2))
-
-window_resolutionx = 1024
-window_resolutiony = 768
-
-# get the coordinates of the eve client window and restrict image searching to
-# within these boundaries.
-# search for the eve neocom logo in top left corner of the eve client window.
-# This will become the origin of the coordinate system.
-origin = pag.locateCenterOnScreen('./img/buttons/neocom.bmp', confidence=0.90)
-(originx, originy) = origin
-
-# move the origin up and to the left slightly to get it to the exact top
-# left corner of the eve client window. This is necessary  because the image
-# searching algorithm returns coordinates to the center of the image rather
-# than its top right corner.
-windowx = originx + window_resolutionx
-windowy = originy + window_resolutiony
-
-
+from lib.vars import originx
+from lib.vars import originy
+from lib.vars import windowx
+from lib.vars import windowy
+from lib.vars import conf
+from lib.vars import alignment_time
+from lib.vars import atsite
+from lib.vars import gotosite
 
 sys.setrecursionlimit(9999999)
 
@@ -228,7 +193,6 @@ def warp_to_waypoint():
 def warp_to_specific_system_bookmark(gotosite):
     # Try warping to a specific bookmark in the current system
     # If the ship is already at the requested site, return function.
-    global atsite
     if gotosite == atsite:
         print('warp_to_specific_system_bookmark -- already at bookmark',
               atsite)
@@ -237,7 +201,7 @@ def warp_to_specific_system_bookmark(gotosite):
         specific_system_bookmark = pag.locateCenterOnScreen(
             ('./img/dest/at_dest' + (bookmark_dict[gotosite]) + '.bmp'),
             confidence=0.90, region=(originx, originy, windowx, windowy))
-        while specific_system_bookmark is None:
+        if specific_system_bookmark is None:
             print('warp_to_specific_system_bookmark -- bookmark', gotosite,
                   'not found in system')
             return 0

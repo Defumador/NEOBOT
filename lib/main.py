@@ -1,46 +1,17 @@
 import sys
 import traceback
 import time
-import ctypes
 
 import pyautogui as pag
 
+from lib import vars as v
 from lib import docked
 from lib import load_ship
 from lib import mining
 from lib import navigation as nav
 from lib import unload_ship
 
-atsite = 0
-gotosite = 0
-sys.setrecursionlimit(9999999)  # set high recursion limit for functions that
-# call themselves.
-
-conf = 0.95
-alignment_time = 6  # Seconds (rounded up) current ship takes to begin a warp.
-
-
-window_resolutionx = 1024
-window_resolutiony = 768
-
-# get the coordinates of the eve client window and restrict image searching to
-# within these boundaries.
-# search for the eve neocom logo in top left corner of the eve client window.
-# This will become the origin of the coordinate system.
-origin = pag.locateCenterOnScreen('./img/buttons/neocom.bmp', confidence=0.90)
-(originx, originy) = origin
-
-# move the origin up and to the left slightly to get it to the exact top
-# left corner of the eve client window. This is necessary  because the image
-# searching algorithm returns coordinates to the center of the image rather
-# than its top right corner.
-#originx -= 10
-#originy -= 10
-windowx = originx + window_resolutionx
-windowy = originy + window_resolutiony
-
-#print(originx, originy, windowx, windowy)
-#sys.exit()
+sys.setrecursionlimit(9999999)
 
 # TERMINOLOGY #######################
 
@@ -75,7 +46,7 @@ def miner():
                 while mining.inv_full_popup() == 0:
                     if mining.asteroid_depleted_popup() == 1:
                         if mining.check_for_asteroids() == 0:
-                            nav.blacklist_bookmark(atsite)
+                            nav.blacklist_bookmark(v.atsite)
                             miner()
                         elif mining.check_for_asteroids() == 1:
                             mining.target_asteroid()
@@ -99,7 +70,7 @@ def miner():
                             miner()
 
             if mining.check_for_asteroids() == 0:
-                nav.blacklist_bookmark(atsite)
+                nav.blacklist_bookmark(v.atsite)
         elif mining.travel_to_bookmark() == 0:
             nav.emergency_terminate()
             sys.exit(0)

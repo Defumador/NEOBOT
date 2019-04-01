@@ -1,28 +1,19 @@
 import time
-import sys
-import ctypes
 import random
-import ctypes
+import sys
 
 import pyautogui as pag
 
 from lib import navigation as nav
-from lib import docked
-from lib import unload_ship
 from lib import keyboard
 from lib import mouse
 
-global screenx
-global screeny
-global halfscreenx
-global halfscreeny
-global windowx
-global windowy
-global originx
-global originy
-global conf
-global alignment_time
+from lib.vars import originx
+from lib.vars import originy
+from lib.vars import windowx
+from lib.vars import windowy
 
+sys.setrecursionlimit(9999999)
 
 ###############################################################################
 # User-specified variables.
@@ -43,7 +34,6 @@ check_for_enemy_battleships = 1
 # check_for_player_greys = 1
 
 ###############################################################################
-
 
 
 def travel_to_bookmark():
@@ -240,6 +230,7 @@ def target_asteroid():
                    mouse.duration(), mouse.path())
         mouse.click()
         keyboard.keypress('ctrl')
+        time.sleep(float(random.randint(4000, 7000)) / 1000)
         return 1
     elif asteroid_m is not None:
         (asteroid_mediumx, asteroid_mediumy) = asteroid_m
@@ -248,6 +239,7 @@ def target_asteroid():
                    mouse.duration(), mouse.path())
         mouse.click()
         keyboard.keypress('ctrl')
+        time.sleep(float(random.randint(4000, 7000)) / 1000)
         return 1
     elif asteroid_s is not None:
         (asteroid_smallx, asteroid_smally) = asteroid_s
@@ -256,7 +248,7 @@ def target_asteroid():
                    mouse.duration(), mouse.path())
         mouse.click()
         keyboard.keypress('ctrl')
-        time.sleep(float(random.randint(500, 1500)) / 1000)
+        time.sleep(float(random.randint(4000, 7000)) / 1000)
         return 1
     else:
         print('target_asteroid -- no asteroids to target')
