@@ -238,40 +238,49 @@ def warp_to_waypoint():
 
 
 
-def warp_to_specific_system_bookmark(gohere):
-    print('5 atsite, gotosite, gohere', atsite, gotosite, gohere)
+def warp_to_specific_system_bookmark(target_site):
     # Try warping to a specific bookmark in the current system
     # If the ship is already at the requested site, return function.
-    if gohere == atsite:
-        print('warp_to_specific_system_bookmark -- already at bookmark',
-              atsite)
-        return 0
-    else:
-        specific_system_bookmark = pag.locateCenterOnScreen(
-            ('./img/dest/at_dest' + (bookmark_dict[gohere]) + '.bmp'),
+    specific_system_bookmark = pag.locateCenterOnScreen(
+    ('./img/dest/at_dest' + (bookmark_dict[target_site]) + '.bmp'),
+    confidence=0.90, region=(originx, originy, windowx, windowy))
+    (specific_system_bookmarkx, specific_system_bookmarky) = \
+        specific_system_bookmark
+
+    # If the target site has been found, right click on the target to see if
+    # the 'approach location' option is there. If so, return function. If
+    # not, check for a 'warp to' option, if it's present, warp to location.
+    if specific_system_bookmark is not None:
+        pag.moveTo((specific_system_bookmarkx + (random.randint(-1, 200))),
+                   (specific_system_bookmarky + (random.randint(-3, 3))),
+                    mouse.duration(), mouse.path())
+        mouse.click_right()
+
+        at_target_site = pag.locateCenterOnScreen(
+            './img/approach_location.bmp',
             confidence=0.90, region=(originx, originy, windowx, windowy))
-        if specific_system_bookmark is None:
-            print('warp_to_specific_system_bookmark -- bookmark', gohere,
-                  'not found in system')
-            print('6 atsite, gotosite', atsite, gohere)
+
+        if at_target_site is not None:
+            print('warp_to_specific_system_bookmark -- already at bookmark',
+                  target_site)
             return 0
-        else:
-            print('warp_to_specific_system_bookmark -- found bookmark',
-                  gohere)
-            (specific_system_bookmarkx), (
-                specific_system_bookmarky) = specific_system_bookmark
-            pag.moveTo((specific_system_bookmarkx + (random.randint(-1, 200))),
-                       (specific_system_bookmarky +
-                        (random.randint(-3, 3))), mouse.duration(),
-                       mouse.path())
-            mouse.click_right()
-            pag.moveRel((0 + (random.randint(10, 80))),
-                        (0 + (random.randint(10, 15))),
-                        mouse.duration(), mouse.path())
-            mouse.click()
-            time.sleep(2)
-            print('7 atsite, gotosite', atsite, gotosite)
-            return 1
+
+        if at_target_site is None:
+            warp_to_target = pag.locateCenterOnScreen(
+                './img/warp_to_location.bmp',
+                confidence=0.90, region=(originx, originy, windowx, windowy))
+
+            if warp_to_target is not None:
+                print('warp_to_specific_system_bookmark -- warping to bookmark',
+                pag.moveRel((0 + (random.randint(10, 80))),
+                           (0 + (random.randint(10, 15))),
+                            mouse.duration(), mouse.path())
+                mouse.click()
+                time.sleep(2)
+                return 1
+            else:
+                print('warp_to_specific_system_bookmark -- error')
+                return 0
 
 
 def detect_warp():

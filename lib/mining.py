@@ -34,21 +34,17 @@ check_for_enemy_battleships = 1
 
 
 def travel_to_bookmark():
-    from lib.vars import atsite, gotosite
     # Find a suitable asteroid field by warping to each bookmark in
     # numerical order.
     # Currently only mining in a single system with at least one station is
     # supported
-    global gotosite
-    global atsite
-    gotosite = 1
-    print('1 atsite, gotosite', atsite, gotosite)
+
+    gotosite l= 1
     # Try warping to bookmark 1 in the system. If bookmark 1 doesn't exist,
     # is not in the current system, or your ship is already there, increment
     # bookmark number by 1 and try again.
-    travel = nav.warp_to_specific_system_bookmark(gotosite)
+    travel = nav.warp_to_specific_system_bookmark(target_site)
     while travel == 0 and gotosite <= 10:
-        print('2 atsite, gotosite', atsite, gotosite)
         gotosite += 1
         print('3 atsite, gotosite', atsite, gotosite)
         travel = nav.warp_to_specific_system_bookmark(gotosite)
