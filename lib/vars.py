@@ -11,10 +11,8 @@ global conf
 
 global alignment_time
 
-global atsite
 global gotosite
 
-atsite = 0
 gotosite = 0
 
 sys.setrecursionlimit(9999999)  # set high recursion limit for functions that

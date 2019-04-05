@@ -39,23 +39,19 @@ def travel_to_bookmark():
     # Currently only mining in a single system with at least one station is
     # supported
 
-    gotosite l= 1
+    target_bookmark = 1
     # Try warping to bookmark 1 in the system. If bookmark 1 doesn't exist,
     # is not in the current system, or your ship is already there, increment
     # bookmark number by 1 and try again.
-    travel = nav.warp_to_specific_system_bookmark(target_site)
-    while travel == 0 and gotosite <= 10:
-        gotosite += 1
-        print('3 atsite, gotosite', atsite, gotosite)
-        travel = nav.warp_to_specific_system_bookmark(gotosite)
+    travel_to_bookmark_var = nav.warp_to_specific_system_bookmark(target_bookmark)
+    while travel_to_bookmark_var == 0 and target_bookmark <= 10:
+        target_bookmark += 1
+        travel_to_bookmark_var = nav.warp_to_specific_system_bookmark(target_bookmark)
         continue
-    if travel == 1 and gotosite <= 10:
-        print('4 atsite, gotosite', atsite, gotosite)
+    if travel_to_bookmark_var == 1 and target_bookmark <= 10:
         # Once a valid site is found, remember the site number the ship is
         # warping to so script doesn't try warping there again.
-        atsite = gotosite
-        print('5 atsite, gotosite', atsite, gotosite)
-        if nav.detect_warp() == 1:
+        if nav.wait_for_warp_to_complete() == 1:
             return 1
     else:
         print('travel_to_bookmark -- ran out of sites to check for')
@@ -63,14 +59,13 @@ def travel_to_bookmark():
 
 
 def check_for_enemy_npcs():
-    from lib.vars import atsite, gotosite
     # Check entire window for red ship hud icons, indicating hostile npcs.
     # Only avoid the hostile ship classes specified by the user in the
     # global variables above. Script will try looking for these icons on the
     # default 'general' overview tab. Script will keep the 'general' overview
     # tab visible by default until switching tabs in required to locate another
     # asteroid.
-    print('check_for_enemy_npcs called')
+    print('check_for_enemy_npcs -- called')
     if check_for_enemy_frigates == 1:
         enemy_frigate = pag.locateCenterOnScreen(
             './img/overview/enemy_frigate.bmp',
@@ -79,8 +74,8 @@ def check_for_enemy_npcs():
             region=(originx, originy, windowx, windowy))
         if enemy_frigate is not None:
             print('check_for_enemy_npcs -- found hostile npc frigate')
-            print('10 atsite, gotosite', atsite, gotosite)
             return 1
+
     # elif check_for_enemy_destroyers == 1:
     #	enemy_destroyer = pag.locateCenterOnScreen(
     #	'./img/overview/enemy_destroyer.bmp',
@@ -231,7 +226,11 @@ def target_asteroid():
                    mouse.duration(), mouse.path())
         mouse.click()
         keyboard.keypress('ctrl')
-        time.sleep(float(random.randint(4000, 7000)) / 1000)
+        if target_out_of_range_popup() == 1:
+            target_asteroid()
+        elif target_out_of_range_popup() == 0:
+            time.sleep(float(random.randint(4000, 7000)) / 1000)  # Wait for
+            # a lock to be achieved.
         return 1
     elif asteroid_m is not None:
         (asteroid_mediumx, asteroid_mediumy) = asteroid_m
@@ -259,12 +258,12 @@ def target_asteroid():
 def inv_full_popup():
     # Check for momentary popup indicating cargo/ore hold is full.
     # This popup lasts about 5 seconds.
-    inv_full_popup = pag.locateCenterOnScreen(
+    inv_full_popup_var = pag.locateCenterOnScreen(
         './img/popups/ship_inv_full.bmp',
         confidence=0.90, region=(originx, originy, windowx, windowy))
-    if inv_full_popup is None:
+    if inv_full_popup_var is None:
         return 0
-    elif inv_full_popup is not None:
+    elif inv_full_popup_var is not None:
         print('inv_full_popup -- detected')
         return 1
 
@@ -272,13 +271,13 @@ def inv_full_popup():
 def asteroid_depleted_popup():
     # Check for popup indicating the asteroid currently being mined has been
     # depleted.
-    asteroid_depleted = pag.locateCenterOnScreen(
+    asteroid_depleted_popup_var = pag.locateCenterOnScreen(
         './img/overview/asteroid_depleted.bmp',
         confidence=0.90,
         region=(originx, originy, windowx, windowy))
-    if asteroid_depleted is None:
+    if asteroid_depleted_popup_var is None:
         return 0
-    elif asteroid_depleted is not None:
+    elif asteroid_depleted_popup_var is not None:
         print('asteroid_depleted_popup -- detected')
         return 1
 
@@ -287,17 +286,66 @@ def activate_mining_laser():
     # Activate mining lasers in sequential order.
     if mining_lasers == 1:
         keyboard.keypress('f1')
+        if miner_out_of_range_popup() == 1:
+            activate_mining_laser()
+        elif miner_out_of_range_popup() == 0:
+            return 1
     elif mining_lasers == 2:
         keyboard.keypress('f1')
-        keyboard.keypress('f2')
+        if miner_out_of_range_popup() == 1:
+            activate_mining_laser()
+        elif miner_out_of_range_popup() == 0:
+            keyboard.keypress('f2')
+            return 1
     elif mining_lasers == 3:
         keyboard.keypress('f1')
-        keyboard.keypress('f2')
-        keyboard.keypress('f3')
+        if miner_out_of_range_popup() == 1:
+            activate_mining_laser()
+        elif miner_out_of_range_popup() == 0:
+            keyboard.keypress('f2')
+            keyboard.keypress('f3')
+            return 1
     elif mining_lasers == 4:
         keyboard.keypress('f1')
-        keyboard.keypress('f2')
-        keyboard.keypress('f3')
-        keyboard.keypress('f4')
+        if miner_out_of_range_popup() == 1:
+            activate_mining_laser()
+        elif miner_out_of_range_popup() == 0:
+            keyboard.keypress('f2')
+            keyboard.keypress('f3')
+            keyboard.keypress('f4')
+            return 1
     print('activate_mining_laser -- called')
     return 1
+
+
+def miner_out_of_range_popup():
+    # Check if the ship's mining laser is out of range. If it is,
+    # orbit the asteroid at a specified distance and try activating the
+    # mining laser again in a few seconds.
+    miner_out_of_range = pag.locateCenterOnScreen(
+        './img/popups/miner_out_of_range.bmp',
+        confidence=0.90,
+        region=(originx, originy, windowx, windowy))
+    while miner_out_of_range is not None:
+        # Orbit asteroid and wait 10-20s before trying to activate miner again.
+
+        time.sleep(float(random.randint(10000, 20000)) / 1000)
+        return 1
+    if miner_out_of_range is None:
+        return 0
+
+
+def target_out_of_range_popup():
+    # Check if ship is too far from the desired object in order to get a
+    # target lock on it.
+    target_out_of_range = pag.locateCenterOnScreen(
+        './img/popups/target_too_far.bmp',
+        confidence=0.90,
+        region=(originx, originy, windowx, windowy))
+    while target_out_of_range is not None:
+        # Orbit asteroid and wait 10-20s before trying to lock target again.
+
+        time.sleep(float(random.randint(10000, 20000)) / 1000)
+        return 1
+    if target_out_of_range is None:
+        return 0
