@@ -1,5 +1,4 @@
 import sys
-
 import pyautogui as pag
 
 global windowx

@@ -1,14 +1,7 @@
-import time
-import random
-import sys
-
+import time, sys, random
 import pyautogui as pag
-
-from lib import navigation as nav
-from lib import keyboard, mouse
-
+from lib import navigation as nav, keyboard, mouse
 from lib.vars import originx, originy, windowx, windowy
-
 
 sys.setrecursionlimit(9999999)
 
@@ -22,6 +15,7 @@ check_for_enemy_destroyers = 1
 check_for_enemy_cruisers = 1
 check_for_enemy_battlecruisers = 1
 check_for_enemy_battleships = 1
+
 
 # check_for_player_neutrals = 1
 # check_for_player_suspects = 1
@@ -43,10 +37,12 @@ def travel_to_bookmark():
     # Try warping to bookmark 1 in the system. If bookmark 1 doesn't exist,
     # is not in the current system, or your ship is already there, increment
     # bookmark number by 1 and try again.
-    travel_to_bookmark_var = nav.warp_to_specific_system_bookmark(target_bookmark)
+    travel_to_bookmark_var = nav.warp_to_specific_system_bookmark(
+        target_bookmark)
     while travel_to_bookmark_var == 0 and target_bookmark <= 10:
         target_bookmark += 1
-        travel_to_bookmark_var = nav.warp_to_specific_system_bookmark(target_bookmark)
+        travel_to_bookmark_var = nav.warp_to_specific_system_bookmark(
+            target_bookmark)
         continue
     if travel_to_bookmark_var == 1 and target_bookmark <= 10:
         # Once a valid site is found, remember the site number the ship is

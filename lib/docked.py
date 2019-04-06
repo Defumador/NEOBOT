@@ -1,18 +1,7 @@
-import sys
-import time
-import ctypes
-import random
-
+import time, random
 import pyautogui as pag
-
-from lib import mouse
-from lib import keyboard
-
-from lib.vars import originx
-from lib.vars import originy
-from lib.vars import windowx
-from lib.vars import windowy
-from lib.vars import conf
+from lib import mouse, keyboard
+from lib.vars import originx, originy, windowx, windowy, conf
 
 
 def docked_check():
@@ -63,7 +52,7 @@ def open_spec_inv():
     # products etc.) click on it in
     # inventory window while docked.
     print('open_spec_inv -- opening special inventory')
-    tries = 1
+    tries = 0
     spec_inv = pag.locateCenterOnScreen('./img/buttons/spec_inv.bmp',
                                         confidence=conf,
                                         region=(originx, originy,
@@ -91,7 +80,7 @@ def open_station_inv():
     # Click on the station inventory button within the main inventory window
     # while docked.
     print('open_station_inv -- opening station inventory')
-    tries = 1
+    tries = 0
     station_inv = pag.locateCenterOnScreen('./img/buttons/station_inv.bmp',
                                            confidence=conf,
                                            region=(originx, originy,
@@ -121,7 +110,7 @@ def focus_inv_window():
     # any items are selected. Look for the sorting buttons in top right corner
     # of the inventory window and position the mouse cursor relative to those
     # buttons to click a non-interactive area within the inventory window.
-    tries = 1
+    tries = 0
     sort_station_inv = pag.locateCenterOnScreen(
         './img/buttons/station_sorting.bmp',
         confidence=conf,
@@ -239,9 +228,7 @@ def undock():
     print('undock -- undocking')
     pag.keyDown('alt')  # alt+u
     time.sleep(float(random.randint(200, 1200)) / 1000)
-    pag.keyDown('u')
-    time.sleep(float(random.randint(200, 1200)) / 1000)
-    pag.keyUp('u')
+    keyboard.keypress('u')
     time.sleep(float(random.randint(200, 1200)) / 1000)
     pag.keyUp('alt')
     time.sleep(int((random.randint(5000, 10000) / 1000)))
@@ -255,9 +242,7 @@ def undock():
         print('undock -- trying undocking second time')
         pag.keyDown('alt')
         time.sleep(float(random.randint(200, 1200)) / 1000)
-        pag.keyDown('u')
-        time.sleep(float(random.randint(200, 1200)) / 1000)
-        pag.keyUp('u')
+        keyboard.keypress('u')
         time.sleep(float(random.randint(200, 1200)) / 1000)
         pag.keyUp('alt')
         time.sleep(int((random.randint(5000, 10000) / 1000)))

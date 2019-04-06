@@ -1,19 +1,7 @@
-import sys
-import time
-import random
-
+import sys, time, random
 import pyautogui as pag
-
-from lib import mouse
-from lib import keyboard
-from lib import docked
-
-from lib.vars import originx
-from lib.vars import originy
-from lib.vars import windowx
-from lib.vars import windowy
-from lib.vars import conf
-from lib.vars import alignment_time
+from lib import mouse, keyboard, docked
+from lib.vars import originx, originy, windowx, windowy, conf
 
 sys.setrecursionlimit(9999999)
 

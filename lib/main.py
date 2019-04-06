@@ -1,16 +1,5 @@
-import sys
-import traceback
-import time
-
-import pyautogui as pag
-
-from lib import docked
-from lib import load_ship
-from lib import navigation as nav
-from lib import unload_ship
-
-from lib import mining
-
+import sys, time, traceback
+from lib import docked, load_ship, navigation as nav, unload_ship, mining
 
 sys.setrecursionlimit(9999999)
 
@@ -26,22 +15,14 @@ sys.setrecursionlimit(9999999)
 #####################################
 
 def miner():
-    from lib.vars import atsite, gotosite
-    global atsite
-    global gotosite
-    print('13 atsite, gotosite', atsite, gotosite)
     while docked.docked_check() == 0:
-        print('12 atsite, gotosite', atsite, gotosite)
         if mining.travel_to_bookmark() == 1:
-            print('14 atsite, gotosite', atsite, gotosite)
             # Once arrived at site, check for hostile npcs and human players.
             # If either exist, warp to a different site.
             # If no hostiles npcs or players are present, check for asteroids.
             # If no asteroids, blacklist site and warp to next site.
             if mining.check_for_enemy_npcs() == 1:
-                print('11 atsite, gotosite', atsite, gotosite)
                 miner()
-                print('15 atsite, gotosite', atsite, gotosite)
             # if check_for_players() == 1:
             #   break
 
@@ -53,7 +34,7 @@ def miner():
                 while mining.inv_full_popup() == 0:
                     if mining.asteroid_depleted_popup() == 1:
                         if mining.check_for_asteroids() == 0:
-                            nav.blacklist_bookmark(atsite)
+                            nav.blacklist_current_bookmark()
                             miner()
                         elif mining.check_for_asteroids() == 1:
                             mining.target_asteroid()
@@ -77,7 +58,7 @@ def miner():
                             miner()
 
             if mining.check_for_asteroids() == 0:
-                nav.blacklist_bookmark(atsite)
+                nav.blacklist_current_bookmark()
         elif mining.travel_to_bookmark() == 0:
             nav.emergency_terminate()
             sys.exit(0)

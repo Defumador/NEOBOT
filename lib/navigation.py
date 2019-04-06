@@ -1,21 +1,7 @@
-import sys
-import time
-import random
-import traceback
-
+import sys, time, random, traceback
 import pyautogui as pag
-
-from lib import mouse
-from lib import keyboard
-
-from lib.vars import originx
-from lib.vars import originy
-from lib.vars import windowx
-from lib.vars import windowy
-from lib.vars import conf
-from lib.vars import alignment_time
-from lib.vars import atsite
-from lib.vars import gotosite
+from lib import mouse, keyboard
+from lib.vars import originx, originy, windowx, windowy, conf, alignment_time
 
 sys.setrecursionlimit(9999999)
 
@@ -31,9 +17,9 @@ def route_set():
     # Check the top-left corner of the hud to see if a route has actually been
     # set by the user.
     route_set_var = pag.locateCenterOnScreen('./img/indicators/route_set.bmp',
-                                     confidence=0.85,
-                                     region=(originx, originy,
-                                             windowx, windowy))
+                                             confidence=0.85,
+                                             region=(originx, originy,
+                                                     windowx, windowy))
     if route_set_var is None:
         print('route_set -- no route set!')
         sys.exit(0)
@@ -77,9 +63,9 @@ def at_home_check():
     # Check if the ship is at its home station by looking for a bookmark
     # starting with '000'.
     at_home_check_var = pag.locateCenterOnScreen('./img/dest/at_dest0.bmp',
-                                       confidence=conf,
-                                       region=(originx, originy,
-                                               windowx, windowy))
+                                                 confidence=conf,
+                                                 region=(originx, originy,
+                                                         windowx, windowy))
     if at_home_check_var is None:
         return 0
     elif at_home_check_var is not None:
@@ -91,9 +77,9 @@ def set_home():
     # Set destination as the bookmark beginning with '000'.
     print('set_home -- setting home waypoint')
     set_home_var = pag.locateCenterOnScreen('./img/dest/dest0.bmp',
-                                    confidence=conf,
-                                    region=(originx, originy,
-                                            windowx, windowy))
+                                            confidence=conf,
+                                            region=(originx, originy,
+                                                    windowx, windowy))
     if set_home_var is not None:
         (homex, homey) = set_home_var
         pag.moveTo((homex + (random.randint(-1, 200))),
@@ -127,7 +113,7 @@ def warp_to_waypoint():
     # Click on the current waypoint and use warp hotkey to warp to waypoint.
     # Currently supports warping to stargate and station waypoints.
     print('warp_to_waypoint -- looking for waypoints')
-    tries = 1
+    tries = 0
     # Speed up image searching by checking right half of eve window only. This
     # obviously requires the user to place the overview on the right half of
     # the client window.
@@ -194,49 +180,49 @@ def warp_to_waypoint():
 
 '''
 (defined_bookmark_in_systemx), (defined_bookmark_in_systemy) =
-	defined_bookmark_in_system
-	tries = 0
-	pag.moveTo((defined_bookmark_in_systemx + (random.randint(-1, 200))),
-	(defined_bookmark_in_systemy +
-												(random.randint(-3, 3))),
-												mouse.duration(),
-												mouse.path())
-	mouse.click_right()
-	print('detect_warp_to_bookmark_in_system -- waiting for warp')
-	at_bookmark_in_system = pag.locateCenterOnScreen(
-	'./img/detect_warp_to_bookmark.bmp',
-													confidence=0.85,
-													region=(originx, originy,
-													screenwidth,
-													screenheight))
-	while at_bookmark_in_system is None and tries <= 50:
-		time.sleep(float(random.randint(1000, 3000)) / 1000)
-		focus_overview()
-		time.sleep(float(random.randint(5000, 10000)) / 1000)
-		warp_to_bookmark_tries += 1
-		pag.moveTo((defined_bookmark_in_systemx + (random.randint(-1, 200))),
-		(defined_bookmark_in_systemy +
-										(random.randint(-3, 3))),
-										mouse.duration(), mouse.path())
-		mouse.click_right()
-		at_bookmark_in_system = pag.locateCenterOnScreen(
-		'./img/detect_warp_to_bookmark.bmp',
-														 confidence=0.98,
-														 region=(originx,
-														 originy,
-														 halfscreenwidth,
-														 screenheight))
-	if at_bookmark_in_system is None and warp_to_bookmark_tries >= 50:
-		emergency_terminate()
-		return 0
-	if at_bookmark_in_system is not None and warp_to_bookmark_tries < 50:
-		print('detect_warp_to_bookmark_in_system -- warp completed')
-		return 1
+defined_bookmark_in_system
+tries = 0
+pag.moveTo((defined_bookmark_in_systemx + (random.randint(-1, 200))),
+           (defined_bookmark_in_systemy +
+            (random.randint(-3, 3))),
+           mouse.duration(),
+           mouse.path())
+mouse.click_right()
+print('detect_warp_to_bookmark_in_system -- waiting for warp')
+at_bookmark_in_system = pag.locateCenterOnScreen(
+    './img/detect_warp_to_bookmark.bmp',
+    confidence=0.85,
+    region=(originx, originy,
+            screenwidth,
+            screenheight))
+while at_bookmark_in_system is None and tries <= 50:
+    time.sleep(float(random.randint(1000, 3000)) / 1000)
+    focus_overview()
+    time.sleep(float(random.randint(5000, 10000)) / 1000)
+    warp_to_bookmark_tries += 1
+    pag.moveTo((defined_bookmark_in_systemx + (random.randint(-1, 200))),
+               (defined_bookmark_in_systemy +
+                (random.randint(-3, 3))),
+               mouse.duration(), mouse.path())
+    mouse.click_right()
+    at_bookmark_in_system = pag.locateCenterOnScreen(
+        './img/detect_warp_to_bookmark.bmp',
+        confidence=0.98,
+        region=(originx,
+                originy,
+                halfscreenwidth,
+                screenheight))
+if at_bookmark_in_system is None and warp_to_bookmark_tries >= 50:
+    emergency_terminate()
+    return 0
+if at_bookmark_in_system is not None and warp_to_bookmark_tries < 50:
+    print('detect_warp_to_bookmark_in_system -- warp completed')
+    return 1
 '''
 
 
 def warp_to_specific_system_bookmark(target_site):
-    # Try warping to a specific bookmark in the current system
+    # Try warping to a specific bookmark in the current system.
     # If the ship is already at the requested site, return function.
     specific_system_bookmark = pag.locateCenterOnScreen(
         ('./img/dest/at_dest' + (bookmark_dict[target_site]) + '.bmp'),
@@ -368,17 +354,17 @@ def detect_dock():
     # eve client window.
     tries = 0
     detect_dock_var = pag.locateCenterOnScreen('./img/buttons/undock.bmp',
-                                      confidence=0.91,
-                                      region=(originx, originy,
-                                              windowx, windowy))
+                                               confidence=0.91,
+                                               region=(originx, originy,
+                                                       windowx, windowy))
     while detect_dock_var is None and tries <= 100:
         tries += 1
         print('detect_dock -- waiting for dock...', tries)
         time.sleep(3)
         detect_dock_var = pag.locateCenterOnScreen('./img/buttons/undock.bmp',
-                                          confidence=0.91,
-                                          region=(originx, originy,
-                                                  windowx, windowy))
+                                                   confidence=0.91,
+                                                   region=(originx, originy,
+                                                           windowx, windowy))
     if detect_dock_var is not None and tries <= 100:
         print('detect_dock -- detected dock')
         time.sleep(float(random.randint(2000, 5000)) / 1000)
@@ -454,15 +440,93 @@ def blacklist_station():
         time.sleep((random.randint(0, 200)) / 100)
         pag.keyUp('enter')
         return
-    else:
-        return
 
 
-def blacklist_bookmark(atsite):
-    # Blacklist a specific bookmark by changing its name.
-    print('blacklist_bookmark -- blacklisting bookmark'atsite)
+def blacklist_current_bookmark():
+    # Determine which bookmark ship is at by looking at the right-click
+    # menu. If a bookmark is on grid with the user's ship, blacklist the
+    # bookmark by editing its name.
+    print('blacklist_current_bookmark -- called')
+
+    # First check to see if the bookmark even exists.
+    bookmark = 1
     bookmark_to_blacklist = pag.locateCenterOnScreen(
-        ('./img/dest/at_dest' + (bookmark_dict[atsite]) + '.bmp'),
+        ('./img/dest/at_dest' + (bookmark_dict[bookmark]) + '.bmp'),
+        confidence=0.95,
+        region=(originx, originy, windowx, windowy))
+
+    # If bookmark exists, check right-click menu .
+    while bookmark_to_blacklist is not None:
+
+        bookmark_to_blacklist = pag.locateCenterOnScreen(
+            ('./img/dest/at_dest' + (bookmark_dict[bookmark]) + '.bmp'),
+            confidence=0.95,
+            region=(originx, originy, windowx, windowy))
+
+        if bookmark_to_blacklist is not None:
+
+            (bookmark_to_blacklistx), (
+                bookkmark_to_blacklisty) = bookmark_to_blacklist
+            pag.moveTo((bookmark_to_blacklistx + (random.randint(-1, 200))),
+                       (bookkmark_to_blacklisty + (random.randint(-3, 3))),
+                       mouse.duration(), mouse.path())
+
+            # Right-click on bookmark to check if an 'approach location' option is
+            # available. If it is, blacklist bookmark. If it isn't, try another
+            # bookmark.
+            time.sleep(float(random.randint(1000, 2000)) / 1000)
+            mouse.click_right()
+            time.sleep(float(random.randint(1000, 2000)) / 1000)
+
+            at_bookmark = pag.locateCenterOnScreen(
+                './img/approach_location.bmp',
+                confidence=0.90,
+                region=(originx, originy, windowx, windowy))
+
+            # If 'approach location' is present, blacklist that bookmark.
+            if at_bookmark is not None:
+                print('blacklist_current_bookmark -- blacklisting bookmark',
+                      bookmark)
+                time.sleep(float(random.randint(1000, 2000)) / 1000)
+                mouse.click()
+                # Click once to focus entry, then double-click the entry to edit.
+                time.sleep(float(random.randint(1000, 2000)) / 1000)
+                mouse.click()
+                time.sleep(float(random.randint(5, 50)) / 1000)
+                mouse.click()
+                time.sleep(float(random.randint(3000, 4000)) / 1000)
+                pag.keyDown('home')
+                time.sleep(float(random.randint(0, 500)) / 1000)
+                pag.keyUp('home')
+                time.sleep(float(random.randint(0, 1000)) / 1000)
+                pag.keyDown('b')
+                # Add a 'b' to beginning of the name indicating site is blacklisted.
+                pag.keyUp('b')
+                time.sleep(float(random.randint(0, 1000)) / 1000)
+                pag.keyDown('enter')
+                time.sleep((random.randint(0, 200)) / 100)
+                pag.keyUp('enter')
+                return 1
+
+            # If 'approach location' is not present, click the overview to
+            # close the right-click menu and check the next bookmark
+            if at_bookmark is None:
+                print(
+                    'blacklist_current_bookmark -- not at bookmark', bookmark)
+                focus_overview()
+                bookmark += 1
+                continue
+
+        elif bookmark_to_blacklist is None:
+            print('blacklist_current_bookmark -- out of bookmarks to look for')
+            return 0
+
+
+def blacklist_specific_bookmark(target_site):
+    # Blacklist a specific bookmark by changing its name.
+    print('blacklist_specific_bookmark -- blacklisting bookmark', target_site)
+    bookmark_to_blacklist = pag.locateCenterOnScreen(
+        ('./img/dest/at_dest' + (bookmark_dict[target_site]) + '.bmp'),
         confidence=conf,
         region=(originx, originy, windowx, windowy))
 
@@ -492,7 +556,7 @@ def emergency_terminate():
     # found after 20 loops, warp to the nearest celestial body at 100+ km
     # instead and immediately force an unsafe logout in space.
     print('emergency_terminate -- emergency termination called!')
-    tries = 1
+    tries = 0
     confidence = 0.99
     station_icon = pag.locateCenterOnScreen('./img/overview/station.bmp',
                                             confidence=confidence,
@@ -572,7 +636,6 @@ def emergency_logout():
     # safely' feature
     return
 
-
 '''
 ##### old functions #####
 
@@ -587,14 +650,14 @@ def warp_to_first_bookmark_in_system():
     # not, increment by 1 and try again
     defined_bookmark_in_system = pag.locateCenterOnScreen(
         ('./img/dest/at_dest' + (bookmark_dict[bnum]) + '.bmp'),
-        confidence = 0.90,
-        region = (originx, originy, windowx, windowy))
+        confidence=0.90,
+        region=(originx, originy, windowx, windowy))
     while defined_bookmark_in_system is None:
         bnum += 1
         defined_bookmark_in_system = pag.locateCenterOnScreen(
             ('./img/dest/at_dest' + (bookmark_dict[bnum]) + '.bmp'),
-            confidence = 0.90,
-            region = (originx, originy, windowx, windowy))
+            confidence=0.90,
+            region=(originx, originy, windowx, windowy))
         if bnum == 9 and defined_bookmark_in_system is None:
             print(
                 'warp_to_first_bookmark_in_system -- out of bookmarks in '
@@ -619,48 +682,53 @@ def warp_to_first_bookmark_in_system():
 
 
 def detect_warp_to_bookmark_in_system():
-	# detect when warp to a bookmark has been completed to a bookmark by 
-	checking if the bookmark's right-click
-	# menu still has a 'warp to' option. if the option is not present, 
-	ship has arrived at bookmark
-	(defined_bookmark_in_systemx), (defined_bookmark_in_systemy) = 
-	defined_bookmark_in_system
-	tries = 0
-	pag.moveTo((defined_bookmark_in_systemx + (random.randint(-1, 200))), 
-	(defined_bookmark_in_systemy +
-												(random.randint(-3, 3))), 
-												mouse.duration(), 
-												mouse.path())
-	mouse.click_right()
-	print('detect_warp_to_bookmark_in_system -- waiting for warp')
-	at_bookmark_in_system = pag.locateCenterOnScreen(
-	'./img/detect_warp_to_bookmark.bmp',
-													confidence=0.85,
-													region=(originx, originy, 
-													screenwidth, 
-													screenheight))
-	while at_bookmark_in_system is None and tries <= 50:
-		time.sleep(float(random.randint(1000, 3000)) / 1000)
-		focus_overview()
-		time.sleep(float(random.randint(5000, 10000)) / 1000)
-		warp_to_bookmark_tries += 1
-		pag.moveTo((defined_bookmark_in_systemx + (random.randint(-1, 200))), 
-		(defined_bookmark_in_systemy +
-										(random.randint(-3, 3))), 
-										mouse.duration(), mouse.path())
-		mouse.click_right()
-		at_bookmark_in_system = pag.locateCenterOnScreen(
-		'./img/detect_warp_to_bookmark.bmp',
-														 confidence=0.98,
-														 region=(originx, 
-														 originy, 
-														 halfscreenwidth, 
-														 screenheight))
-	if at_bookmark_in_system is None and warp_to_bookmark_tries >= 50:
-		emergency_terminate()
-		return 0
-	if at_bookmark_in_system is not None and warp_to_bookmark_tries < 50:
-		print('detect_warp_to_bookmark_in_system -- warp completed')
-		return 1
-
+    # detect when warp to a bookmark has been completed to a bookmark by 
+    checking if the
+    bookmark
+    's right-click
+    # menu still has a 'warp to' option. if the option is not present, 
+    ship
+    has
+    arrived
+    at
+    bookmark
+    (defined_bookmark_in_systemx), (defined_bookmark_in_systemy) =
+    defined_bookmark_in_system
+    tries = 0
+    pag.moveTo((defined_bookmark_in_systemx + (random.randint(-1, 200))),
+               (defined_bookmark_in_systemy +
+                (random.randint(-3, 3))),
+               mouse.duration(),
+               mouse.path())
+    mouse.click_right()
+    print('detect_warp_to_bookmark_in_system -- waiting for warp')
+    at_bookmark_in_system = pag.locateCenterOnScreen(
+        './img/detect_warp_to_bookmark.bmp',
+        confidence=0.85,
+        region=(originx, originy,
+                screenwidth,
+                screenheight))
+    while at_bookmark_in_system is None and tries <= 50:
+        time.sleep(float(random.randint(1000, 3000)) / 1000)
+        focus_overview()
+        time.sleep(float(random.randint(5000, 10000)) / 1000)
+        warp_to_bookmark_tries += 1
+        pag.moveTo((defined_bookmark_in_systemx + (random.randint(-1, 200))),
+                   (defined_bookmark_in_systemy +
+                    (random.randint(-3, 3))),
+                   mouse.duration(), mouse.path())
+        mouse.click_right()
+        at_bookmark_in_system = pag.locateCenterOnScreen(
+            './img/detect_warp_to_bookmark.bmp',
+            confidence=0.98,
+            region=(originx,
+                    originy,
+                    halfscreenwidth,
+                    screenheight))
+    if at_bookmark_in_system is None and warp_to_bookmark_tries >= 50:
+        emergency_terminate()
+        return 0
+    if at_bookmark_in_system is not None and warp_to_bookmark_tries < 50:
+        print('detect_warp_to_bookmark_in_system -- warp completed')
+        return 1
 '''

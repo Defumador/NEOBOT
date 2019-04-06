@@ -1,6 +1,4 @@
-import time
-import random
-
+import time, random
 import pyautogui
 
 
