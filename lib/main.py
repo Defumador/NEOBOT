@@ -1,5 +1,6 @@
 import sys, time, traceback
 from lib import docked, load_ship, navigation as nav, unload_ship, mining
+from lib.vars import system_mining
 
 sys.setrecursionlimit(9999999)
 
@@ -16,6 +17,7 @@ sys.setrecursionlimit(9999999)
 
 def miner():
     while docked.docked_check() == 0:
+        nav.focus_overview()
         if mining.travel_to_bookmark() == 1:
             # Once arrived at site, check for hostile npcs and human players.
             # If either exist, warp to a different site.
@@ -28,7 +30,7 @@ def miner():
 
             while mining.check_for_asteroids() == 1:
                 mining.target_asteroid()
-                mining.activate_mining_laser()
+                mining.activate_miner()
                 # If ship inventory isn't full, continue to mine ore and wait
                 # for popups or errors.
                 while mining.inv_full_popup() == 0:
@@ -38,7 +40,7 @@ def miner():
                             miner()
                         elif mining.check_for_asteroids() == 1:
                             mining.target_asteroid()
-                            mining.activate_mining_laser()
+                            mining.activate_miner()
                             mining.inv_full_popup()
                             continue
                     if mining.check_for_enemy_npcs() == 1:
@@ -50,12 +52,21 @@ def miner():
 
                 if mining.inv_full_popup() == 1:
                     # Once inventory is full, dock at home station and unload.
-                    if nav.set_home() == 1:
-                        if navigator() == 1:
-                            unload_ship.unload_ship()
-                            docked.undock()
-                            time.sleep(3)
-                            miner()
+                    if system_mining == 0:
+                        if nav.set_home() == 1:
+                            if navigator() == 1:
+                                unload_ship.unload_ship()
+                                docked.undock()
+                                time.sleep(3)
+                                miner()
+                    # If ship is mining in the same system it will dock in,
+                    # a different set of functions is required.
+                    elif system_mining == 1:
+                        nav.dock_at_station_bookmark()
+                        unload_ship.unload_ship()
+                        docked.undock()
+                        time.sleep(3)
+                        miner()
 
             if mining.check_for_asteroids() == 0:
                 nav.blacklist_current_bookmark()
@@ -64,10 +75,10 @@ def miner():
             sys.exit(0)
     if docked.docked_check() == 1:
         # If docked when script starts, undock.
+        nav.focus_overview()
         docked.undock()
         miner()
 
-miner()
 
 def navigator():
     # A standard warp-to-zero autopilot script. Warp to the destination, then
@@ -174,6 +185,14 @@ def collector():
             sys.exit()
     if dockedcheck is None:
         collector()
+
+
+unload_ship.unload_ship()
+docked.undock()
+time.sleep(3)
+miner()
+
+
 
 
 #miner()

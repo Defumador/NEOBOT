@@ -1,24 +1,19 @@
 import sys
 import pyautogui as pag
 
-global windowx
-global windowy
-global originx
-global originy
-
-global conf
-
-global alignment_time
-
-global gotosite
-
 gotosite = 0
 
 sys.setrecursionlimit(9999999)  # set high recursion limit for functions that
 # call themselves.
 
 conf = 0.95
+
 alignment_time = 6  # Seconds (rounded up) current ship takes to begin a warp.
+target_lock_time = 4  # Seconds (rounded up) current ship takes to lock a
+# target on average.
+
+system_mining = 1  # Tell the miner script if you're mining in the same
+# system you're storing your ore in. 1 is yes, 0 is no.
 
 window_resolutionx = 1024
 window_resolutiony = 768
@@ -28,7 +23,11 @@ window_resolutiony = 768
 # search for the eve neocom logo in top left corner of the eve client window.
 # This will become the origin of the coordinate system.
 origin = pag.locateCenterOnScreen('./img/buttons/neocom.bmp', confidence=0.90)
-(originx, originy) = origin
+if origin is None:
+    print("can't find client!")
+    sys.exit(0)
+else:
+    (originx, originy) = origin
 
 # Move the origin up and to the left slightly to get it to the exact top
 # left corner of the eve client window. This is necessary  because the image

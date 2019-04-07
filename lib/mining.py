@@ -1,7 +1,11 @@
-import time, sys, random
+import time
+import sys
+import random
+
 import pyautogui as pag
+
 from lib import navigation as nav, keyboard, mouse
-from lib.vars import originx, originy, windowx, windowy
+from lib.vars import originx, originy, windowx, windowy, target_lock_time
 
 sys.setrecursionlimit(9999999)
 
@@ -107,9 +111,9 @@ def check_for_enemy_npcs():
     #												screenheight))
     #	if enemy_battleship is not None:
     #		return 1
-    else:
-        print('check_for_enemy_ships -- no hostile npcs to avoid')
-        return 0
+        else:
+            print('check_for_enemy_ships -- all clear')
+            return 0
 
 
 def check_for_players():
@@ -186,19 +190,19 @@ def check_for_asteroids():
     global asteroid_m
     global asteroid_l
     asteroid_l = pag.locateCenterOnScreen('./img/overview/asteroid_l.bmp',
-                                          confidence=0.80,
+                                          confidence=0.90,
                                           region=(originx, originy,
                                                   windowx, windowy))
     if asteroid_l is not None:
         return 1
     asteroid_m = pag.locateCenterOnScreen('./img/overview/asteroid_m.bmp',
-                                          confidence=0.80,
+                                          confidence=0.90,
                                           region=(originx, originy,
                                                   windowx, windowy))
     if asteroid_m is not None:
         return 1
     asteroid_s = pag.locateCenterOnScreen('./img/overview/asteroid_s.bmp',
-                                          confidence=0.80,
+                                          confidence=0.90,
                                           region=(originx, originy,
                                                   windowx, windowy))
     if asteroid_s is not None:
@@ -215,6 +219,7 @@ def target_asteroid():
     global asteroid_s
     global asteroid_m
     global asteroid_l
+
     if asteroid_l is not None:
         (asteroid_largex, asteroid_largey) = asteroid_l
         pag.moveTo((asteroid_largex + (random.randint(-2, 200))),
@@ -222,12 +227,22 @@ def target_asteroid():
                    mouse.duration(), mouse.path())
         mouse.click()
         keyboard.keypress('ctrl')
-        if target_out_of_range_popup() == 1:
-            target_asteroid()
-        elif target_out_of_range_popup() == 0:
-            time.sleep(float(random.randint(4000, 7000)) / 1000)  # Wait for
+        time.sleep(float(random.randint(1000, 2000)) / 1000)
+        while target_out_of_range_popup() == 1:
+            keyboard.keypress('w')
+            print('target_asteroid -- getting closer to target')
+            time.sleep(float(random.randint(10000, 40000)) / 1000)
+            keyboard.keypress('ctrl')
+            time.sleep(float(random.randint(1000, 2000)) / 1000)
+        if target_out_of_range_popup() == 0:
+            print('target_asteroid -- locking target')
+            time.sleep(target_lock_time)
+            time.sleep(float(random.randint(1000, 3000)) / 1000)  # Wait for
             # a lock to be achieved.
+            print('target_asteroid -- target locked, orbiting')
+            keyboard.keypress('w')
         return 1
+
     elif asteroid_m is not None:
         (asteroid_mediumx, asteroid_mediumy) = asteroid_m
         pag.moveTo((asteroid_mediumx + (random.randint(-2, 200))),
@@ -235,8 +250,21 @@ def target_asteroid():
                    mouse.duration(), mouse.path())
         mouse.click()
         keyboard.keypress('ctrl')
-        time.sleep(float(random.randint(4000, 7000)) / 1000)
+        time.sleep(float(random.randint(1000, 2000)) / 1000)
+        while target_out_of_range_popup() == 1:
+            keyboard.keypress('w')
+            print('target_asteroid -- getting closer to target')
+            time.sleep(float(random.randint(10000, 40000)) / 1000)
+            keyboard.keypress('ctrl')
+            time.sleep(float(random.randint(1000, 2000)) / 1000)
+        if target_out_of_range_popup() == 0:
+            print('target_asteroid -- locking target')
+            time.sleep(target_lock_time)
+            time.sleep(float(random.randint(1000, 3000)) / 1000)
+            print('target_asteroid -- target locked, orbiting')
+            keyboard.keypress('w')
         return 1
+
     elif asteroid_s is not None:
         (asteroid_smallx, asteroid_smally) = asteroid_s
         pag.moveTo((asteroid_smallx + (random.randint(-2, 200))),
@@ -244,7 +272,19 @@ def target_asteroid():
                    mouse.duration(), mouse.path())
         mouse.click()
         keyboard.keypress('ctrl')
-        time.sleep(float(random.randint(4000, 7000)) / 1000)
+        time.sleep(float(random.randint(1000, 2000)) / 1000)
+        while target_out_of_range_popup() == 1:
+            keyboard.keypress('w')
+            print('target_asteroid -- getting closer to target')
+            time.sleep(float(random.randint(10000, 40000)) / 1000)
+            keyboard.keypress('ctrl')
+            time.sleep(float(random.randint(1000, 2000)) / 1000)
+        if target_out_of_range_popup() == 0:
+            print('target_asteroid -- locking target')
+            time.sleep(target_lock_time)
+            time.sleep(float(random.randint(1000, 3000)) / 1000)
+            print('target_asteroid -- target locked, orbiting')
+            keyboard.keypress('w')
         return 1
     else:
         print('target_asteroid -- no asteroids to target')
@@ -258,6 +298,7 @@ def inv_full_popup():
         './img/popups/ship_inv_full.bmp',
         confidence=0.90, region=(originx, originy, windowx, windowy))
     if inv_full_popup_var is None:
+        print('inv_full_popup -- not detected')
         return 0
     elif inv_full_popup_var is not None:
         print('inv_full_popup -- detected')
@@ -267,6 +308,9 @@ def inv_full_popup():
 def asteroid_depleted_popup():
     # Check for popup indicating the asteroid currently being mined has been
     # depleted.
+    print('asteroid_depleted_popup -- not detected')
+    return 0
+    '''
     asteroid_depleted_popup_var = pag.locateCenterOnScreen(
         './img/overview/asteroid_depleted.bmp',
         confidence=0.90,
@@ -276,36 +320,44 @@ def asteroid_depleted_popup():
     elif asteroid_depleted_popup_var is not None:
         print('asteroid_depleted_popup -- detected')
         return 1
+    '''
 
 
-def activate_mining_laser():
+def activate_miner():
     # Activate mining lasers in sequential order.
     if mining_lasers == 1:
         keyboard.keypress('f1')
-        if miner_out_of_range_popup() == 1:
-            activate_mining_laser()
-        elif miner_out_of_range_popup() == 0:
+        while miner_out_of_range_popup() == 1:
+            time.sleep(float(random.randint(15000, 40000)) / 1000)
+            activate_miner()
+        if miner_out_of_range_popup() == 0:
             return 1
+
     elif mining_lasers == 2:
         keyboard.keypress('f1')
-        if miner_out_of_range_popup() == 1:
-            activate_mining_laser()
-        elif miner_out_of_range_popup() == 0:
+        while miner_out_of_range_popup() == 1:
+            time.sleep(float(random.randint(15000, 40000)) / 1000)
+            activate_miner()
+        if miner_out_of_range_popup() == 0:
             keyboard.keypress('f2')
             return 1
+
     elif mining_lasers == 3:
         keyboard.keypress('f1')
-        if miner_out_of_range_popup() == 1:
-            activate_mining_laser()
-        elif miner_out_of_range_popup() == 0:
+        while miner_out_of_range_popup() == 1:
+            time.sleep(float(random.randint(15000, 40000)) / 1000)
+            activate_miner()
+        if miner_out_of_range_popup() == 0:
             keyboard.keypress('f2')
             keyboard.keypress('f3')
             return 1
+
     elif mining_lasers == 4:
         keyboard.keypress('f1')
-        if miner_out_of_range_popup() == 1:
-            activate_mining_laser()
-        elif miner_out_of_range_popup() == 0:
+        while miner_out_of_range_popup() == 1:
+            time.sleep(float(random.randint(15000, 40000)) / 1000)
+            activate_miner()
+        if miner_out_of_range_popup() == 0:
             keyboard.keypress('f2')
             keyboard.keypress('f3')
             keyboard.keypress('f4')
@@ -323,11 +375,10 @@ def miner_out_of_range_popup():
         confidence=0.90,
         region=(originx, originy, windowx, windowy))
     while miner_out_of_range is not None:
-        # Orbit asteroid and wait 10-20s before trying to activate miner again.
-
-        time.sleep(float(random.randint(10000, 20000)) / 1000)
+        print('miner_out_of_range_popup -- out of module range')
         return 1
     if miner_out_of_range is None:
+        print('miner_out_of_range_popup -- in module range')
         return 0
 
 
@@ -339,9 +390,8 @@ def target_out_of_range_popup():
         confidence=0.90,
         region=(originx, originy, windowx, windowy))
     while target_out_of_range is not None:
-        # Orbit asteroid and wait 10-20s before trying to lock target again.
-
-        time.sleep(float(random.randint(10000, 20000)) / 1000)
+        print('target_out_of_range -- out of targeting range')
         return 1
     if target_out_of_range is None:
+        print('target_out_of_range -- in targeting range')
         return 0

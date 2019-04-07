@@ -1,7 +1,8 @@
 import sys, time, random, traceback
 import pyautogui as pag
 from lib import mouse, keyboard
-from lib.vars import originx, originy, windowx, windowy, conf, alignment_time
+from lib.vars import originx, originy, windowx, windowy, conf, \
+    alignment_time, system_mining
 
 sys.setrecursionlimit(9999999)
 
@@ -242,17 +243,18 @@ def warp_to_specific_system_bookmark(target_site):
         mouse.click_right()
 
         at_target_site = pag.locateCenterOnScreen(
-            './img/approach_location.bmp',
+            './img/buttons/detect_warp_to_bookmark.bmp',
             confidence=0.90, region=(originx, originy, windowx, windowy))
 
         if at_target_site is not None:
             print('warp_to_specific_system_bookmark -- already at bookmark',
                   target_site)
+            keyboard.keypress('esc')  # Close right-click menu.
             return 0
 
         elif at_target_site is None:
             warp_to_target = pag.locateCenterOnScreen(
-                './img/warp_to_location.bmp',
+                './img/buttons/warp_to_bookmark.bmp',
                 confidence=0.90, region=(originx, originy, windowx, windowy))
 
             if warp_to_target is not None:
@@ -267,6 +269,27 @@ def warp_to_specific_system_bookmark(target_site):
             else:
                 print('warp_to_specific_system_bookmark -- error')
                 return 0
+
+
+def dock_at_station_bookmark():
+    # Dock at the first bookmark beginning with a '0'
+    dock_at_station_bookmark_var = pag.locateCenterOnScreen(
+        './img/dest/at_dest0.bmp',
+        confidence=conf,
+        region=(originx, originy,
+                windowx, windowy))
+    if dock_at_station_bookmark_var is not None:
+        (homex, homey) = dock_at_station_bookmark_var
+        pag.moveTo((homex + (random.randint(-1, 200))),
+                   (homey + (random.randint(-3, 3))),
+                   mouse.duration(), mouse.path())
+        mouse.click_right()
+
+        pag.moveRel((0 + (random.randint(10, 80))),
+                    (0 + (random.randint(35, 40))),
+                    mouse.duration(), mouse.path())
+        mouse.click()
+        detect_dock()
 
 
 def wait_for_warp_to_complete():
@@ -286,7 +309,7 @@ def wait_for_warp_to_complete():
     # Wait up to 300 seconds before concluding there was an error with the
     # function.
     while warp_drive_active is not None and warp_duration <= 300:
-        print('wait_for_warp_to_complete -- warping...')
+        print('wait_for_warp_to_complete -- warping...',warp_duration)
         warp_duration += 1
         time.sleep(1)
         warp_drive_active = pag.locateCenterOnScreen(
@@ -479,7 +502,7 @@ def blacklist_current_bookmark():
             time.sleep(float(random.randint(1000, 2000)) / 1000)
 
             at_bookmark = pag.locateCenterOnScreen(
-                './img/approach_location.bmp',
+                './img/buttons/detect_warp_to_bookmark.bmp',
                 confidence=0.90,
                 region=(originx, originy, windowx, windowy))
 
@@ -488,11 +511,12 @@ def blacklist_current_bookmark():
                 print('blacklist_current_bookmark -- blacklisting bookmark',
                       bookmark)
                 time.sleep(float(random.randint(1000, 2000)) / 1000)
+                keyboard.keypress('esc')
                 mouse.click()
                 # Click once to focus entry, then double-click the entry to edit.
                 time.sleep(float(random.randint(1000, 2000)) / 1000)
                 mouse.click()
-                time.sleep(float(random.randint(5, 50)) / 1000)
+                time.sleep(float(random.randint(50, 100)) / 1000)
                 mouse.click()
                 time.sleep(float(random.randint(3000, 4000)) / 1000)
                 pag.keyDown('home')
@@ -513,7 +537,7 @@ def blacklist_current_bookmark():
             if at_bookmark is None:
                 print(
                     'blacklist_current_bookmark -- not at bookmark', bookmark)
-                focus_overview()
+                keyboard.keypress('esc')
                 bookmark += 1
                 continue
 
@@ -634,6 +658,7 @@ def emergency_terminate():
 def emergency_logout():
     # use hotkey to forcefully kill client session, don't use the 'log off
     # safely' feature
+    # ALT SHIFT Q
     return
 
 '''
