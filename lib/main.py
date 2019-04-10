@@ -3,8 +3,9 @@ from lib import docked, load_ship, navigation as nav, unload_ship, mining
 from lib.vars import system_mining
 
 sys.setrecursionlimit(9999999)
+playerfound = 0
 
-# TERMINOLOGY #######################
+# TERMINOLOGY #################################################################
 
 # A 'warning' is a persistent dialogue window that appears in the center of
 # the screen and dims the rest of the screen. Warnings can only be dismissed
@@ -13,9 +14,11 @@ sys.setrecursionlimit(9999999)
 # A 'popup' is a partially transparent block of text that appears in the
 # main play area for about five seconds.
 
-#####################################
+###############################################################################
+
 
 def miner():
+    global playerfound
     while docked.docked_check() == 0:
         nav.focus_overview()
         if mining.travel_to_bookmark() == 1:
@@ -23,10 +26,14 @@ def miner():
             # If either exist, warp to a different site.
             # If no hostiles npcs or players are present, check for asteroids.
             # If no asteroids, blacklist site and warp to next site.
-            if mining.check_for_enemy_npcs() == 1:
-                miner()
-            # if check_for_players() == 1:
-            #   break
+            if mining.check_for_enemies_var == 1:
+                if mining.check_for_enemies() == 1:
+                    miner()
+            if mining.check_for_players_var == 1:
+                mining.find_overview_icons()
+                if mining.check_for_players() == 1:
+                    playerfound += 1
+                    miner()
 
             while mining.check_for_asteroids() == 1:
                 mining.target_asteroid()
@@ -43,7 +50,7 @@ def miner():
                             mining.activate_miner()
                             mining.inv_full_popup()
                             continue
-                    if mining.check_for_enemy_npcs() == 1:
+                    if mining.check_for_enemies() == 1:
                         miner()
                     # check_for_players()
                     # if check_for_players() == 1:
@@ -57,6 +64,7 @@ def miner():
                             if navigator() == 1:
                                 unload_ship.unload_ship()
                                 docked.undock()
+                                playerfound = 0
                                 time.sleep(3)
                                 miner()
                     # If ship is mining in the same system it will dock in,
@@ -65,6 +73,7 @@ def miner():
                         nav.dock_at_station_bookmark()
                         unload_ship.unload_ship()
                         docked.undock()
+                        playerfound = 0
                         time.sleep(3)
                         miner()
 

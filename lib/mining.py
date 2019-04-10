@@ -14,19 +14,40 @@ sys.setrecursionlimit(9999999)
 
 mining_lasers = 1
 
+# ----------------------------------
+
+check_for_enemies_var = 1
+
 check_for_enemy_frigates = 1
 check_for_enemy_destroyers = 1
 check_for_enemy_cruisers = 1
 check_for_enemy_battlecruisers = 1
 check_for_enemy_battleships = 1
 
+# ----------------------------------
 
-# check_for_player_neutrals = 1
-# check_for_player_suspects = 1
-# check_for_player_war_targets = 1
-# check_for_player_criminals = 1
-# check_for_player_yellows = 1
-# check_for_player_greys = 1
+check_for_players_var = 1
+
+check_for_player_type_alliancemate = 1
+check_for_player_type_ally = 1
+check_for_player_type_bad_standing = 1
+check_for_player_type_corpmate = 1
+check_for_player_type_criminal = 1
+check_for_player_type_engagement = 1
+check_for_player_type_excellent_standing = 1
+check_for_player_type_fleetmate = 1
+check_for_player_type_good_standing = 1
+check_for_player_type_has_bounty = 1
+check_for_player_type_has_killright = 1
+check_for_player_type_militia_ally = 1
+check_for_player_type_neg5_sec = 1
+check_for_player_type_neutral_standing = 1
+check_for_player_type_suspect = 1
+check_for_player_type_terrible_standing = 1
+check_for_player_type_war_target = 1
+check_for_player_type_war_target_militia = 1
+check_for_player_type_zero_sec = 1
+
 
 ###############################################################################
 
@@ -58,14 +79,14 @@ def travel_to_bookmark():
         return 0
 
 
-def check_for_enemy_npcs():
+def check_for_enemies():
     # Check entire window for red ship hud icons, indicating hostile npcs.
     # Only avoid the hostile ship classes specified by the user in the
     # global variables above. Script will try looking for these icons on the
     # default 'general' overview tab. Script will keep the 'general' overview
     # tab visible by default until switching tabs in required to locate another
     # asteroid.
-    print('check_for_enemy_npcs -- called')
+    print('check_for_enemies -- called')
     if check_for_enemy_frigates == 1:
         enemy_frigate = pag.locateCenterOnScreen(
             './img/overview/enemy_frigate.bmp',
@@ -73,106 +94,47 @@ def check_for_enemy_npcs():
             # detect icon in both overview and on grid.
             region=(originx, originy, windowx, windowy))
         if enemy_frigate is not None:
-            print('check_for_enemy_npcs -- found hostile npc frigate')
+            print('check_for_enemies -- found hostile npc frigate')
             return 1
 
-    # elif check_for_enemy_destroyers == 1:
-    #	enemy_destroyer = pag.locateCenterOnScreen(
-    #	'./img/overview/enemy_destroyer.bmp',
-    #	confidence=0.90,
-    #												region=(originx, originy,
-    #												screenwidth,
-    #												screenheight))
-    #	if enemy_destroyer is not None:
-    #		return 1
-    # elif check_for_enemy_cruisers == 1:
-    #	enemy_cruiser = pag.locateCenterOnScreen('./img/overview/enemy_cruiser.bmp',
-    #	confidence=0.90,
-    #											region=(originx, originy,
-    #											screenwidth,
-    #											screenheight))
-    #	if enemy_cruiser is not None:
-    #		return 1
-    # elif check_for_enemy_battlecruisers == 1:
-    #	enemy_battlecruiser = pag.locateCenterOnScreen(
-    #	'./img/overview/enemy_battlecruiser.bmp', confidence=0.90,
-    #													region=(originx,
-    #													originy,
-    #													screenwidth,
-    #													screenheight))
-    #	if enemy_battlecruiser is not None:
-    #		return 1
-    # elif check_for_enemy_battleships == 1:
-    #	enemy_battleship = pag.locateCenterOnScreen(
-    #	'./img/overview/enemy_battleship.bmp',
-    #	confidence=0.90,
-    #												region=(originx, originy,
-    #												screenwidth,
-    #												screenheight))
-    #	if enemy_battleship is not None:
-    #		return 1
+        # elif check_for_enemy_destroyers == 1:
+        #	enemy_destroyer = pag.locateCenterOnScreen(
+        #	'./img/overview/enemy_destroyer.bmp',
+        #	confidence=0.90,
+        #												region=(originx, originy,
+        #												screenwidth,
+        #												screenheight))
+        #	if enemy_destroyer is not None:
+        #		return 1
+        # elif check_for_enemy_cruisers == 1:
+        #	enemy_cruiser = pag.locateCenterOnScreen('./img/overview/enemy_cruiser.bmp',
+        #	confidence=0.90,
+        #											region=(originx, originy,
+        #											screenwidth,
+        #											screenheight))
+        #	if enemy_cruiser is not None:
+        #		return 1
+        # elif check_for_enemy_battlecruisers == 1:
+        #	enemy_battlecruiser = pag.locateCenterOnScreen(
+        #	'./img/overview/enemy_battlecruiser.bmp', confidence=0.90,
+        #													region=(originx,
+        #													originy,
+        #													screenwidth,
+        #													screenheight))
+        #	if enemy_battlecruiser is not None:
+        #		return 1
+        # elif check_for_enemy_battleships == 1:
+        #	enemy_battleship = pag.locateCenterOnScreen(
+        #	'./img/overview/enemy_battleship.bmp',
+        #	confidence=0.90,
+        #												region=(originx, originy,
+        #												screenwidth,
+        #												screenheight))
+        #	if enemy_battleship is not None:
+        #		return 1
         else:
             print('check_for_enemy_ships -- all clear')
             return 0
-
-
-def check_for_players():
-    # Same as check_for_enemy_npcs function, except check for certain
-    # classes of
-    # human players as specified by the user.
-    # if check_for_player_war_targets == 1:
-    #	player_war_target = pag.locateCenterOnScreen(
-    #	'./img/overview/player_war_target.bmp',
-    #	confidence=0.80,
-    #											region=(originx, originy,
-    #											screenwidth,
-    #											screenheight))
-    #	if player_war_target is not None:
-    #		print('check_for_players -- found war target')
-    #		return 1
-    # elif check_for_player_suspects == 1:
-    #	player_war_target = pag.locateCenterOnScreen(
-    #	'./img/player_war_target.bmp',
-    #	confidence=0.80,
-    #											region=(originx, originy,
-    #											screenwidth,
-    #											screenheight))
-    #	if player_war_target is not None:
-    #		print('check_for_players -- found war target')
-    #		return 1
-    #
-    # elif check_for_player_criminals == 1:
-    #	player_criminal = pag.locateCenterOnScreen(
-    #	'./img/player_criminal.bmp',
-    #	confidence=0.80,
-    #											region=(originx, originy,
-    #											screenwidth,
-    #											screenheight))
-    #	if player_criminal is not None:
-    #		print('check_for_players -- found criminal')
-    #		return 1
-    #
-    # elif check_for_player_neutrals == 1:
-    #	player_neutral = pag.locateCenterOnScreen('./img/player_neutral.bmp',
-    #	confidence=0.80,
-    #											region=(originx, originy,
-    #											screenwidth,
-    #											screenheight))
-    #	if player_neutral is not None:
-    #		print('check_for_players -- found neutral')
-    #		return 1
-    #
-    # elif check_for_player_war_targets == 1:
-    #	player_war_target = pag.locateCenterOnScreen(
-    #	'./img/player_war_target.bmp',
-    #	confidence=0.80,
-    #											region=(originx, originy,
-    #											screenwidth,
-    #											screenheight))
-    #	if player_war_target is not None:
-    #		print('check_for_players -- found war target')
-    #		return 1
-    return 0
 
 
 def check_for_asteroids():
@@ -394,4 +356,232 @@ def target_out_of_range_popup():
         return 1
     if target_out_of_range is None:
         print('target_out_of_range -- in targeting range')
+        return 0
+
+
+def find_overview_icons():
+    # Used in the check_for_players function to reduce the total image
+    # search space and improve speed.
+    print('find_overview_icons -- called')
+    overview_menu = pag.locateCenterOnScreen(
+        './img/overview/overview_menu.bmp',
+        confidence=0.93,
+        region=(originx, originy,
+                windowx,
+                windowy))
+    (overview_menux, overview_menuy) = overview_menu
+
+    global overview_icons_originx
+    global overview_icons_originy
+    global overview_icons_right_edgex
+
+    overview_icons_originx = overview_menux - 34
+    overview_icons_originy = overview_menuy + 47
+    overview_icons_right_edgex = overview_icons_originx + 22
+    return 1
+
+
+def check_for_players():
+    # Same as check_for_enemies function, except check for certain
+    # classes of
+    # human players as specified by the user.
+    print('check_for_players -- called')
+
+    if check_for_player_type_alliancemate == 1:
+        alliancemate = pag.locateCenterOnScreen(
+            './img/overview/player_type_alliancemate.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if alliancemate is not None:
+            print('check_for_players -- found alliancemate')
+            return 1
+
+    ally = pag.locateCenterOnScreen(
+        './img/overview/player_type_ally.bmp',
+        confidence=0.90,
+        region=(overview_icons_originx, overview_icons_originy,
+                overview_icons_right_edgex, windowy))
+    if check_for_player_type_ally == 1:
+        if ally is not None:
+            print('check_for_players -- found ally')
+            return 1
+
+    if check_for_player_type_bad_standing == 1:
+        bad_standing = pag.locateCenterOnScreen(
+            './img/overview/player_type_bad_standing.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if bad_standing is not None:
+            bad_standing = pag.locateCenterOnScreen(
+                './img/overview/player_type_bad_standing.bmp',
+                confidence=0.90,
+                region=(overview_icons_originx, overview_icons_originy,
+                        overview_icons_right_edgex, windowy))
+            print('check_for_players -- found player with bad standing')
+            return 1
+
+    if check_for_player_type_corpmate == 1:
+        corpmate = pag.locateCenterOnScreen(
+            './img/overview/player_type_corpmate.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if corpmate is not None:
+            print('check_for_players -- found corpmate')
+            return 1
+
+    if check_for_player_type_criminal == 1:
+        criminal = pag.locateCenterOnScreen(
+            './img/overview/player_type_criminal.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if criminal is not None:
+            print('check_for_players -- found criminal')
+            return 1
+
+    if check_for_player_type_engagement == 1:
+        engagement = pag.locateCenterOnScreen(
+            './img/overview/player_type_engagement.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if engagement is not None:
+            print('check_for_players -- found player with limited engagement')
+            return 1
+
+    if check_for_player_type_excellent_standing == 1:
+        excellent_standing = pag.locateCenterOnScreen(
+            './img/overview/player_type_excellent_standing.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if excellent_standing is not None:
+            print('check_for_players -- found player with excellent standing')
+            return 1
+
+    if check_for_player_type_fleetmate == 1:
+        fleetmate = pag.locateCenterOnScreen(
+            './img/overview/player_type_.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if fleetmate is not None:
+            print('check_for_players -- found fleetmate')
+            return 1
+
+    if check_for_player_type_good_standing == 1:
+        good_standing = pag.locateCenterOnScreen(
+            './img/overview/player_type_good_standing.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if good_standing is not None:
+            print('check_for_players -- found player with good standing')
+            return 1
+
+    if check_for_player_type_has_bounty == 1:
+        has_bounty = pag.locateCenterOnScreen(
+            './img/overview/player_type_has_bounty.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if has_bounty is not None:
+            print('check_for_players -- found player with a bounty')
+            return 1
+
+    if check_for_player_type_has_killright == 1:
+        has_killright = pag.locateCenterOnScreen(
+            './img/overview/player_type_has_killright.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if has_killright is not None:
+            print('check_for_players -- found player with a killright')
+            return 1
+
+    if check_for_player_type_militia_ally == 1:
+        militia_ally = pag.locateCenterOnScreen(
+            './img/overview/player_type_militia_ally.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if militia_ally is not None:
+            print('check_for_players -- found militia ally')
+            return 1
+
+    if check_for_player_type_neg5_sec == 1:
+        neg5_sec = pag.locateCenterOnScreen(
+            './img/overview/player_type_neg5_sec.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if neg5_sec is not None:
+            print('check_for_players -- found player with under -5 security')
+            return 1
+
+    if check_for_player_type_neutral_standing == 1:
+        neutral_standing = pag.locateCenterOnScreen(
+            './img/overview/player_type_neutral_standing.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if neutral_standing is not None:
+            print('check_for_players -- found player with neutral standing')
+            return 1
+
+    if check_for_player_type_suspect == 1:
+        suspect = pag.locateCenterOnScreen(
+            './img/overview/player_type_suspect.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if suspect is not None:
+            print('check_for_players -- found suspect')
+            return 1
+
+    if check_for_player_type_terrible_standing == 1:
+        terrible_standing = pag.locateCenterOnScreen(
+            './img/overview/player_type_terrible_standing.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if terrible_standing is not None:
+            print('check_for_players -- found player with terrible standing')
+            return 1
+
+    if check_for_player_type_war_target == 1:
+        war_target = pag.locateCenterOnScreen(
+            './img/overview/player_type_war_target.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if war_target is not None:
+            print('check_for_players -- found war target')
+            return 1
+
+    if check_for_player_type_war_target_militia == 1:
+        war_target_militia = pag.locateCenterOnScreen(
+            './img/overview/player_type_war_target_militia.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if war_target_militia is not None:
+            print('check_for_players -- found militia war target')
+            return 1
+
+    if check_for_player_type_zero_sec == 1:
+        zero_sec = pag.locateCenterOnScreen(
+            './img/overview/player_type_zero_sec.bmp',
+            confidence=0.90,
+            region=(overview_icons_originx, overview_icons_originy,
+                    overview_icons_right_edgex, windowy))
+        if zero_sec is not None:
+            print('check_for_players -- found player with under 0 security')
+            return 1
+
+    else:
+        print('check_for_players -- found no players')
         return 0

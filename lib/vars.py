@@ -24,7 +24,7 @@ window_resolutiony = 768
 # This will become the origin of the coordinate system.
 origin = pag.locateCenterOnScreen('./img/buttons/neocom.bmp', confidence=0.90)
 if origin is None:
-    print("can't find client!")
+    print("origin -- can't find client!")
     sys.exit(0)
 else:
     (originx, originy) = origin
