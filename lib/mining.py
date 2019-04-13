@@ -1,6 +1,7 @@
 import time
 import sys
 import random
+import traceback
 
 import pyautogui as pag
 
@@ -52,13 +53,12 @@ check_for_player_type_zero_sec = 1
 ###############################################################################
 
 
-def travel_to_bookmark():
+def travel_to_bookmark(target_bookmark):
     # Find a suitable asteroid field by warping to each bookmark in
     # numerical order.
     # Currently only mining in a single system with at least one station is
     # supported
 
-    target_bookmark = 1
     # Try warping to bookmark 1 in the system. If bookmark 1 doesn't exist,
     # is not in the current system, or your ship is already there, increment
     # bookmark number by 1 and try again.
@@ -253,12 +253,77 @@ def target_asteroid():
         return 0
 
 
+def focus_general_tab():
+    # Switch to the default 'General' tab of the overview to check for other
+    # ships.
+    print('focus_general_tab -- called')
+    general_tab_selected = pag.locateCenterOnScreen(
+        './img/overview/general_overview_tab_selected.bmp',
+        # Requires very high confidence since the button looks only slightly
+        # different when it's selected.
+        confidence=0.992,
+        region=(originx, originy,
+                windowx, windowy))
+    if general_tab_selected is not None:
+        print('focus_general_tab -- already selected')
+        return 1
+    else:
+        general_tab_unselected = pag.locateCenterOnScreen(
+            './img/overview/general_overview_tab.bmp',
+            confidence=0.95,
+            region=(originx, originy,
+                    windowx, windowy))
+
+        if general_tab_unselected is not None:
+            (x, y) = general_tab_unselected
+            pag.moveTo((x + (random.randint(-14, 14))),
+                       (y + (random.randint(-7, 7))),
+                       mouse.duration(), mouse.path())
+            mouse.click()
+            return 1
+        else:
+            return 0
+
+
+def focus_mining_tab():
+    # Switch to the default 'Mining' tab of the overview to check for
+    # asteroids.
+    print('focus_mining_tab -- called')
+    mining_tab_selected = pag.locateCenterOnScreen(
+        './img/overview/mining_overview_tab_selected.bmp',
+        # Requires very high confidence since the button looks only slightly
+        # different when it's selected.
+        confidence=0.992,
+        region=(originx, originy,
+                windowx, windowy))
+    if mining_tab_selected is not None:
+        print('focus_mining_tab -- already selected')
+    else:
+        mining_tab_unselected = pag.locateCenterOnScreen(
+            './img/overview/mining_overview_tab.bmp',
+            confidence=0.95,
+            region=(originx, originy,
+                    windowx, windowy))
+
+        if mining_tab_unselected is not None:
+            (x, y) = mining_tab_unselected
+            pag.moveTo((x + (random.randint(-10, 10))),
+                       (y + (random.randint(-7, 7))),
+                       mouse.duration(), mouse.path())
+            mouse.click()
+            return 1
+        else:
+            return 0
+
+
 def inv_full_popup():
     # Check for momentary popup indicating cargo/ore hold is full.
     # This popup lasts about 5 seconds.
     inv_full_popup_var = pag.locateCenterOnScreen(
         './img/popups/ship_inv_full.bmp',
-        confidence=0.90, region=(originx, originy, windowx, windowy))
+        confidence=0.9,
+        region=(originx, originy,
+                windowx, windowy))
     if inv_full_popup_var is None:
         print('inv_full_popup -- not detected')
         return 0
@@ -359,50 +424,29 @@ def target_out_of_range_popup():
         return 0
 
 
-def find_overview_icons():
-    # Used in the check_for_players function to reduce the total image
-    # search space and improve speed.
-    print('find_overview_icons -- called')
-    overview_menu = pag.locateCenterOnScreen(
-        './img/overview/overview_menu.bmp',
-        confidence=0.93,
-        region=(originx, originy,
-                windowx,
-                windowy))
-    (overview_menux, overview_menuy) = overview_menu
-
-    global overview_icons_originx
-    global overview_icons_originy
-    global overview_icons_right_edgex
-
-    overview_icons_originx = overview_menux - 34
-    overview_icons_originy = overview_menuy + 47
-    overview_icons_right_edgex = overview_icons_originx + 22
-    return 1
-
-
 def check_for_players():
     # Same as check_for_enemies function, except check for certain
     # classes of
     # human players as specified by the user.
     print('check_for_players -- called')
+    conf = 0.96
 
     if check_for_player_type_alliancemate == 1:
         alliancemate = pag.locateCenterOnScreen(
             './img/overview/player_type_alliancemate.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if alliancemate is not None:
-            print('check_for_players -- found alliancemate')
+            print('check_for_players -- found alliancemate', alliancemate)
             return 1
 
-    ally = pag.locateCenterOnScreen(
-        './img/overview/player_type_ally.bmp',
-        confidence=0.90,
-        region=(overview_icons_originx, overview_icons_originy,
-                overview_icons_right_edgex, windowy))
     if check_for_player_type_ally == 1:
+        ally = pag.locateCenterOnScreen(
+            './img/overview/player_type_ally.bmp',
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if ally is not None:
             print('check_for_players -- found ally')
             return 1
@@ -410,24 +454,19 @@ def check_for_players():
     if check_for_player_type_bad_standing == 1:
         bad_standing = pag.locateCenterOnScreen(
             './img/overview/player_type_bad_standing.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if bad_standing is not None:
-            bad_standing = pag.locateCenterOnScreen(
-                './img/overview/player_type_bad_standing.bmp',
-                confidence=0.90,
-                region=(overview_icons_originx, overview_icons_originy,
-                        overview_icons_right_edgex, windowy))
             print('check_for_players -- found player with bad standing')
             return 1
 
     if check_for_player_type_corpmate == 1:
         corpmate = pag.locateCenterOnScreen(
             './img/overview/player_type_corpmate.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if corpmate is not None:
             print('check_for_players -- found corpmate')
             return 1
@@ -435,9 +474,9 @@ def check_for_players():
     if check_for_player_type_criminal == 1:
         criminal = pag.locateCenterOnScreen(
             './img/overview/player_type_criminal.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if criminal is not None:
             print('check_for_players -- found criminal')
             return 1
@@ -445,9 +484,9 @@ def check_for_players():
     if check_for_player_type_engagement == 1:
         engagement = pag.locateCenterOnScreen(
             './img/overview/player_type_engagement.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if engagement is not None:
             print('check_for_players -- found player with limited engagement')
             return 1
@@ -455,19 +494,19 @@ def check_for_players():
     if check_for_player_type_excellent_standing == 1:
         excellent_standing = pag.locateCenterOnScreen(
             './img/overview/player_type_excellent_standing.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if excellent_standing is not None:
             print('check_for_players -- found player with excellent standing')
             return 1
 
     if check_for_player_type_fleetmate == 1:
         fleetmate = pag.locateCenterOnScreen(
-            './img/overview/player_type_.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            './img/overview/player_type_fleetmate.bmp',
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if fleetmate is not None:
             print('check_for_players -- found fleetmate')
             return 1
@@ -475,9 +514,9 @@ def check_for_players():
     if check_for_player_type_good_standing == 1:
         good_standing = pag.locateCenterOnScreen(
             './img/overview/player_type_good_standing.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if good_standing is not None:
             print('check_for_players -- found player with good standing')
             return 1
@@ -485,9 +524,9 @@ def check_for_players():
     if check_for_player_type_has_bounty == 1:
         has_bounty = pag.locateCenterOnScreen(
             './img/overview/player_type_has_bounty.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if has_bounty is not None:
             print('check_for_players -- found player with a bounty')
             return 1
@@ -495,9 +534,9 @@ def check_for_players():
     if check_for_player_type_has_killright == 1:
         has_killright = pag.locateCenterOnScreen(
             './img/overview/player_type_has_killright.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if has_killright is not None:
             print('check_for_players -- found player with a killright')
             return 1
@@ -505,9 +544,9 @@ def check_for_players():
     if check_for_player_type_militia_ally == 1:
         militia_ally = pag.locateCenterOnScreen(
             './img/overview/player_type_militia_ally.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if militia_ally is not None:
             print('check_for_players -- found militia ally')
             return 1
@@ -515,9 +554,9 @@ def check_for_players():
     if check_for_player_type_neg5_sec == 1:
         neg5_sec = pag.locateCenterOnScreen(
             './img/overview/player_type_neg5_sec.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if neg5_sec is not None:
             print('check_for_players -- found player with under -5 security')
             return 1
@@ -525,9 +564,9 @@ def check_for_players():
     if check_for_player_type_neutral_standing == 1:
         neutral_standing = pag.locateCenterOnScreen(
             './img/overview/player_type_neutral_standing.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if neutral_standing is not None:
             print('check_for_players -- found player with neutral standing')
             return 1
@@ -535,9 +574,9 @@ def check_for_players():
     if check_for_player_type_suspect == 1:
         suspect = pag.locateCenterOnScreen(
             './img/overview/player_type_suspect.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if suspect is not None:
             print('check_for_players -- found suspect')
             return 1
@@ -545,19 +584,20 @@ def check_for_players():
     if check_for_player_type_terrible_standing == 1:
         terrible_standing = pag.locateCenterOnScreen(
             './img/overview/player_type_terrible_standing.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if terrible_standing is not None:
-            print('check_for_players -- found player with terrible standing')
+            print('check_for_players -- found player with terrible '
+                  'standing', terrible_standing)
             return 1
 
     if check_for_player_type_war_target == 1:
         war_target = pag.locateCenterOnScreen(
             './img/overview/player_type_war_target.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if war_target is not None:
             print('check_for_players -- found war target')
             return 1
@@ -565,9 +605,9 @@ def check_for_players():
     if check_for_player_type_war_target_militia == 1:
         war_target_militia = pag.locateCenterOnScreen(
             './img/overview/player_type_war_target_militia.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if war_target_militia is not None:
             print('check_for_players -- found militia war target')
             return 1
@@ -575,9 +615,9 @@ def check_for_players():
     if check_for_player_type_zero_sec == 1:
         zero_sec = pag.locateCenterOnScreen(
             './img/overview/player_type_zero_sec.bmp',
-            confidence=0.90,
-            region=(overview_icons_originx, overview_icons_originy,
-                    overview_icons_right_edgex, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         if zero_sec is not None:
             print('check_for_players -- found player with under 0 security')
             return 1

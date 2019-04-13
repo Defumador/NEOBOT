@@ -227,7 +227,7 @@ def warp_to_specific_system_bookmark(target_site):
     # If the ship is already at the requested site, return function.
     specific_system_bookmark = pag.locateCenterOnScreen(
         ('./img/dest/at_dest' + (bookmark_dict[target_site]) + '.bmp'),
-        confidence=0.90,
+        confidence=0.95,
         region=(originx, originy, windowx, windowy))
     (specific_system_bookmarkx, specific_system_bookmarky) = \
         specific_system_bookmark
@@ -237,7 +237,7 @@ def warp_to_specific_system_bookmark(target_site):
     # because ship is already at that location. If the option is not there,
     # check for a 'warp to' option, if it's present, warp to location.
     if specific_system_bookmark is not None:
-        pag.moveTo((specific_system_bookmarkx + (random.randint(-1, 200))),
+        pag.moveTo((specific_system_bookmarkx + (random.randint(10, 200))),
                    (specific_system_bookmarky + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
         mouse.click_right()

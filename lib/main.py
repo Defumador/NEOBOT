@@ -1,6 +1,9 @@
 import sys, time, traceback
+import pyautogui as pag
+from lib import mouse
 from lib import docked, load_ship, navigation as nav, unload_ship, mining
 from lib.vars import system_mining
+from lib.vars import origin, originx, originy, windowx, windowy
 
 sys.setrecursionlimit(9999999)
 playerfound = 0
@@ -16,25 +19,39 @@ playerfound = 0
 
 ###############################################################################
 
+# These variables are for the mining script only ------------------------------
+# Script begins at location 0, assumed to be your home station.
+site = 0
+# Total number of saved bookmark locations. This variable is set by the user.
+total_sites = 7
+# -----------------------------------------------------------------------------
 
+#nav.focus_overview()
 def miner():
     global playerfound
+    global site
     while docked.docked_check() == 0:
-        nav.focus_overview()
-        if mining.travel_to_bookmark() == 1:
+        # Increment desired mining site by one as this is the next location
+        # ship will warp to.
+        site += 1
+        # If there aren't any more sites left, loop back around to site 1.
+        if site >= total_sites:
+            site = 1
+        if mining.travel_to_bookmark(site) == 1:
             # Once arrived at site, check for hostile npcs and human players.
-            # If either exist, warp to a different site.
+            # If either exist, warp to the next site.
             # If no hostiles npcs or players are present, check for asteroids.
             # If no asteroids, blacklist site and warp to next site.
             if mining.check_for_enemies_var == 1:
-                if mining.check_for_enemies() == 1:
-                    miner()
+                if mining.focus_general_tab() == 1:
+                    if mining.check_for_enemies() == 1:
+                        miner()
             if mining.check_for_players_var == 1:
-                mining.find_overview_icons()
                 if mining.check_for_players() == 1:
                     playerfound += 1
                     miner()
 
+            mining.focus_mining_tab()
             while mining.check_for_asteroids() == 1:
                 mining.target_asteroid()
                 mining.activate_miner()
@@ -77,8 +94,8 @@ def miner():
                         time.sleep(3)
                         miner()
 
-            if mining.check_for_asteroids() == 0:
-                nav.blacklist_current_bookmark()
+                if mining.check_for_asteroids() == 0:
+                    nav.blacklist_current_bookmark()
         elif mining.travel_to_bookmark() == 0:
             nav.emergency_terminate()
             sys.exit(0)
@@ -196,13 +213,7 @@ def collector():
         collector()
 
 
-unload_ship.unload_ship()
-docked.undock()
-time.sleep(3)
-miner()
-
-
-
+mining.focus_general_tab()
 
 #miner()
 # Method for determining which script to run, as yet to be implemented by gui.
