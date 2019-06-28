@@ -4,10 +4,10 @@ NEOBOT is a free and open image-recognition bot that runs on top of the EVE clie
 
 Currently the bot supports hauling, autopilot, and mining functions.  
 
-The bot was originally written in AutoHotkey but has been rewritten in Python 3. AHK files have been preserved for archival purposes.
+##### No client injection, no memory dumping, and no packet hacking. The bot interacts with the game the same way a human would: with the mouse and keyboard.
 
 
-### Dependencies:
+#### Dependencies:
 -pyautogui (https://github.com/asweigart/pyautogui)
 
 -tkinter
