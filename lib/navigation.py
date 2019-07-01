@@ -1,8 +1,7 @@
 import sys, time, random, traceback
 import pyautogui as pag
 from lib import mouse, keyboard
-from lib.vars import originx, originy, windowx, windowy, conf, \
-    alignment_time, system_mining
+from lib.vars import originx, originy, windowx, windowy, conf, system_mining
 
 sys.setrecursionlimit(9999999)
 
@@ -225,9 +224,10 @@ if at_bookmark_in_system is not None and warp_to_bookmark_tries < 50:
 def warp_to_specific_system_bookmark(target_site):
     # Try warping to a specific bookmark in the current system.
     # If the ship is already at the requested site, return function.
+    # Confidence must be >0.95 because script will confuse 6 with 0
     specific_system_bookmark = pag.locateCenterOnScreen(
         ('./img/dest/at_dest' + (bookmark_dict[target_site]) + '.bmp'),
-        confidence=0.95,
+        confidence=0.98,
         region=(originx, originy, windowx, windowy))
     (specific_system_bookmarkx, specific_system_bookmarky) = \
         specific_system_bookmark
@@ -297,25 +297,39 @@ def wait_for_warp_to_complete():
     # to disappear from the spedometer. Wait for the ship to begin its warp
     # before checking though, otherwise the script will think the warp has
     # already been completed.
-    print(
-        'wait_for_warp_to_complete -- aligning for', alignment_time, 'seconds')
-    time.sleep(alignment_time)
     warp_duration = 1
     warp_drive_active = pag.locateCenterOnScreen(
         './img/indicators/warping.bmp',
-        confidence=0.90,
-        region=(originx, originy, windowx, windowy))
+        confidence=0.96,
+        # Only look at bottom quarter of screen
+        region=(originx, originy + (int(windowy - (windowy / 4))), windowx,
+                windowy))
+
+    # Wait for warp to begin by waiting until the spedometer is full. Ship
+    # might be stuck on something so this could take an variable amount of
+    # time.
+    while warp_drive_active is None and warp_duration <= 300:
+        print('wait_for_warp_to_complete -- waiting for warp to start',
+              warp_duration)
+        time.sleep(float(random.randint(1000, 3000)) / 1000)
+        warp_duration += 1
+        warp_drive_active = pag.locateCenterOnScreen(
+            './img/indicators/warping.bmp',
+            confidence=0.96,
+            region=(originx, originy + (int(windowy - (windowy / 4))), windowx,
+                    windowy))
 
     # Wait up to 300 seconds before concluding there was an error with the
     # function.
     while warp_drive_active is not None and warp_duration <= 300:
         print('wait_for_warp_to_complete -- warping...',warp_duration)
         warp_duration += 1
-        time.sleep(1)
+        time.sleep(2)
         warp_drive_active = pag.locateCenterOnScreen(
             './img/indicators/warping.bmp',
-            confidence=0.90,
-            region=(originx, originy, windowx, windowy))
+            confidence=0.95,
+            region=(originx, originy + (int(windowy - (windowy / 4))), windowx,
+                    windowy))
 
     if warp_drive_active is None and warp_duration <= 300:
         time.sleep(float(random.randint(1000, 3000)) / 1000)
@@ -554,9 +568,9 @@ def blacklist_specific_bookmark(target_site):
         confidence=conf,
         region=(originx, originy, windowx, windowy))
 
-    (bookmark_to_blacklistx), (bookkmark_to_blacklisty) = bookmark_to_blacklist
+    (bookmark_to_blacklistx), (bookmark_to_blacklisty) = bookmark_to_blacklist
     pag.moveTo((bookmark_to_blacklistx + (random.randint(-1, 200))),
-               (bookkmark_to_blacklisty + (random.randint(-3, 3))),
+               (bookmark_to_blacklisty + (random.randint(-3, 3))),
                mouse.duration(), mouse.path())
 
     time.sleep(float(random.randint(1000, 2000)) / 1000)

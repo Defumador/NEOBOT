@@ -1,4 +1,4 @@
-
+test 123
 testing:
 -test situation when ship is at dest9 to see if dest checking loop works fully
 -NOT READY FOR TESTING IN LOSEC YET

@@ -8,7 +8,6 @@ sys.setrecursionlimit(9999999)  # set high recursion limit for functions that
 
 conf = 0.95
 
-alignment_time = 6  # Seconds (rounded up) current ship takes to begin a warp.
 target_lock_time = 4  # Seconds (rounded up) current ship takes to lock a
 # target on average.
 

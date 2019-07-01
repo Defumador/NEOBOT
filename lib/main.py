@@ -1,4 +1,4 @@
-import sys, time, traceback
+import sys, time, traceback, cProfile, re
 import pyautogui as pag
 from lib import mouse
 from lib import docked, load_ship, navigation as nav, unload_ship, mining
@@ -23,7 +23,7 @@ playerfound = 0
 # Script begins at location 0, assumed to be your home station.
 site = 0
 # Total number of saved bookmark locations. This variable is set by the user.
-total_sites = 7
+total_sites = 10
 # -----------------------------------------------------------------------------
 
 #nav.focus_overview()
@@ -35,7 +35,7 @@ def miner():
         # ship will warp to.
         site += 1
         # If there aren't any more sites left, loop back around to site 1.
-        if site >= total_sites:
+        if site > total_sites:
             site = 1
         if mining.travel_to_bookmark(site) == 1:
             # Once arrived at site, check for hostile npcs and human players.
@@ -57,6 +57,8 @@ def miner():
                 mining.activate_miner()
                 # If ship inventory isn't full, continue to mine ore and wait
                 # for popups or errors.
+                # Switch back to the general tab for easier ship detection
+                mining.focus_general_tab()
                 while mining.inv_full_popup() == 0:
                     if mining.asteroid_depleted_popup() == 1:
                         if mining.check_for_asteroids() == 0:
@@ -69,10 +71,10 @@ def miner():
                             continue
                     if mining.check_for_enemies() == 1:
                         miner()
-                    # check_for_players()
-                    # if check_for_players() == 1:
-                    # miner()
-                    time.sleep(1)
+                    #check_for_players()
+                    if mining.check_for_players() == 1:
+                        miner()
+                    time.sleep(2)
 
                 if mining.inv_full_popup() == 1:
                     # Once inventory is full, dock at home station and unload.
@@ -212,10 +214,13 @@ def collector():
     if dockedcheck is None:
         collector()
 
+print("originx =", originx)
+print("originy =", originy)
+print("windowx =", windowx)
+print("windowy =", windowy)
+#mining.check_for_enemies()
 
-mining.focus_general_tab()
-
-#miner()
+cProfile.run('mining.check_for_players()')
 # Method for determining which script to run, as yet to be implemented by gui.
 # selectscript = 2
 #

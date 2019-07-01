@@ -15,7 +15,7 @@ sys.setrecursionlimit(9999999)
 
 mining_lasers = 1
 
-# ----------------------------------
+# -----------------------------------------------------------------------------
 
 check_for_enemies_var = 1
 
@@ -25,10 +25,19 @@ check_for_enemy_cruisers = 1
 check_for_enemy_battlecruisers = 1
 check_for_enemy_battleships = 1
 
-# ----------------------------------
+# -----------------------------------------------------------------------------
 
 check_for_players_var = 1
 
+check_for_player_type_barge_and_industrial = 1
+check_for_player_type_frigate_and_destroyer = 1
+check_for_player_type_capital_industrial_and_freighter = 1
+check_for_player_type_cruiser_and_battlecruiser = 1
+check_for_player_type_battleship = 1
+check_for_player_type_rookie_ship = 1
+check_for_player_type_capsule = 1
+
+"""
 check_for_player_type_alliancemate = 1
 check_for_player_type_ally = 1
 check_for_player_type_bad_standing = 1
@@ -48,7 +57,7 @@ check_for_player_type_terrible_standing = 1
 check_for_player_type_war_target = 1
 check_for_player_type_war_target_militia = 1
 check_for_player_type_zero_sec = 1
-
+"""
 
 ###############################################################################
 
@@ -60,7 +69,7 @@ def travel_to_bookmark(target_bookmark):
     # supported
 
     # Try warping to bookmark 1 in the system. If bookmark 1 doesn't exist,
-    # is not in the current system, or your ship is already there, increment
+    # is not in the current system, or your ship is already there. Increment
     # bookmark number by 1 and try again.
     travel_to_bookmark_var = nav.warp_to_specific_system_bookmark(
         target_bookmark)
@@ -90,11 +99,17 @@ def check_for_enemies():
     if check_for_enemy_frigates == 1:
         enemy_frigate = pag.locateCenterOnScreen(
             './img/overview/enemy_frigate.bmp',
-            confidence=0.80,  # Lower confidence than normal so script will
-            # detect icon in both overview and on grid.
+            confidence=0.92,  # High confidence required because script will
+            #  not match icon consistently on the grid. Must match on
+            # overview only.
             region=(originx, originy, windowx, windowy))
         if enemy_frigate is not None:
-            print('check_for_enemies -- found hostile npc frigate')
+            (enemy_frigatex, enemy_frigatey) = enemy_frigate
+            print('check_for_enemies -- found hostile npc frigate at',
+                  enemy_frigatex, enemy_frigatey)
+            pag.moveTo(enemy_frigatex, enemy_frigatey,  # Move mouse over
+                       # enemy frigate so it can be identified
+                       .5, mouse.path())
             return 1
 
         # elif check_for_enemy_destroyers == 1:
@@ -291,7 +306,7 @@ def focus_mining_tab():
     print('focus_mining_tab -- called')
     mining_tab_selected = pag.locateCenterOnScreen(
         './img/overview/mining_overview_tab_selected.bmp',
-        # Requires very high confidence since the button looks only slightly
+        # Requires very high confidence because the button looks slightly
         # different when it's selected.
         confidence=0.992,
         region=(originx, originy,
@@ -423,6 +438,140 @@ def target_out_of_range_popup():
         print('target_out_of_range -- in targeting range')
         return 0
 
+
+def check_for_players():
+    # Same as check_for_enemies function, except check for certain
+    # classes of
+    # human players as specified by the user. Search for most common ship
+    # types first
+    print('check_for_players -- called')
+    conf = 0.96
+    if check_for_players_var == 1:
+        if check_for_player_type_barge_and_industrial == 1:
+            mining_barge_and_industrial = pag.locateCenterOnScreen(
+                './img/overview/player_ship_icons'
+                '/archetype_icons/player_mining_barge_and_industrial.bmp',
+                confidence=conf,
+                # Search right half of screen only.
+                region=(originx, originy,
+                        windowx, windowy))
+            if mining_barge_and_industrial is not None:
+                print('check_for_players -- found mining_barge_and_industrial',
+                      mining_barge_and_industrial)
+                (x, y) = mining_barge_and_industrial
+                pag.moveTo(x, y,  # Move mouse over
+                           # icon for debugging purposes
+                           .5, mouse.path())
+                return 1
+
+        if check_for_player_type_frigate_and_destroyer == 1:
+            frigate_and_destroyer = pag.locateCenterOnScreen(
+                './img/overview/player_ship_icons'
+                '/archetype_icons/player_frigate_and_destroyer.bmp',
+                confidence=conf,
+                region=(originx, originy,
+                        windowx, windowy))
+            if frigate_and_destroyer is not None:
+                print('check_for_players -- found frigate_and_destroyer',
+                      frigate_and_destroyer)
+                (x, y) = frigate_and_destroyer
+                pag.moveTo(x, y,  # Move mouse over
+                           # icon for debugging purposes
+                           .5, mouse.path())
+                return 1
+
+        if check_for_player_type_capital_industrial_and_freighter == 1:
+            capital_industrial_and_freighter = pag.locateCenterOnScreen(
+                './img/overview/player_ship_icons'
+                '/archetype_icons/player_capital_industrial_and_freighter.bmp',
+                confidence=conf,
+                region=(originx, originy,
+                        windowx, windowy))
+            if capital_industrial_and_freighter is not None:
+                print('check_for_players --'
+                      'found capital_industrial_and_freighter'
+                      , capital_industrial_and_freighter)
+                (x, y) = capital_industrial_and_freighter
+                pag.moveTo(x, y,  # Move mouse over
+                           # icon for debugging purposes
+                           .5, mouse.path())
+                return 1
+
+        if check_for_player_type_cruiser_and_battlecruiser == 1:
+            cruiser_and_battlecruiser = pag.locateCenterOnScreen(
+                './img/overview/player_ship_icons'
+                '/archetype_icons/player_cruiser_and_battlecruiser.bmp',
+                confidence=conf,
+                region=(originx, originy,
+                        windowx, windowy))
+            if cruiser_and_battlecruiser is not None:
+                print('check_for_players -- found cruiser_and_battlecruiser',
+                      cruiser_and_battlecruiser)
+                (x, y) = cruiser_and_battlecruiser
+                pag.moveTo(x, y,  # Move mouse over
+                           # icon for debugging purposes
+                           .5, mouse.path())
+                return 1
+
+        if check_for_player_type_battleship == 1:
+            battleship = pag.locateCenterOnScreen(
+                './img/overview/player_ship_icons'
+                '/archetype_icons/player_battleship.bmp',
+                confidence=conf,
+                region=(originx, originy,
+                        windowx, windowy))
+            if battleship is not None:
+                print('check_for_players -- found battleship',
+                      battleship)
+                (x, y) = battleship
+                pag.moveTo(x, y,  # Move mouse over
+                           # icon for debugging purposes
+                           .5, mouse.path())
+                return 1
+
+        if check_for_player_type_rookie_ship == 1:
+            rookie_ship = pag.locateCenterOnScreen(
+                './img/overview/player_ship_icons'
+                '/archetype_icons/player_rookie_ship.bmp',
+                confidence=conf,
+                region=(originx, originy,
+                        windowx, windowy))
+            if rookie_ship is not None:
+                print('check_for_players -- found rookie_ship',
+                      rookie_ship)
+                (x, y) = rookie_ship
+                pag.moveTo(x, y,  # Move mouse over
+                           # icon for debugging purposes
+                           .5, mouse.path())
+                return 1
+
+        if check_for_player_type_capsule == 1:
+            capsule = pag.locateCenterOnScreen(
+                './img/overview/player_ship_icons'
+                '/archetype_icons/player_capsule.bmp',
+                confidence=conf,
+                region=(originx, originy,
+                        windowx, windowy))
+            if capsule is not None:
+                print('check_for_players -- found capsule',
+                      capsule)
+                (x, y) = capsule
+                pag.moveTo(x, y,  # Move mouse over
+                           # icon for debugging purposes
+                           .5, mouse.path())
+                return 1
+
+            else:
+                print('check_for_players -- all clear')
+                return 0
+        else:
+            return 0
+    else:
+        return 0
+
+"""
+# Old check for player function in which player standing was checked rather 
+than simply ship icons. About 4x slower than the current method. 
 
 def check_for_players():
     # Same as check_for_enemies function, except check for certain
@@ -625,3 +774,4 @@ def check_for_players():
     else:
         print('check_for_players -- found no players')
         return 0
+"""

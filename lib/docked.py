@@ -231,7 +231,7 @@ def undock():
     keyboard.keypress('u')
     time.sleep(float(random.randint(200, 1200)) / 1000)
     pag.keyUp('alt')
-    time.sleep(int((random.randint(5000, 10000) / 1000)))
+    time.sleep(int((random.randint(8000, 15000) / 1000)))
     undocked = pag.locateCenterOnScreen(
         './img/indicators/session_change_undocked.bmp',
         confidence=0.55,
