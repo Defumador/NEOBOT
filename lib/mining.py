@@ -61,6 +61,7 @@ check_for_player_type_zero_sec = 1
 
 ###############################################################################
 
+# Move most of these functions into an "overview" file.
 
 def travel_to_bookmark(target_bookmark):
     # Find a suitable asteroid field by warping to each bookmark in
