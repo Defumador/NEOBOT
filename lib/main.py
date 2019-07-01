@@ -18,7 +18,7 @@ playerfound = 0
 # main play area for about five seconds.
 
 ###############################################################################
-
+# test123
 # These variables are for the mining script only ------------------------------
 # Script begins at location 0, assumed to be your home station.
 site = 0
