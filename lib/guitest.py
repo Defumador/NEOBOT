@@ -1,22 +1,18 @@
+import logging
 import tkinter as tk
 
-def cbc(id, tex):
-    return lambda : callback(id, tex)
+class WidgetLogger(logging.Handler):
+    def __init__(self, widget):
+        logging.Handler.__init__(self)
+        self.setLevel(logging.INFO)
+        self.widget = widget
+        self.widget.config(state='disabled')
 
-def callback(id, tex):
-    s = 'At {} f is {}\n'.format(id, id**id/0.987)
-    tex.insert(tk.END, s)
-    tex.see(tk.END)             # Scroll if necessary
+    def emit(self, record):
+        self.widget.config(state='normal')
+        # Append message (record) to the widget
+        self.widget.insert(tk.END, self.format(record) + '\n')
+        self.widget.see(tk.END)  # Scroll to the bottom
+        self.widget.config(state='disabled')
 
-top = tk.Tk()
-tex = tk.Text(master=top)
-tex.pack(side=tk.RIGHT)
-#bop = tk.Frame()
-#bop.pack(side=tk.LEFT)
-for k in range(1,10):
-    tv = 'Say {}'.format(k)
-    #b = tk.Button(bop, text=tv, command=cbc(k, tex))
-    #b.pack()
-
-#tk.Button(bop, text='Exit', command=top.destroy).pack()
-top.mainloop()
+WidgetLogger()
