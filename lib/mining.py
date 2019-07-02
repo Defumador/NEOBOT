@@ -473,7 +473,42 @@ def check_for_players():
         # continue to check for other player ship icons using the same overview screenshot from the beginning of the function
     
     
-    
+ # SAME FUNC BUT WITH FOR LOOP
+def check_for_players():
+    print('check_for_players -- called')
+    conf = 0.96
+    if check_for_players_var == 1:
+        overview = pag.screenshot(region=((windowx - (int(windowx / 4))), originy,
+            (int(windowx / 4)), windowy))
+         
+        # create an empty list of player types
+        player_types_list= []
+                
+        # populate list with only the player types that the user wishes to check for
+        if check_for_player_type_frigate_and_destroyer == 1:  
+            player_types_list.append('./img/overview/player_ship_icons/archetype_icons/player_frigate_and_destroyer.bmp')
+        if check_for_player_type_barge_and_industrial == 1:
+            player_types_list.append('./img/overview/player_ship_icons/archetype_icons/player_barge_and_industrial.bmp')
+        
+        # iterate through the list and check for each player type
+        for i in player_types_list:
+            result = pag.locate(
+                i, overview, confidence=conf)
+
+            if result not None:
+                print('check_for_players -- found player',
+                      i, result)
+                (x, y) = result
+                pag.moveTo(x, y,  # Move mouse over
+                           # icon for debugging purposes
+                           .5, mouse.path())
+                return 1
+                
+        print('no players found')
+        return 0
+    else:
+        return 0
+                
     
     
     
