@@ -472,13 +472,14 @@ def check_for_players():
                 return 1
         # continue to check for other player ship icons using the same overview screenshot from the beginning of the function
     
-    
+         
+            
  # SAME FUNC BUT WITH FOR LOOP
 def check_for_players():
     print('check_for_players -- called')
     conf = 0.96
     if check_for_players_var == 1:
-        overview = pag.screenshot(region=((windowx - (int(windowx / 4))), originy,
+        overview = pag.screenshot(region=((originx + (windowx - (int(windowx / 4)))), originy,
             (int(windowx / 4)), windowy))
          
         # create an empty list of player types
@@ -510,16 +511,7 @@ def check_for_players():
         return 0
                 
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
 def check_for_players():
     # Same as check_for_enemies function, except check for certain
     # classes of
