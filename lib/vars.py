@@ -37,4 +37,3 @@ originy -= 18
 windowx = window_resolutionx
 windowy = window_resolutiony
 
-sys.setrecursionlimit(9999999)
