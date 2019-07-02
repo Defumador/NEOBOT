@@ -34,7 +34,7 @@ else:
 # than its top right corner.
 originx -= 18
 originy -= 18
-windowx = originx + window_resolutionx
-windowy = originy + window_resolutiony
+windowx = window_resolutionx
+windowy = window_resolutiony
 
 sys.setrecursionlimit(9999999)
