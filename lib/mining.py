@@ -440,6 +440,51 @@ def target_out_of_range_popup():
         return 0
 
 
+    
+    
+# ALTERNATIVE CHECK FOR PLAYERS WITH ONLY ONE SCREENSHOT
+def check_for_players():
+    print('check_for_players -- called')
+    conf = 0.96
+    if check_for_players_var == 1:
+        
+        # take a single screenshot of the rightmost quarter of the screen to capture the overview. do this at the beginning of the
+        # function only once, rather than each time a ship icon is searched for
+        overview = pag.screenshot(region=((windowx - (int(windowx / 4))), originy,
+            (int(windowx / 4)), windowy))
+            
+        if check_for_player_type_barge_and_industrial == 1:  
+            
+            # look for ship icon on the screenshot that was taken. keep the screenshot in memory so you don't have to wait for it to
+            # write to disk
+            mining_barge_and_industrial = pag.locate(
+                './img/overview/player_ship_icons'
+                '/archetype_icons/player_mining_barge_and_industrial.bmp', overview,
+                confidence=conf,
+
+            if mining_barge_and_industrial is not None:
+                print('check_for_players -- found mining_barge_and_industrial',
+                      mining_barge_and_industrial)
+                (x, y) = mining_barge_and_industrial
+                pag.moveTo(x, y,  # Move mouse over
+                           # icon for debugging purposes
+                           .5, mouse.path())
+                return 1
+        # continue to check for other player ship icons using the same overview screenshot from the beginning of the function
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 def check_for_players():
     # Same as check_for_enemies function, except check for certain
     # classes of
@@ -449,13 +494,14 @@ def check_for_players():
     conf = 0.96
     if check_for_players_var == 1:
         if check_for_player_type_barge_and_industrial == 1:
-            mining_barge_and_industrial = pag.locateCenterOnScreen(
+################ No need for locateCenterOnScreen            
+            mining_barge_and_industrial = pag.locateOnScreen(
                 './img/overview/player_ship_icons'
                 '/archetype_icons/player_mining_barge_and_industrial.bmp',
                 confidence=conf,
-                # Search right half of screen only.
-                region=(originx, originy,
-                        windowx, windowy))
+################ Search right quarter of screen only. This is a tuple (left,top,width,height), NOT coordinates!! ( (x1, y1), (x2, y2) )
+                region=((windowx - (int(windowx / 4))), originy,
+                        (int(windowx / 4)), windowy)),
             if mining_barge_and_industrial is not None:
                 print('check_for_players -- found mining_barge_and_industrial',
                       mining_barge_and_industrial)
@@ -470,8 +516,8 @@ def check_for_players():
                 './img/overview/player_ship_icons'
                 '/archetype_icons/player_frigate_and_destroyer.bmp',
                 confidence=conf,
-                region=(originx, originy,
-                        windowx, windowy))
+                region=((windowx - (int(windowx / 4))), originy,
+                        (int(windowx / 4)), windowy)),
             if frigate_and_destroyer is not None:
                 print('check_for_players -- found frigate_and_destroyer',
                       frigate_and_destroyer)
@@ -486,8 +532,8 @@ def check_for_players():
                 './img/overview/player_ship_icons'
                 '/archetype_icons/player_capital_industrial_and_freighter.bmp',
                 confidence=conf,
-                region=(originx, originy,
-                        windowx, windowy))
+                region=((windowx - (int(windowx / 4))), originy,
+                        (int(windowx / 4)), windowy)),
             if capital_industrial_and_freighter is not None:
                 print('check_for_players --'
                       'found capital_industrial_and_freighter'
@@ -503,8 +549,8 @@ def check_for_players():
                 './img/overview/player_ship_icons'
                 '/archetype_icons/player_cruiser_and_battlecruiser.bmp',
                 confidence=conf,
-                region=(originx, originy,
-                        windowx, windowy))
+                region=((windowx - (int(windowx / 4))), originy,
+                        (int(windowx / 4)), windowy)),
             if cruiser_and_battlecruiser is not None:
                 print('check_for_players -- found cruiser_and_battlecruiser',
                       cruiser_and_battlecruiser)
@@ -519,8 +565,8 @@ def check_for_players():
                 './img/overview/player_ship_icons'
                 '/archetype_icons/player_battleship.bmp',
                 confidence=conf,
-                region=(originx, originy,
-                        windowx, windowy))
+                region=((windowx - (int(windowx / 4))), originy,
+                        (int(windowx / 4)), windowy)),
             if battleship is not None:
                 print('check_for_players -- found battleship',
                       battleship)
@@ -535,8 +581,8 @@ def check_for_players():
                 './img/overview/player_ship_icons'
                 '/archetype_icons/player_rookie_ship.bmp',
                 confidence=conf,
-                region=(originx, originy,
-                        windowx, windowy))
+                region=((windowx - (int(windowx / 4))), originy,
+                        (int(windowx / 4)), windowy)),
             if rookie_ship is not None:
                 print('check_for_players -- found rookie_ship',
                       rookie_ship)
@@ -551,8 +597,8 @@ def check_for_players():
                 './img/overview/player_ship_icons'
                 '/archetype_icons/player_capsule.bmp',
                 confidence=conf,
-                region=(originx, originy,
-                        windowx, windowy))
+                region=((windowx - (int(windowx / 4))), originy,
+                        (int(windowx / 4)), windowy)),
             if capsule is not None:
                 print('check_for_players -- found capsule',
                       capsule)
@@ -570,9 +616,11 @@ def check_for_players():
     else:
         return 0
 
+                
+                
 """
 # Old check for player function in which player standing was checked rather 
-than simply ship icons. About 4x slower than the current method. 
+than simply ship icons. The entire function takes around 4 seconds on a 1024x768 client. 
 
 def check_for_players():
     # Same as check_for_enemies function, except check for certain
