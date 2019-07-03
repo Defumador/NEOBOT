@@ -18,7 +18,7 @@ playerfound = 0
 # main play area for about five seconds.
 
 ###############################################################################
-# test123
+
 # These variables are for the mining script only ------------------------------
 # Script begins at location 0, assumed to be your home station.
 site = 0
@@ -46,8 +46,8 @@ def miner():
                 if mining.focus_general_tab() == 1:
                     if mining.check_for_enemies() == 1:
                         miner()
-            if mining.check_for_players_var == 1:
-                if mining.check_for_players() == 1:
+            if mining.detect_pcs_var == 1:
+                if mining.detect_pcs() == 1:
                     playerfound += 1
                     miner()
 
@@ -71,8 +71,8 @@ def miner():
                             continue
                     if mining.check_for_enemies() == 1:
                         miner()
-                    #check_for_players()
-                    if mining.check_for_players() == 1:
+                    #detect_pcs()
+                    if mining.detect_pcs() == 1:
                         miner()
                     time.sleep(2)
 
@@ -220,7 +220,7 @@ print("windowx =", windowx)
 print("windowy =", windowy)
 #mining.check_for_enemies()
 
-cProfile.run('mining.check_for_players()')
+cProfile.run('mining.detect_npcs()')
 # Method for determining which script to run, as yet to be implemented by gui.
 # selectscript = 2
 #

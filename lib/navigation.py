@@ -178,7 +178,7 @@ def warp_to_waypoint():
         traceback.print_stack()
         sys.exit()
 
-
+"""
 # FROM MINING
 def travel_to_bookmark(target_bookmark):
     # Find a suitable asteroid field by warping to each bookmark in
@@ -204,6 +204,7 @@ def travel_to_bookmark(target_bookmark):
     else:
         print('nav.travel_to_bookmark -- ran out of sites to check for')
         return 0
+"""
 
 def warp_to_specific_system_bookmark(target_site):
     # Try warping to a specific bookmark in the current system.
@@ -587,9 +588,8 @@ def emergency_terminate():
            
     # Look for a station to dock at until confidence is <0.85
     while station_icon is None and tries <= 15:
-        print(
-            "!!! nav.emergency_terminate -- looking for station to dock at,
-            "confidence =",confidence)
+        print('!!! nav.emergency_terminate -- looking for station to dock at,'
+            'confidence =',confidence)
         tries += 1
         time.sleep(float(random.randint(600, 1200)) / 1000)
         station_icon = pag.locateCenterOnScreen('./img/station_icon.bmp',
