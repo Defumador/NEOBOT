@@ -1,10 +1,19 @@
-test 123
-testing:
+mining script:
+- capture 'target-locked' versions of asteroid icons so script knows when a
+target has been sucessfully locked. see the 1h12m mark on video
+D/screen_recordings/2019-07-04_21-08-19
+- add support for a 'don't recall drones when escaping pcs or npcs' variable,
+which could be useful in losec space when it's necessary to quickly escape
+ships when they arrive on grid
+
+
+
+
+
+
+
 -test situation when ship is at dest9 to see if dest checking loop works fully
 -NOT READY FOR TESTING IN LOSEC YET
-
-bugs:
--script thinks dest10 is actually dest1 because they both start with a "1"; max # of destinations is 9 for now
 
 features:
 -add support for 'icons' style inventory view

@@ -42,9 +42,9 @@ def miner():
             # If either exist, warp to the next site.
             # If no hostiles npcs or players are present, check for asteroids.
             # If no asteroids, blacklist site and warp to next site.
-            if mining.check_for_enemies_var == 1:
+            if mining.detect_npcs_var == 1:
                 if mining.focus_general_tab() == 1:
-                    if mining.check_for_enemies() == 1:
+                    if mining.detect_npcs() == 1:
                         miner()
             if mining.detect_pcs_var == 1:
                 if mining.detect_pcs() == 1:
@@ -52,7 +52,8 @@ def miner():
                     miner()
 
             mining.focus_mining_tab()
-            while mining.check_for_asteroids() == 1:
+            while mining.detect_asteroids() == 1:
+                mining.launch_drones()
                 mining.target_asteroid()
                 mining.activate_miner()
                 # If ship inventory isn't full, continue to mine ore and wait
@@ -61,23 +62,26 @@ def miner():
                 mining.focus_general_tab()
                 while mining.inv_full_popup() == 0:
                     if mining.asteroid_depleted_popup() == 1:
-                        if mining.check_for_asteroids() == 0:
-                            nav.blacklist_current_bookmark()
+                        if mining.detect_asteroids() == 0:
+                            #nav.blacklist_current_bookmark()
                             miner()
-                        elif mining.check_for_asteroids() == 1:
+                        elif mining.detect_asteroids() == 1:
                             mining.target_asteroid()
                             mining.activate_miner()
                             mining.inv_full_popup()
                             continue
-                    if mining.check_for_enemies() == 1:
+                    if mining.detect_npcs() == 1:
+                        mining.recall_drones()
                         miner()
                     #detect_pcs()
                     if mining.detect_pcs() == 1:
+                        mining.recall_drones()
                         miner()
                     time.sleep(2)
 
                 if mining.inv_full_popup() == 1:
                     # Once inventory is full, dock at home station and unload.
+                    mining.recall_drones()
                     if system_mining == 0:
                         if nav.set_home() == 1:
                             if navigator() == 1:
@@ -89,16 +93,16 @@ def miner():
                     # If ship is mining in the same system it will dock in,
                     # a different set of functions is required.
                     elif system_mining == 1:
-                        nav.dock_at_station_bookmark()
+                        nav.dock_at_local_bookmark()
                         unload_ship.unload_ship()
                         docked.undock()
                         playerfound = 0
                         time.sleep(3)
                         miner()
 
-                if mining.check_for_asteroids() == 0:
+                if mining.detect_asteroids() == 0:
                     nav.blacklist_current_bookmark()
-        elif mining.travel_to_bookmark() == 0:
+        elif mining.travel_to_bookmark(site) == 0:
             nav.emergency_terminate()
             sys.exit(0)
     if docked.docked_check() == 1:
@@ -192,7 +196,7 @@ def collector():
             print('collector -- loadship is', loadship)
 
             if loadship == 2 or loadship == 0 or loadship is None:
-                atdestnum = nav.at_dest_num()
+                atdestnum = nav.detect_bookmark_location()
                 if atdestnum == -1:
                     docked.undock()
                     collector()
@@ -218,9 +222,15 @@ print("originx =", originx)
 print("originy =", originy)
 print("windowx =", windowx)
 print("windowy =", windowy)
-#mining.check_for_enemies()
 
-cProfile.run('mining.detect_npcs()')
+miner()
+
+# unit tests
+
+#mining.check_for_enemies()
+#time.sleep(2)
+#mining.recall_drones()
+#cProfile.run('mining.detect_npcs()')
 # Method for determining which script to run, as yet to be implemented by gui.
 # selectscript = 2
 #

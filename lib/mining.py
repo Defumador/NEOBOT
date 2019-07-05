@@ -14,13 +14,15 @@ sys.setrecursionlimit(9999999)
 #  User-specified variables
 ###############################################################################
 
-mining_lasers = 1
+mining_lasers = 2
+# Attack drones only, mining drones are not yet supported.
+drones = 1
 
 # -----------------------------------------------------------------------------
 
 detect_npcs_var = 1
 
-detect_npc_frigate_and_destroyer = 1
+detect_npc_frigate_and_destroyer = 0
 detect_npc_cruiser_and_battlecruiser = 1
 detect_npc_battleship = 1
 
@@ -51,24 +53,24 @@ def travel_to_bookmark(target_bookmark):
     # Try warping to bookmark 1 in the system. If bookmark 1 doesn't exist,
     # is not in the current system, or your ship is already there. Increment
     # bookmark number by 1 and try again.
-    travel_to_bookmark_var = nav.warp_to_specific_system_bookmark(
+    travel_to_bookmark_var = nav.warp_to_local_bookmark(
         target_bookmark)
     while travel_to_bookmark_var == 0 and target_bookmark <= 10:
         target_bookmark += 1
-        travel_to_bookmark_var = nav.warp_to_specific_system_bookmark(
+        travel_to_bookmark_var = nav.warp_to_local_bookmark(
             target_bookmark)
         continue
     if travel_to_bookmark_var == 1 and target_bookmark <= 10:
         # Once a valid site is found, remember the site number the ship is
         # warping to so script doesn't try warping there again.
-        if nav.wait_for_warp_to_complete() == 1:
+        if nav.detect_warp() == 1:
             return 1
     else:
         print('travel_to_bookmark -- ran out of sites to check for')
         return 0
 
 
-def check_for_asteroids():
+def detect_asteroids():
     # Switch overview to 'mining' tab, check for asteroids, then switch back to
     # the 'general' tab. Prioritize larger asteroids by searching for them
     # first.
@@ -82,17 +84,18 @@ def check_for_asteroids():
     global asteroid_s
     global asteroid_m
     global asteroid_l
-    asteroid_l = pag.locateCenterOnScreen('./img/overview/asteroid_l.bmp',
-                                          confidence=0.90,
-                                          region=(originx, originy,
-                                                  windowx, windowy))
-    if asteroid_l is not None:
-        return 1
+
     asteroid_m = pag.locateCenterOnScreen('./img/overview/asteroid_m.bmp',
                                           confidence=0.90,
                                           region=(originx, originy,
                                                   windowx, windowy))
     if asteroid_m is not None:
+        return 1
+    asteroid_l = pag.locateCenterOnScreen('./img/overview/asteroid_l.bmp',
+                                          confidence=0.90,
+                                          region=(originx, originy,
+                                                  windowx, windowy))
+    if asteroid_l is not None:
         return 1
     asteroid_s = pag.locateCenterOnScreen('./img/overview/asteroid_s.bmp',
                                           confidence=0.90,
@@ -101,7 +104,7 @@ def check_for_asteroids():
     if asteroid_s is not None:
         return 1
     else:
-        print('check_for_asteroids -- no more asteroids found at site')
+        print('detect_asteroids -- no more asteroids found at site')
     return 0
 
 
@@ -113,7 +116,29 @@ def target_asteroid():
     global asteroid_m
     global asteroid_l
 
-    if asteroid_l is not None:
+    if asteroid_m is not None:
+        (asteroid_mediumx, asteroid_mediumy) = asteroid_m
+        pag.moveTo((asteroid_mediumx + (random.randint(-2, 200))),
+                   (asteroid_mediumy + (random.randint(-3, 3))),
+                   mouse.duration(), mouse.path())
+        mouse.click()
+        keyboard.keypress('ctrl')
+        time.sleep(float(random.randint(1000, 2000)) / 1000)
+        while target_out_of_range_popup() == 1:
+            keyboard.keypress('w')
+            print('target_asteroid -- getting closer to target')
+            time.sleep(float(random.randint(10000, 40000)) / 1000)
+            keyboard.keypress('ctrl')
+            time.sleep(float(random.randint(1000, 2000)) / 1000)
+        if target_out_of_range_popup() == 0:
+            print('target_asteroid -- locking target')
+            time.sleep(target_lock_time)
+            time.sleep(float(random.randint(1000, 3000)) / 1000)
+            print('target_asteroid -- target locked, orbiting')
+            keyboard.keypress('w')
+        return 1
+
+    elif asteroid_l is not None:
         (asteroid_largex, asteroid_largey) = asteroid_l
         pag.moveTo((asteroid_largex + (random.randint(-2, 200))),
                    (asteroid_largey + (random.randint(-3, 3))),
@@ -132,28 +157,6 @@ def target_asteroid():
             time.sleep(target_lock_time)
             time.sleep(float(random.randint(1000, 3000)) / 1000)  # Wait for
             # a lock to be achieved.
-            print('target_asteroid -- target locked, orbiting')
-            keyboard.keypress('w')
-        return 1
-
-    elif asteroid_m is not None:
-        (asteroid_mediumx, asteroid_mediumy) = asteroid_m
-        pag.moveTo((asteroid_mediumx + (random.randint(-2, 200))),
-                   (asteroid_mediumy + (random.randint(-3, 3))),
-                   mouse.duration(), mouse.path())
-        mouse.click()
-        keyboard.keypress('ctrl')
-        time.sleep(float(random.randint(1000, 2000)) / 1000)
-        while target_out_of_range_popup() == 1:
-            keyboard.keypress('w')
-            print('target_asteroid -- getting closer to target')
-            time.sleep(float(random.randint(10000, 40000)) / 1000)
-            keyboard.keypress('ctrl')
-            time.sleep(float(random.randint(1000, 2000)) / 1000)
-        if target_out_of_range_popup() == 0:
-            print('target_asteroid -- locking target')
-            time.sleep(target_lock_time)
-            time.sleep(float(random.randint(1000, 3000)) / 1000)
             print('target_asteroid -- target locked, orbiting')
             keyboard.keypress('w')
         return 1
@@ -179,6 +182,7 @@ def target_asteroid():
             print('target_asteroid -- target locked, orbiting')
             keyboard.keypress('w')
         return 1
+
     else:
         print('target_asteroid -- no asteroids to target')
         return 0
@@ -326,6 +330,57 @@ def activate_miner():
     return 1
 
 
+def launch_drones():
+    # User must custom-set the "launch drones" hotkey to be Shift-l
+    if drones != 0:
+        time.sleep(float(random.randint(10, 800)) / 1000)
+        pag.keyDown('shift')
+        time.sleep(float(random.randint(10, 800)) / 1000)
+        pag.keyDown('l')
+        time.sleep(float(random.randint(10, 800)) / 1000)
+        pag.keyUp('shift')
+        time.sleep(float(random.randint(10, 800)) / 1000)
+        pag.keyUp('l')
+        time.sleep(float(random.randint(2000, 5000)) / 1000)
+        print('launch drones -- drones launched')
+        return 1
+    else:
+        return 1
+
+
+drones_dict = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5"}
+
+
+def recall_drones():
+    if drones != 0:
+        time.sleep(float(random.randint(10, 800)) / 1000)
+        pag.keyDown('shift')
+        time.sleep(float(random.randint(10, 800)) / 1000)
+        pag.keyDown('r')
+        time.sleep(float(random.randint(10, 800)) / 1000)
+        pag.keyUp('shift')
+        time.sleep(float(random.randint(10, 800)) / 1000)
+        pag.keyUp('r')
+
+        # Wait for all drones to return to drone bay.
+        drones_recalled = pag.locateOnScreen('./img/indicators/drones/' + (
+            drones_dict[drones]) + '_drone_in_bay.bmp')
+        tries = 1
+        while drones_recalled is None and tries <= 25:
+            time.sleep(float(random.randint(1000, 2000)) / 1000)
+            drones_recalled = pag.locateOnScreen('./img/indicators/drones/' + (
+                drones_dict[drones]) + '_drone_in_bay.bmp')
+            tries += 1
+        if drones_recalled is not None and tries <= 25:
+            print('recall_drones -- drones returned to bay')
+            return 1
+        else:
+            print('recall_drones -- timed out waiting for drones to return')
+            return 1
+    else:
+        return 0
+
+
 def miner_out_of_range_popup():
     # Check if the ship's mining laser is out of range. If it is,
     # orbit the asteroid at a specified distance and try activating the
@@ -360,7 +415,7 @@ def target_out_of_range_popup():
 def detect_npcs():
     # Check for hostile non-player characters by looking for red ship icons in
     # the overview.
-    print('detect_npcs -- called')
+    #print('detect_npcs -- called')
     conf = 0.98
     if detect_npcs_var == 1:
 
@@ -382,9 +437,9 @@ def detect_npcs():
         if detect_npc_cruiser_and_battlecruiser == 1:
             npc_list.append(
                 './img/overview/npc_ship_icons/npc_hostile_cruiser.bmp')
-        if detect_npc_battleship == 1:
-            npc_list.append(
-                './img/overview/npc_ship_icons/npc_hostile_battleship.bmp')
+        #if detect_npc_battleship == 1:
+        #    npc_list.append(
+        #        './img/overview/npc_ship_icons/npc_hostile_battleship.bmp')
 
         # Scan the 'overview' screenshot for each player icon in the list.
         for npc_icon in npc_list:
@@ -401,7 +456,7 @@ def detect_npcs():
                            (y + originy),
                            0, mouse.path())
                 return 1
-        print('no hostile NPCs found')
+        print('detect npcs -- no hostile NPCs found')
         return 0
     else:
         return 0
@@ -410,7 +465,7 @@ def detect_npcs():
 def detect_pcs():
     # Check for player characters by looking for player ship icons in the
     # overview.
-    print('detect_pcs -- called')
+    #print('detect_pcs -- called')
     conf = 0.98
     if detect_pcs_var == 1:
 
@@ -470,7 +525,7 @@ def detect_pcs():
                            (y + originy),
                            0, mouse.path())
                 return 1
-        print('no players found')
+        print('detect pcs -- no players found')
         return 0
     else:
         return 0

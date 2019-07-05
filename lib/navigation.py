@@ -189,24 +189,24 @@ def travel_to_bookmark(target_bookmark):
     # Try warping to bookmark 1 in the system. If bookmark 1 doesn't exist,
     # is not in the current system, or your ship is already there. Increment
     # bookmark number by 1 and try again.
-    travel_to_bookmark_var = nav.warp_to_specific_system_bookmark(
+    travel_to_bookmark_var = nav.warp_to_local_bookmark(
         target_bookmark)
     while travel_to_bookmark_var == 0 and target_bookmark <= 10:
         target_bookmark += 1
-        travel_to_bookmark_var = nav.warp_to_specific_system_bookmark(
+        travel_to_bookmark_var = nav.warp_to_local_bookmark(
             target_bookmark)
         continue
     if travel_to_bookmark_var == 1 and target_bookmark <= 10:
         # Once a valid site is found, remember the site number the ship is
         # warping to so script doesn't try warping there again.
-        if nav.wait_for_warp_to_complete() == 1:
+        if nav.detect_warp() == 1:
             return 1
     else:
         print('nav.travel_to_bookmark -- ran out of sites to check for')
         return 0
 """
 
-def warp_to_specific_system_bookmark(target_site):
+def warp_to_local_bookmark(target_site):
     # Try warping to a specific bookmark in the current system.
     # If the ship is already at the requested site, return function.
     # Confidence must be >0.95 because script will confuse 6 with 0
@@ -232,7 +232,7 @@ def warp_to_specific_system_bookmark(target_site):
             confidence=0.90, region=(originx, originy, windowx, windowy))
 
         if at_target_site is not None:
-            print('nav.warp_to_specific_system_bookmark -- already at bookmark',
+            print('nav.warp_to_local_bookmark -- already at bookmark',
                   target_site)
             keyboard.keypress('esc')  # Close right-click menu.
             return 0
@@ -243,7 +243,7 @@ def warp_to_specific_system_bookmark(target_site):
                 confidence=0.90, region=(originx, originy, windowx, windowy))
 
             if warp_to_target is not None:
-                print('nav.warp_to_specific_system_bookmark -- warping to '
+                print('nav.warp_to_local_bookmark -- warping to '
                       'bookmark', target_site)
                 pag.moveRel((0 + (random.randint(10, 80))),
                             (0 + (random.randint(10, 15))),
@@ -252,11 +252,11 @@ def warp_to_specific_system_bookmark(target_site):
                 time.sleep(2)
                 return 1
             else:
-                print('nav.warp_to_specific_system_bookmark -- error')
+                print('nav.warp_to_local_bookmark -- error')
                 return 0
 
 
-def dock_at_station_bookmark():
+def dock_at_local_bookmark():
     # Dock at the first bookmark beginning with a '0'
     dock_at_station_bookmark_var = pag.locateCenterOnScreen(
         './img/dest/at_dest0.bmp',
@@ -277,7 +277,7 @@ def dock_at_station_bookmark():
         detect_dock()
 
 
-def wait_for_warp_to_complete():
+def detect_warp():
     # Detect when a warp has been completed by waiting for the 'warping' text
     # to disappear from the spedometer. Wait for the ship to begin its warp
     # before checking though, otherwise the script will think the warp has
@@ -285,7 +285,7 @@ def wait_for_warp_to_complete():
     warp_duration = 1
     warp_drive_active = pag.locateCenterOnScreen(
         './img/indicators/warping.bmp',
-        confidence=0.96,
+        confidence=0.98,
         region=(originx, originy, windowx,
                 windowy))
 
@@ -293,34 +293,35 @@ def wait_for_warp_to_complete():
     # might be stuck on something so this could take an variable amount of
     # time.
     while warp_drive_active is None and warp_duration <= 300:
-        print('nav.wait_for_warp_to_complete -- waiting for warp to start...',
+        print('nav.detect_warp -- waiting for warp to start...',
               warp_duration)
         time.sleep(float(random.randint(1000, 3000)) / 1000)
         warp_duration += 1
         warp_drive_active = pag.locateCenterOnScreen(
             './img/indicators/warping.bmp',
-            confidence=0.96,
+            confidence=0.98,
             region=(originx, originy, windowx,
                     windowy))
 
     # Wait up to 300 seconds before concluding there was an error with the
     # function.
     while warp_drive_active is not None and warp_duration <= 150:
-        print('nav.wait_for_warp_to_complete -- warping...',warp_duration)
+        print('warp icon found at', warp_drive_active)
+        print('nav.detect_warp -- warping...', warp_duration)
         warp_duration += 1
         time.sleep(2)
         warp_drive_active = pag.locateCenterOnScreen(
             './img/indicators/warping.bmp',
-            confidence=0.95,
+            confidence=0.98,
             region=(originx, originy, windowx,
                     windowy))
 
     if warp_drive_active is None and warp_duration <= 150:
         time.sleep(float(random.randint(1000, 3000)) / 1000)
-        print('nav.wait_for_warp_to_complete -- warp completed')
+        print('nav.detect_warp -- warp completed')
         return 1
     else:
-        print('nav.wait_for_warp_to_complete -- timed out waiting for warp')
+        print('nav.detect_warp -- timed out waiting for warp')
         emergency_terminate()
         return 0
 
@@ -397,7 +398,7 @@ def detect_dock():
         sys.exit()
 
 
-def at_dest_num():
+def detect_bookmark_location():
     # Determine if any bookmarks are green, indicating that bookmark is in the
     # ship's current system.
     global n
@@ -415,12 +416,12 @@ def at_dest_num():
             ('./img/dest/at_dest' + (destnum[n]) + '.bmp'),
             confidence=0.98,
             region=(originx, originy, windowx, windowy))
-        print('at_dest_num -- looking if at destination' + (destnum[n]))
+        print('detect_bookmark_location -- looking if at destination' + (destnum[n]))
         if n == 9 and at_dest is None:
             print('out of destinations to look for')
             return -1
     if at_dest is not None:
-        print('at_dest_num -- at dest' + (destnum[n]))
+        print('detect_bookmark_location -- at dest' + (destnum[n]))
         return n
 
 
@@ -428,7 +429,7 @@ def blacklist_station():
     # Blacklist the first green bookmark script identifies by editing its
     # bookmark name. This will prevent further trips to the blacklisted
     # station.
-    at_dest = at_dest_num()
+    at_dest = detect_bookmark_location()
     if at_dest is not None:
         print('blacklist_station -- blacklisting station')
         at_dest = pag.locateCenterOnScreen(
@@ -655,7 +656,7 @@ def emergency_terminate():
                        (random.randint(150, (
                        int(windowx - (windowx / 4))))),
                        mouse.duration(), mouse.path())
-            wait_for_warp_to_complete()
+            detect_warp()
             emergency_logout()
             return 0
         else:
