@@ -1,15 +1,26 @@
 mining script:
-- capture 'target-locked' versions of asteroid icons so script knows when a
+    - capture 'target-locked' versions of asteroid icons so script knows when a
 target has been sucessfully locked. see the 1h12m mark on video
 D/screen_recordings/2019-07-04_21-08-19
-- add support for a 'don't recall drones when escaping pcs or npcs' variable,
+    - add support for a 'don't recall drones when escaping pcs or npcs' variable,
 which could be useful in losec space when it's necessary to quickly escape
 ships when they arrive on grid
+    - add support for checking if shields have been depleted while mining. create screenshot of the leftmost area of the instrument cluster in which the shield has been depleted
+  
+  
+multi-thread support:
+    - make checks while mining multi-threaded to reduce resource usage.
 
 
-
-
-
+multi-client support
+    - each client will run on a separate thread of NEOBOT
+    - NEOBOT will share control of the mouse between each client by making each threat submit inputs to an 'input queue.'
+        - the mouse/keyboard will then run through the input queue and perform each action in order, regardless of which thread submitted the 'order.'
+        - links about python multithreading and queues:
+            blog on basig queue use -- https://www.troyfawkes.com/learn-python-multithreading-queues-basics/
+            documentation on python's "queue" library -- https://pymotw.com/2/Queue/
+            
+            
 
 
 -test situation when ship is at dest9 to see if dest checking loop works fully
