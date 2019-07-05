@@ -10,6 +10,135 @@ ships when they arrive on grid
   
 multi-thread support:
     - make checks while mining multi-threaded to reduce resource usage.
+        - this way, different checks can be run at different intervals. pc and npc checks can run once every 3 seconds, popup checks can be run every 2 seconds, etc.
+            sample code: if a check reaches a specific condition, it locks the warpout() function and then passes a variable that kills the other thread. Each function checks the stop variable before it runs the main 'if' statement to prevent issues if both threads try to access warpout() at the same time. lock.acquire() is also used to prevent simultaneous access to warpout().
+                
+                in other words, if a thread reaches its target condition, it immediately attempts to kill other threads and then proceeds to lock warpout(). after warpout completes and ship has returned to site, lock is released and threads are restarted.
+            """
+            import threading
+            import time
+            stop = 0
+            lock = threading.Lock()
+
+            def shield_check():
+                global stop
+                for i in range(1, 15):
+                    time.sleep(1)
+                    print('shield_check',i)
+                    if stop == 1:
+                      print('shield check stopping!')
+                      break
+                    elif i >= 4:
+                      print('shield check warping out!')
+                      stop = 1
+                      warpout()
+
+            def npc_check():
+                global stop
+                for i in range(1, 21):
+                    time.sleep(2)
+                    print('npc_check',i)
+                    if stop == 1:
+                      print('npc_check stopping!')
+                      break
+                    elif i >= 2:
+                      print('npc_check warping out!')
+                      stop = 1
+                      warpout()
+
+            def warpout():
+              lock.acquire()
+              for i in range(1, 5):
+                time.sleep(3)
+                print('warping out!',i)
+              lock.release()
+
+            threading.Thread(target=shield_check).start()
+            threading.Thread(target=npc_check).start()
+            """
+            
+            
+            multiprocessing with variable sharing between processes
+            """
+            import multiprocessing
+
+            def smile_detection(thread_name, counter, lock):
+                for x in range(10):
+                    with lock:
+                        counter.value +=1
+                        print (thread_name, counter.value)  
+
+
+            count = multiprocessing.Value('i',  0)
+            lock = multiprocessing.Lock()
+            x = multiprocessing.Process(target=smile_detection, args=("Thread1", count, lock))
+            y = multiprocessing.Process(target=smile_detection, args=("Thread2", count, lock))
+            x.start()
+            y.start()
+            x.join()
+            y.join()
+            """
+            
+            full multi-core implementation
+            """
+            import ctypes
+            import time
+            import multiprocessing
+            #global stopvar
+            stopvar = multiprocessing.Value('i', 0)
+            lock = multiprocessing.Lock()
+
+            def shield_check(stopvar, lock):
+                #global stopvar
+                for i in range(1, 15):
+                    time.sleep(1)
+                    print('shield_check',i)
+                    #global stopvar
+                    with lock:
+                      stopvar.value += 1
+                    print('stopvar is',stopvar)
+                    #return stopvar
+                    #if stopvar == 1:
+                    #  print('shield check stopping!')
+                    #  break
+                    #elif i == 10:
+                    #  print('shield check warping out!')
+                    #  #lock.acquire()
+                    #  stopvar = 1
+                    #  warpout()
+
+
+            def npc_check(stopvar, lock):
+                #global stopvar
+                for i in range(1, 21):
+                    time.sleep(2)
+                    print('npc_check',i)
+                    with lock:
+                      stopvar.value += 1
+                    #return stopvar
+                    #if stopvar == 1:
+                    #  print('npc_check stopping!')
+                    #  break
+                    #elif i == 2:
+                    #  print('npc_check warping out!')
+                    #  stopvar += 1
+                    #  print('npc stopvar is',stopvar)
+                    #  warpout()
+
+            def warpout():
+              lock.acquire()
+              for i in range(1, 5):
+                time.sleep(3)
+                print('warping out!',i)
+              lock.release()
+
+            a = multiprocessing.Process(target=shield_check, args=(stopvar, lock))
+            b = multiprocessing.Process(target=npc_check, args=(stopvar, lock))
+            a.start()
+            b.start()  
+            a.join()
+            b.join()
+            """
 
 
 multi-client support
