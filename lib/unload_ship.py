@@ -46,7 +46,7 @@ def unload_ship():
         if specinv == 1:
             # Wait between 0 and 2s before actions for increased randomness.
             time.sleep(float(random.randint(0, 2000)) / 1000)
-            docked.open_spec_inv()
+            docked.open_spec_inv_ore()
             items = docked.look_for_items()
 
             while items == 1:
@@ -80,7 +80,7 @@ def unload_ship():
         items = docked.look_for_items()
 
     if specinv == 1:
-        docked.open_spec_inv()
+        docked.open_spec_inv_ore()
         items = docked.look_for_items()
 
         while items == 1:

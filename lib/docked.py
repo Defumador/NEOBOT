@@ -47,28 +47,29 @@ def open_ship_inv():
         return 0
 
 
-def open_spec_inv():
+def open_spec_inv_ore():
     # If a special inventory was found (for ore, minerals, planetary
     # products etc.) click on it in
     # inventory window while docked.
-    print('open_spec_inv -- opening special inventory')
+    print('open_spec_inv_ore -- opening special inventory')
     tries = 0
-    spec_inv = pag.locateCenterOnScreen('./img/buttons/spec_inv.bmp',
+    spec_inv_ore = pag.locateCenterOnScreen('./img/buttons/spec_inv_ore.bmp',
                                         confidence=conf,
                                         region=(originx, originy,
                                                 windowx, windowy))
-    while spec_inv is None and tries <= 25:
-        print("open_spec_inv -- can't find special hold")
+    while spec_inv_ore is None and tries <= 25:
+        print("open_spec_inv_ore -- can't find special hold")
         tries += 1
-        spec_inv = pag.locateCenterOnScreen('./img/buttons/spec_in.bmp',
+        spec_inv_ore = pag.locateCenterOnScreen(
+            './img/buttons/spec_inv_ore.bmp',
                                             confidence=conf,
                                             region=(originx, originy,
                                                     windowx, windowy))
         time.sleep(1)
-    if spec_inv is not None and tries <= 25:
-        (spec_invx, spec_invy) = spec_inv
+    if spec_inv_ore is not None and tries <= 25:
+        (spec_invx, spec_invy) = spec_inv_ore
         pag.moveTo((spec_invx + (random.randint(-4, 50))),
-                   (spec_invy + (random.randint(15, 30))),
+                   (spec_invy + (random.randint(0, 15))),
                    mouse.duration(), mouse.path())
         mouse.click()
         return 1
@@ -159,18 +160,20 @@ def look_for_items():
 
 
 def look_for_spec_inv():
-    # Look for a drop-down arrow next to your ship icon in the station
-    # inventory window, indicating the ship has a special inventory.
-    spec_inv = pag.locateCenterOnScreen('./img/buttons/spec_inv.bmp',
-                                        confidence=conf,
-                                        region=(originx, originy,
-                                                windowx, windowy))
+    # Look for different kinds of special inventory locations on your
+    # ship.
     no_additional_invs = pag.locateCenterOnScreen(
         './img/indicators/no_additional_bays.bmp',
         confidence=conf, region=(originx, originy, windowx, windowy))
-    if spec_inv is not None and no_additional_invs is None:
-        print('look_for_spec_inv -- found special inventory')
+
+    spec_inv_ore = pag.locateCenterOnScreen('./img/buttons/spec_inv_ore.bmp',
+                                        confidence=conf,
+                                        region=(originx, originy,
+                                                windowx, windowy))
+    if spec_inv_ore is not None and no_additional_invs is None:
+        print('look_for_spec_inv -- found ore inventory')
         return 1
+
     else:
         return 0
 
