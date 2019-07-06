@@ -54,17 +54,17 @@ def open_spec_inv_ore():
     print('open_spec_inv_ore -- opening special inventory')
     tries = 0
     spec_inv_ore = pag.locateCenterOnScreen('./img/buttons/spec_inv_ore.bmp',
-                                        confidence=conf,
-                                        region=(originx, originy,
-                                                windowx, windowy))
+                                            confidence=conf,
+                                            region=(originx, originy,
+                                                    windowx, windowy))
     while spec_inv_ore is None and tries <= 25:
         print("open_spec_inv_ore -- can't find special hold")
         tries += 1
         spec_inv_ore = pag.locateCenterOnScreen(
             './img/buttons/spec_inv_ore.bmp',
-                                            confidence=conf,
-                                            region=(originx, originy,
-                                                    windowx, windowy))
+            confidence=conf,
+            region=(originx, originy,
+                    windowx, windowy))
         time.sleep(1)
     if spec_inv_ore is not None and tries <= 25:
         (spec_invx, spec_invy) = spec_inv_ore
@@ -167,9 +167,9 @@ def look_for_spec_inv():
         confidence=conf, region=(originx, originy, windowx, windowy))
 
     spec_inv_ore = pag.locateCenterOnScreen('./img/buttons/spec_inv_ore.bmp',
-                                        confidence=conf,
-                                        region=(originx, originy,
-                                                windowx, windowy))
+                                            confidence=conf,
+                                            region=(originx, originy,
+                                                    windowx, windowy))
     if spec_inv_ore is not None and no_additional_invs is None:
         print('look_for_spec_inv -- found ore inventory')
         return 1
@@ -182,11 +182,11 @@ def spec_inv_warning():
     # Look for a popup indicating the selected inventory items aren't
     # compatible with the ship's special inventory. This warning is partially
     # transparent so confidence rating must be slightly lower than normal.
-    spec_inv_warning = pag.locateCenterOnScreen(
+    spec_inv_warning_var = pag.locateCenterOnScreen(
         './img/popups/spec_inv.bmp',
         confidence=0.8,
         region=(originx, originy, windowx, windowy))
-    if spec_inv_warning is None:
+    if spec_inv_warning_var is None:
         return 0
     else:
         print('spec_inv_warning -- detected')

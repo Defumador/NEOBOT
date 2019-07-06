@@ -36,5 +36,3 @@ originx -= 18
 originy -= 18
 windowx = window_resolutionx
 windowy = window_resolutiony
-
-

@@ -8,7 +8,33 @@ ships when they arrive on grid
     - add support for checking if shields have been depleted while mining. create screenshot of the leftmost area of the instrument cluster in which the shield has been depleted
 - have ship return to previously used belt after dropping off cargo so ship
 doesn't have to start over looking for a suitable belt
-  
+
+
+
+multi-client support
+    - each client will run on a separate thread of NEOBOT
+    - NEOBOT will share control of the mouse between each client by making each threat submit inputs to an 'input queue.'
+        - the mouse/keyboard will then run through the input queue and perform each action in order, regardless of which thread submitted the 'order.'
+        - links about python multithreading and queues:
+            blog on basig queue use -- https://www.troyfawkes.com/learn-python-multithreading-queues-basics/
+            documentation on python's "queue" library -- https://pymotw.com/2/Queue/
+
+
+
+-test situation when ship is at dest9 to see if dest checking loop works fully
+-NOT READY FOR TESTING IN LOSEC YET
+
+features:
+-add support for 'icons' style inventory view
+-resize session change icons to only include cyan ring on left side to give script more time to check for image
+-add player-owned structures support
+-GUI
+-add a small chance for a semli-long wait after each jump/undock for increased randomness, make sure session change
+timer doesn't expire though as it would leave ship vulnerable in low-sec systems
+-add image recognition for yellow-highlighted entries in people & places
+
+
+
 multi-thread support:
     - make checks while mining multi-threaded to reduce resource usage.
         - this way, different checks can be run at different intervals. pc and npc checks can run once every 3 seconds, popup checks can be run every 2 seconds, etc.
@@ -140,27 +166,3 @@ multi-thread support:
             a.join()
             b.join()
             """
-
-
-multi-client support
-    - each client will run on a separate thread of NEOBOT
-    - NEOBOT will share control of the mouse between each client by making each threat submit inputs to an 'input queue.'
-        - the mouse/keyboard will then run through the input queue and perform each action in order, regardless of which thread submitted the 'order.'
-        - links about python multithreading and queues:
-            blog on basig queue use -- https://www.troyfawkes.com/learn-python-multithreading-queues-basics/
-            documentation on python's "queue" library -- https://pymotw.com/2/Queue/
-            
-            
-
-
--test situation when ship is at dest9 to see if dest checking loop works fully
--NOT READY FOR TESTING IN LOSEC YET
-
-features:
--add support for 'icons' style inventory view
--resize session change icons to only include cyan ring on left side to give script more time to check for image
--add player-owned structures support
--GUI
--add a small chance for a semli-long wait after each jump/undock for increased randomness, make sure session change
-timer doesn't expire though as it would leave ship vulnerable in low-sec systems
--add image recognition for yellow-highlighted entries in people & places
