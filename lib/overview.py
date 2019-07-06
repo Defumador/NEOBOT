@@ -14,7 +14,8 @@ detect_npc_battleship = 1
 
 detect_pcs_var = 1
 
-detect_pc_mining_barge_and_industrial = 1
+detect_pc_industrial = 1
+detect_pc_mining_barge = 1
 detect_pc_frigate_and_destroyer = 1
 detect_pc_capital_industrial_and_freighter = 1
 detect_pc_cruiser_and_battlecruiser = 1
@@ -31,17 +32,18 @@ def detect_target_lock():
         region=(originx, originy,
                 windowx, windowy))
     tries = 1
-    while target_lock is None and tries <= 25:
+    while target_lock is None and tries <= 100:
         target_lock = pag.locateOnScreen(
             './img/indicators/target_lock_attained.bmp',
             confidence=0.95,
             region=(originx, originy,
                     windowx, windowy))
         time.sleep(float(random.randint(100, 500)) / 1000)
-    if target_lock is not None and tries <= 25:
+        print('detect_target_lock -- locking', tries)
+    if target_lock is not None and tries <= 100:
         print('detect_target_lock -- lock attained')
         return 1
-    else:
+    elif target_lock is None and tries > 100:
         print('detect_target_lock -- timed out waiting for lock')
         return 0
 
@@ -180,7 +182,7 @@ def detect_pcs():
     # Check for player characters by looking for player ship icons in the
     # overview.
     # print('detect_pcs -- called')
-    conf = 0.98
+    conf = 0.95
     if detect_pcs_var == 1:
 
         # Search within the rightmost third of the client. Bot assumes
@@ -195,10 +197,14 @@ def detect_pcs():
 
         # Populate pc_list with only the player icons that the user wishes to
         # check for, as specified by the variables at the top of this file.
-        if detect_pc_mining_barge_and_industrial == 1:
+        if detect_pc_industrial == 1:
             pc_list.append(
                 './img/overview/player_ship_icons/archetype_icons'
-                '/player_mining_barge_and_industrial.bmp')
+                '/player_industrial.bmp')
+        if detect_pc_mining_barge == 1:
+            pc_list.append(
+                './img/overview/player_ship_icons/archetype_icons'
+                '/player_mining_barge.bmp')
         if detect_pc_frigate_and_destroyer == 1:
             pc_list.append(
                 './img/overview/player_ship_icons'

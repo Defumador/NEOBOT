@@ -104,9 +104,9 @@ def detect_ore():
     ore_list = []
     # Populate ore_list with only the ore types that the user wishes to
     # check for, as specified by the variables at the top of this file.
-    if plagioclase == 1:
-        ore_list.append('./img/overview/ore_types/plagioclase.bmp')
     if pyroxeres == 1:
+        ore_list.append('./img/overview/ore_types/plagioclase.bmp')
+    if plagioclase == 1:
         ore_list.append('./img/overview/ore_types/pyroxeres.bmp')
     if scordite == 1:
         ore_list.append('./img/overview/ore_types/scordite.bmp')
@@ -180,20 +180,22 @@ def target_ore():
         keyboard.keypress('w')
         if target_available() == 0:
             time.sleep(float(random.randint(500, 1000)) / 1000)
-            print('target_asteroid -- getting closer to target')
+            print('target_ore -- getting closer to target')
             time.sleep(float(random.randint(1000, 5000)) / 1000)
             tries = 0
             while target_available() == 0 and tries <= 30:
                 time.sleep(10)
             if target_available() == 0 and tries > 30:
-                print('target_asteroid -- timed out getting closer to target')
+                print('target_ore -- timed out getting closer to target')
                 return 0
         if target_available() == 1:
             keyboard.keypress('ctrl')
             time.sleep(float(random.randint(1000, 2000)) / 1000)
-            print('target_asteroid -- locking target')
-            detect_target_lock()
-            return 1
+            print('target_ore -- locking target')
+            if detect_target_lock() == 1:
+                return 1
+            elif detect_target_lock() == 0:
+                return 0
     else:
-        print('target_asteroid -- no asteroids to target')
+        print('target_ore -- no asteroids to target')
         return 0

@@ -1,14 +1,13 @@
-import sys, time, traceback, cProfile
-import pyautogui as pag
+import sys
+import time
+import traceback
 
 import lib.bookmarks
 import lib.drones
 import lib.navigation
 import lib.overview
-from lib import mouse
 from lib import docked, load_ship, navigation as nav, unload_ship, mining
-from lib.vars import system_mining
-from lib.vars import origin, originx, originy, windowx, windowy
+from lib.vars import system_mining, originx, originy, windowx, windowy
 
 sys.setrecursionlimit(9999999)
 playerfound = 0
@@ -32,12 +31,17 @@ playerfound = 0
 site = 7
 # Total number of saved bookmark locations. This variable is set by the user.
 total_sites = 10
+# Number of 'runs' completed for mining script
+runs = 0
 # -----------------------------------------------------------------------------
 
 
 def miner():
     global playerfound
     global site
+    global runs
+    runs += 1
+    print('beginning run', runs)
     while docked.docked_check() == 0:
         if lib.drones.detect_drones_launched() == 1:
             lib.overview.focus_overview()
@@ -65,7 +69,8 @@ def miner():
             lib.overview.focus_mining_tab()
             while mining.detect_ore() == 1:
                 lib.drones.launch_drones_loop()
-                mining.target_ore()
+                if mining.target_ore() == 0:
+                    miner()
                 mining.activate_miner()
                 # If ship inventory isn't full, continue to mine ore and wait
                 # for popups or errors.
@@ -77,7 +82,8 @@ def miner():
                             #nav.blacklist_local_bookmark()
                             miner()
                         elif mining.detect_ore() == 1:
-                            mining.target_ore()
+                            if mining.target_ore() == 0:
+                                miner()
                             mining.activate_miner()
                             mining.inv_full_popup()
                             continue
@@ -278,11 +284,11 @@ print("windowx =", windowx)
 print("windowy =", windowy)
 
 miner()
-'''
+
 #mining.detect_ore()
 #mining.target_ore()
 #mining.activate_miner()
-#mining.detect_npcs()
+# lib.overview.detect_pcs()
 #mining.detect_asteroids()
 #mining.target_asteroid()
 #mining.focus_mining_tab()
@@ -299,7 +305,7 @@ miner()
 # elif selectscript == 2:
 #	nav.detect_route()
 #	collector()
-
+'''
 # unit tests
 while mining.inv_full_popup() == 0:
     if mining.asteroid_depleted_popup() == 1:
