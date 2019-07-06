@@ -110,7 +110,7 @@ def warp_to_local_bookmark(target_site):
             confidence=0.90, region=(originx, originy, windowx, windowy))
 
         if at_target_site is not None:
-            print('nav.warp_to_local_bookmark -- already at bookmark',
+            print('warp_to_local_bookmark -- already at bookmark',
                   target_site)
             keyboard.keypress('esc')  # Close right-click menu.
             return 0
@@ -121,16 +121,17 @@ def warp_to_local_bookmark(target_site):
                 confidence=0.90, region=(originx, originy, windowx, windowy))
 
             if warp_to_target is not None:
-                print('nav.warp_to_local_bookmark -- warping to '
+                print('warp_to_local_bookmark -- warping to '
                       'bookmark', target_site)
                 pag.moveRel((0 + (random.randint(10, 80))),
                             (0 + (random.randint(10, 15))),
                             mouse.duration(), mouse.path())
+                time.sleep(float(random.randint(500, 800)) / 1000)
                 mouse.click()
-                time.sleep(2)
+                time.sleep(1)
                 return 1
             else:
-                print('nav.warp_to_local_bookmark -- error')
+                print('warp_to_local_bookmark -- error, is ship docked?')
                 return 0
 
 
@@ -151,13 +152,17 @@ def dock_at_local_bookmark():
         pag.moveRel((0 + (random.randint(10, 80))),
                     (0 + (random.randint(35, 40))),
                     mouse.duration(), mouse.path())
+        # Sleep used to fix possible bug in which script doesn't
+        # clock on 'dock' after opening right-click menu
+        # (see video 2019-07-06_13-26-14 at 33m50s for bug).
+        time.sleep(float(random.randint(500, 800)) / 1000)
         mouse.click()
         detect_dock_loop()
 
 
 def detect_bookmark_location():
     # Determine if any bookmarks are green, indicating that bookmark is in the
-    # ship's current system.
+    # ship's current system
     global n
     n = 0
     # Confidence must be higher than normal because script frequently

@@ -160,7 +160,7 @@ def detect_jump_loop():
 
     while detect_jump_var is None and tries <= 180:
         tries += 1
-        print('nav.detect_jump_loop -- waiting for jump...', tries)
+        print('ndetect_jump_loop -- waiting for jump', tries)
         time.sleep(1.5)
         detect_jump_var = pag.locateCenterOnScreen(
             './img/indicators/session_change_cloaked.bmp',
@@ -180,12 +180,12 @@ def detect_jump_loop():
                 continue
 
     if detect_jump_var is not None and tries <= 180:
-        print('nav.detect_jump_loop -- jump detected')
+        print('detect_jump_loop -- jump detected', tries)
         time.sleep(float(random.randint(900, 2400)) / 1000)
         return 1
 
     else:
-        print('nav.detect_jump_loop -- timed out looking for jump')
+        print('detect_jump_loop -- timed out looking for jump', tries)
         emergency_terminate()
         traceback.print_stack()
         sys.exit()
@@ -208,11 +208,11 @@ def detect_dock_loop():
                                                    region=(originx, originy,
                                                            windowx, windowy))
     if detect_dock_var is not None and tries <= 100:
-        print('nav.detect_dock_loop -- detected dock')
+        print('detect_dock_loop -- detected dock', tries)
         time.sleep(float(random.randint(2000, 5000)) / 1000)
         return 1
     else:
-        print('nav.detect_dock_loop -- timed out looking for dock')
+        print('detect_dock_loop -- timed out looking for dock', tries)
         emergency_terminate()
         traceback.print_stack()
         sys.exit()
@@ -236,8 +236,8 @@ def emergency_terminate():
 
     # Look for a station to dock at until confidence is <0.85
     while station_icon is None and tries <= 15:
-        print('!!! nav.emergency_terminate -- looking for station to dock at,'
-              'confidence =', confidence)
+        print('!!! emergency_terminate -- looking for station to dock at,'
+              'confidence =', confidence, tries)
         tries += 1
         time.sleep(float(random.randint(600, 1200)) / 1000)
         station_icon = pag.locateCenterOnScreen('./img/station_icon.bmp',
@@ -245,7 +245,7 @@ def emergency_terminate():
                                                 region=(originx, originy,
                                                         windowx, windowy))
     if station_icon is not None and tries <= 15:
-        print('!!! nav.emergency_terminate -- emergency docking')
+        print('!!! emergency_terminate -- emergency docking', tries)
         (station_iconx, station_icony) = station_icon
         pag.moveTo((station_iconx + (random.randint(-2, 50))),
                    (station_icony + (random.randint(-2, 2))),
@@ -269,8 +269,8 @@ def emergency_terminate():
     # instead.
     else:
         print(
-            "!!! nav.emergency_terminate -- couldn't find station to "
-            "emergency dock at, warping to celestial body instead")
+            "!!! emergency_terminate -- couldn't find station to "
+            "emergency dock at, warping to celestial body instead", tries)
         tries = 0
         confidence = 0.99
         celestial_icon = pag.locateCenterOnScreen(
@@ -278,7 +278,7 @@ def emergency_terminate():
             confidence=confidence,
             region=(originx, originy, windowx, windowy))
         while celestial_icon is None and tries <= 50:
-            print('!!! nav.emergency_terminate -- looking for celestial body')
+            print('!!! emergency_terminate -- looking for celestial body', tries)
             tries += 1
             confidence -= 0.01
             time.sleep(float(random.randint(600, 1200)) / 1000)
@@ -289,8 +289,8 @@ def emergency_terminate():
 
         if celestial_icon is not None and tries <= 50:
             print(
-                '!!! nav.emergency_terminate -- '
-                'emergency warping to celestial body')
+                '!!! emergency_terminate -- '
+                'emergency warping to celestial body', tries)
             (celestial_iconx, celestial_icony) = celestial_icon
             pag.moveTo((celestial_iconx + (random.randint(-2, 50))),
                        (celestial_icony + (random.randint(-2, 2))),
@@ -310,8 +310,8 @@ def emergency_terminate():
             return 0
         else:
             print(
-                '!!! nav.emergency_terminate -- '
-                'out of celestial bodies to look for')
+                '!!! emergency_terminate -- '
+                'out of celestial bodies to look for', tries)
             emergency_logout()
         return 1
 
@@ -320,7 +320,7 @@ def emergency_logout():
     # use hotkey to forcefully kill client session, don't use the 'log off
     # safely' feature
     # ALT SHIFT Q
-    print("!!! nav.emergency_logout -- called")
+    print("!!! emergency_logout -- called")
     time.sleep(float(random.randint(1000, 5000)) / 1000)
     pag.keyDown('alt')
     time.sleep(float(random.randint(500, 1000)) / 1000)

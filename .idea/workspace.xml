@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/notes.txt" line="1" />
+    <bookmark url="file://$PROJECT_DIR$/.idea/workspace.xml" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="82058255-4514-49d6-abc8-1a3c67f503d2" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/PyCharm.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/PyCharm.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="82058255-4514-49d6-abc8-1a3c67f503d2" name="Default Changelist" comment="renamed functions and rewrote undock function">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/docked.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/docked.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/img/buttons/spec_inv.bmp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/unload_ship.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/unload_ship.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/bookmarks.py" beforeDir="false" afterPath="$PROJECT_DIR$/lib/bookmarks.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,13 +20,49 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/lib/bookmarks.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2574">
+              <caret line="157" column="41" selection-start-line="157" selection-start-column="41" selection-end-line="157" selection-end-column="41" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/docked.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="861">
+              <caret line="276" column="32" selection-start-line="276" selection-start-column="32" selection-end-line="276" selection-end-column="32" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/drones.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="338">
+              <caret line="13" column="54" selection-start-line="13" selection-start-column="54" selection-end-line="13" selection-end-column="54" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/main.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="5746">
-              <caret line="226" column="23" selection-start-line="226" selection-start-column="23" selection-end-line="226" selection-end-column="23" />
+            <state relative-caret-position="6819">
+              <caret line="304" column="26" lean-forward="true" selection-start-line="304" selection-start-column="26" selection-end-line="304" selection-end-column="26" />
               <folding>
-                <element signature="e#0#41#0" expanded="true" />
+                <element signature="e#0#37#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -35,68 +71,19 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/lib/mining.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3042">
-              <caret line="286" column="49" lean-forward="true" selection-start-line="286" selection-start-column="49" selection-end-line="286" selection-end-column="49" />
+            <state relative-caret-position="-5200">
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
-                <marker date="1562114242180" expanded="true" signature="13378:13383" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/gui.py">
+        <entry file="file://$PROJECT_DIR$/lib/navigation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="26">
-              <caret line="5" selection-start-line="5" selection-end-line="5" />
-              <folding>
-                <element signature="e#0#21#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/lib/docked.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="327">
-              <caret line="96" column="21" lean-forward="true" selection-start-line="96" selection-start-column="21" selection-end-line="96" selection-end-column="21" />
-              <folding>
-                <element signature="e#0#19#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/load_ship.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="130">
-              <caret line="8" column="9" selection-start-line="8" selection-start-column="9" selection-end-line="8" selection-end-column="9" />
-              <folding>
-                <element signature="e#0#35#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/unload_ship.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="509">
-              <caret line="48" column="12" selection-start-line="48" selection-start-column="12" selection-end-line="48" selection-end-column="12" />
-              <folding>
-                <element signature="e#0#24#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/lib/vars.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
+            <state relative-caret-position="490">
+              <caret line="322" column="16" selection-start-line="322" selection-start-column="16" selection-end-line="322" selection-end-column="16" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -105,44 +92,74 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/.gitignore">
+        <entry file="file://$PROJECT_DIR$/lib/overview.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="870">
-              <caret line="72" selection-start-line="72" selection-end-line="72" />
+            <state relative-caret-position="240">
+              <caret line="33" column="31" selection-start-line="33" selection-start-column="31" selection-end-line="33" selection-end-column="31" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/lib/vars.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="260">
+              <caret line="10" column="1" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
+              <folding>
+                <element signature="e#0#10#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
     </leaf>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="FindInProjectRecents">
     <findStrings>
       <find>TEST</find>
       <find>grid_columnconfigure</find>
+      <find>pag.key</find>
+      <find>dict</find>
+      <find>asteroid</find>
+      <find>target_avail</find>
+      <find>waiting for warp</find>
+      <find>while</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SIGN_OFF_COMMIT" value="true" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/lib/guitest.py" />
-        <option value="$PROJECT_DIR$/lib/navigation.py" />
-        <option value="$PROJECT_DIR$/.gitignore" />
-        <option value="$PROJECT_DIR$/lib/mining.py" />
-        <option value="$PROJECT_DIR$/lib/main.py" />
+        <option value="$PROJECT_DIR$/ahk.old/traveler.py.old" />
+        <option value="$PROJECT_DIR$/ahk.old/traveler.ahk.old" />
         <option value="$PROJECT_DIR$/lib/docked.py" />
+        <option value="$PROJECT_DIR$/lib/navigation.py" />
+        <option value="$PROJECT_DIR$/lib/drones.py" />
+        <option value="$PROJECT_DIR$/lib/bookmarks.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="135" />
-    <option name="y" value="-1088" />
-    <option name="width" value="1440" />
-    <option name="height" value="780" />
+  <component name="ProjectFrameBounds">
+    <option name="x" value="513" />
+    <option name="width" value="1414" />
+    <option name="height" value="1047" />
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
@@ -154,11 +171,6 @@
             <path>
               <item name="NEOBOT" type="b2602c69:ProjectViewProjectNode" />
               <item name="NEOBOT" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="NEOBOT" type="b2602c69:ProjectViewProjectNode" />
-              <item name="NEOBOT" type="462c0819:PsiDirectoryNode" />
-              <item name="ahk.old" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="NEOBOT" type="b2602c69:ProjectViewProjectNode" />
@@ -288,7 +300,49 @@
       <option name="project" value="LOCAL" />
       <updated>1561944855189</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="added basic attack-drone support">
+      <created>1562294726500</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1562294726500</updated>
+    </task>
+    <task id="LOCAL-00003" summary="changed how asteroid targeting works, added detection for drone launches">
+      <created>1562377964797</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1562377964797</updated>
+    </task>
+    <task id="LOCAL-00004" summary="organization">
+      <created>1562383623287</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1562383623287</updated>
+    </task>
+    <task id="LOCAL-00005" summary="renamed functions and rewrote undock function">
+      <created>1562433871661</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1562433871661</updated>
+    </task>
+    <task id="LOCAL-00006" summary="renamed functions and rewrote undock function&#10;&#10;Signed-off-by: takelley1 &lt;37026149+Zultair@users.noreply.github.com&gt;">
+      <created>1562434706614</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1562434706614</updated>
+    </task>
+    <task id="LOCAL-00007" summary="possible fix causing script to not click 'dock' in right-click menu">
+      <created>1562436456214</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1562436456214</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TodoView">
@@ -301,36 +355,62 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="135" y="-1088" width="1936" height="1056" extended-state="6" />
+    <frame x="513" y="0" width="1414" height="1047" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.80306345" visible="true" weight="0.124200426" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.80306345" weight="0.10394456" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.34486488" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.4931164" weight="0.4268559" />
       <window_info anchor="bottom" id="Debug" order="2" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="3" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="4" weight="0.4" />
+      <window_info anchor="bottom" id="Run" order="5" sideWeight="0.5068836" side_tool="true" visible="true" weight="0.1058952" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" x="140" y="143" width="626" height="946" id="Structure" order="3" sideWeight="0.5010571" weight="0.32942432" />
+      <window_info anchor="right" x="140" y="143" width="626" height="946" id="Structure" order="3" sideWeight="0.5010571" weight="0.32889125" />
       <window_info anchor="right" id="Favorites" order="4" show_stripe_button="false" weight="0.32889125" />
       <window_info anchor="right" auto_hide="true" x="647" y="284" width="626" height="472" id="Python Console" order="5" sideWeight="0.4989429" weight="0.32942432" />
       <window_info anchor="right" id="Terminal" order="6" weight="0.32942432" />
-      <window_info anchor="right" id="Version Control" order="7" weight="0.32942432" />
+      <window_info anchor="right" id="Version Control" order="7" weight="0.22757111" />
       <window_info anchor="right" id="TODO" order="8" weight="0.32942432" />
       <window_info anchor="right" id="Event Log" order="9" sideWeight="0.5014903" weight="0.23347548" />
-      <window_info anchor="right" id="Run" order="10" sideWeight="0.49850968" weight="0.44829425" />
     </layout>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="implemented new player ship checking and warp checking functions, various bug fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="implemented new player ship checking and warp checking functions, various bug fixes" />
+    <MESSAGE value="added basic attack-drone support" />
+    <MESSAGE value="changed how asteroid targeting works, added detection for drone launches" />
+    <MESSAGE value="organization" />
+    <MESSAGE value="renamed functions and rewrote undock function" />
+    <MESSAGE value="renamed functions and rewrote undock function&#10;&#10;Signed-off-by: takelley1 &lt;37026149+Zultair@users.noreply.github.com&gt;" />
+    <MESSAGE value="possible fix causing script to not click 'dock' in right-click menu" />
+    <option name="LAST_COMMIT_MESSAGE" value="possible fix causing script to not click 'dock' in right-click menu" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/lib/vars.py">
+    <entry file="file://$PROJECT_DIR$/lib/drones.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
+        <state relative-caret-position="338">
+          <caret line="13" column="54" selection-start-line="13" selection-start-column="54" selection-end-line="13" selection-end-column="54" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/mining.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-5200">
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/navigation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="490">
+          <caret line="322" column="16" selection-start-line="322" selection-start-column="16" selection-end-line="322" selection-end-column="16" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
@@ -339,48 +419,30 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5746">
-          <caret line="226" column="23" selection-start-line="226" selection-start-column="23" selection-end-line="226" selection-end-column="23" />
+        <state relative-caret-position="6819">
+          <caret line="304" column="26" lean-forward="true" selection-start-line="304" selection-start-column="26" selection-end-line="304" selection-end-column="26" />
           <folding>
-            <element signature="e#0#41#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="870">
-          <caret line="72" selection-start-line="72" selection-end-line="72" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/mining.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3042">
-          <caret line="286" column="49" lean-forward="true" selection-start-line="286" selection-start-column="49" selection-end-line="286" selection-end-column="49" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-            <marker date="1562114242180" expanded="true" signature="13378:13383" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/unload_ship.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="509">
-          <caret line="48" column="12" selection-start-line="48" selection-start-column="12" selection-end-line="48" selection-end-column="12" />
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
+            <element signature="e#0#37#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/lib/docked.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="327">
-          <caret line="96" column="21" lean-forward="true" selection-start-line="96" selection-start-column="21" selection-end-line="96" selection-end-column="21" />
+        <state relative-caret-position="861">
+          <caret line="276" column="32" selection-start-line="276" selection-start-column="32" selection-end-line="276" selection-end-column="32" />
           <folding>
-            <element signature="e#0#19#0" expanded="true" />
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib/bookmarks.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2574">
+          <caret line="157" column="41" selection-start-line="157" selection-start-column="41" selection-end-line="157" selection-end-column="41" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
           </folding>
         </state>
       </provider>
