@@ -235,7 +235,7 @@ def detect_pcs():
                 (x, y, t, w) = player_found
                 # Coordinates must compensate for the altered coordinate-space
                 # of the screenshot.
-                pag.moveTo((x + (originx + (windowx - (int(windowx / 2))))),
+                pag.moveTo((x + (originx + (windowx - (int(windowx / 3.8))))),
                            (y + originy),
                            0, mouse.path())
                 return 1

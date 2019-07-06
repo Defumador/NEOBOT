@@ -63,9 +63,9 @@ def miner():
                     miner()
 
             lib.overview.focus_mining_tab()
-            while mining.detect_asteroids() == 1:
+            while mining.detect_ore() == 1:
                 lib.drones.launch_drones_loop()
-                mining.target_asteroid()
+                mining.target_ore()
                 mining.activate_miner()
                 # If ship inventory isn't full, continue to mine ore and wait
                 # for popups or errors.
@@ -73,11 +73,11 @@ def miner():
                 lib.overview.focus_general_tab()
                 while mining.inv_full_popup() == 0:
                     if mining.asteroid_depleted_popup() == 1:
-                        if mining.detect_asteroids() == 0:
+                        if mining.detect_ore() == 0:
                             #nav.blacklist_local_bookmark()
                             miner()
-                        elif mining.detect_asteroids() == 1:
-                            mining.target_asteroid()
+                        elif mining.detect_ore() == 1:
+                            mining.target_ore()
                             mining.activate_miner()
                             mining.inv_full_popup()
                             continue
@@ -110,7 +110,7 @@ def miner():
                         time.sleep(3)
                         miner()
 
-                if mining.detect_asteroids() == 0:
+                if mining.detect_ore() == 0:
                     lib.bookmarks.blacklist_local_bookmark()
         elif lib.bookmarks.travel_to_bookmark(site) == 0:
             nav.emergency_terminate()
@@ -279,25 +279,8 @@ print("windowy =", windowy)
 
 miner()
 '''
-# unit tests
-while mining.inv_full_popup() == 0:
-    if mining.asteroid_depleted_popup() == 1:
-        if mining.detect_asteroids() == 0:
-            # nav.blacklist_local_bookmark()
-            miner()
-        elif mining.detect_asteroids() == 1:
-            mining.target_asteroid()
-            mining.activate_miner()
-            mining.inv_full_popup()
-            continue
-    if threading.Thread(target=mining.detect_pcs()).start() == 1:
-        mining.recall_drones_loop()
-        miner()
-    if threading.Thread(target=mining.detect_pcs()).start() == 1:
-        mining.recall_drones_loop()
-        miner()
-    time.sleep(2)
-'''
+#mining.detect_ore()
+#mining.target_ore()
 #mining.activate_miner()
 #mining.detect_npcs()
 #mining.detect_asteroids()
@@ -317,3 +300,22 @@ while mining.inv_full_popup() == 0:
 #	nav.detect_route()
 #	collector()
 
+# unit tests
+while mining.inv_full_popup() == 0:
+    if mining.asteroid_depleted_popup() == 1:
+        if mining.detect_asteroids() == 0:
+            # nav.blacklist_local_bookmark()
+            miner()
+        elif mining.detect_asteroids() == 1:
+            mining.target_asteroid()
+            mining.activate_miner()
+            mining.inv_full_popup()
+            continue
+    if threading.Thread(target=mining.detect_pcs()).start() == 1:
+        mining.recall_drones_loop()
+        miner()
+    if threading.Thread(target=mining.detect_pcs()).start() == 1:
+        mining.recall_drones_loop()
+        miner()
+    time.sleep(2)
+'''

@@ -127,6 +127,7 @@ def warp_to_local_bookmark(target_site):
                             (0 + (random.randint(10, 15))),
                             mouse.duration(), mouse.path())
                 mouse.click()
+                time.sleep(float(random.randint(500, 800)) / 1000)
                 time.sleep(1)
                 return 1
             else:
@@ -153,7 +154,8 @@ def dock_at_local_bookmark():
                     mouse.duration(), mouse.path())
         # Sleep used to fix possible bug in which script doesn't
         # clock on 'dock' after opening right-click menu.
-        time.sleep(float(random.randint(300, 800)) / 1000)
+        # (see video 2019-07-06_13-26-14 at 33m50s for bug).
+        time.sleep(float(random.randint(500, 800)) / 1000)
         mouse.click()
         detect_dock_loop()
 
