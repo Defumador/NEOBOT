@@ -101,7 +101,7 @@ def set_home():
 def focus_overview():
     # Click on the overview window to focus the eve client window.
     print('nav.focus_overview -- called')
-    pag.moveTo((windowx - (random.randint(10, 230))),
+    pag.moveTo((windowx - (random.randint(10, 90))),
                (75 + (random.randint(0, (windowy - 10)))),
                mouse.duration(), mouse.path())
     time.sleep(float(random.randint(50, 500)) / 1000)
@@ -285,7 +285,7 @@ def detect_warp():
     warp_duration = 1
     warp_drive_active = pag.locateCenterOnScreen(
         './img/indicators/warping.bmp',
-        confidence=0.98,
+        confidence=0.95,
         region=(originx, originy, windowx,
                 windowy))
 
@@ -299,7 +299,7 @@ def detect_warp():
         warp_duration += 1
         warp_drive_active = pag.locateCenterOnScreen(
             './img/indicators/warping.bmp',
-            confidence=0.98,
+            confidence=0.95,
             region=(originx, originy, windowx,
                     windowy))
 
@@ -312,7 +312,7 @@ def detect_warp():
         time.sleep(2)
         warp_drive_active = pag.locateCenterOnScreen(
             './img/indicators/warping.bmp',
-            confidence=0.98,
+            confidence=0.95,
             region=(originx, originy, windowx,
                     windowy))
 

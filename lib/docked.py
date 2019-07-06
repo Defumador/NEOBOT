@@ -69,7 +69,7 @@ def open_spec_inv_ore():
     if spec_inv_ore is not None and tries <= 25:
         (spec_invx, spec_invy) = spec_inv_ore
         pag.moveTo((spec_invx + (random.randint(-4, 50))),
-                   (spec_invy + (random.randint(0, 15))),
+                   (spec_invy + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
         mouse.click()
         return 1

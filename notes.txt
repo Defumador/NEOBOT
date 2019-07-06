@@ -6,7 +6,8 @@ D/screen_recordings/2019-07-04_21-08-19
 which could be useful in losec space when it's necessary to quickly escape
 ships when they arrive on grid
     - add support for checking if shields have been depleted while mining. create screenshot of the leftmost area of the instrument cluster in which the shield has been depleted
-  
+- have ship return to previously used belt after dropping off cargo so ship
+doesn't have to start over looking for a suitable belt
   
 multi-thread support:
     - make checks while mining multi-threaded to reduce resource usage.

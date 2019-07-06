@@ -16,7 +16,7 @@ sys.setrecursionlimit(9999999)
 
 mining_lasers = 2
 # Attack drones only, mining drones are not yet supported.
-drones = 1
+drones = 2
 
 # -----------------------------------------------------------------------------
 
@@ -87,20 +87,29 @@ def detect_asteroids():
 
     asteroid_m = pag.locateCenterOnScreen('./img/overview/asteroid_m.bmp',
                                           confidence=0.90,
-                                          region=(originx, originy,
-                                                  windowx, windowy))
+                                          region=((originx + (windowx - (
+                                              int(windowx / 3.8)))),
+                                                  originy,
+                                                  (int(windowx / 3.8)),
+                                                  windowy))
     if asteroid_m is not None:
         return 1
     asteroid_l = pag.locateCenterOnScreen('./img/overview/asteroid_l.bmp',
                                           confidence=0.90,
-                                          region=(originx, originy,
-                                                  windowx, windowy))
+                                          region=((originx + (windowx - (
+                                              int(windowx / 3.8)))),
+                                                  originy,
+                                                  (int(windowx / 3.8)),
+                                                  windowy))
     if asteroid_l is not None:
         return 1
     asteroid_s = pag.locateCenterOnScreen('./img/overview/asteroid_s.bmp',
                                           confidence=0.90,
-                                          region=(originx, originy,
-                                                  windowx, windowy))
+                                          region=((originx + (windowx - (
+                                              int(windowx / 3.8)))),
+                                                  originy,
+                                                  (int(windowx / 3.8)),
+                                                  windowy))
     if asteroid_s is not None:
         return 1
     else:
@@ -122,21 +131,23 @@ def target_asteroid():
                    (asteroid_mediumy + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
         mouse.click()
-        keyboard.keypress('ctrl')
-        time.sleep(float(random.randint(1000, 2000)) / 1000)
-        while target_out_of_range_popup() == 1:
-            keyboard.keypress('w')
+        keyboard.keypress('w')
+        if target_available() == 0:
+            time.sleep(float(random.randint(500, 1000)) / 1000)
             print('target_asteroid -- getting closer to target')
-            time.sleep(float(random.randint(10000, 40000)) / 1000)
+            time.sleep(float(random.randint(1000, 5000)) / 1000)
+            tries = 0
+            while target_available() == 0 and tries <= 30:
+                time.sleep(10)
+            if target_available() == 0 and tries > 30:
+                print('target_asteroid -- timed out getting closer to target')
+                return 0
+        if target_available() == 1:
             keyboard.keypress('ctrl')
             time.sleep(float(random.randint(1000, 2000)) / 1000)
-        if target_out_of_range_popup() == 0:
             print('target_asteroid -- locking target')
-            time.sleep(target_lock_time)
-            time.sleep(float(random.randint(1000, 3000)) / 1000)
-            print('target_asteroid -- target locked, orbiting')
-            keyboard.keypress('w')
-        return 1
+            detect_target_lock()
+            return 1
 
     elif asteroid_l is not None:
         (asteroid_largex, asteroid_largey) = asteroid_l
@@ -144,22 +155,24 @@ def target_asteroid():
                    (asteroid_largey + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
         mouse.click()
-        keyboard.keypress('ctrl')
-        time.sleep(float(random.randint(1000, 2000)) / 1000)
-        while target_out_of_range_popup() == 1:
-            keyboard.keypress('w')
+        keyboard.keypress('w')
+        if target_available() == 0:
             print('target_asteroid -- getting closer to target')
-            time.sleep(float(random.randint(10000, 40000)) / 1000)
+            time.sleep(float(random.randint(1000, 5000)) / 1000)
+            # This while loop is required to prevent script from constantly
+            # issuing 'orbit' commands.
+            tries = 0
+            while target_available() == 0 and tries <= 30:
+                time.sleep(10)
+            if target_available() == 0 and tries > 30:
+                print('target_asteroid -- timed out getting closer to target')
+                return 0
+        if target_available() == 1:
             keyboard.keypress('ctrl')
             time.sleep(float(random.randint(1000, 2000)) / 1000)
-        if target_out_of_range_popup() == 0:
             print('target_asteroid -- locking target')
-            time.sleep(target_lock_time)
-            time.sleep(float(random.randint(1000, 3000)) / 1000)  # Wait for
-            # a lock to be achieved.
-            print('target_asteroid -- target locked, orbiting')
-            keyboard.keypress('w')
-        return 1
+            detect_target_lock()
+            return 1
 
     elif asteroid_s is not None:
         (asteroid_smallx, asteroid_smally) = asteroid_s
@@ -167,29 +180,54 @@ def target_asteroid():
                    (asteroid_smally + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
         mouse.click()
-        keyboard.keypress('ctrl')
-        time.sleep(float(random.randint(1000, 2000)) / 1000)
-        while target_out_of_range_popup() == 1:
-            keyboard.keypress('w')
+        keyboard.keypress('w')
+        if target_available() == 0:
             print('target_asteroid -- getting closer to target')
-            time.sleep(float(random.randint(10000, 40000)) / 1000)
+            time.sleep(float(random.randint(1000, 5000)) / 1000)
+            tries = 0
+            while target_available() == 0 and tries <= 30:
+                time.sleep(10)
+            if target_available() == 0 and tries > 30:
+                print('target_asteroid -- timed out getting closer to target')
+                return 0
+        if target_available() == 1:
             keyboard.keypress('ctrl')
             time.sleep(float(random.randint(1000, 2000)) / 1000)
-        if target_out_of_range_popup() == 0:
             print('target_asteroid -- locking target')
-            time.sleep(target_lock_time)
-            time.sleep(float(random.randint(1000, 3000)) / 1000)
-            print('target_asteroid -- target locked, orbiting')
-            keyboard.keypress('w')
-        return 1
+            detect_target_lock()
+            return 1
 
     else:
         print('target_asteroid -- no asteroids to target')
         return 0
 
 
+def detect_target_lock():
+    # Wait for ship to finish acquiring target lock.
+    target_lock = pag.locateOnScreen(
+        './img/indicators/target_lock_attained.bmp',
+        confidence=0.95,
+        region=(originx, originy,
+                windowx, windowy))
+    tries = 1
+    while target_lock is None and tries <= 25:
+        target_lock = pag.locateOnScreen(
+            './img/indicators/target_lock_attained.bmp',
+            confidence=0.95,
+            region=(originx, originy,
+                    windowx, windowy))
+        time.sleep(float(random.randint(100, 500)) / 1000)
+    if target_lock is not None and tries <= 25:
+        print('detect_target_lock -- lock attained')
+        return 1
+    else:
+        print('detect_target_lock -- timed out waiting for lock')
+        return 0
+
+
 def focus_general_tab():
-    # Switch to the default 'General' tab of the overview to check for other
+    # Switch to the default 'General' tab of the overview to check for
+    # other
     # ships.
     print('focus_general_tab -- called')
     general_tab_selected = pag.locateCenterOnScreen(
@@ -228,7 +266,7 @@ def focus_mining_tab():
         './img/overview/mining_overview_tab_selected.bmp',
         # Requires very high confidence because the button looks slightly
         # different when it's selected.
-        confidence=0.992,
+        confidence=0.995,
         region=(originx, originy,
                 windowx, windowy))
     if mining_tab_selected is not None:
@@ -292,26 +330,26 @@ def activate_miner():
     if mining_lasers == 1:
         keyboard.keypress('f1')
         while miner_out_of_range_popup() == 1:
-            time.sleep(float(random.randint(15000, 40000)) / 1000)
+            time.sleep(float(random.randint(10000, 20000)) / 1000)
             activate_miner()
-        if miner_out_of_range_popup() == 0:
-            return 1
+        return 1
 
     elif mining_lasers == 2:
         keyboard.keypress('f1')
         while miner_out_of_range_popup() == 1:
-            time.sleep(float(random.randint(15000, 40000)) / 1000)
-            activate_miner()
-        if miner_out_of_range_popup() == 0:
+            time.sleep(float(random.randint(10000, 20000)) / 1000)
+            keyboard.keypress('f1')
+        else:
+            print('pressing f2')
             keyboard.keypress('f2')
             return 1
 
     elif mining_lasers == 3:
         keyboard.keypress('f1')
         while miner_out_of_range_popup() == 1:
-            time.sleep(float(random.randint(15000, 40000)) / 1000)
-            activate_miner()
-        if miner_out_of_range_popup() == 0:
+            time.sleep(float(random.randint(10000, 20000)) / 1000)
+            keyboard.keypress('f1')
+        else:
             keyboard.keypress('f2')
             keyboard.keypress('f3')
             return 1
@@ -319,9 +357,9 @@ def activate_miner():
     elif mining_lasers == 4:
         keyboard.keypress('f1')
         while miner_out_of_range_popup() == 1:
-            time.sleep(float(random.randint(15000, 40000)) / 1000)
-            activate_miner()
-        if miner_out_of_range_popup() == 0:
+            time.sleep(float(random.randint(10000, 20000)) / 1000)
+            keyboard.keypress('f1')
+        else:
             keyboard.keypress('f2')
             keyboard.keypress('f3')
             keyboard.keypress('f4')
@@ -341,11 +379,33 @@ def launch_drones():
         pag.keyUp('shift')
         time.sleep(float(random.randint(10, 800)) / 1000)
         pag.keyUp('l')
-        time.sleep(float(random.randint(2000, 5000)) / 1000)
-        print('launch drones -- drones launched')
+        time.sleep(float(random.randint(300, 800)) / 1000)
+
+    # Wait for drones to launch by looking for '0' in drone bay
+    drones_launched = pag.locateOnScreen(
+        './img/indicators/drones/0_drone_in_bay.bmp')
+    tries = 0
+    while drones_launched is None and tries <= 25:
+        time.sleep(float(random.randint(500, 2000)) / 1000)
+        drones_launched = pag.locateOnScreen(
+            './img/indicators/drones/0_drone_in_bay.bmp')
+        tries += 1
+    if drones_launched is not None and tries <= 25:
+        print('launch_drones -- drones launched')
         return 1
     else:
+        print('launch_drones -- timed out waiting for drones to launch')
         return 1
+
+
+def drones_launched():
+    drones_launched = pag.locateOnScreen(
+        './img/indicators/drones/0_drone_in_bay.bmp')
+    if drones_launched is not None:
+        print('drones_launched -- drones are in space')
+        return 1
+    else:
+        return 0
 
 
 drones_dict = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5"}
@@ -397,18 +457,19 @@ def miner_out_of_range_popup():
         return 0
 
 
-def target_out_of_range_popup():
-    # Check if ship is too far from the desired object in order to get a
-    # target lock on it.
-    target_out_of_range = pag.locateCenterOnScreen(
-        './img/popups/target_too_far.bmp',
-        confidence=0.90,
-        region=(originx, originy, windowx, windowy))
-    while target_out_of_range is not None:
-        print('target_out_of_range -- out of targeting range')
+def target_available():
+    # Look for the target icon in the 'selected item' window, indicating
+    # target is close enough in order to achieve a lock.
+    target_lock_available = pag.locateOnScreen(
+        './img/indicators/target_lock_available.bmp',
+        confidence=0.9999,  # High confidence required since greyed-out icon
+        # looks so similar to enabled icon.
+        region=(originx, originy, windowx, windowy), grayscale=True)
+    if target_lock_available is not None:
+        print('target_available -- within targeting range')
         return 1
-    if target_out_of_range is None:
-        print('target_out_of_range -- in targeting range')
+    elif target_lock_available is None:
+        print('target_available -- outside of targeting range')
         return 0
 
 
@@ -423,8 +484,8 @@ def detect_npcs():
         # overview is on the right half of the screen. This is about
         # twice as fast as searching the entire 1024x768 client.
         overview = pag.screenshot(
-            region=((originx + (windowx - (int(windowx / 2)))),
-                    originy, (int(windowx / 2)), windowy))
+            region=((originx + (windowx - (int(windowx / 3.8)))),
+                    originy, (int(windowx / 3.8)), windowy))
 
         # Create an empty list to be filled with player icon paths
         npc_list = []
@@ -449,14 +510,14 @@ def detect_npcs():
                 print('detect_npcs -- found ship at', hostile_npc_found)
                 print('located icon', npc_icon)
                 # Break up the tuple so mouse can point at icon for debugging.
-                (x, y, t, w) = hostile_npc_found
+                #(x, y, t, w) = hostile_npc_found
                 # Coordinates must compensate for the altered coordinate-space
                 # of the screenshot.
-                pag.moveTo((x + (originx + (windowx - (int(windowx / 2))))),
-                           (y + originy),
-                           0, mouse.path())
+                #pag.moveTo((x + (originx + (windowx - (int(windowx / 2))))),
+                #           (y + originy),
+                #           0, mouse.path())
                 return 1
-        print('detect npcs -- no hostile NPCs found')
+        print('detect npcs -- passed')
         return 0
     else:
         return 0
@@ -473,8 +534,8 @@ def detect_pcs():
         # overview is on the right half of the screen. This is about
         # twice as fast as searching the entire 1024x768 client.
         overview = pag.screenshot(
-            region=((originx + (windowx - (int(windowx / 2)))),
-                    originy, (int(windowx / 2)), windowy))
+            region=((originx + (windowx - (int(windowx / 3.8)))),
+                    originy, (int(windowx / 3.8)), windowy))
 
         # Create an empty list to be filled with player icon paths
         pc_list = []
@@ -525,13 +586,29 @@ def detect_pcs():
                            (y + originy),
                            0, mouse.path())
                 return 1
-        print('detect pcs -- no players found')
+        print('detect pcs -- passed')
         return 0
     else:
         return 0
 
 
 '''
+# no longer used
+def target_out_of_range_popup():
+    # Check if ship is too far from the desired object in order to get a
+    # target lock on it.
+    target_out_of_range = pag.locateCenterOnScreen(
+        './img/popups/target_too_far.bmp',
+        confidence=0.90,
+        region=(originx, originy, windowx, windowy))
+    while target_out_of_range is not None:
+        print('target_out_of_range -- out of targeting range')
+        return 1
+    if target_out_of_range is None:
+        print('target_out_of_range -- in targeting range')
+        return 0
+
+
 def detect_pcs():
     # Same as check_for_enemies function, except check for certain
     # classes of

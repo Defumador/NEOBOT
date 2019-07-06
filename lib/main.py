@@ -1,4 +1,4 @@
-import sys, time, traceback, cProfile, re
+import sys, time, traceback, cProfile
 import pyautogui as pag
 from lib import mouse
 from lib import docked, load_ship, navigation as nav, unload_ship, mining
@@ -21,16 +21,19 @@ playerfound = 0
 
 # These variables are for the mining script only ------------------------------
 # Script begins at location 0, assumed to be your home station.
-site = 0
+site = 7
 # Total number of saved bookmark locations. This variable is set by the user.
 total_sites = 10
 # -----------------------------------------------------------------------------
 
-#nav.focus_overview()
+
 def miner():
     global playerfound
     global site
     while docked.docked_check() == 0:
+        if mining.drones_launched() == 1:
+            nav.focus_overview()
+            mining.recall_drones()
         # Increment desired mining site by one as this is the next location
         # ship will warp to.
         site += 1
@@ -73,7 +76,6 @@ def miner():
                     if mining.detect_npcs() == 1:
                         mining.recall_drones()
                         miner()
-                    #detect_pcs()
                     if mining.detect_pcs() == 1:
                         mining.recall_drones()
                         miner()
@@ -111,6 +113,48 @@ def miner():
         docked.undock()
         miner()
 
+'''
+sample threading implementation
+
+import threading
+import time
+
+stop = 0
+lock = threading.Lock()
+
+def shield_check():
+    global stop
+    for i in range(1, 15):
+        time.sleep(1)
+        print('shield_check', i)
+        if stop == 1:
+            print('shield check stopping!')
+            break
+        elif i >= 4:
+            print('shield check warping out!')
+            stop = 1
+            warpout()
+
+def npc_check():
+    global stop
+    for i in range(1, 21):
+        time.sleep(2)
+        print('npc_check', i)
+        if stop == 1:
+            print('npc_check stopping!')
+            break
+        elif i >= 2:
+            print('npc_check warping out!')
+            stop = 1
+            warpout()
+
+def warpout():
+    lock.acquire()
+    for i in range(1, 5):
+        time.sleep(3)
+        print('warping out!', i)
+    lock.release()
+'''
 
 def navigator():
     # A standard warp-to-zero autopilot script. Warp to the destination, then
@@ -224,13 +268,36 @@ print("windowx =", windowx)
 print("windowy =", windowy)
 
 miner()
-
+'''
 # unit tests
-
+while mining.inv_full_popup() == 0:
+    if mining.asteroid_depleted_popup() == 1:
+        if mining.detect_asteroids() == 0:
+            # nav.blacklist_current_bookmark()
+            miner()
+        elif mining.detect_asteroids() == 1:
+            mining.target_asteroid()
+            mining.activate_miner()
+            mining.inv_full_popup()
+            continue
+    if threading.Thread(target=mining.detect_pcs()).start() == 1:
+        mining.recall_drones()
+        miner()
+    if threading.Thread(target=mining.detect_pcs()).start() == 1:
+        mining.recall_drones()
+        miner()
+    time.sleep(2)
+'''
+#mining.activate_miner()
+#mining.detect_npcs()
+#mining.detect_asteroids()
+#mining.target_asteroid()
+#mining.focus_mining_tab()
 #mining.check_for_enemies()
 #time.sleep(2)
 #mining.recall_drones()
-#cProfile.run('mining.detect_npcs()')
+#mining.launch_drones()
+#cProfile.run('mining.detect_pcs()')
 # Method for determining which script to run, as yet to be implemented by gui.
 # selectscript = 2
 #
