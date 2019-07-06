@@ -22,6 +22,9 @@ playerfound = 0
 # A 'popup' is a partially transparent block of text that appears in the
 # main play area for about five seconds.
 
+# A function with the word 'loop' in its name will not return until a certain
+# condition has been met or it times out.
+
 ###############################################################################
 
 # These variables are for the mining script only ------------------------------
@@ -36,9 +39,9 @@ def miner():
     global playerfound
     global site
     while docked.docked_check() == 0:
-        if lib.drones.drones_launched() == 1:
+        if lib.drones.detect_drones_launched() == 1:
             lib.overview.focus_overview()
-            lib.drones.recall_drones()
+            lib.drones.recall_drones_loop()
         # Increment desired mining site by one as this is the next location
         # ship will warp to.
         site += 1
@@ -71,7 +74,7 @@ def miner():
                 while mining.inv_full_popup() == 0:
                     if mining.asteroid_depleted_popup() == 1:
                         if mining.detect_asteroids() == 0:
-                            #nav.blacklist_current_bookmark()
+                            #nav.blacklist_local_bookmark()
                             miner()
                         elif mining.detect_asteroids() == 1:
                             mining.target_asteroid()
@@ -79,21 +82,21 @@ def miner():
                             mining.inv_full_popup()
                             continue
                     if lib.overview.detect_npcs() == 1:
-                        lib.drones.recall_drones()
+                        lib.drones.recall_drones_loop()
                         miner()
                     if lib.overview.detect_pcs() == 1:
-                        lib.drones.recall_drones()
+                        lib.drones.recall_drones_loop()
                         miner()
                     time.sleep(2)
 
                 if mining.inv_full_popup() == 1:
                     # Once inventory is full, dock at home station and unload.
-                    lib.drones.recall_drones()
+                    lib.drones.recall_drones_loop()
                     if system_mining == 0:
                         if lib.bookmarks.set_home() == 1:
                             if navigator() == 1:
                                 unload_ship.unload_ship()
-                                docked.undock()
+                                docked.undock_loop()
                                 playerfound = 0
                                 time.sleep(3)
                                 miner()
@@ -102,20 +105,20 @@ def miner():
                     elif system_mining == 1:
                         lib.bookmarks.dock_at_local_bookmark()
                         unload_ship.unload_ship()
-                        docked.undock()
+                        docked.undock_loop()
                         playerfound = 0
                         time.sleep(3)
                         miner()
 
                 if mining.detect_asteroids() == 0:
-                    lib.bookmarks.blacklist_current_bookmark()
+                    lib.bookmarks.blacklist_local_bookmark()
         elif lib.bookmarks.travel_to_bookmark(site) == 0:
             nav.emergency_terminate()
             sys.exit(0)
     if docked.docked_check() == 1:
-        # If docked when script starts, undock.
+        # If docked when script starts, undock_loop.
         lib.overview.focus_overview()
-        docked.undock()
+        docked.undock_loop()
         miner()
 
 '''
@@ -161,11 +164,12 @@ def warpout():
     lock.release()
 '''
 
+
 def navigator():
     # A standard warp-to-zero autopilot script. Warp to the destination, then
     # terminate.
     print('navigator -- running navigator')
-    nav.route_set()
+    nav.detect_route()
     dockedcheck = docked.docked_check()
 
     while dockedcheck == 0:
@@ -173,7 +177,7 @@ def navigator():
         selectwaypoint = nav.warp_to_waypoint()
         while selectwaypoint == 1:  # Value of 1 indicates stargate waypoint.
             time.sleep(5)  # Wait for jump to begin.
-            detectjump = nav.detect_jump()
+            detectjump = nav.detect_jump_loop()
             if detectjump == 1:
                 lib.overview.focus_overview()
                 selectwaypoint = nav.warp_to_waypoint()
@@ -185,7 +189,7 @@ def navigator():
 
         while selectwaypoint == 2:  # Value of 2 indicates a station waypoint.
             time.sleep(5)
-            detectdock = nav.detect_dock()
+            detectdock = nav.detect_dock_loop()
             if detectdock == 1:
                 print('navigator -- arrived at destination')
                 return 1
@@ -194,7 +198,7 @@ def navigator():
             return 1
 
     while dockedcheck == 1:
-        docked.undock()
+        docked.undock_loop()
         time.sleep(5)
         navigator()
 
@@ -213,13 +217,13 @@ def collector():
 
         while selectwaypoint == 1:
             time.sleep(3)  # Wait for warp to start.
-            detectjump = nav.detect_jump()
+            detectjump = nav.detect_jump_loop()
             if detectjump == 1:
                 lib.overview.focus_overview()
                 selectwaypoint = nav.warp_to_waypoint()
         while selectwaypoint == 2:
             time.sleep(3)
-            detectdock = nav.detect_dock()
+            detectdock = nav.detect_dock_loop()
             if detectdock == 1:
                 collector()
         else:
@@ -231,13 +235,13 @@ def collector():
             sys.exit()
 
     while dockedcheck == 1:
-        athomecheck = lib.bookmarks.at_home_check()
+        athomecheck = lib.bookmarks.detect_at_home()
         # If docked at home station, set a destination waypoint to a remote
         # station and unload cargo from ship into home station inventory.
         if athomecheck == 1:
             unload_ship.unload_ship()
             lib.bookmarks.set_dest()
-            docked.undock()
+            docked.undock_loop()
             collector()
         elif athomecheck == 0:
             print('collector -- not at home')
@@ -247,25 +251,26 @@ def collector():
             if loadship == 2 or loadship == 0 or loadship is None:
                 atdestnum = lib.bookmarks.detect_bookmark_location()
                 if atdestnum == -1:
-                    docked.undock()
+                    docked.undock_loop()
                     collector()
                 else:
                     lib.bookmarks.set_dest()
                     lib.bookmarks.blacklist_station()
-                    docked.undock()
+                    docked.undock_loop()
                     collector()
             elif loadship == 1:  # Value of 1 indicates ship is full.
                 lib.bookmarks.set_home()
-                docked.undock()
+                docked.undock_loop()
                 collector()
 
         else:
-            print('collector -- error with at_home_check and at_dest_check')
+            print('collector -- error with detect_at_home and at_dest_check')
             traceback.print_exc()
             traceback.print_stack()
             sys.exit()
     if dockedcheck is None:
         collector()
+
 
 print("originx =", originx)
 print("originy =", originy)
@@ -278,7 +283,7 @@ miner()
 while mining.inv_full_popup() == 0:
     if mining.asteroid_depleted_popup() == 1:
         if mining.detect_asteroids() == 0:
-            # nav.blacklist_current_bookmark()
+            # nav.blacklist_local_bookmark()
             miner()
         elif mining.detect_asteroids() == 1:
             mining.target_asteroid()
@@ -286,10 +291,10 @@ while mining.inv_full_popup() == 0:
             mining.inv_full_popup()
             continue
     if threading.Thread(target=mining.detect_pcs()).start() == 1:
-        mining.recall_drones()
+        mining.recall_drones_loop()
         miner()
     if threading.Thread(target=mining.detect_pcs()).start() == 1:
-        mining.recall_drones()
+        mining.recall_drones_loop()
         miner()
     time.sleep(2)
 '''
@@ -300,7 +305,7 @@ while mining.inv_full_popup() == 0:
 #mining.focus_mining_tab()
 #mining.check_for_enemies()
 #time.sleep(2)
-#mining.recall_drones()
+#mining.recall_drones_loop()
 #mining.launch_drones()
 #cProfile.run('mining.detect_pcs()')
 # Method for determining which script to run, as yet to be implemented by gui.
@@ -309,54 +314,6 @@ while mining.inv_full_popup() == 0:
 # if selectscript == 1:
 #	navigator()
 # elif selectscript == 2:
-#	nav.route_set()
+#	nav.detect_route()
 #	collector()
 
-
-'''
-##### old original miner script #####
-def miner():  # mine ore from a predetermined set of asteroid fields
-	print('running miner')
-	dockedcheck = docked.docked_check()
-	while dockedcheck == 0:  # if not docked, check cargohold capacity
-		cargohold = check_cargohold()
-		if cargohold == 1:  # if cargohold over 90%, dock and unload at home 
-		station, then rerun function
-			nav.set_home()
-		elif cargohold == 0:  # if cargohold less than 90%, go to first 
-		asteroid field
-			nav.set_dest()
-			navigator()
-
-	while dockedcheck == 1:  # if docked, check if at home station
-		athomecheck = nav.at_home_check()
-		if athomecheck == 1:  # if at home station, set destination waypoint 
-		and unload ore from ship
-			unload_ship.unload_ship()
-			nav.set_dest()
-			docked.undock()
-			miner()
-		elif athomecheck == 0:  # if not at home station, go to home station 
-		to unload ore
-			print('not at home')
-			nav.set_home()
-			docked.undock()
-			miner()
-		else:
-			print('error with at_home_check and at_dest_check')
-			traceback.print_exc()
-			traceback.print_stack()
-			sys.exit()
-	if dockedcheck is None:
-		miner()
-
-
-if docked.docked_check == 1:
-	print('good')
-if docked.docked_check == 0:
-	print('not docked')
-    value = docked.docked_check()
-    print(value)
-    sys.exit()
-
-'''

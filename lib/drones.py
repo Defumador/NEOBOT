@@ -38,17 +38,17 @@ def launch_drones():
         return 1
 
 
-def drones_launched():
+def detect_drones_launched():
     drones_launched_var = pag.locateOnScreen(
         './img/indicators/drones/0_drone_in_bay.bmp')
     if drones_launched_var is not None:
-        print('drones_launched -- drones are in space')
+        print('detect_drones_launched -- drones are in space')
         return 1
     else:
         return 0
 
 
-def recall_drones():
+def recall_drones_loop():
     if drones != 0:
         time.sleep(float(random.randint(10, 800)) / 1000)
         pag.keyDown('shift')
@@ -59,7 +59,8 @@ def recall_drones():
         time.sleep(float(random.randint(10, 800)) / 1000)
         pag.keyUp('r')
 
-        # Wait for all drones to return to drone bay.
+        # Wait for all drones to return to drone bay. Very sensitive to the
+        # drones variable. Won't work unless the drones variable is correct.
         drones_recalled = pag.locateOnScreen('./img/indicators/drones/' + (
             drones_dict[drones]) + '_drone_in_bay.bmp')
         tries = 1
@@ -69,10 +70,10 @@ def recall_drones():
                 drones_dict[drones]) + '_drone_in_bay.bmp')
             tries += 1
         if drones_recalled is not None and tries <= 25:
-            print('recall_drones -- drones returned to bay')
+            print('recall_drones_loop -- drones returned to bay')
             return 1
         else:
-            print('recall_drones -- timed out waiting for drones to return')
+            print('recall_drones_loop -- timed out waiting for drones to return')
             return 1
     else:
         return 0

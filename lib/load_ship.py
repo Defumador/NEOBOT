@@ -98,7 +98,7 @@ def drag_to_ship_spec_inv():
 def load_ship_bulk():
     # Load ship by selecting all item stacks and moving all stacks at once.
     print('load_ship_bulk -- beginning bulk loading procedure')
-    items = docked.look_for_items()
+    items = docked.detect_items()
 
     if items is None:
         return 0
@@ -118,7 +118,7 @@ def load_ship_bulk():
 
         elif nospace == 1:  # If a warning appears, check if the ship has a
             # special inventory
-            specinv = docked.look_for_spec_inv()
+            specinv = docked.detect_spec_inv()
             if specinv == 1:
                 docked.focus_inv_window()
                 keyboard.select_all()
@@ -129,7 +129,7 @@ def load_ship_bulk():
                 setquant = docked.set_quant_warning()
 
                 if specinvwarning == 0 and setquant == 0 and nospace == 0:
-                    docked.look_for_items()  # If no warnings appear, look for
+                    docked.detect_items()  # If no warnings appear, look for
                     # more item stacks.
                     if items == 0:
                         return 2
@@ -156,7 +156,7 @@ def load_ship_individually():
     # Load ship one item stack at a time.
     print('load_ship_individually -- beginning individual loading procedure')
     docked.open_station_inv()
-    items = docked.look_for_items()
+    items = docked.detect_items()
 
     while items == 1:
         docked.focus_inv_window()
@@ -171,7 +171,7 @@ def load_ship_individually():
             time.sleep(2)
             nospace = docked.not_enough_space_warning()
             setquant = docked.set_quant_warning()
-            docked.look_for_items()
+            docked.detect_items()
 
         elif nospace == 0 and setquant == 1:
             return 1
@@ -180,14 +180,14 @@ def load_ship_individually():
         # has a special inventory.
         elif nospace == 1 and setquant == 0:
             traceback.print_stack()
-            specinv = docked.look_for_spec_inv()
+            specinv = docked.detect_spec_inv()
             if specinv == 1:
                 drag_to_ship_spec_inv()
                 time.sleep(2)
                 specinvwarning = docked.spec_inv_warning()
                 nospace = docked.not_enough_space_warning()
                 setquant = docked.set_quant_warning()
-                docked.look_for_items()
+                docked.detect_items()
 
                 while specinvwarning == 0 and setquant == 0 and nospace == 0:
                     drag_to_ship_spec_inv()
@@ -195,7 +195,7 @@ def load_ship_individually():
                     specinvwarning = docked.spec_inv_warning()
                     nospace = docked.not_enough_space_warning()
                     setquant = docked.set_quant_warning()
-                    docked.look_for_items()
+                    docked.detect_items()
 
                 if items is None:
                     print(
@@ -215,7 +215,7 @@ def load_ship_individually():
 def load_ship_full():
     # Utilize both individual and bulk loading functions to load ship.
     docked.open_station_inv()
-    items = docked.look_for_items()
+    items = docked.detect_items()
 
     if items == 1:
         lsb = load_ship_bulk()

@@ -8,7 +8,7 @@ sys.setrecursionlimit(9999999)  # set high recursion limit for functions that
 
 conf = 0.95
 
-target_lock_time = 4  # Seconds (rounded up) current ship takes to lock a
+#target_lock_time = 2  # Seconds (rounded up) current ship takes to lock a
 # target on average.
 
 system_mining = 1  # Tell the miner script if you're mining in the same

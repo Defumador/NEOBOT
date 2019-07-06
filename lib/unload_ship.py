@@ -38,16 +38,16 @@ def drag_items_from_ship_inv():
 def unload_ship():
     print('unload_ship -- began unloading procedure')
     docked.open_ship_inv()
-    specinv = docked.look_for_spec_inv()
-    items = docked.look_for_items()
+    specinv = docked.detect_spec_inv()
+    items = docked.detect_items()
 
-    if docked.look_for_items() == 0:
-        docked.look_for_spec_inv()
+    if docked.detect_items() == 0:
+        docked.detect_spec_inv()
         if specinv == 1:
             # Wait between 0 and 2s before actions for increased randomness.
             time.sleep(float(random.randint(0, 2000)) / 1000)
             docked.open_spec_inv_ore()
-            items = docked.look_for_items()
+            items = docked.detect_items()
 
             while items == 1:
                 time.sleep(float(random.randint(0, 2000)) / 1000)
@@ -57,7 +57,7 @@ def unload_ship():
                 time.sleep(float(random.randint(0, 2000)) / 1000)
                 drag_items_from_ship_inv()
                 time.sleep(2)
-                docked.look_for_items()
+                docked.detect_items()
                 print('unload_ship -- finished unloading procedure')
                 return 1
 
@@ -76,12 +76,12 @@ def unload_ship():
         time.sleep(float(random.randint(0, 2000)) / 1000)
         drag_items_from_ship_inv()
         time.sleep(2)
-        docked.look_for_spec_inv()
-        items = docked.look_for_items()
+        docked.detect_spec_inv()
+        items = docked.detect_items()
 
     if specinv == 1:
         docked.open_spec_inv_ore()
-        items = docked.look_for_items()
+        items = docked.detect_items()
 
         while items == 1:
             docked.focus_inv_window()
@@ -90,7 +90,7 @@ def unload_ship():
             time.sleep(float(random.randint(0, 2000)) / 1000)
             drag_items_from_ship_inv()
             time.sleep(2)
-            docked.look_for_items()
+            docked.detect_items()
             print('unload_ship -- finished unloading procedure')
             return 1
 

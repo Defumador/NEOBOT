@@ -1,4 +1,7 @@
-import sys, time, random, traceback
+import sys
+import time
+import random
+import traceback
 import pyautogui as pag
 from lib import mouse, keyboard
 from lib.vars import originx, originy, windowx, windowy
@@ -10,15 +13,15 @@ sys.setrecursionlimit(9999999)
 # match images related to that variable.
 
 
-def route_set():
+def detect_route():
     # Check the top-left corner of the hud to see if a route has actually been
     # set by the user.
-    route_set_var = pag.locateCenterOnScreen('./img/indicators/route_set.bmp',
+    route_set_var = pag.locateCenterOnScreen('./img/indicators/detect_route.bmp',
                                              confidence=0.85,
                                              region=(originx, originy,
                                                      windowx, windowy))
     if route_set_var is None:
-        print('nav.route_set -- no route set!')
+        print('nav.detect_route -- no route set!')
         sys.exit(0)
     else:
         return
@@ -94,7 +97,7 @@ def warp_to_waypoint():
         sys.exit()
 
 
-def detect_warp():
+def detect_warp_loop():
     # Detect when a warp has been completed by waiting for the 'warping' text
     # to disappear from the spedometer. Wait for the ship to begin its warp
     # before checking though, otherwise the script will think the warp has
@@ -110,7 +113,7 @@ def detect_warp():
     # might be stuck on something so this could take an variable amount of
     # time.
     while warp_drive_active is None and warp_duration <= 300:
-        print('nav.detect_warp -- waiting for warp to start...',
+        print('nav.detect_warp_loop -- waiting for warp to start...',
               warp_duration)
         time.sleep(float(random.randint(1000, 3000)) / 1000)
         warp_duration += 1
@@ -124,7 +127,7 @@ def detect_warp():
     # function.
     while warp_drive_active is not None and warp_duration <= 150:
         print('warp icon found at', warp_drive_active)
-        print('nav.detect_warp -- warping...', warp_duration)
+        print('nav.detect_warp_loop -- warping...', warp_duration)
         warp_duration += 1
         time.sleep(2)
         warp_drive_active = pag.locateCenterOnScreen(
@@ -135,15 +138,15 @@ def detect_warp():
 
     if warp_drive_active is None and warp_duration <= 150:
         time.sleep(float(random.randint(1000, 3000)) / 1000)
-        print('nav.detect_warp -- warp completed')
+        print('nav.detect_warp_loop -- warp completed')
         return 1
     else:
-        print('nav.detect_warp -- timed out waiting for warp')
+        print('nav.detect_warp_loop -- timed out waiting for warp')
         emergency_terminate()
         return 0
 
 
-def detect_jump():
+def detect_jump_loop():
     # Detect a jump by looking for the cyan session-change icon in top left
     # corner of the eve client window. If a jump hasn't been detected after
     # 50 checks, check if the 'low security system warning' window has appeared
@@ -157,7 +160,7 @@ def detect_jump():
 
     while detect_jump_var is None and tries <= 180:
         tries += 1
-        print('nav.detect_jump -- waiting for jump...', tries)
+        print('nav.detect_jump_loop -- waiting for jump...', tries)
         time.sleep(1.5)
         detect_jump_var = pag.locateCenterOnScreen(
             './img/indicators/session_change_cloaked.bmp',
@@ -177,19 +180,19 @@ def detect_jump():
                 continue
 
     if detect_jump_var is not None and tries <= 180:
-        print('nav.detect_jump -- jump detected')
+        print('nav.detect_jump_loop -- jump detected')
         time.sleep(float(random.randint(900, 2400)) / 1000)
         return 1
 
     else:
-        print('nav.detect_jump -- timed out looking for jump')
+        print('nav.detect_jump_loop -- timed out looking for jump')
         emergency_terminate()
         traceback.print_stack()
         sys.exit()
 
 
-def detect_dock():
-    # Detect a station dock by looking for undock icon on the right half of the
+def detect_dock_loop():
+    # Detect a station dock by looking for undock_loop icon on the right half of the
     # eve client window.
     tries = 0
     detect_dock_var = pag.locateCenterOnScreen('./img/buttons/undock.bmp',
@@ -198,18 +201,18 @@ def detect_dock():
                                                        windowx, windowy))
     while detect_dock_var is None and tries <= 100:
         tries += 1
-        print('nav.detect_dock -- waiting for dock...', tries)
+        print('nav.detect_dock_loop -- waiting for dock...', tries)
         time.sleep(3)
         detect_dock_var = pag.locateCenterOnScreen('./img/buttons/undock.bmp',
                                                    confidence=0.91,
                                                    region=(originx, originy,
                                                            windowx, windowy))
     if detect_dock_var is not None and tries <= 100:
-        print('nav.detect_dock -- detected dock')
+        print('nav.detect_dock_loop -- detected dock')
         time.sleep(float(random.randint(2000, 5000)) / 1000)
         return 1
     else:
-        print('nav.detect_dock -- timed out looking for dock')
+        print('nav.detect_dock_loop -- timed out looking for dock')
         emergency_terminate()
         traceback.print_stack()
         sys.exit()
@@ -302,7 +305,7 @@ def emergency_terminate():
                        (random.randint(150, (
                            int(windowx - (windowx / 4))))),
                        mouse.duration(), mouse.path())
-            detect_warp()
+            detect_warp_loop()
             emergency_logout()
             return 0
         else:

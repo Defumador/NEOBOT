@@ -4,7 +4,7 @@ import time
 import pyautogui as pag
 
 from lib import mouse, keyboard, navigation as nav
-from lib.navigation import detect_dock
+from lib.navigation import detect_dock_loop
 from lib.vars import originx, originy, windowx, windowy, conf
 
 destnum = {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7",
@@ -45,7 +45,7 @@ def set_dest():
         return
 
 
-def at_home_check():
+def detect_at_home():
     # Check if the ship is at its home station by looking for a bookmark
     # starting with '000'.
     at_home_check_var = pag.locateCenterOnScreen('./img/dest/at_dest0.bmp',
@@ -55,7 +55,7 @@ def at_home_check():
     if at_home_check_var is None:
         return 0
     elif at_home_check_var is not None:
-        print('nav.at_home_check -- at home station')
+        print('nav.detect_at_home -- at home station')
         return 1
 
 
@@ -152,7 +152,7 @@ def dock_at_local_bookmark():
                     (0 + (random.randint(35, 40))),
                     mouse.duration(), mouse.path())
         mouse.click()
-        detect_dock()
+        detect_dock_loop()
 
 
 def detect_bookmark_location():
@@ -222,11 +222,11 @@ def blacklist_station():
         return
 
 
-def blacklist_current_bookmark():
+def blacklist_local_bookmark():
     # Determine which bookmark ship is at by looking at the right-click
     # menu. If a bookmark is on grid with the user's ship, blacklist the
     # bookmark by editing its name.
-    print('blacklist_current_bookmark -- called')
+    print('blacklist_local_bookmark -- called')
 
     # First check to see if the bookmark even exists.
     bookmark = 1
@@ -265,7 +265,7 @@ def blacklist_current_bookmark():
 
             # If 'approach location' is present, blacklist that bookmark.
             if at_bookmark is not None:
-                print('blacklist_current_bookmark -- blacklisting bookmark',
+                print('blacklist_local_bookmark -- blacklisting bookmark',
                       bookmark)
                 time.sleep(float(random.randint(1000, 2000)) / 1000)
                 keyboard.keypress('esc')
@@ -295,13 +295,13 @@ def blacklist_current_bookmark():
             # close the right-click menu and check the next bookmark
             if at_bookmark is None:
                 print(
-                    'blacklist_current_bookmark -- not at bookmark', bookmark)
+                    'blacklist_local_bookmark -- not at bookmark', bookmark)
                 keyboard.keypress('esc')
                 bookmark += 1
                 continue
 
         elif bookmark_to_blacklist is None:
-            print('blacklist_current_bookmark -- out of bookmarks to look for')
+            print('blacklist_local_bookmark -- out of bookmarks to look for')
             return 0
 
 
@@ -351,7 +351,7 @@ def travel_to_bookmark(target_bookmark):
     if travel_to_bookmark_var == 1 and target_bookmark <= 10:
         # Once a valid site is found, remember the site number the ship is
         # warping to so script doesn't try warping there again.
-        if nav.detect_warp() == 1:
+        if nav.detect_warp_loop() == 1:
             return 1
     else:
         print('travel_to_bookmark -- ran out of sites to check for')

@@ -1,15 +1,16 @@
-import time, random
+import time
+import random
+import sys
 import pyautogui as pag
 from lib import mouse, keyboard
 from lib.vars import originx, originy, windowx, windowy, conf
 
 
 def docked_check():
-    # Check if the ship is currently docked by looking for the undock icon.
-    print(originx, originy, windowx, windowy)
+    # Check if the ship is currently docked by looking for the undock_loop icon.
     undock_icon = pag.locateCenterOnScreen('./img/buttons/undock.bmp',
                                            confidence=conf,
-                                           region=(0, 0,
+                                           region=(originx, originy,
                                                    windowx, windowy))
     if undock_icon is None:
         print('docked_check -- not docked')
@@ -137,7 +138,7 @@ def focus_inv_window():
         return 0
 
 
-def look_for_items():
+def detect_items():
     # Look at the bottom-right corner of the station inventory window for the
     # '0 items found' text. If it isn't present, there must be items in the
     # station's inventory.
@@ -155,11 +156,11 @@ def look_for_items():
             region=(originx, originy, windowx, windowy))
         return 1
     elif no_items_station_inv is not None:
-        print('look_for_items -- no more items')
+        print('detect_items -- no more items')
         return 0
 
 
-def look_for_spec_inv():
+def detect_spec_inv():
     # Look for different kinds of special inventory locations on your
     # ship.
     no_additional_invs = pag.locateCenterOnScreen(
@@ -171,7 +172,7 @@ def look_for_spec_inv():
                                             region=(originx, originy,
                                                     windowx, windowy))
     if spec_inv_ore is not None and no_additional_invs is None:
-        print('look_for_spec_inv -- found ore inventory')
+        print('detect_spec_inv -- found ore inventory')
         return 1
 
     else:
@@ -224,36 +225,65 @@ def not_enough_space_warning():
         return 1
 
 
-def undock():
-    # Undock from the station with the default hotkey. The undock has been
+def undock_loop():
+    # Undock from the station with the default hotkey. The undock_loop has been
     # completed once the script sees the cyan ship icon in the top left corner
     # of the client window, indicating a session change has just ocurred.
-    print('undock -- undocking')
-    pag.keyDown('alt')  # alt+u
-    time.sleep(float(random.randint(200, 1200)) / 1000)
+    print('undock_loop -- undocking')
+    pag.keyDown('alt')
+    time.sleep(float(random.randint(100, 800)) / 1000)
     keyboard.keypress('u')
-    time.sleep(float(random.randint(200, 1200)) / 1000)
+    time.sleep(float(random.randint(100, 800)) / 1000)
     pag.keyUp('alt')
-    time.sleep(int((random.randint(8000, 15000) / 1000)))
-    undocked = pag.locateCenterOnScreen(
-        './img/indicators/session_change_undocked.bmp',
-        confidence=0.55,
-        region=(originx, originy, windowx, windowy))
 
-    while undocked is None:
-        time.sleep(int((random.randint(3000, 10000) / 1000)))
-        print('undock -- trying undocking second time')
-        pag.keyDown('alt')
-        time.sleep(float(random.randint(200, 1200)) / 1000)
-        keyboard.keypress('u')
-        time.sleep(float(random.randint(200, 1200)) / 1000)
-        pag.keyUp('alt')
-        time.sleep(int((random.randint(5000, 10000) / 1000)))
-        undocked = pag.locateCenterOnScreen(
+    # Wait for the 'undock' button to change to 'undocking', indicating the
+    # undock action has been confirmed.
+    undocking = pag.locateCenterOnScreen('./img/buttons/undocking.bmp',
+                                         confidence=0.90, region=(
+                                        originx, originy, windowx,
+                                        windowy))
+    tries = 0
+    while undocking is not None and tries <= 25:
+        print('undock_loop -- waiting for session change to begin')
+        tries += 1
+        time.sleep(int((random.randint(1000, 2000) / 1000)))
+        undocking = pag.locateCenterOnScreen('./img/buttons/undocking.bmp',
+                                                 confidence=0.90, region=(
+                                                 originx, originy, windowx,
+                                                 windowy))
+    if undocking is None and tries <= 25:
+        print('undock_loop -- session change underway')
+
+        # Now wait for the undock to complete by looking for the session
+        # change indicator.
+        session_change = pag.locateCenterOnScreen(
             './img/indicators/session_change_undocked.bmp',
             confidence=0.55,
             region=(originx, originy, windowx, windowy))
+        tries = 0
 
-    if undocked is not None:
-        time.sleep(int((random.randint(2000, 3000) / 1000)))
-        return
+        while session_change is None and tries <= 30:
+            time.sleep(int((random.randint(1000, 2000) / 1000)))
+            print('undock_loop -- waiting for session change to complete')
+            tries += 1
+            session_change = pag.locateCenterOnScreen(
+                './img/indicators/session_change_undocked.bmp',
+                confidence=0.55,
+                region=(originx, originy, windowx, windowy))
+        if session_change is not None and tries <= 30:
+            print('undock_loop -- undock completed')
+            return 1
+        # If script times out waiting for the session change icon, simply
+        # look for the undock button instead since ship has likely completed
+        # an undock, but at this point the session change icon is probably
+        # gone.
+        else:
+            if docked_check() == 1:
+                print('undock_loop -- undock tentatively completed')
+                return 1
+            elif docked_check() == 0:
+                print('undock_loop -- unable to undock')
+                sys.exit()
+    else:
+        print('undock_loop -- timed out waiting for session change')
+        sys.exit()

@@ -1,6 +1,53 @@
 '''
 ##### old functions #####
 
+
+##### old original miner script #####
+def miner():  # mine ore from a predetermined set of asteroid fields
+	print('running miner')
+	dockedcheck = docked.docked_check()
+	while dockedcheck == 0:  # if not docked, check cargohold capacity
+		cargohold = check_cargohold()
+		if cargohold == 1:  # if cargohold over 90%, dock and unload at home
+		station, then rerun function
+			nav.set_home()
+		elif cargohold == 0:  # if cargohold less than 90%, go to first
+		asteroid field
+			nav.set_dest()
+			navigator()
+
+	while dockedcheck == 1:  # if docked, check if at home station
+		athomecheck = nav.detect_at_home()
+		if athomecheck == 1:  # if at home station, set destination waypoint
+		and unload ore from ship
+			unload_ship.unload_ship()
+			nav.set_dest()
+			docked.undock_loop()
+			miner()
+		elif athomecheck == 0:  # if not at home station, go to home station
+		to unload ore
+			print('not at home')
+			nav.set_home()
+			docked.undock_loop()
+			miner()
+		else:
+			print('error with detect_at_home and at_dest_check')
+			traceback.print_exc()
+			traceback.print_stack()
+			sys.exit()
+	if dockedcheck is None:
+		miner()
+
+
+if docked.docked_check == 1:
+	print('good')
+if docked.docked_check == 0:
+	print('not docked')
+    value = docked.docked_check()
+    print(value)
+    sys.exit()
+
+
 def warp_to_first_bookmark_in_system():
     # warp to lowest-numbered bookmark in the system higher than 0
     # bookmark names must be preceded with a 1-digit number higher than 0 (
