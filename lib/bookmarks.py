@@ -126,7 +126,6 @@ def warp_to_local_bookmark(target_site):
                 pag.moveRel((0 + (random.randint(10, 80))),
                             (0 + (random.randint(10, 15))),
                             mouse.duration(), mouse.path())
-                time.sleep(float(random.randint(500, 800)) / 1000)
                 mouse.click()
                 time.sleep(1)
                 return 1
@@ -153,16 +152,15 @@ def dock_at_local_bookmark():
                     (0 + (random.randint(35, 40))),
                     mouse.duration(), mouse.path())
         # Sleep used to fix possible bug in which script doesn't
-        # clock on 'dock' after opening right-click menu
-        # (see video 2019-07-06_13-26-14 at 33m50s for bug).
-        time.sleep(float(random.randint(500, 800)) / 1000)
+        # clock on 'dock' after opening right-click menu.
+        time.sleep(float(random.randint(300, 800)) / 1000)
         mouse.click()
         detect_dock_loop()
 
 
 def detect_bookmark_location():
     # Determine if any bookmarks are green, indicating that bookmark is in the
-    # ship's current system
+    # ship's current system.
     global n
     n = 0
     # Confidence must be higher than normal because script frequently
