@@ -244,7 +244,7 @@ def undock_loop():
                                         windowy))
     tries = 0
     while undocking is not None and tries <= 25:
-        print('undock_loop -- waiting for session change to begin')
+        print('undock_loop -- waiting for session change to begin', tries)
         tries += 1
         time.sleep(int((random.randint(1000, 2000) / 1000)))
         undocking = pag.locateCenterOnScreen('./img/buttons/undocking.bmp',
@@ -252,7 +252,7 @@ def undock_loop():
                                                  originx, originy, windowx,
                                                  windowy))
     if undocking is None and tries <= 25:
-        print('undock_loop -- session change underway')
+        print('undock_loop -- session change underway', tries)
 
         # Now wait for the undock to complete by looking for the session
         # change indicator.
@@ -264,14 +264,15 @@ def undock_loop():
 
         while session_change is None and tries <= 30:
             time.sleep(int((random.randint(1000, 2000) / 1000)))
-            print('undock_loop -- waiting for session change to complete')
+            print('undock_loop -- waiting for session change to complete',
+                  tries)
             tries += 1
             session_change = pag.locateCenterOnScreen(
                 './img/indicators/session_change_undocked.bmp',
                 confidence=0.55,
                 region=(originx, originy, windowx, windowy))
         if session_change is not None and tries <= 30:
-            print('undock_loop -- undock completed')
+            print('undock_loop -- undock completed', tries)
             return 1
         # If script times out waiting for the session change icon, simply
         # look for the undock button instead since ship has likely completed
@@ -279,11 +280,11 @@ def undock_loop():
         # gone.
         else:
             if docked_check() == 1:
+                print('undock_loop -- still docked')
+                sys.exit()
+            elif docked_check() == 0:
                 print('undock_loop -- undock tentatively completed')
                 return 1
-            elif docked_check() == 0:
-                print('undock_loop -- unable to undock')
-                sys.exit()
     else:
         print('undock_loop -- timed out waiting for session change')
         sys.exit()

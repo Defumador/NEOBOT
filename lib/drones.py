@@ -8,9 +8,10 @@ drones = 2
 drones_dict = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5"}
 
 
-def launch_drones():
+def launch_drones_loop():
     # User must custom-set the "launch drones" hotkey to be Shift-l
     if drones != 0:
+        print('launch_drones_loop -- launching drones')
         time.sleep(float(random.randint(10, 800)) / 1000)
         pag.keyDown('shift')
         time.sleep(float(random.randint(10, 800)) / 1000)
@@ -31,10 +32,10 @@ def launch_drones():
             './img/indicators/drones/0_drone_in_bay.bmp')
         tries += 1
     if drones_launched_var is not None and tries <= 25:
-        print('launch_drones -- drones launched')
+        print('launch_drones_loop -- drones launched', tries)
         return 1
     else:
-        print('launch_drones -- timed out waiting for drones to launch')
+        print('launch_drones_loop -- timed out waiting for drones to launch', tries)
         return 1
 
 
@@ -70,10 +71,10 @@ def recall_drones_loop():
                 drones_dict[drones]) + '_drone_in_bay.bmp')
             tries += 1
         if drones_recalled is not None and tries <= 25:
-            print('recall_drones_loop -- drones returned to bay')
+            print('recall_drones_loop -- drones returned to bay', tries)
             return 1
         else:
-            print('recall_drones_loop -- timed out waiting for drones to return')
+            print('recall_drones_loop -- timed out waiting for drones to return', tries)
             return 1
     else:
         return 0

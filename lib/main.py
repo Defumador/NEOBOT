@@ -64,7 +64,7 @@ def miner():
 
             lib.overview.focus_mining_tab()
             while mining.detect_asteroids() == 1:
-                lib.drones.launch_drones()
+                lib.drones.launch_drones_loop()
                 mining.target_asteroid()
                 mining.activate_miner()
                 # If ship inventory isn't full, continue to mine ore and wait
@@ -306,7 +306,7 @@ while mining.inv_full_popup() == 0:
 #mining.check_for_enemies()
 #time.sleep(2)
 #mining.recall_drones_loop()
-#mining.launch_drones()
+#mining.launch_drones_loop()
 #cProfile.run('mining.detect_pcs()')
 # Method for determining which script to run, as yet to be implemented by gui.
 # selectscript = 2
