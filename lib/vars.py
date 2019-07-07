@@ -1,6 +1,21 @@
 import sys
 import pyautogui as pag
 
+# CUSTOM CONFIGS THAT MUST BE SET MANUALLY ON THE EVE CLIENT
+# HOTKEYS
+# general tab > exit station > ctrl-u
+# drones tab > launch drones > shift-l
+
+# OVERVIEW
+# default warpto tab should have only planets and stations, nothing else
+# default mining tab should have only asteroids, nothing else
+# default general tab should have stations, gates, and ships, nothing else
+
+# MISC
+# for mining, default orbit distance must be within the range of mining lasers
+# right click on item > orbit > set default
+
+
 gotosite = 0
 
 sys.setrecursionlimit(9999999)  # set high recursion limit for functions that

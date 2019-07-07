@@ -58,7 +58,7 @@ def miner():
             # If no hostiles npcs or players are present, check for asteroids.
             # If no asteroids, blacklist site and warp to next site.
             if lib.overview.detect_npcs_var == 1:
-                if lib.overview.focus_overview_tab() == 1:
+                if lib.overview.focus_overview_tab('mining') == 1:
                     if lib.overview.detect_npcs() == 1:
                         miner()
             if lib.overview.detect_pcs_var == 1:
@@ -66,7 +66,7 @@ def miner():
                     playerfound += 1
                     miner()
 
-            lib.overview.focus_mining_tab()
+            lib.overview.focus_overview_tab('mining')
             while mining.detect_ore() == 1:
                 lib.drones.launch_drones_loop()
                 if mining.target_ore() == 0:
@@ -75,7 +75,7 @@ def miner():
                 # If ship inventory isn't full, continue to mine ore and wait
                 # for popups or errors.
                 # Switch back to the general tab for easier ship detection
-                lib.overview.focus_overview_tab()
+                lib.overview.focus_overview_tab('mining')
                 while mining.inv_full_popup() == 0:
                     if mining.asteroid_depleted_popup() == 1:
                         if mining.detect_ore() == 0:
@@ -284,8 +284,8 @@ print("windowx =", windowx)
 print("windowy =", windowy)
 
 # miner()
-lib.overview.focus_overview_tab('warpto')
-# nav.emergency_terminate()
+# lib.overview.focus_overview_tab('warpto')
+nav.emergency_terminate()
 #mining.detect_ore()
 #mining.target_ore()
 #mining.activate_miner()

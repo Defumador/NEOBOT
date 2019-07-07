@@ -3,11 +3,10 @@ import time
 import random
 import traceback
 import pyautogui as pag
-from lib import mouse, keyboard
+from lib import mouse, keyboard, overview
 from lib.vars import originx, originy, windowx, windowy
 
 sys.setrecursionlimit(9999999)
-
 
 # Create dictionary for concatenating an integer variable with a file name to
 # match images related to that variable.
@@ -63,7 +62,7 @@ def warp_to_waypoint():
             pag.moveTo((station_waypointx + (random.randint(-8, 8))),
                        (station_waypointy + (random.randint(-8, 8))),
                        mouse.duration(), mouse.path())
-            pag.keyDown('d')  # Warp hotkey.
+            pag.keyDown('d')  # 'dock' hotkey.
             time.sleep(float(random.randint(600, 1200)) / 1000)
             mouse.click()
             pag.keyUp('d')
@@ -126,7 +125,7 @@ def detect_warp_loop():
     # Wait up to 300 seconds before concluding there was an error with the
     # function.
     while warp_drive_active is not None and warp_duration <= 150:
-        print('warp icon found at', warp_drive_active)
+        # print('warp icon found at', warp_drive_active)
         print('nav.detect_warp_loop -- warping...', warp_duration)
         warp_duration += 1
         time.sleep(2)
@@ -226,11 +225,15 @@ def emergency_terminate():
     # After warp completes, force an unsafe logout in space.
     print('!!! nav.emergency_terminate -- EMERGENCY TERMINATE CALLED !!!')
     tries = 0
-    confidence = 0.99
+    confidence = 0.95
+    overview.focus_overview_tab('general')
     station_icon = pag.locateCenterOnScreen('./img/overview/station.bmp',
                                             confidence=confidence,
-                                            region=(originx, originy,
-                                                    windowx, windowy))
+                                            region=((originx + (windowx - (
+                                                int(windowx / 3.8)))),
+                                                    originy,
+                                                    (int(windowx / 3.8)),
+                                                    windowy))
 
     # Look for a station to dock at until confidence is <0.85
     while station_icon is None and tries <= 15:
@@ -240,8 +243,11 @@ def emergency_terminate():
         time.sleep(float(random.randint(600, 1200)) / 1000)
         station_icon = pag.locateCenterOnScreen('./img/station_icon.bmp',
                                                 confidence=confidence,
-                                                region=(originx, originy,
-                                                        windowx, windowy))
+                                                region=((originx + (windowx - (
+                                                    int(windowx / 3.8)))),
+                                                        originy,
+                                                        (int(windowx / 3.8)),
+                                                        windowy))
     if station_icon is not None and tries <= 15:
         print('!!! emergency_terminate -- emergency docking', tries)
         (station_iconx, station_icony) = station_icon
@@ -264,41 +270,44 @@ def emergency_terminate():
             emergency_logout()
         return 0
 
-    # If confidence lowers below threshold, try warping to a planet or moon
+    # If confidence lowers below threshold, try warping to a planet
     # instead.
     else:
         print(
             "!!! emergency_terminate -- couldn't find station to "
             "emergency dock at, warping to celestial body instead", tries)
-        tries = 0
-        confidence = 0.99
-        celestial_icon = pag.locateCenterOnScreen(
-            './img/overview/celestial.bmp',
+        confidence = 1
+        overview.focus_overview_tab('warpto')
+        planet = pag.locateCenterOnScreen(
+            './img/overview/planet.bmp',
             confidence=confidence,
-            region=(originx, originy, windowx, windowy))
-        while celestial_icon is None and tries <= 50:
-            print('!!! emergency_terminate -- looking for celestial body', tries)
+            region=((originx + (windowx - (int(windowx / 3.8)))),
+                    originy, (int(windowx / 3.8)), windowy))
+        while planet is None and tries <= 50:
+            print('!!! emergency_terminate -- looking for planet', tries,
+                  confidence)
             tries += 1
-            confidence -= 0.01
-            time.sleep(float(random.randint(600, 1200)) / 1000)
-            celestial_icon = pag.locateCenterOnScreen(
-                './img/overview/celestial_icon.bmp',
+            # Lower confidence on every third try.
+            if (tries % 3) == 0:
+                confidence -= 0.01
+            time.sleep(float(random.randint(600, 2000)) / 1000)
+            planet = pag.locateCenterOnScreen(
+                './img/overview/planet.bmp',
                 confidence=confidence,
-                region=(originx, originy, windowx, windowy))
+                region=((originx + (windowx - (int(windowx / 3.8)))),
+                        originy, (int(windowx / 3.8)), windowy))
 
-        if celestial_icon is not None and tries <= 50:
+        if planet is not None and tries <= 50:
             print(
                 '!!! emergency_terminate -- '
-                'emergency warping to celestial body', tries)
-            (celestial_iconx, celestial_icony) = celestial_icon
-            pag.moveTo((celestial_iconx + (random.randint(-2, 50))),
-                       (celestial_icony + (random.randint(-2, 2))),
+                'emergency warping to planet', tries)
+            (x, y) = planet
+            pag.moveTo((x + (random.randint(-2, 50))),
+                       (y + (random.randint(-2, 2))),
                        mouse.duration(), mouse.path())
             mouse.click()
             time.sleep(float(random.randint(600, 1200)) / 1000)
-            pag.keyDown('w')
-            time.sleep(float(random.randint(600, 1200)) / 1000)
-            pag.keyUp('w')
+            keyboard.keypress('s')
             pag.moveTo((random.randint(150, (
                 int(windowy - (windowy / 4))))),
                        (random.randint(150, (
@@ -310,7 +319,7 @@ def emergency_terminate():
         else:
             print(
                 '!!! emergency_terminate -- '
-                'out of celestial bodies to look for', tries)
+                'timed out looking for planet', tries)
             emergency_logout()
         return 1
 

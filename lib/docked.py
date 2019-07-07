@@ -230,11 +230,11 @@ def undock_loop():
     # completed once the script sees the cyan ship icon in the top left corner
     # of the client window, indicating a session change has just ocurred.
     print('undock_loop -- undocking')
-    pag.keyDown('alt')
+    pag.keyDown('ctrl')
     time.sleep(float(random.randint(100, 800)) / 1000)
     keyboard.keypress('u')
     time.sleep(float(random.randint(100, 800)) / 1000)
-    pag.keyUp('alt')
+    pag.keyUp('ctrl')
 
     # Wait for the 'undock' button to change to 'undocking', indicating the
     # undock action has been confirmed.
