@@ -213,9 +213,7 @@ def detect_dock_loop():
         return 1
     else:
         print('detect_dock_loop -- timed out looking for dock', tries)
-        emergency_terminate()
-        traceback.print_stack()
-        sys.exit()
+        return 0
 
 
 def emergency_terminate():
@@ -259,10 +257,11 @@ def emergency_terminate():
             (random.randint(150, (int(windowy - (windowy / 4))))),
             (random.randint(150, (int(windowx - (windowx / 4))))),
             mouse.duration(), mouse.path())
-        # Don't even try to detect a dock, since ship may have warped
-        # to a non-station object by mistake
-        time.sleep(float(random.randint(60000, 120000)) / 1000)
-        emergency_logout()
+        if detect_dock_loop() == 1:
+            emergency_logout()
+        elif detect_dock_loop() == 0:
+            time.sleep(float(random.randint(60000, 120000)) / 1000)
+            emergency_logout()
         return 0
 
     # If confidence lowers below threshold, try warping to a planet or moon

@@ -1,7 +1,4 @@
 mining script:
-    - capture 'target-locked' versions of asteroid icons so script knows when a
-target has been sucessfully locked. see the 1h12m mark on video
-D/screen_recordings/2019-07-04_21-08-19
     - add support for a 'don't recall drones when escaping pcs or npcs' variable,
 which could be useful in losec space when it's necessary to quickly escape
 ships when they arrive on grid
@@ -9,6 +6,8 @@ ships when they arrive on grid
 - have ship return to previously used belt after dropping off cargo so ship
 doesn't have to start over looking for a suitable belt
 
+BUGS:
+    - script breaks if jammed while in the midst of locking a target
 
 
 multi-client support

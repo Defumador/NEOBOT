@@ -27,6 +27,19 @@ plagioclase = 1
 scordite = 0
 veldspar = 0
 pyroxeres = 1
+# need to add these ores
+kernite = 0
+morphite = 0
+bistot = 0
+arkonor = 0
+crokite = 0
+jaspet = 0
+omber = 0
+ochre = 0
+gneiss = 0
+hedbergite = 0
+hemorphite = 0
+mercoxit = 0
 
 
 def activate_miner():

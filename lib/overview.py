@@ -48,63 +48,30 @@ def detect_target_lock():
         return 0
 
 
-def focus_general_tab():
-    # Switch to the default 'General' tab of the overview to check for
-    # other
-    # ships.
-    print('focus_general_tab -- called')
-    general_tab_selected = pag.locateCenterOnScreen(
-        './img/overview/general_overview_tab_selected.bmp',
+def focus_overview_tab(tab):
+    # Switch to the specified tab of the overview
+    print('focus_overview_tab -- called for', tab, 'tab')
+    tab_selected = pag.locateCenterOnScreen(
+        './img/overview/' + tab + '_overview_tab_selected.bmp',
         # Requires very high confidence since the button looks only slightly
         # different when it's selected.
         confidence=0.992,
         region=(originx, originy,
                 windowx, windowy))
-    if general_tab_selected is not None:
-        print('focus_general_tab -- already selected')
+    if tab_selected is not None:
+        print('focus', tab, 'tab -- already selected')
         return 1
     else:
-        general_tab_unselected = pag.locateCenterOnScreen(
-            './img/overview/general_overview_tab.bmp',
+        tab_unselected = pag.locateCenterOnScreen(
+            './img/overview/' + tab + '_overview_tab.bmp',
             confidence=0.95,
             region=(originx, originy,
                     windowx, windowy))
 
-        if general_tab_unselected is not None:
-            (x, y) = general_tab_unselected
-            pag.moveTo((x + (random.randint(-14, 14))),
-                       (y + (random.randint(-7, 7))),
-                       mouse.duration(), mouse.path())
-            mouse.click()
-            return 1
-        else:
-            return 0
-
-
-def focus_mining_tab():
-    # Switch to the default 'Mining' tab of the overview to check for
-    # asteroids.
-    print('focus_mining_tab -- called')
-    mining_tab_selected = pag.locateCenterOnScreen(
-        './img/overview/mining_overview_tab_selected.bmp',
-        # Requires very high confidence because the button looks slightly
-        # different when it's selected.
-        confidence=0.995,
-        region=(originx, originy,
-                windowx, windowy))
-    if mining_tab_selected is not None:
-        print('focus_mining_tab -- already selected')
-    else:
-        mining_tab_unselected = pag.locateCenterOnScreen(
-            './img/overview/mining_overview_tab.bmp',
-            confidence=0.95,
-            region=(originx, originy,
-                    windowx, windowy))
-
-        if mining_tab_unselected is not None:
-            (x, y) = mining_tab_unselected
-            pag.moveTo((x + (random.randint(-10, 10))),
-                       (y + (random.randint(-7, 7))),
+        if tab_unselected is not None:
+            (x, y) = tab_unselected
+            pag.moveTo((x + (random.randint(-12, 12))),
+                       (y + (random.randint(-6, 6))),
                        mouse.duration(), mouse.path())
             mouse.click()
             return 1

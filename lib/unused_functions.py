@@ -48,6 +48,36 @@ def detect_asteroids():
     return 0
 
 
+def focus_mining_tab():
+    # Switch to the default 'Mining' tab of the overview to check for
+    # asteroids.
+    print('focus_mining_tab -- called')
+    mining_tab_selected = pag.locateCenterOnScreen(
+        './img/overview/mining_overview_tab_selected.bmp',
+        # Requires very high confidence because the button looks slightly
+        # different when it's selected.
+        confidence=0.995,
+        region=(originx, originy,
+                windowx, windowy))
+    if mining_tab_selected is not None:
+        print('focus_mining_tab -- already selected')
+    else:
+        mining_tab_unselected = pag.locateCenterOnScreen(
+            './img/overview/mining_overview_tab.bmp',
+            confidence=0.95,
+            region=(originx, originy,
+                    windowx, windowy))
+
+        if mining_tab_unselected is not None:
+            (x, y) = mining_tab_unselected
+            pag.moveTo((x + (random.randint(-10, 10))),
+                       (y + (random.randint(-7, 7))),
+                       mouse.duration(), mouse.path())
+            mouse.click()
+            return 1
+        else:
+            return 0
+
 def target_asteroid():
     # Target the closest large-sized asteroid in overview, assuming overview is
     # sorted by distance, with closest objects at the top.
