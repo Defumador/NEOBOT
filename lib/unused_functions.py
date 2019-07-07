@@ -279,7 +279,7 @@ def detect_warp_to_bookmark_in_system():
                 screenheight))
     while at_bookmark_in_system is None and tries <= 50:
         time.sleep(float(random.randint(1000, 3000)) / 1000)
-        focus_overview()
+        focus_client()
         time.sleep(float(random.randint(5000, 10000)) / 1000)
         warp_to_bookmark_tries += 1
         pag.moveTo((defined_bookmark_in_systemx + (random.randint(-1, 200))),
@@ -321,7 +321,7 @@ at_bookmark_in_system = pag.locateCenterOnScreen(
             screenheight))
 while at_bookmark_in_system is None and tries <= 50:
     time.sleep(float(random.randint(1000, 3000)) / 1000)
-    focus_overview()
+    focus_client()
     time.sleep(float(random.randint(5000, 10000)) / 1000)
     warp_to_bookmark_tries += 1
     pag.moveTo((defined_bookmark_in_systemx + (random.randint(-1, 200))),

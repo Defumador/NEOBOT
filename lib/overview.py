@@ -218,11 +218,12 @@ def detect_pcs():
         return 0
 
 
-def focus_overview():
-    # Click on the overview window to focus the eve client window.
-    print('nav.focus_overview -- called')
-    pag.moveTo((windowx - (random.randint(10, 90))),
-               (75 + (random.randint(0, (windowy - 10)))),
+def focus_client():
+    # Click on a blank area in the client, assuming user has
+    # properly configured the UI.
+    print('focus_client -- called')
+    pag.moveTo((originx + (random.randint(50, 300))),
+               (originy + (random.randint(300, 500))),
                mouse.duration(), mouse.path())
     time.sleep(float(random.randint(50, 500)) / 1000)
     mouse.click()

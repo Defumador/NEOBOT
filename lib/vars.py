@@ -14,7 +14,8 @@ import pyautogui as pag
 # MISC
 # for mining, default orbit distance must be within the range of mining lasers
 # right click on item > orbit > set default
-
+# drones should be set to 'agressive'
+# click on hamburger menu in top left corner of drone window > agressive
 
 gotosite = 0
 

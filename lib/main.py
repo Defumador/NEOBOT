@@ -44,7 +44,7 @@ def miner():
     print('beginning run', runs)
     while docked.docked_check() == 0:
         if lib.drones.detect_drones_launched() == 1:
-            lib.overview.focus_overview()
+            lib.overview.focus_client()
             lib.drones.recall_drones_loop()
         # Increment desired mining site by one as this is the next location
         # ship will warp to.
@@ -58,7 +58,7 @@ def miner():
             # If no hostiles npcs or players are present, check for asteroids.
             # If no asteroids, blacklist site and warp to next site.
             if lib.overview.detect_npcs_var == 1:
-                if lib.overview.focus_overview_tab('mining') == 1:
+                if lib.overview.focus_overview_tab('general') == 1:
                     if lib.overview.detect_npcs() == 1:
                         miner()
             if lib.overview.detect_pcs_var == 1:
@@ -75,7 +75,7 @@ def miner():
                 # If ship inventory isn't full, continue to mine ore and wait
                 # for popups or errors.
                 # Switch back to the general tab for easier ship detection
-                lib.overview.focus_overview_tab('mining')
+                lib.overview.focus_overview_tab('general')
                 while mining.inv_full_popup() == 0:
                     if mining.asteroid_depleted_popup() == 1:
                         if mining.detect_ore() == 0:
@@ -123,7 +123,7 @@ def miner():
             sys.exit(0)
     if docked.docked_check() == 1:
         # If docked when script starts, undock_loop.
-        lib.overview.focus_overview()
+        lib.overview.focus_client()
         docked.undock_loop()
         miner()
 
@@ -179,13 +179,13 @@ def navigator():
     dockedcheck = docked.docked_check()
 
     while dockedcheck == 0:
-        lib.overview.focus_overview()
+        lib.overview.focus_client()
         selectwaypoint = nav.warp_to_waypoint()
         while selectwaypoint == 1:  # Value of 1 indicates stargate waypoint.
             time.sleep(5)  # Wait for jump to begin.
             detectjump = nav.detect_jump_loop()
             if detectjump == 1:
-                lib.overview.focus_overview()
+                lib.overview.focus_client()
                 selectwaypoint = nav.warp_to_waypoint()
             else:
                 nav.emergency_terminate()
@@ -218,14 +218,14 @@ def collector():
     print('collector -- running collector')
     dockedcheck = docked.docked_check()
     while dockedcheck == 0:
-        lib.overview.focus_overview()
+        lib.overview.focus_client()
         selectwaypoint = nav.warp_to_waypoint()
 
         while selectwaypoint == 1:
             time.sleep(3)  # Wait for warp to start.
             detectjump = nav.detect_jump_loop()
             if detectjump == 1:
-                lib.overview.focus_overview()
+                lib.overview.focus_client()
                 selectwaypoint = nav.warp_to_waypoint()
         while selectwaypoint == 2:
             time.sleep(3)
@@ -283,9 +283,9 @@ print("originy =", originy)
 print("windowx =", windowx)
 print("windowy =", windowy)
 
-# miner()
+miner()
 # lib.overview.focus_overview_tab('warpto')
-nav.emergency_terminate()
+# nav.emergency_terminate()
 #mining.detect_ore()
 #mining.target_ore()
 #mining.activate_miner()
@@ -295,6 +295,7 @@ nav.emergency_terminate()
 #mining.focus_mining_tab()
 #mining.check_for_enemies()
 #time.sleep(2)
+#lib.overview.focus_client()
 #mining.recall_drones_loop()
 #mining.launch_drones_loop()
 #cProfile.run('mining.detect_pcs()')
