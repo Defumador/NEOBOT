@@ -149,6 +149,7 @@ if __name__ == '__main__':
 import logging
 import tkinter
 import datetime
+import tkinter.scrolledtext as ScrolledText
 
 # (but you can also reference this getLogger instance from other modules and other threads by passing the same argument name...allowing you to share and isolate loggers as desired)
 # ...so it is module-level logging and it takes the name of this module (by using __name__)
@@ -175,7 +176,7 @@ class simpleapp_tk(tkinter.Tk):
         self.mybutton.grid(column=0,row=0,sticky='EW')
         self.mybutton.bind("<ButtonRelease-1>", self.button_callback)
 
-        self.mytext = tkinter.Text(self, state="disabled")
+        self.mytext = ScrolledText.ScrolledText(self, state="disabled")
         self.mytext.grid(column=2, row=2,sticky='SE')
         self.mytext.config(width='50', height='10')
 
@@ -191,9 +192,10 @@ class MyHandlerText(logging.StreamHandler):
     def emit(self, record):
         msg = self.format(record)
         self.textctrl.config(state="normal")
-        self.textctrl.insert("end", msg + "\n")
+        self.textctrl.insert(tkinter.END, msg + "\n")
         self.flush()
         self.textctrl.config(state="disabled")
+        self.textctrl.yview(tkinter.END)
 
 if __name__ == "__main__":
 
