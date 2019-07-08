@@ -1,4 +1,6 @@
-import sys, time, random
+import sys
+import time
+import random
 import pyautogui as pag
 from lib import mouse, keyboard, docked
 from lib.vars import originx, originy, windowx, windowy, conf

@@ -1,6 +1,7 @@
 import time
 import sys
 import random
+import logging
 
 import pyautogui as pag
 
@@ -41,11 +42,15 @@ hedbergite = 0
 hemorphite = 0
 mercoxit = 0
 
+logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
+                           'message)s', level=logging.DEBUG)
+
 
 def activate_miner():
     # Activate mining lasers in sequential order.
     if mining_lasers == 1:
         keyboard.keypress('f1')
+        logging.debug('activating miner 1')
         while miner_out_of_range_popup() == 1:
             time.sleep(float(random.randint(10000, 20000)) / 1000)
             activate_miner()
@@ -53,42 +58,49 @@ def activate_miner():
 
     elif mining_lasers == 2:
         keyboard.keypress('f1')
+        logging.debug('activating miner 1')
         while miner_out_of_range_popup() == 1:
             time.sleep(float(random.randint(10000, 20000)) / 1000)
             keyboard.keypress('f1')
         else:
-            print('pressing f2')
             keyboard.keypress('f2')
+            logging.debug('activating miner 2')
             return 1
 
     elif mining_lasers == 3:
         keyboard.keypress('f1')
+        logging.debug('activating miner 1')
         while miner_out_of_range_popup() == 1:
             time.sleep(float(random.randint(10000, 20000)) / 1000)
             keyboard.keypress('f1')
         else:
             keyboard.keypress('f2')
+            logging.debug('activating miner 2')
             keyboard.keypress('f3')
+            logging.debug('activating miner 3')
             return 1
 
     elif mining_lasers == 4:
         keyboard.keypress('f1')
+        logging.debug('activating miner 1')
         while miner_out_of_range_popup() == 1:
             time.sleep(float(random.randint(10000, 20000)) / 1000)
             keyboard.keypress('f1')
         else:
             keyboard.keypress('f2')
+            logging.debug('activating miner 2')
             keyboard.keypress('f3')
+            logging.debug('activating miner 3')
             keyboard.keypress('f4')
+            logging.debug('activating miner 4')
             return 1
-    print('activate_mining_laser -- called')
     return 1
 
 
 def asteroid_depleted_popup():
     # Check for popup indicating the asteroid currently being mined has been
     # depleted.
-    print('asteroid_depleted_popup -- not detected')
+    logging.debug('asteroid still available')
     return 0
 
 
@@ -131,14 +143,14 @@ def detect_ore():
         global ore_found
         ore_found = pag.locate(ore_type, overview, confidence=0.92)
         if ore_found is not None:
-            print('found ore at', ore_found)
+            logging.debug('found ore at ' + (str(ore_found)))
             (x, y, l, w) = ore_found
             pag.moveTo((x + (originx + (windowx - (int(windowx / 3.8))))),
                        (y + originy),
                        1, mouse.path())
             return 1
         else:
-            print('detect_ore -- no more ore to mine')
+            logging.info('no more ore available in belt')
             return 0
 
 
@@ -151,10 +163,10 @@ def inv_full_popup():
         region=(originx, originy,
                 windowx, windowy))
     if inv_full_popup_var is None:
-        print('inv_full_popup -- not detected')
+        logging.debug('inventory not yet full')
         return 0
     elif inv_full_popup_var is not None:
-        print('inv_full_popup -- detected')
+        logging.info('inventory full')
         return 1
 
 
@@ -167,18 +179,19 @@ def miner_out_of_range_popup():
         confidence=0.90,
         region=(originx, originy, windowx, windowy))
     while miner_out_of_range is not None:
-        print('miner_out_of_range_popup -- out of module range')
+        logging.debug('out of module range')
         return 1
     if miner_out_of_range is None:
-        print('miner_out_of_range_popup -- in module range')
+        logging.debug('within module range')
         return 0
 
 
 def timer(timer_var):
     # Timeout timer for mining. If, for some reason, miner gets stuck in
     # belt, restart script after a certain period of time.
-    print('timervar is', timer_var)
+    logging.debug('time spent at site is ' + (str(timer_var)) + 's')
     if timer_var >= 800:
+        logging.warning('timed out!')
         return 1
     elif timer_var < 800:
         return 0
@@ -203,22 +216,22 @@ def target_ore():
         keyboard.keypress('w')
         if target_available() == 0:
             time.sleep(float(random.randint(500, 1000)) / 1000)
-            print('target_ore -- getting closer to target')
+            logging.info('getting closer to ore')
             time.sleep(float(random.randint(1000, 5000)) / 1000)
             tries = 0
             while target_available() == 0 and tries <= 30:
                 time.sleep(10)
             if target_available() == 0 and tries > 30:
-                print('target_ore -- timed out getting closer to target')
+                logging.warning('timed out getting closer to ore!')
                 return 0
         if target_available() == 1:
             keyboard.keypress('ctrl')
             time.sleep(float(random.randint(1000, 2000)) / 1000)
-            print('target_ore -- locking target')
+            logging.debug('locking target')
             if detect_target_lock() == 1:
                 return 1
             elif detect_target_lock() == 0:
                 return 0
     else:
-        print('target_ore -- no asteroids to target')
+        logging.info('no asteroids to target')
         return 0

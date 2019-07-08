@@ -1,5 +1,6 @@
 import random
 import time
+import logging
 
 import pyautogui as pag
 
@@ -23,6 +24,9 @@ detect_pc_battleship = 1
 detect_pc_rookie_ship = 1
 detect_pc_capsule = 1
 
+logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
+                           'message)s', level=logging.DEBUG)
+
 
 def detect_target_lock():
     # Wait for ship to finish acquiring target lock.
@@ -39,12 +43,12 @@ def detect_target_lock():
             region=(originx, originy,
                     windowx, windowy))
         time.sleep(float(random.randint(100, 500)) / 1000)
-        print('detect_target_lock -- locking', tries)
+        logging.debug('locking target' + (str(tries)))
     if target_lock is not None and tries <= 100:
-        print('detect_target_lock -- lock attained')
+        logging.debug('lock attained')
         return 1
     elif target_lock is None and tries > 100:
-        print('detect_target_lock -- timed out waiting for lock')
+        logging.error('timed out waiting for target lock')
         return 0
 
 
@@ -57,7 +61,7 @@ def detect_jam():
     jammed = pag.locate(
         './img/overview/jammed_overview.bmp', overview, confidence=0.95)
     if jammed is not None:
-        print('detect_jam -- ship has been jammed!')
+        logging.info('ship has been jammed!')
         return 1
     else:
         return 0
@@ -65,7 +69,7 @@ def detect_jam():
 
 def focus_overview_tab(tab):
     # Switch to the specified tab of the overview
-    print('focus_overview_tab -- called for', tab, 'tab')
+    logging.debug('focusing ' + (str(tab)) + ' tab')
     tab_selected = pag.locateCenterOnScreen(
         './img/overview/' + tab + '_overview_tab_selected.bmp',
         # Requires very high confidence since the button looks only slightly
@@ -74,7 +78,7 @@ def focus_overview_tab(tab):
         region=(originx, originy,
                 windowx, windowy))
     if tab_selected is not None:
-        print('focus', tab, 'tab -- already selected')
+        logging.debug('tab ' + (str(tab)) + ' -- already selected')
         return 1
     else:
         tab_unselected = pag.locateCenterOnScreen(
@@ -103,10 +107,10 @@ def target_available():
         # looks so similar to enabled icon.
         region=(originx, originy, windowx, windowy), grayscale=True)
     if target_lock_available is not None:
-        print('target_available -- within targeting range')
+        logging.debug('within targeting range')
         return 1
     elif target_lock_available is None:
-        print('target_available -- outside of targeting range')
+        logging.debug('outside of targeting range')
         return 0
 
 
@@ -144,8 +148,8 @@ def detect_npcs():
             hostile_npc_found = pag.locate(npc_icon, overview, confidence=conf)
 
             if hostile_npc_found is not None:
-                print('detect_npcs -- found ship at', hostile_npc_found)
-                print('located icon', npc_icon)
+                logging.debug('found ship at ' + (str(hostile_npc_found)))
+                logging.debug('located icon ' + (str(npc_icon)))
                 # Break up the tuple so mouse can point at icon for debugging.
                 # (x, y, t, w) = hostile_npc_found
                 # Coordinates must compensate for the altered coordinate-space
@@ -154,7 +158,7 @@ def detect_npcs():
                 #           (y + originy),
                 #           0, mouse.path())
                 return 1
-        print('detect npcs -- passed')
+        logging.debug('passed npc check')
         return 0
     else:
         return 0
@@ -217,8 +221,8 @@ def detect_pcs():
             player_found = pag.locate(pc_icon, overview, confidence=conf)
 
             if player_found is not None:
-                print('detect_pcs -- found player at', player_found)
-                print('located icon', pc_icon)
+                logging.debug('found player at' + (str(player_found)))
+                logging.debug('located icon' + (str(pc_icon)))
                 # Break up the tuple so mouse can point at icon for debugging.
                 (x, y, t, w) = player_found
                 # Coordinates must compensate for the altered coordinate-space
@@ -227,7 +231,7 @@ def detect_pcs():
                            (y + originy),
                            0, mouse.path())
                 return 1
-        print('detect pcs -- passed')
+        logging.debug('passed pc check')
         return 0
     else:
         return 0
@@ -236,7 +240,7 @@ def detect_pcs():
 def focus_client():
     # Click on a blank area in the client, assuming user has
     # properly configured the UI.
-    print('focus_client -- called')
+    logging.debug('focusing client')
     pag.moveTo((originx + (random.randint(50, 300))),
                (originy + (random.randint(300, 500))),
                mouse.duration(), mouse.path())

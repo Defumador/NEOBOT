@@ -1,5 +1,7 @@
 import random
+import sys
 import time
+import logging
 
 import pyautogui as pag
 
@@ -11,6 +13,9 @@ destnum = {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7",
            8: "8", 9: "9", 10: "10"}
 bookmark_dict = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7",
                  8: "8", 9: "9", 10: "10"}
+
+logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
+                           'message)s', level=logging.DEBUG)
 
 
 def set_dest():
@@ -28,10 +33,10 @@ def set_dest():
             ('./img/dest/dest' + (destnum[target_dest]) + '.bmp'),
             confidence=0.98,
             region=(originx, originy, windowx, windowy))
-        print('nav.set_dest -- looking for dest' + (destnum[target_dest]))
+        logging.debug('looking for dest ' + (str((destnum[target_dest]))))
 
     if set_dest_var is not None:
-        print('nav.set_dest -- setting destination waypoint')
+        logging.debug('setting destination waypoint')
         (next_destx), (next_desty) = set_dest_var
         pag.moveTo((next_destx + (random.randint(-1, 200))),
                    (next_desty + (random.randint(-3, 3))),
@@ -53,15 +58,16 @@ def detect_at_home():
                                                  region=(originx, originy,
                                                          windowx, windowy))
     if at_home_check_var is None:
+        logging.debug('not at home station')
         return 0
     elif at_home_check_var is not None:
-        print('nav.detect_at_home -- at home station')
+        logging.debug('at home station')
         return 1
 
 
 def set_home():
     # Set destination as the bookmark beginning with '000'.
-    print('nav.set_home -- setting home waypoint')
+    logging.debug('setting home waypoint')
     set_home_var = pag.locateCenterOnScreen('./img/dest/dest0.bmp',
                                             confidence=conf,
                                             region=(originx, originy,
@@ -78,7 +84,7 @@ def set_home():
         mouse.click()
         return 1
     else:
-        print("set_home -- couldn't find home waypoint")
+        logging.error('could not find home waypoint!')
         return 0
 
     # !! needs work to transition to windowx,windowy
@@ -110,8 +116,7 @@ def warp_to_local_bookmark(target_site):
             confidence=0.90, region=(originx, originy, windowx, windowy))
 
         if at_target_site is not None:
-            print('warp_to_local_bookmark -- already at bookmark',
-                  target_site)
+            logging.debug('already at bookmark ' + (str(target_site)))
             keyboard.keypress('esc')  # Close right-click menu.
             return 0
 
@@ -121,8 +126,7 @@ def warp_to_local_bookmark(target_site):
                 confidence=0.90, region=(originx, originy, windowx, windowy))
 
             if warp_to_target is not None:
-                print('warp_to_local_bookmark -- warping to '
-                      'bookmark', target_site)
+                logging.info('warping to bookmark ' + (str(target_site)))
                 pag.moveRel((0 + (random.randint(10, 80))),
                             (0 + (random.randint(10, 15))),
                             mouse.duration(), mouse.path())
@@ -131,7 +135,7 @@ def warp_to_local_bookmark(target_site):
                 time.sleep(1)
                 return 1
             else:
-                print('warp_to_local_bookmark -- error, is ship docked?')
+                logging.error('unable to warp to target site, is ship docked?')
                 return 0
 
 
@@ -178,13 +182,12 @@ def detect_bookmark_location():
             ('./img/dest/at_dest' + (destnum[n]) + '.bmp'),
             confidence=0.98,
             region=(originx, originy, windowx, windowy))
-        print('detect_bookmark_location -- looking if at destination'
-              + (destnum[n]))
+        logging.debug('looking if at destination ' + (str((destnum[n]))))
         if n == 9 and at_dest is None:
             print('out of destinations to look for')
             return -1
     if at_dest is not None:
-        print('detect_bookmark_location -- at dest' + (destnum[n]))
+        logging.debug('at dest ' + (str((destnum[n]))))
         return n
 
 
@@ -194,7 +197,7 @@ def blacklist_station():
     # station.
     at_dest = detect_bookmark_location()
     if at_dest is not None:
-        print('blacklist_station -- blacklisting station')
+        logging.debug('blacklisting station')
         at_dest = pag.locateCenterOnScreen(
             ('./img/dest/at_dest' + (destnum[n]) + '.bmp'),
             confidence=conf,
@@ -231,7 +234,7 @@ def blacklist_local_bookmark():
     # Determine which bookmark ship is at by looking at the right-click
     # menu. If a bookmark is on grid with the user's ship, blacklist the
     # bookmark by editing its name.
-    print('blacklist_local_bookmark -- called')
+    logging.debug('blacklisting local bookmark')
 
     # First check to see if the bookmark even exists.
     bookmark = 1
@@ -270,8 +273,7 @@ def blacklist_local_bookmark():
 
             # If 'approach location' is present, blacklist that bookmark.
             if at_bookmark is not None:
-                print('blacklist_local_bookmark -- blacklisting bookmark',
-                      bookmark)
+                logging.debug('blacklisting bookmark ' + (str(bookmark)))
                 time.sleep(float(random.randint(1000, 2000)) / 1000)
                 keyboard.keypress('esc')
                 mouse.click()
@@ -299,20 +301,19 @@ def blacklist_local_bookmark():
             # If 'approach location' is not present,
             # close the right-click menu and check the next bookmark
             if at_bookmark is None:
-                print(
-                    'blacklist_local_bookmark -- not at bookmark', bookmark)
+                logging.debug('not at bookmark ' + (str(bookmark)))
                 keyboard.keypress('esc')
                 bookmark += 1
                 continue
 
         elif bookmark_to_blacklist is None:
-            print('blacklist_local_bookmark -- out of bookmarks to look for')
+            logging.warning('out of bookmarks to look for')
             return 0
 
 
 def blacklist_specific_bookmark(target_site):
     # Blacklist a specific bookmark by changing its name.
-    print('blacklist_specific_bookmark -- blacklisting bookmark', target_site)
+    logging.debug('blacklisting bookmark ' + (str(target_site)))
     bookmark_to_blacklist = pag.locateCenterOnScreen(
         ('./img/dest/at_dest' + (bookmark_dict[target_site]) + '.bmp'),
         confidence=conf,
@@ -359,5 +360,5 @@ def travel_to_bookmark(target_bookmark):
         if nav.detect_warp_loop() == 1:
             return 1
     else:
-        print('travel_to_bookmark -- ran out of sites to check for')
+        logging.warning('ran out of sites to check for')
         return 0

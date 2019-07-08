@@ -2,6 +2,7 @@ import sys
 import time
 import traceback
 import cProfile
+import logging
 
 import lib.bookmarks
 import lib.drones
@@ -12,6 +13,9 @@ from lib.vars import system_mining, originx, originy, windowx, windowy
 
 sys.setrecursionlimit(9999999)
 playerfound = 0
+
+logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
+                           'message)s', level=logging.DEBUG)
 
 # TERMINOLOGY #################################################################
 
@@ -42,7 +46,7 @@ def miner():
     global site
     global runs
     timer_var = 0
-    print('beginning run', runs)
+    logging.info('beginning run' + (str(runs)))
     while docked.docked_check() == 0:
         if lib.drones.detect_drones_launched() == 1:
             lib.overview.focus_client()
@@ -95,12 +99,12 @@ def miner():
                         lib.drones.recall_drones_loop()
                         miner()
                     timer_var += 1
-                    time.sleep(2)
+                    time.sleep(1)
 
                 if mining.inv_full_popup() == 1:
                     # Once inventory is full, dock at home station and unload.
                     lib.drones.recall_drones_loop()
-                    print('finishing run', runs)
+                    logging.info('finishing run' + (str(runs)))
                     if system_mining == 0:
                         if lib.bookmarks.set_home() == 1:
                             if navigator() == 1:
@@ -248,20 +252,6 @@ print("windowy =", windowy)
 
 miner()
 
-# lib.overview.focus_overview_tab('warpto')
-# nav.emergency_terminate()
-#mining.detect_ore()
-#mining.target_ore()
-#mining.activate_miner()
-# lib.overview.detect_pcs()
-#mining.detect_asteroids()
-#mining.target_asteroid()
-#mining.focus_mining_tab()
-#mining.check_for_enemies()
-#time.sleep(2)
-#lib.overview.focus_client()
-#mining.recall_drones_loop()
-#mining.launch_drones_loop()
 # cProfile.run('lib.overview.detect_jam()')
 # Method for determining which script to run, as yet to be implemented by gui.
 # selectscript = 2
@@ -271,6 +261,7 @@ miner()
 # elif selectscript == 2:
 #	nav.detect_route()
 #	collector()
+
 '''
 # unit tests
 while mining.inv_full_popup() == 0:
