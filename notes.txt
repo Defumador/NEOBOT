@@ -5,7 +5,10 @@ ships when they arrive on grid
     - add support for checking if shields have been depleted while mining. create screenshot of the leftmost area of the instrument cluster in which the shield has been depleted
 - have ship return to previously used belt after dropping off cargo so ship
 doesn't have to start over looking for a suitable belt
+
 - add ocr support so ship will only target asteroid once it's within range. (https://pypi.org/project/pytesseract/) https://github.com/tesseract-ocr/tesseract/wiki/Command-Line-Usage
+
+- improved logging https://github.com/beenje/tkinter-logging-text-widget/blob/master/main.py
 
 BUGS:
     - warp function sometimes breaks if ship is already at full speed when it
