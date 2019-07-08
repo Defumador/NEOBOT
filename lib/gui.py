@@ -1,3 +1,146 @@
+import logging
+import tkinter
+import datetime
+import tkinter.scrolledtext as ScrolledText
+from tkinter import ttk
+
+# (but you can also reference this getLogger instance from other modules and other threads by passing the same argument name...allowing you to share and isolate loggers as desired)
+# ...so it is module-level logging and it takes the name of this module (by using __name__)
+# recommended per https://docs.python.org/2/library/logging.html
+module_logger = logging.getLogger(__name__)
+
+class simpleapp_tk(tkinter.Tk):
+    def __init__(self,parent):
+      tkinter.Tk.__init__(self,parent)
+      self.parent = parent
+
+      self.grid()
+
+      var1 = tkinter.IntVar()
+      pcbc = tkinter.IntVar()
+      pci  = tkinter.IntVar()
+      pcmf  = tkinter.IntVar()
+      pcfd  = tkinter.IntVar()
+      pcbs  = tkinter.IntVar()
+      pc  = tkinter.IntVar()
+      npcbc = tkinter.IntVar()
+      npcfd  = tkinter.IntVar()
+      npcbs  = tkinter.IntVar()
+      npc  = tkinter.IntVar()
+      ecm = tkinter.IntVar()
+      #combo_d = tkinter.IntVar()
+      #combo_d.set(2)
+
+      def start():
+        print(self.combo_m.get())
+        print(self.combo_d.get())
+        print(var1.get())
+
+      self.t = tkinter.Label(self, text="title here")
+      self.t.grid(column=0, row=0, columnspan=2, sticky='W', padx=15)
+
+      self.start = tkinter.Button(self, text="Start", command=start)
+      self.start.grid(column=0,row=1,sticky='W')
+      self.start.config(width='13', height='1')
+
+      self.stop = tkinter.Button(self, text="Stop")
+      self.stop.grid(column=1, row=1, columnspan=1, sticky='W')
+      self.stop.config(width='13', height='1')
+
+      self.end = tkinter.Button(self, text="End Run")
+      self.end.grid(column=1, row=2, columnspan=1, sticky='W')
+      self.end.config(width='13', height='1')
+
+      self.combo_m = ttk.Combobox(self, values=[1,2,3,4])
+      self.combo_m.current(1)
+      self.combo_m.grid(column=1, row=3, columnspan=1, sticky='W')
+      self.combo_m.config(width='4', height='5')
+      self.m = tkinter.Label(self, text="mc")
+      self.m.grid(column=0, row=3, columnspan=1, sticky='W', padx=5)
+
+      self.combo_d = ttk.Combobox(self, values=[1,2,3,4,5])
+      self.combo_d.current(1)
+      self.combo_d.grid(column=1, row=4, columnspan=1, sticky='W')
+      self.combo_d.config(width='4', height='5')
+      self.d = tkinter.Label(self, text="dc")
+      self.d.grid(column=0, row=4, columnspan=1, sticky='W', padx=5)
+
+      self.check_pc = tkinter.Checkbutton(self, text='pc check', variable=pc)
+      self.check_pc.grid(column=0, row=5, columnspan=1, sticky='W')
+      self.check_pc = tkinter.Checkbutton(self, text='pc frig/des check', variable=pcfd)
+      self.check_pc.grid(column=1, row=5, columnspan=1, sticky='W')
+      self.check_pc = tkinter.Checkbutton(self, text='pc cru/bc check', variable=pcbc)
+      self.check_pc.grid(column=0, row=6, columnspan=1, sticky='W')
+      self.check_pc = tkinter.Checkbutton(self, text='pc bs check', variable=pcbs)
+      self.check_pc.grid(column=1, row=6, columnspan=1, sticky='W')
+      self.check_pc = tkinter.Checkbutton(self, text='pc min frig check', variable=pcmf)
+      self.check_pc.grid(column=0, row=7, columnspan=1, sticky='W')
+      self.check_pc = tkinter.Checkbutton(self, text='pc indy check', variable=pci)
+      self.check_pc.grid(column=1, row=7, columnspan=1, sticky='W')
+
+      self.check_pc = tkinter.Checkbutton(self, text='npc check', variable=npc)
+      self.check_pc.grid(column=0, row=8, columnspan=1, sticky='W')
+      self.check_pc = tkinter.Checkbutton(self, text='npc frig/des check', variable=npcfd)
+      self.check_pc.grid(column=1, row=8, columnspan=1, sticky='W')
+      self.check_pc = tkinter.Checkbutton(self, text='npc cru/bc check', variable=npcbc)
+      self.check_pc.grid(column=0, row=9, columnspan=1, sticky='W')
+      self.check_pc = tkinter.Checkbutton(self, text='npc bs check', variable=npcbs)
+      self.check_pc.grid(column=1, row=9, columnspan=1, sticky='W')
+
+      self.check_pc = tkinter.Checkbutton(self, text='ecm check', variable=ecm)
+      self.check_pc.grid(column=0, row=10, columnspan=1, sticky='W')
+
+      self.mytext = ScrolledText.ScrolledText(self, state="disabled")
+      self.mytext.grid(column=0, row=99, columnspan=99)
+      self.mytext.grid_columnconfigure(0, weight=1)
+      self.mytext.grid_rowconfigure(0, weight=1)
+      self.mytext.config(width='40', height='8')
+
+      self.mybutton = tkinter.Button(self, text="ClickMe")
+      self.mybutton.grid(column=0,row=2,sticky='W')
+      self.mybutton.bind("<ButtonRelease-1>", self.button_callback)
+      self.mybutton.config(width='13', height='1')
+
+    def button_callback(self, event):
+        now = datetime.datetime.now()
+        module_logger.info(now)
+
+
+
+class MyHandlerText(logging.StreamHandler):
+    def __init__(self, textctrl):
+        logging.StreamHandler.__init__(self) # initialize parent
+        self.textctrl = textctrl
+
+    def emit(self, record):
+        msg = self.format(record)
+        self.textctrl.config(state="normal")
+        self.textctrl.insert(tkinter.END, msg + "\n")
+        self.flush()
+        self.textctrl.config(state="disabled")
+        self.textctrl.yview(tkinter.END)
+
+if __name__ == "__main__":
+
+    # create Tk object instance
+    app = simpleapp_tk(None)
+    app.title('my application')
+
+    # setup logging handlers using the Tk instance created above
+    # the pattern below can be used in other threads...
+    # ...to allow other thread to send msgs to the gui
+    # in this example, we set up two handlers just for demonstration (you could add a fileHandler, etc)
+    stderrHandler = logging.StreamHandler()  # no arguments => stderr
+    module_logger.addHandler(stderrHandler)
+    guiHandler = MyHandlerText(app.mytext)
+    module_logger.addHandler(guiHandler)
+    module_logger.setLevel(logging.INFO)
+    module_logger.info("from main")    
+
+    # start Tk
+    app.mainloop()
+    
+'''
 from tkinter import *
 from tkinter.ttk import *
 import tkinter.scrolledtext as ScrolledText
