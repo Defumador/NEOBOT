@@ -174,6 +174,16 @@ def miner_out_of_range_popup():
         return 0
 
 
+def timer(timer_var):
+    # Timeout timer for mining. If, for some reason, miner gets stuck in
+    # belt, restart script after a certain period of time.
+    print('timervar is', timer_var)
+    if timer_var >= 300:  # 10 minutes
+        return 1
+    elif timer_var < 300:
+        return 0
+
+
 def target_ore():
     # Target the closest user-defined ore in overview, assuming overview is
     # sorted by distance, with closest objects at the top.

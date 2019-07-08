@@ -41,6 +41,7 @@ def miner():
     global site
     global runs
     runs += 1
+    timer_var = 0
     print('beginning run', runs)
     while docked.docked_check() == 0:
         if lib.drones.detect_drones_launched() == 1:
@@ -86,6 +87,7 @@ def miner():
                                 miner()
                             mining.activate_miner()
                             mining.inv_full_popup()
+                            print('finishing run', runs)
                             continue
                     if lib.overview.detect_npcs() == 1:
                         lib.drones.recall_drones_loop()
@@ -93,11 +95,16 @@ def miner():
                     if lib.overview.detect_pcs() == 1:
                         lib.drones.recall_drones_loop()
                         miner()
+                    timer_var += 1
+                    if mining.timer(timer_var) == 1:
+                        lib.drones.recall_drones_loop()
+                        miner()
                     time.sleep(2)
 
                 if mining.inv_full_popup() == 1:
                     # Once inventory is full, dock at home station and unload.
                     lib.drones.recall_drones_loop()
+                    print('finishing run', runs)
                     if system_mining == 0:
                         if lib.bookmarks.set_home() == 1:
                             if navigator() == 1:
@@ -127,48 +134,6 @@ def miner():
         docked.undock_loop()
         miner()
 
-'''
-sample threading implementation
-
-import threading
-import time
-
-stop = 0
-lock = threading.Lock()
-
-def shield_check():
-    global stop
-    for i in range(1, 15):
-        time.sleep(1)
-        print('shield_check', i)
-        if stop == 1:
-            print('shield check stopping!')
-            break
-        elif i >= 4:
-            print('shield check warping out!')
-            stop = 1
-            warpout()
-
-def npc_check():
-    global stop
-    for i in range(1, 21):
-        time.sleep(2)
-        print('npc_check', i)
-        if stop == 1:
-            print('npc_check stopping!')
-            break
-        elif i >= 2:
-            print('npc_check warping out!')
-            stop = 1
-            warpout()
-
-def warpout():
-    lock.acquire()
-    for i in range(1, 5):
-        time.sleep(3)
-        print('warping out!', i)
-    lock.release()
-'''
 
 
 def navigator():
@@ -326,4 +291,47 @@ while mining.inv_full_popup() == 0:
         mining.recall_drones_loop()
         miner()
     time.sleep(2)
+'''
+
+'''
+sample threading implementation
+
+import threading
+import time
+
+stop = 0
+lock = threading.Lock()
+
+def shield_check():
+    global stop
+    for i in range(1, 15):
+        time.sleep(1)
+        print('shield_check', i)
+        if stop == 1:
+            print('shield check stopping!')
+            break
+        elif i >= 4:
+            print('shield check warping out!')
+            stop = 1
+            warpout()
+
+def npc_check():
+    global stop
+    for i in range(1, 21):
+        time.sleep(2)
+        print('npc_check', i)
+        if stop == 1:
+            print('npc_check stopping!')
+            break
+        elif i >= 2:
+            print('npc_check warping out!')
+            stop = 1
+            warpout()
+
+def warpout():
+    lock.acquire()
+    for i in range(1, 5):
+        time.sleep(3)
+        print('warping out!', i)
+    lock.release()
 '''

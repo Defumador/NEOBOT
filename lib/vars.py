@@ -19,6 +19,8 @@ import pyautogui as pag
 
 gotosite = 0
 
+# timervar = 0
+
 sys.setrecursionlimit(9999999)  # set high recursion limit for functions that
 # call themselves.
 
