@@ -217,4 +217,101 @@ if __name__ == "__main__":
     # start Tk
     app.mainloop()
    
+   import logging
+import tkinter
+import datetime
+import tkinter.scrolledtext as ScrolledText
+from tkinter import ttk
+
+# (but you can also reference this getLogger instance from other modules and other threads by passing the same argument name...allowing you to share and isolate loggers as desired)
+# ...so it is module-level logging and it takes the name of this module (by using __name__)
+# recommended per https://docs.python.org/2/library/logging.html
+module_logger = logging.getLogger(__name__)
+
+class simpleapp_tk(tkinter.Tk):
+    def __init__(self,parent):
+        tkinter.Tk.__init__(self,parent)
+        self.parent = parent
+
+        self.grid()
+
+        m = tkinter.IntVar()
+        m.set(2)
+        d = tkinter.IntVar()
+        d.set(2)
+
+        def start():
+          print(m.get())
+          print(d.get())
+
+        self.start = tkinter.Button(self, text="Start", command=start)
+        self.start.grid(column=0,row=0,sticky='W')
+
+        self.stop = tkinter.Button(self, text="Stop")
+        self.stop.grid(column=0, row=1, columnspan=1, sticky='W')
+
+        self.radio_m1 = tkinter.Radiobutton(self, text='1', value=1, variable=m)
+        self.radio_m1.grid(column=0, row=2, columnspan=1, sticky='W')
+
+        self.radio_m2 = tkinter.Radiobutton(self, text='2', value=2, variable=m)
+        self.radio_m2.grid(column=1, row=2, columnspan=1, sticky='W')
+        #self.radio_m2.current(2)
+
+        self.radio_m3 = tkinter.Radiobutton(self, text='3', value=3, variable=m)
+        self.radio_m3.grid(column=2, row=2, columnspan=1, sticky='W')
+
+        self.radio_m4 = tkinter.Radiobutton(self, text='4', value=4, variable=m)
+        self.radio_m4.grid(column=3, row=2, columnspan=1, sticky='W')
+
+        self.mybutton = tkinter.Button(self, text="ClickMe")
+        self.mybutton.grid(column=0,row=4,sticky='W')
+        self.mybutton.bind("<ButtonRelease-1>", self.button_callback)
+
+        self.combo_d = ttk.Combobox(self, values=[1,2,3,4], variable=d)
+        self.combo_d.current(1)
+        self.combo_d.grid(column=0, row=3, columnspan=1, sticky='W')
+        self.combo_d.config(width='4', height='1')
+
+        self.mytext = ScrolledText.ScrolledText(self, state="disabled")
+        self.mytext.grid(column=0, row=99, columnspan=99)
+        self.mytext.grid_columnconfigure(0, weight=1)
+        self.mytext.grid_rowconfigure(0, weight=1)
+        self.mytext.config(width='50', height='8')
+
+    def button_callback(self, event):
+        now = datetime.datetime.now()
+        module_logger.info(now)
+
+class MyHandlerText(logging.StreamHandler):
+    def __init__(self, textctrl):
+        logging.StreamHandler.__init__(self) # initialize parent
+        self.textctrl = textctrl
+
+    def emit(self, record):
+        msg = self.format(record)
+        self.textctrl.config(state="normal")
+        self.textctrl.insert(tkinter.END, msg + "\n")
+        self.flush()
+        self.textctrl.config(state="disabled")
+        self.textctrl.yview(tkinter.END)
+
+if __name__ == "__main__":
+
+    # create Tk object instance
+    app = simpleapp_tk(None)
+    app.title('my application')
+
+    # setup logging handlers using the Tk instance created above
+    # the pattern below can be used in other threads...
+    # ...to allow other thread to send msgs to the gui
+    # in this example, we set up two handlers just for demonstration (you could add a fileHandler, etc)
+    stderrHandler = logging.StreamHandler()  # no arguments => stderr
+    module_logger.addHandler(stderrHandler)
+    guiHandler = MyHandlerText(app.mytext)
+    module_logger.addHandler(guiHandler)
+    module_logger.setLevel(logging.INFO)
+    module_logger.info("from main")    
+
+    # start Tk
+    app.mainloop()
    '''
