@@ -48,6 +48,21 @@ def detect_target_lock():
         return 0
 
 
+def detect_jam():
+    # Check overview window for target jamming icon on the right edge
+    overview = pag.screenshot('test.bmp',
+                              region=(
+                                  (originx + (windowx - (int(windowx / 8)))),
+                                  originy, (int(windowx / 8)), windowy))
+    jammed = pag.locate(
+        './img/overview/jammed_overview.bmp', overview, confidence=0.95)
+    if jammed is not None:
+        print('detect_jam -- ship has been jammed!')
+        return 1
+    else:
+        return 0
+
+
 def focus_overview_tab(tab):
     # Switch to the specified tab of the overview
     print('focus_overview_tab -- called for', tab, 'tab')

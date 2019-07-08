@@ -1,6 +1,7 @@
 import sys
 import time
 import traceback
+import cProfile
 
 import lib.bookmarks
 import lib.drones
@@ -32,7 +33,7 @@ site = 7
 # Total number of saved bookmark locations. This variable is set by the user.
 total_sites = 10
 # Number of 'runs' completed for mining script
-runs = 0
+runs = 1
 # -----------------------------------------------------------------------------
 
 
@@ -40,7 +41,6 @@ def miner():
     global playerfound
     global site
     global runs
-    runs += 1
     timer_var = 0
     print('beginning run', runs)
     while docked.docked_check() == 0:
@@ -87,18 +87,14 @@ def miner():
                                 miner()
                             mining.activate_miner()
                             mining.inv_full_popup()
-                            print('finishing run', runs)
                             continue
-                    if lib.overview.detect_npcs() == 1:
-                        lib.drones.recall_drones_loop()
-                        miner()
-                    if lib.overview.detect_pcs() == 1:
+                    if lib.overview.detect_npcs() == 1 or \
+                            lib.overview.detect_pcs() == 1 or \
+                            lib.overview.detect_jam() == 1 or \
+                            mining.timer(timer_var) == 1:
                         lib.drones.recall_drones_loop()
                         miner()
                     timer_var += 1
-                    if mining.timer(timer_var) == 1:
-                        lib.drones.recall_drones_loop()
-                        miner()
                     time.sleep(2)
 
                 if mining.inv_full_popup() == 1:
@@ -112,6 +108,7 @@ def miner():
                                 docked.undock_loop()
                                 playerfound = 0
                                 time.sleep(3)
+                                runs += 1
                                 miner()
                     # If ship is mining in the same system it will dock in,
                     # a different set of functions is required.
@@ -121,6 +118,7 @@ def miner():
                         docked.undock_loop()
                         playerfound = 0
                         time.sleep(3)
+                        runs += 1
                         miner()
 
                 if mining.detect_ore() == 0:
@@ -249,6 +247,7 @@ print("windowx =", windowx)
 print("windowy =", windowy)
 
 miner()
+
 # lib.overview.focus_overview_tab('warpto')
 # nav.emergency_terminate()
 #mining.detect_ore()
@@ -263,7 +262,7 @@ miner()
 #lib.overview.focus_client()
 #mining.recall_drones_loop()
 #mining.launch_drones_loop()
-#cProfile.run('mining.detect_pcs()')
+# cProfile.run('lib.overview.detect_jam()')
 # Method for determining which script to run, as yet to be implemented by gui.
 # selectscript = 2
 #

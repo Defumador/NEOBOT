@@ -178,9 +178,9 @@ def timer(timer_var):
     # Timeout timer for mining. If, for some reason, miner gets stuck in
     # belt, restart script after a certain period of time.
     print('timervar is', timer_var)
-    if timer_var >= 300:  # 10 minutes
+    if timer_var >= 800:
         return 1
-    elif timer_var < 300:
+    elif timer_var < 800:
         return 0
 
 
