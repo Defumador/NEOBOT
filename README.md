@@ -9,7 +9,3 @@ Currently the bot supports hauling, autopilot, and mining functions.
 
 #### Dependencies:
 -pyautogui (https://github.com/asweigart/pyautogui)
-
--tkinter
-
--pygubu (https://pypi.org/project/pygubu/)
