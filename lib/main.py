@@ -4,6 +4,12 @@ import traceback
 import cProfile
 import logging
 
+import logging
+import tkinter
+import datetime
+import tkinter.scrolledtext as ScrolledText
+from tkinter import ttk
+
 import lib.bookmarks
 import lib.drones
 import lib.navigation
@@ -14,8 +20,7 @@ from lib.vars import system_mining, originx, originy, windowx, windowy
 sys.setrecursionlimit(9999999)
 playerfound = 0
 
-logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
-                           'message)s', level=logging.DEBUG)
+
 
 # TERMINOLOGY #################################################################
 
@@ -39,9 +44,39 @@ total_sites = 10
 # Number of 'runs' completed for mining script
 runs = 1
 # -----------------------------------------------------------------------------
+modules = 0
+drones = 0
+
+detect_npcs_var = 1
+
+detect_npc_frigate_and_destroyer = 0
+detect_npc_cruiser_and_battlecruiser = 1
+detect_npc_battleship = 1
+
+detect_pcs = 1
+
+detect_pc_industrial = 1
+detect_pc_mining_barge = 1
+detect_pc_frigate_and_destroyer = 1
+detect_pc_capital_industrial_and_freighter = 1
+detect_pc_cruiser_and_battlecruiser = 1
+detect_pc_battleship = 1
+detect_pc_rookie_ship = 1
+detect_pc_capsule = 1
+
+# recommended per https://docs.python.org/2/library/logging.html
+logger = logging.getLogger(__name__)
 
 
+# logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
+# 'message)s', level=logging.DEBUG)
+
+
+# MAIN SCRIPTS ################################################################
 def miner():
+    print('main, drones is ', drones)
+    print('detect pc', detect_pcs)
+    return
     global playerfound
     global site
     global runs
@@ -250,7 +285,7 @@ print("originy =", originy)
 print("windowx =", windowx)
 print("windowy =", windowy)
 
-miner()
+#miner()
 
 # cProfile.run('lib.overview.detect_jam()')
 # Method for determining which script to run, as yet to be implemented by gui.
@@ -325,3 +360,171 @@ def warpout():
         print('warping out!', i)
     lock.release()
 '''
+
+
+# GUI #########################################################################
+
+
+class simpleapp_tk(tkinter.Tk):
+    def __init__(self, parent):
+        tkinter.Tk.__init__(self, parent)
+        self.parent = parent
+
+        self.grid()
+
+        global detect_npcs_var, detect_npc_frigate_and_destroyer, \
+            detect_npc_cruiser_and_battlecruiser, detect_npc_battleship
+
+        global detect_pcs_var, detect_pc_industrial, detect_pc_mining_barge, \
+            detect_pc_frigate_and_destroyer, \
+            detect_pc_capital_industrial_and_freighter, \
+            detect_pc_cruiser_and_battlecruiser, detect_pc_battleship, \
+            detect_pc_rookie_ship, detect_pc_capsule
+
+        detect_npcs_var = tkinter.IntVar()
+
+        detect_npc_frigate_and_destroyer = tkinter.IntVar()
+        detect_npc_cruiser_and_battlecruiser = tkinter.IntVar()
+        detect_npc_battleship = tkinter.IntVar()
+
+        detect_pcs_var = tkinter.IntVar()
+
+        detect_pc_industrial = tkinter.IntVar()
+        detect_pc_mining_barge = tkinter.IntVar()
+        detect_pc_frigate_and_destroyer = tkinter.IntVar()
+        detect_pc_capital_industrial_and_freighter = tkinter.IntVar()
+        detect_pc_cruiser_and_battlecruiser = tkinter.IntVar()
+        detect_pc_battleship = tkinter.IntVar()
+        detect_pc_rookie_ship = tkinter.IntVar()
+        detect_pc_capsule = tkinter.IntVar()
+
+        def start():
+            global drones, modules, detect_pcs
+            modules = (int(self.combo_modules.get()))
+            drones = (int(self.combo_drones.get()))
+            logger.debug((str(modules)) + ' modules')
+            logger.debug((str(drones)) + ' drones')
+
+            detect_pcs = (int(detect_pcs_var.get()))
+            logger.debug('detect pcs is ' + (str(detect_pcs)))
+            miner()
+
+        self.t = tkinter.Label(self, text="")
+        self.t.grid(column=0, row=0, columnspan=2, sticky='W', padx=0,
+                    pady=0)
+
+        self.start = tkinter.Button(self, text="Start", command=start)
+        self.start.grid(column=0, row=1, sticky='W')
+        self.start.config(width='13', height='1')
+
+        self.stop = tkinter.Button(self, text="Stop")
+        self.stop.grid(column=1, row=1, columnspan=1, sticky='W')
+        self.stop.config(width='13', height='1')
+
+        self.end = tkinter.Button(self, text="End Run")
+        self.end.grid(column=1, row=2, columnspan=1, sticky='W')
+        self.end.config(width='13', height='1')
+
+        self.t = tkinter.Label(self, text="")
+        self.t.grid(column=0, row=3, columnspan=2, sticky='W', padx=0,
+                    pady=0)
+
+        self.combo_modules = ttk.Combobox(self, values=[1, 2, 3, 4])
+        self.combo_modules.current(2)
+        self.combo_modules.grid(column=1, row=4, columnspan=1, sticky='W')
+        self.combo_modules.config(width='4', height='10')
+        self.m = tkinter.Label(self, text="mc")
+        self.m.grid(column=0, row=4, columnspan=1, sticky='W', padx=5)
+
+        self.combo_drones = ttk.Combobox(self, values=[0, 1, 2, 3, 4, 5])
+        self.combo_drones.current(0)
+        self.combo_drones.grid(column=1, row=5, columnspan=1, sticky='W')
+        self.combo_drones.config(width='4', height='10')
+        self.label_drones = tkinter.Label(self, text="drones")
+        self.label_drones.grid(column=0, row=5, columnspan=1, sticky='W',
+                               padx=5)
+
+        self.check_pc = tkinter.Checkbutton(self, text='pc check',
+                                            variable=detect_pcs_var)
+        self.check_pc.grid(column=0, row=6, columnspan=1, sticky='W')
+        # self.check_pc = tkinter.Checkbutton(self, text='pc frig/des check',
+        # variable=pcfd)
+        # self.check_pc.grid(column=1, row=5, columnspan=1, sticky='W')
+        # self.check_pc = tkinter.Checkbutton(self, text='pc cru/bc check',
+        ## variable=pcbc)
+        # self.check_pc.grid(column=0, row=6, columnspan=1, sticky='W')
+        # self.check_pc = tkinter.Checkbutton(self, text='pc bs check',
+        ## variable=pcbs)
+        # self.check_pc.grid(column=1, row=6, columnspan=1, sticky='W')
+        # self.check_pc = tkinter.Checkbutton(self, text='pc min frig check',
+        ## variable=pcmf)
+        # self.check_pc.grid(column=0, row=7, columnspan=1, sticky='W')
+        # self.check_pc = tkinter.Checkbutton(self, text='pc indy check',
+        ## variable=pci)
+        # self.check_pc.grid(column=1, row=7, columnspan=1, sticky='W')
+
+        # self.check_pc = tkinter.Checkbutton(self, text='npc check',
+        ## variable=npc)
+        # self.check_pc.grid(column=0, row=8, columnspan=1, sticky='W')
+        # self.check_pc = tkinter.Checkbutton(self, text='npc frig/des
+        ## check', variable=npcfd)
+        # self.check_pc.grid(column=1, row=8, columnspan=1, sticky='W')
+        # self.check_pc = tkinter.Checkbutton(self, text='npc cru/bc check',
+        ## variable=npcbc)
+        # self.check_pc.grid(column=0, row=9, columnspan=1, sticky='W')
+        # self.check_pc = tkinter.Checkbutton(self, text='npc bs check',
+        ## variable=npcbs)
+        # self.check_pc.grid(column=1, row=9, columnspan=1, sticky='W')
+
+        # self.check_pc = tkinter.Checkbutton(self, text='ecm check',
+        # variable=ecm)
+        # self.check_pc.grid(column=0, row=10, columnspan=1, sticky='W')
+
+        self.mytext = ScrolledText.ScrolledText(self, state="disabled")
+        self.mytext.grid(column=0, row=99, columnspan=99)
+        self.mytext.grid_columnconfigure(0, weight=1)
+        self.mytext.grid_rowconfigure(0, weight=1)
+        self.mytext.config(width='30', height='15')
+
+        self.mybutton = tkinter.Button(self, text="ClickMe")
+        self.mybutton.grid(column=0, row=2, sticky='W')
+        self.mybutton.bind("<ButtonRelease-1>", self.button_callback)
+        self.mybutton.config(width='13', height='1')
+
+    def button_callback(self, event):
+        now = datetime.datetime.now()
+        logger.info(now)
+
+
+class MyHandlerText(logging.StreamHandler):
+    def __init__(self, textctrl):
+        logging.StreamHandler.__init__(self)  # initialize parent
+        self.textctrl = textctrl
+
+    def emit(self, record):
+        msg = self.format(record)
+        self.textctrl.config(state="normal")
+        self.textctrl.insert(tkinter.END, msg + "\n")
+        self.flush()
+        self.textctrl.config(state="disabled")
+        self.textctrl.yview(tkinter.END)
+
+
+if __name__ == "__main__":
+    # create Tk object instance
+    app = simpleapp_tk(None)
+    app.title('NEOMINER v0.1')
+
+    # setup logging handlers using the Tk instance created above
+    # the pattern below can be used in other threads...
+    # ...to allow other thread to send msgs to the gui
+    # in this example, we set up two handlers just for demonstration (you could add a fileHandler, etc)
+    stderrHandler = logging.StreamHandler()  # no arguments => stderr
+    # logger.addHandler(stderrHandler)
+    guiHandler = MyHandlerText(app.mytext)
+    logger.addHandler(guiHandler)
+    logger.setLevel(logging.DEBUG)
+    logger.info("from main")
+
+    # start Tk
+    app.mainloop()

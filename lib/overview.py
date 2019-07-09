@@ -7,22 +7,7 @@ import pyautogui as pag
 from lib import mouse
 from lib.vars import originx, originy, windowx, windowy
 
-detect_npcs_var = 1
 
-detect_npc_frigate_and_destroyer = 0
-detect_npc_cruiser_and_battlecruiser = 1
-detect_npc_battleship = 1
-
-detect_pcs_var = 1
-
-detect_pc_industrial = 1
-detect_pc_mining_barge = 1
-detect_pc_frigate_and_destroyer = 1
-detect_pc_capital_industrial_and_freighter = 1
-detect_pc_cruiser_and_battlecruiser = 1
-detect_pc_battleship = 1
-detect_pc_rookie_ship = 1
-detect_pc_capsule = 1
 
 logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
