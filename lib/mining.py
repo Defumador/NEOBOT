@@ -214,24 +214,21 @@ def target_ore():
                    mouse.duration(), mouse.path())
         mouse.click()
         keyboard.keypress('w')
-        if target_available() == 0:
-            time.sleep(float(random.randint(500, 1000)) / 1000)
-            logging.info('getting closer to ore')
-            time.sleep(float(random.randint(1000, 5000)) / 1000)
-            tries = 0
-            while target_available() == 0 and tries <= 30:
-                time.sleep(10)
-            if target_available() == 0 and tries > 30:
-                logging.warning('timed out getting closer to ore!')
-                return 0
-        if target_available() == 1:
-            keyboard.keypress('ctrl')
+        tries = 0
+        while target_available() == 0 and tries <= 30:
             time.sleep(float(random.randint(1000, 2000)) / 1000)
+            tries += 1
+            logging.debug('target not yet within range ' + (str(tries)))
+        if target_available() == 1 and tries <= 30:
             logging.debug('locking target')
+            keyboard.keypress('ctrl')
             if detect_target_lock() == 1:
                 return 1
             elif detect_target_lock() == 0:
                 return 0
+        elif target_available() == 0 and tries > 30:
+            logging.warning('timed out waiting for target to get within range!')
+            return 0
     else:
-        logging.info('no asteroids to target')
+        logging.info('no targets available')
         return 0
