@@ -14,15 +14,6 @@ sys.setrecursionlimit(9999999)
 # The number of mining modules the ship has.
 mining_lasers = 2
 
-# FOR FUTURE USE, MINING ORES BY PRIORITY
-# The ores to mine, in order of priority. A lower value is higher priority.
-# plagioclase = 1
-# scordite = 4
-# pyroxeres = 2
-# veldspar = 3
-## Sort the ores into a dictionary.
-# ores_dict = {1: "plagioclase", 2: "pyroxeres", 3: "scordite", 4: "veldspar"}
-
 # Set which ores to mine. 1 is yes, 0 is no.
 plagioclase = 1
 scordite = 0
@@ -41,6 +32,14 @@ gneiss = 0
 hedbergite = 0
 hemorphite = 0
 mercoxit = 0
+
+# Specify the target names you wish the script to search for in the Overview.
+# For mining, this would be ore types.
+target1 = './img/overview/ore_types/plagioclase.bmp'
+target2 = './img/overview/ore_types/pyroxeres.bmp'
+target3 = './img/overview/ore_types/veldspar.bmp'
+target4 = './img/overview/ore_types/scordite.bmp'
+target5 = 0
 
 logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
@@ -117,7 +116,7 @@ elif asteroid_depleted_popup_var is not None:
 '''
 
 
-def detect_ore():
+def detect_overview_item():
     # Target asteroids based on ore rather than size.
     global plagioclase, pyroxeres, scordite, veldspar
 
@@ -126,29 +125,29 @@ def detect_ore():
         region=((originx + (windowx - (int(windowx / 3.8)))),
                 originy, (int(windowx / 3.8)), windowy))
 
-    ore_list = []
+    target_list = []
     # Populate ore_list with only the ore types that the user wishes to
     # check for, as specified by the variables at the top of this file.
-    if pyroxeres == 1:
-        ore_list.append('./img/overview/ore_types/plagioclase.bmp')
-    if plagioclase == 1:
-        ore_list.append('./img/overview/ore_types/pyroxeres.bmp')
-    if scordite == 1:
-        ore_list.append('./img/overview/ore_types/scordite.bmp')
-    if veldspar == 1:
-        ore_list.append('./img/overview/ore_types/veldspar.bmp')
+    if target1 != 0:
+        target_list.append(target1)
+    if target2 != 0:
+        target_list.append(target2)
+    if target3 != 0:
+        target_list.append(target3)
+    if target4 != 0:
+        target_list.append(target4)
 
     # Iterate through ore_list until an ore is found.
-    for ore_type in ore_list:
-        global ore_found
-        ore_found = pag.locate(ore_type, overview, confidence=0.92)
-        if ore_found is not None:
-            logging.debug('found ore at ' + (str(ore_found)))
-            (x, y, l, w) = ore_found
+    for item in target_list:
+        #global ore_found
+        item = pag.locate(ore_type, overview, confidence=0.92)
+        if item is not None:
+            logging.debug('found target at ' + (str(item)))
+            (x, y, l, w) = item
             pag.moveTo((x + (originx + (windowx - (int(windowx / 3.8))))),
                        (y + originy),
                        1, mouse.path())
-            return 1
+            return item
         else:
             logging.info('no more ore available in belt')
             return 0
@@ -197,19 +196,18 @@ def timer(timer_var):
         return 0
 
 
-def target_ore():
-    # Target the closest user-defined ore in overview, assuming overview is
-    # sorted by distance, with closest objects at the top.
-    # Switch to mining tab, target asteroid, then switch back to general tab.
-    global ore_found
-
-    if ore_found is not None:
+def target_overview_item():
+    '''
+    Targets the closest user-defined item in the Overview, assuming overview is
+    sorted by distance, with closest objects at the top.
+    '''
+    if detect_overview_item() is not None:
         # Break apart ore_found tuple into coordinates
-        (x, y, l, w) = ore_found
+        (x, y, l, w) = detect_overview_item
         # Adjust coordinates for screen
         x = (x + (originx + (windowx - (int(windowx / 3.8)))))
         y = (y + originy)
-        pag.moveTo((x + (random.randint(-100, 20))),
+        pag.moveTo((x + (random.randint(-100, 20))),5
                    (y + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
         mouse.click()
