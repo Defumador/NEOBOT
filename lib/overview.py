@@ -7,7 +7,32 @@ import pyautogui as pag
 from lib import mouse
 from lib.vars import originx, originy, windowx, windowy
 
+# Specify the target names you wish the script to search for in the Overview.
+# For mining, this would be ore types.
+target1 = './img/overview/ore_tpes/plagioclase.bmp'
+target2 = './img/overview/ore_types/pyroxeres.bmp'
+target3 = './img/overview/ore_types/veldspar.bmp'
+target4 = './img/overview/ore_types/scordite.bmp'
+target5 = 0
 
+# Set which ores to mine. 1 is yes, 0 is no.
+plagioclase = 1
+scordite = 0
+veldspar = 0
+pyroxeres = 1
+# need to add these ores
+kernite = 0
+morphite = 0
+bistot = 0
+arkonor = 0
+crokite = 0
+jaspet = 0
+omber = 0
+ochre = 0
+gneiss = 0
+hedbergite = 0
+hemorphite = 0
+mercoxit = 0
 
 logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
@@ -232,3 +257,44 @@ def focus_client():
     time.sleep(float(random.randint(50, 500)) / 1000)
     mouse.click()
     return 1
+
+
+def detect_overview_target():
+    """Iterate through a list of user-defined targets. If one is found,
+    return its location to the calling function."""
+    global target1, target2, target3, target4, target5
+
+    # Capture the overview to locate ore types
+    overview = pag.screenshot(
+        region=((originx + (windowx - (int(windowx / 3.8)))),
+                originy, (int(windowx / 3.8)), windowy))
+
+    target_list = []
+    # Populate target_list with only the targets that the user wishes to
+    # check for, as specified by the variables at the top of this file. For
+    # mining, these targets would be types of ore.
+    if target1 != 0:
+        target_list.append(target1)
+    if target2 != 0:
+        target_list.append(target2)
+    if target3 != 0:
+        target_list.append(target3)
+    if target4 != 0:
+        target_list.append(target4)
+    if target5 != 0:
+        target_list.append(target5)
+
+    # Iterate through ore_list until an ore is found.
+    for target in target_list:
+        target = pag.locate(target, overview, confidence=0.90)
+        if target is not None:
+            logging.debug('found target at ' + (str(target)))
+            (x, y, l, w) = target
+            # Move mouse over target for debugging.
+            pag.moveTo((x + (originx + (windowx - (int(windowx / 3.8))))),
+                       (y + originy),
+                       1, mouse.path())
+            return target
+        else:
+            logging.info('No targets found.')
+            return 0

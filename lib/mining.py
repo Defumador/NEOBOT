@@ -6,40 +6,14 @@ import logging
 import pyautogui as pag
 
 from lib import keyboard, mouse
-from lib.overview import detect_target_lock, target_available
+from lib.overview import detect_target_lock, target_available, \
+    detect_overview_target
 from lib.vars import originx, originy, windowx, windowy
 
 sys.setrecursionlimit(9999999)
 
 # The number of mining modules the ship has.
 mining_lasers = 2
-
-# Set which ores to mine. 1 is yes, 0 is no.
-plagioclase = 1
-scordite = 0
-veldspar = 0
-pyroxeres = 1
-# need to add these ores
-kernite = 0
-morphite = 0
-bistot = 0
-arkonor = 0
-crokite = 0
-jaspet = 0
-omber = 0
-ochre = 0
-gneiss = 0
-hedbergite = 0
-hemorphite = 0
-mercoxit = 0
-
-# Specify the target names you wish the script to search for in the Overview.
-# For mining, this would be ore types.
-target1 = './img/overview/ore_types/plagioclase.bmp'
-target2 = './img/overview/ore_types/pyroxeres.bmp'
-target3 = './img/overview/ore_types/veldspar.bmp'
-target4 = './img/overview/ore_types/scordite.bmp'
-target5 = 0
 
 logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
@@ -116,43 +90,6 @@ elif asteroid_depleted_popup_var is not None:
 '''
 
 
-def detect_overview_item():
-    # Target asteroids based on ore rather than size.
-    global plagioclase, pyroxeres, scordite, veldspar
-
-    # Capture the overview to locate ore types
-    overview = pag.screenshot(
-        region=((originx + (windowx - (int(windowx / 3.8)))),
-                originy, (int(windowx / 3.8)), windowy))
-
-    target_list = []
-    # Populate ore_list with only the ore types that the user wishes to
-    # check for, as specified by the variables at the top of this file.
-    if target1 != 0:
-        target_list.append(target1)
-    if target2 != 0:
-        target_list.append(target2)
-    if target3 != 0:
-        target_list.append(target3)
-    if target4 != 0:
-        target_list.append(target4)
-
-    # Iterate through ore_list until an ore is found.
-    for item in target_list:
-        #global ore_found
-        item = pag.locate(ore_type, overview, confidence=0.92)
-        if item is not None:
-            logging.debug('found target at ' + (str(item)))
-            (x, y, l, w) = item
-            pag.moveTo((x + (originx + (windowx - (int(windowx / 3.8))))),
-                       (y + originy),
-                       1, mouse.path())
-            return item
-        else:
-            logging.info('no more ore available in belt')
-            return 0
-
-
 def inv_full_popup():
     # Check for momentary popup indicating cargo/ore hold is full.
     # This popup lasts about 5 seconds.
@@ -201,9 +138,9 @@ def target_overview_item():
     Targets the closest user-defined item in the Overview, assuming overview is
     sorted by distance, with closest objects at the top.
     '''
-    if detect_overview_item() is not None:
+    if detect_overview_target() is not None:
         # Break apart ore_found tuple into coordinates
-        (x, y, l, w) = detect_overview_item
+        (x, y, l, w) = detect_overview_target
         # Adjust coordinates for screen
         x = (x + (originx + (windowx - (int(windowx / 3.8)))))
         y = (y + originy)
