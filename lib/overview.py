@@ -34,6 +34,7 @@ hedbergite = 0
 hemorphite = 0
 mercoxit = 0
 
+
 logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
@@ -124,7 +125,8 @@ def target_available():
         return 0
 
 
-def detect_npcs():
+def detect_npcs(detect_npcs_var, detect_npc_frigate_and_destroyer,
+                detect_npc_cruiser_and_battlecruiser):
     # Check for hostile non-player characters by looking for red ship icons in
     # the overview.
     # print('detect_npcs -- called')
@@ -174,7 +176,11 @@ def detect_npcs():
         return 0
 
 
-def detect_pcs():
+def detect_pcs(detect_pcs_var, detect_pc_industrial, detect_pc_mining_barge,
+               detect_pc_frigate_and_destroyer,
+               detect_pc_cruiser_and_battlecruiser, detect_pc_battleship,
+               detect_pc_capital_industrial_and_freighter,
+               detect_pc_rookie_ship, detect_pc_capsule):
     # Check for player characters by looking for player ship icons in the
     # overview.
     # print('detect_pcs -- called')

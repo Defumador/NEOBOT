@@ -39,19 +39,21 @@ window_resolutiony = 768
 # within these boundaries.
 # search for the eve neocom logo in top left corner of the eve client window.
 # This will become the origin of the coordinate system.
-origin = pag.locateCenterOnScreen('./img/buttons/neocom.bmp', confidence=0.80)
-if origin is None:
-    print("origin -- can't find client!")
-    sys.exit(0)
-else:
-    (originx, originy) = origin
-
+# origin = pag.locateCenterOnScreen('./img/buttons/neocom.bmp', confidence=0.80)
+# if origin is None:
+#    print("origin -- can't find client!")
+#    sys.exit(0)
+# else:
+#    (originx, originy) = origin
+origin = 5
+originx = 10
+originy = 10
 # Move the origin up and to the left slightly to get it to the exact top
 # left corner of the eve client window. This is necessary  because the image
 # searching algorithm returns coordinates to the center of the image rather
 # than its top right corner.
-originx -= 18
-originy -= 18
+# originx -= 18
+#riginy -= 18
 windowx = window_resolutionx
 windowy = window_resolutiony
 

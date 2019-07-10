@@ -20,8 +20,6 @@ from lib.vars import system_mining, originx, originy, windowx, windowy
 sys.setrecursionlimit(9999999)
 playerfound = 0
 
-
-
 # TERMINOLOGY #################################################################
 
 # A 'warning' is a persistent dialogue window that appears in the center of
@@ -47,26 +45,8 @@ runs = 1
 modules = 0
 drones = 0
 
-detect_npcs_var = 1
-
-detect_npc_frigate_and_destroyer = 0
-detect_npc_cruiser_and_battlecruiser = 1
-detect_npc_battleship = 1
-
-detect_pcs = 1
-
-detect_pc_industrial = 1
-detect_pc_mining_barge = 1
-detect_pc_frigate_and_destroyer = 1
-detect_pc_capital_industrial_and_freighter = 1
-detect_pc_cruiser_and_battlecruiser = 1
-detect_pc_battleship = 1
-detect_pc_rookie_ship = 1
-detect_pc_capsule = 1
-
 # recommended per https://docs.python.org/2/library/logging.html
 logger = logging.getLogger(__name__)
-
 
 # logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
 # 'message)s', level=logging.DEBUG)
@@ -97,14 +77,23 @@ def miner():
             # If either exist, warp to the next site.
             # If no hostiles npcs or players are present, check for asteroids.
             # If no asteroids, blacklist site and warp to next site.
-            if lib.overview.detect_npcs_var == 1:
-                if lib.overview.focus_overview_tab('general') == 1:
-                    if lib.overview.detect_npcs() == 1:
-                        miner()
-            if lib.overview.detect_pcs_var == 1:
-                if lib.overview.detect_pcs() == 1:
-                    playerfound += 1
+            if lib.overview.focus_overview_tab('general') == 1:
+                if lib.overview.detect_npcs(detect_npcs_var,
+                                            detect_npc_frigate_and_destroyer,
+                                            detect_npc_cruiser_and_battlecruiser) \
+                        == 1:
                     miner()
+            if lib.overview.detect_pcs(detect_pcs_var, detect_pc_industrial,
+                                       detect_pc_mining_barge,
+                                       detect_pc_frigate_and_destroyer,
+                                       detect_pc_cruiser_and_battlecruiser,
+                                       detect_pc_battleship,
+                                       detect_pc_capital_industrial_and_freighter,
+                                       detect_pc_rookie_ship,
+                                       detect_pc_capsule) \
+                    == 1:
+                playerfound += 1
+                miner()
 
             lib.overview.focus_overview_tab('mining')
             while mining.detect_ore() == 1:
@@ -170,7 +159,6 @@ def miner():
         lib.overview.focus_client()
         docked.undock_loop()
         miner()
-
 
 
 def navigator():
@@ -361,7 +349,6 @@ def warpout():
     lock.release()
 '''
 
-
 # GUI #########################################################################
 
 
@@ -372,22 +359,13 @@ class simpleapp_tk(tkinter.Tk):
 
         self.grid()
 
-        global detect_npcs_var, detect_npc_frigate_and_destroyer, \
-            detect_npc_cruiser_and_battlecruiser, detect_npc_battleship
-
-        global detect_pcs_var, detect_pc_industrial, detect_pc_mining_barge, \
-            detect_pc_frigate_and_destroyer, \
-            detect_pc_capital_industrial_and_freighter, \
-            detect_pc_cruiser_and_battlecruiser, detect_pc_battleship, \
-            detect_pc_rookie_ship, detect_pc_capsule
-
         detect_npcs_var = tkinter.IntVar()
 
         detect_npc_frigate_and_destroyer = tkinter.IntVar()
         detect_npc_cruiser_and_battlecruiser = tkinter.IntVar()
         detect_npc_battleship = tkinter.IntVar()
 
-        detect_pcs_var = tkinter.IntVar()
+        check_pcs = tkinter.IntVar()
 
         detect_pc_industrial = tkinter.IntVar()
         detect_pc_mining_barge = tkinter.IntVar()
@@ -399,13 +377,23 @@ class simpleapp_tk(tkinter.Tk):
         detect_pc_capsule = tkinter.IntVar()
 
         def start():
-            global drones, modules, detect_pcs
+            global drones, modules
+
+            global detect_npcs_var, detect_npc_frigate_and_destroyer, \
+                detect_npc_cruiser_and_battlecruiser, detect_npc_battleship
+
+            global detect_pcs, detect_pc_industrial, detect_pc_mining_barge, \
+                detect_pc_frigate_and_destroyer, \
+                detect_pc_capital_industrial_and_freighter, \
+                detect_pc_cruiser_and_battlecruiser, detect_pc_battleship, \
+                detect_pc_rookie_ship, detect_pc_capsule
+
             modules = (int(self.combo_modules.get()))
             drones = (int(self.combo_drones.get()))
             logger.debug((str(modules)) + ' modules')
             logger.debug((str(drones)) + ' drones')
 
-            detect_pcs = (int(detect_pcs_var.get()))
+            detect_pcs = (int(check_pcs.get()))
             logger.debug('detect pcs is ' + (str(detect_pcs)))
             miner()
 
@@ -444,9 +432,9 @@ class simpleapp_tk(tkinter.Tk):
         self.label_drones.grid(column=0, row=5, columnspan=1, sticky='W',
                                padx=5)
 
-        self.check_pc = tkinter.Checkbutton(self, text='pc check',
-                                            variable=detect_pcs_var)
-        self.check_pc.grid(column=0, row=6, columnspan=1, sticky='W')
+        self.check_pcs = tkinter.Checkbutton(self, text='pc check',
+                                             variable=check_pcs)
+        self.check_pcs.grid(column=0, row=6, columnspan=1, sticky='W')
         # self.check_pc = tkinter.Checkbutton(self, text='pc frig/des check',
         # variable=pcfd)
         # self.check_pc.grid(column=1, row=5, columnspan=1, sticky='W')
