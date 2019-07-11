@@ -54,9 +54,14 @@ logger = logging.getLogger(__name__)
 
 # MAIN SCRIPTS ################################################################
 def miner():
+    ore1 = './img/overview/ore_types/plagioclase.bmp'
+    ore2 = './img/overview/ore_types/pyroxeres.bmp'
+    ore3 = './img/overview/ore_types/veldspar.bmp'
+    ore4 = './img/overview/ore_types/scordite.bmp'
+    ore5 = 0
+
     print('main, drones is ', drones)
     print('detect pc', detect_pcs)
-    return
     global playerfound
     global site
     global runs
@@ -78,7 +83,7 @@ def miner():
             # If no hostiles npcs or players are present, check for asteroids.
             # If no asteroids, blacklist site and warp to next site.
             if lib.overview.focus_overview_tab('general') == 1:
-                if lib.overview.detect_npcs(detect_npcs_var, npc_frig_dest,
+                if lib.overview.detect_npcs(detect_npcs, npc_frig_dest,
                                             npc_cruiser_bc) == 1:
                     miner()
             if lib.overview.detect_pcs(detect_pcs, pc_indy, pc_barge,
@@ -89,9 +94,14 @@ def miner():
                 miner()
 
             lib.overview.focus_overview_tab('mining')
-            while mining.detect_ore() == 1:
+            target = lib.overview.detect_overview_target(ore1, ore2, ore3,
+                                                         ore4,
+                                                         ore5)
+            while lib.overview.detect_overview_target(ore1, ore2, ore3, ore4,
+                                                      ore5
+                                                      ) is not None:
                 lib.drones.launch_drones_loop()
-                if mining.target_ore() == 0:
+                if lib.overview.target_overview_target(target) == 0:
                     miner()
                 mining.activate_miner()
                 # If ship inventory isn't full, continue to mine ore and wait
@@ -100,17 +110,36 @@ def miner():
                 lib.overview.focus_overview_tab('general')
                 while mining.inv_full_popup() == 0:
                     if mining.asteroid_depleted_popup() == 1:
-                        if mining.detect_ore() == 0:
+                        target = lib.overview.detect_overview_target(ore1,
+                                                                     ore2,
+                                                                     ore3,
+                                                                     ore4,
+                                                                     ore5)
+                        if lib.overview.detect_overview_target(ore1, ore2,
+                                                               ore3, ore4, ore5
+                                                               ) == 0:
                             #nav.blacklist_local_bookmark()
                             miner()
-                        elif mining.detect_ore() == 1:
-                            if mining.target_ore() == 0:
+
+                        elif lib.overview.detect_overview_target(ore1, ore2,
+                                                                 ore3, ore4,
+                                                                 ore5
+                                                                 ) is not None:
+                            if lib.overview.target_overview_target(target) \
+                                    == 0:
                                 miner()
                             mining.activate_miner()
                             mining.inv_full_popup()
                             continue
-                    if lib.overview.detect_npcs() == 1 or \
-                            lib.overview.detect_pcs() == 1 or \
+                    if lib.overview.detect_npcs(detect_npcs, npc_frig_dest,
+                                                npc_cruiser_bc) == 1 or \
+                            lib.overview.detect_pcs(detect_pcs, pc_indy,
+                                                    pc_barge,
+                                                    pc_frig_dest,
+                                                    pc_cruiser_bc, pc_bs,
+                                                    pc_capindy_freighter,
+                                                    pc_rookie,
+                                                    pc_pod) == 1 or \
                             lib.overview.detect_jam() == 1 or \
                             mining.timer(timer_var) == 1:
                         lib.drones.recall_drones_loop()
@@ -142,7 +171,9 @@ def miner():
                         runs += 1
                         miner()
 
-                if mining.detect_ore() == 0:
+                if lib.overview.detect_overview_target(ore1, ore2, ore3, ore4,
+                                                       ore5
+                                                       ) == 0:
                     lib.bookmarks.blacklist_local_bookmark()
         elif lib.bookmarks.travel_to_bookmark(site) == 0:
             nav.emergency_terminate()
@@ -288,47 +319,27 @@ class simpleapp_tk(tkinter.Tk):
 
         self.grid()
 
-        detect_npcs_var = tkinter.IntVar()
+        detect_npcs_gui = tkinter.IntVar()
 
-        npc_frig_dest = tkinter.IntVar()
-        npc_cruiser_bc = tkinter.IntVar()
-        npc_bs = tkinter.IntVar()
+        npc_frig_dest_gui = tkinter.IntVar()
+        npc_cruiser_bc_gui = tkinter.IntVar()
+        npc_bs_gui = tkinter.IntVar()
 
         detect_pcs_gui = tkinter.IntVar()
 
-        pc_indy = tkinter.IntVar()
-        pc_barge = tkinter.IntVar()
-        pc_frig_dest = tkinter.IntVar()
-        pc_capindy_freighter = tkinter.IntVar()
-        pc_cruiser_bc = tkinter.IntVar()
-        pc_bs = tkinter.IntVar()
-        pc_rookie = tkinter.IntVar()
-        pc_pod = tkinter.IntVar()
-
-        def start():
-            global drones, modules
-
-            global detect_npcs_var, npc_frig_dest, npc_cruiser_bc, npc_bs
-
-            global detect_pcs, pc_indy, pc_barge, pc_frig_dest, \
-                pc_capindy_freighter, pc_cruiser_bc, pc_bs, pc_rookie, pc_pod
-
-            modules = (int(self.combo_modules.get()))
-            drones = (int(self.combo_drones.get()))
-            logger.debug((str(modules)) + ' modules')
-            logger.debug((str(drones)) + ' drones')
-
-            detect_pcs = (int(detect_pcs_gui.get()))
-            logger.debug('detect pcs is ' + (str(detect_pcs)))
-            miner()
+        pc_indy_gui = tkinter.IntVar()
+        pc_barge_gui = tkinter.IntVar()
+        pc_frig_dest_gui = tkinter.IntVar()
+        pc_capindy_freighter_gui = tkinter.IntVar()
+        pc_cruiser_bc_gui = tkinter.IntVar()
+        pc_bs_gui = tkinter.IntVar()
+        pc_rookie_gui = tkinter.IntVar()
+        pc_pod_gui = tkinter.IntVar()
 
         self.t = tkinter.Label(self, text="")
         self.t.grid(column=0, row=0, columnspan=2, sticky='W', padx=0,
                     pady=0)
 
-        self.start = tkinter.Button(self, text="Start", command=start)
-        self.start.grid(column=0, row=1, sticky='W')
-        self.start.config(width='13', height='1')
 
         self.stop = tkinter.Button(self, text="Stop")
         self.stop.grid(column=1, row=1, columnspan=1, sticky='W')
@@ -360,37 +371,63 @@ class simpleapp_tk(tkinter.Tk):
         self.detect_pcs = tkinter.Checkbutton(self, text='pc check',
                                               variable=detect_pcs_gui)
         self.detect_pcs.grid(column=0, row=6, columnspan=1, sticky='W')
-        # self.check_pc = tkinter.Checkbutton(self, text='pc frig/des check',
-        # variable=pcfd)
-        # self.check_pc.grid(column=1, row=5, columnspan=1, sticky='W')
-        # self.check_pc = tkinter.Checkbutton(self, text='pc cru/bc check',
-        ## variable=pcbc)
-        # self.check_pc.grid(column=0, row=6, columnspan=1, sticky='W')
-        # self.check_pc = tkinter.Checkbutton(self, text='pc bs check',
-        ## variable=pcbs)
-        # self.check_pc.grid(column=1, row=6, columnspan=1, sticky='W')
-        # self.check_pc = tkinter.Checkbutton(self, text='pc min frig check',
-        ## variable=pcmf)
-        # self.check_pc.grid(column=0, row=7, columnspan=1, sticky='W')
-        # self.check_pc = tkinter.Checkbutton(self, text='pc indy check',
-        ## variable=pci)
-        # self.check_pc.grid(column=1, row=7, columnspan=1, sticky='W')
 
-        # self.check_pc = tkinter.Checkbutton(self, text='npc check',
-        ## variable=npc)
-        # self.check_pc.grid(column=0, row=8, columnspan=1, sticky='W')
-        # self.check_pc = tkinter.Checkbutton(self, text='npc frig/des
-        ## check', variable=npcfd)
-        # self.check_pc.grid(column=1, row=8, columnspan=1, sticky='W')
-        # self.check_pc = tkinter.Checkbutton(self, text='npc cru/bc check',
-        ## variable=npcbc)
-        # self.check_pc.grid(column=0, row=9, columnspan=1, sticky='W')
-        # self.check_pc = tkinter.Checkbutton(self, text='npc bs check',
-        ## variable=npcbs)
-        # self.check_pc.grid(column=1, row=9, columnspan=1, sticky='W')
+        self.pc_indy = tkinter.Checkbutton(self, text='pc indy check',
+                                           variable=pc_indy_gui)
+        self.pc_indy.grid(column=1, row=6, columnspan=1, sticky='W')
 
-        # self.check_pc = tkinter.Checkbutton(self, text='ecm check',
-        # variable=ecm)
+        self.pc_barge = tkinter.Checkbutton(self, text='pc barge check',
+                                            variable=pc_barge_gui)
+        self.pc_barge.grid(column=0, row=7, columnspan=1, sticky='W')
+
+        self.pc_frig_dest = tkinter.Checkbutton(self, text='pc frig/dest '
+                                                           'check',
+                                                variable=pc_frig_dest_gui)
+        self.pc_frig_dest.grid(column=1, row=7, columnspan=1, sticky='W')
+
+        self.pc_capindy_freighter = tkinter.Checkbutton(self, text='pc '
+                                                                   'capital '
+                                                                   'indy/freighter check',
+                                                        variable=pc_capindy_freighter_gui)
+        self.pc_capindy_freighter.grid(column=0, row=8, columnspan=1,
+                                       sticky='W')
+
+        self.pc_cruiser_bc = tkinter.Checkbutton(self, text='pc cruiser/bc '
+                                                            'check',
+                                                 variable=pc_cruiser_bc_gui)
+        self.pc_cruiser_bc.grid(column=1, row=8, columnspan=1, sticky='W')
+
+        self.pc_bs = tkinter.Checkbutton(self, text='pc bs check',
+                                         variable=pc_bs_gui)
+        self.pc_bs.grid(column=0, row=9, columnspan=1, sticky='W')
+
+        self.pc_rookie = tkinter.Checkbutton(self, text='pc rookie check',
+                                             variable=pc_rookie_gui)
+        self.pc_rookie.grid(column=1, row=9, columnspan=1, sticky='W')
+
+        self.pc_pod = tkinter.Checkbutton(self, text='pc pod check',
+                                          variable=pc_pod_gui)
+        self.pc_pod.grid(column=0, row=10, columnspan=1, sticky='W')
+
+        self.detect_npcs = tkinter.Checkbutton(self, text='npcs check',
+                                               variable=detect_npcs_gui)
+        self.detect_npcs.grid(column=1, row=10, columnspan=1, sticky='W')
+
+        self.npc_frig_dest = tkinter.Checkbutton(self, text='npc frig/dest '
+                                                            'check',
+                                                 variable=npc_frig_dest_gui)
+        self.npc_frig_dest.grid(column=1, row=11, columnspan=1, sticky='W')
+
+        self.npc_cruiser_bc = tkinter.Checkbutton(self, text='npc bs check',
+                                                  variable=npc_cruiser_bc_gui)
+        self.npc_cruiser_bc.grid(column=0, row=12, columnspan=1, sticky='W')
+
+        # self.npc_bs = tkinter.Checkbutton(self, text='npc bs check',
+        #                                    variable=npc_bs_gui)
+        # self.npc_bs.grid(column=1, row=10, columnspan=1, sticky='W')
+
+        # self.detect_jam = tkinter.Checkbutton(self, text='jam check',
+        # variable=detect_jam)
         # self.check_pc.grid(column=0, row=10, columnspan=1, sticky='W')
 
         self.mytext = ScrolledText.ScrolledText(self, state="disabled")
@@ -403,6 +440,66 @@ class simpleapp_tk(tkinter.Tk):
         self.mybutton.grid(column=0, row=2, sticky='W')
         self.mybutton.bind("<ButtonRelease-1>", self.button_callback)
         self.mybutton.config(width='13', height='1')
+
+        def start():
+            global drones, modules
+
+            global detect_pcs, pc_indy, pc_barge, pc_frig_dest, \
+                pc_capindy_freighter, pc_cruiser_bc, pc_bs, pc_rookie, pc_pod
+
+            global detect_npcs, npc_frig_dest, npc_cruiser_bc, npc_bs
+
+            modules = (int(self.combo_modules.get()))
+            drones = (int(self.combo_drones.get()))
+            logger.debug((str(modules)) + ' modules')
+            logger.debug((str(drones)) + ' drones')
+
+            detect_pcs = (int(detect_pcs_gui.get()))
+            logger.debug('detect pcs is ' + (str(detect_pcs)))
+
+            pc_indy = (int(pc_indy_gui.get()))
+            logger.debug('detect pc indy is ' + (str(pc_indy)))
+
+            pc_barge = (int(pc_barge_gui.get()))
+            logger.debug('detect pc barge is ' + (str(pc_barge)))
+
+            pc_frig_dest = (int(pc_frig_dest_gui.get()))
+            logger.debug('detect pc frig/dest is ' + (str(pc_frig_dest)))
+
+            pc_capindy_freighter = (int(pc_capindy_freighter_gui.get()))
+            logger.debug('detect pc capital indy/freighter is ' + (str(
+                pc_capindy_freighter)))
+
+            pc_cruiser_bc = (int(pc_cruiser_bc_gui.get()))
+            logger.debug('detect pc cruiser/bc is ' + (str(
+                pc_cruiser_bc)))
+
+            pc_bs = (int(pc_bs_gui.get()))
+            logger.debug('detect pc bs is ' + (str(pc_bs)))
+
+            pc_rookie = (int(pc_rookie_gui.get()))
+            logger.debug('detect pc rookie is ' + (str(pc_rookie)))
+
+            pc_pod = (int(pc_pod_gui.get()))
+            logger.debug('detect pc pod is ' + (str(pc_pod)))
+
+            detect_npcs = (int(detect_npcs_gui.get()))
+            logger.debug('detect npcs is ' + (str(detect_npcs)))
+
+            npc_frig_dest = (int(npc_frig_dest_gui.get()))
+            logger.debug('detect npc frig/dest is ' + (str(npc_frig_dest)))
+
+            npc_cruiser_bc = (int(npc_cruiser_bc_gui.get()))
+            logger.debug('detect npc cruiser/bc is ' + (str(npc_cruiser_bc)))
+
+            npc_bs = (int(npc_bs_gui.get()))
+            logger.debug('detect npc bs is ' + (str(npc_bs)))
+            miner()
+
+        self.start = tkinter.Button(self, text="Start", command=start)
+        self.start.grid(column=0, row=1, sticky='W')
+        self.start.config(width='13', height='1')
+
 
     def button_callback(self, event):
         now = datetime.datetime.now()

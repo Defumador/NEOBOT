@@ -5,9 +5,7 @@ import logging
 
 import pyautogui as pag
 
-from lib import keyboard, mouse
-from lib.overview import detect_target_lock, target_available, \
-    detect_overview_target
+from lib import keyboard
 from lib.vars import originx, originy, windowx, windowy
 
 sys.setrecursionlimit(9999999)
@@ -130,40 +128,4 @@ def timer(timer_var):
         logging.warning('timed out!')
         return 1
     elif timer_var < 800:
-        return 0
-
-
-def target_overview_item():
-    '''
-    Targets the closest user-defined item in the Overview, assuming overview is
-    sorted by distance, with closest objects at the top.
-    '''
-    if detect_overview_target() is not None:
-        # Break apart ore_found tuple into coordinates
-        (x, y, l, w) = detect_overview_target
-        # Adjust coordinates for screen
-        x = (x + (originx + (windowx - (int(windowx / 3.8)))))
-        y = (y + originy)
-        pag.moveTo((x + (random.randint(-100, 20))),5
-                   (y + (random.randint(-3, 3))),
-                   mouse.duration(), mouse.path())
-        mouse.click()
-        keyboard.keypress('w')
-        tries = 0
-        while target_available() == 0 and tries <= 30:
-            time.sleep(float(random.randint(1000, 2000)) / 1000)
-            tries += 1
-            logging.debug('target not yet within range ' + (str(tries)))
-        if target_available() == 1 and tries <= 30:
-            logging.debug('locking target')
-            keyboard.keypress('ctrl')
-            if detect_target_lock() == 1:
-                return 1
-            elif detect_target_lock() == 0:
-                return 0
-        elif target_available() == 0 and tries > 30:
-            logging.warning('timed out waiting for target to get within range!')
-            return 0
-    else:
-        logging.info('no targets available')
         return 0
