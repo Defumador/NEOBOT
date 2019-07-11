@@ -3,6 +3,7 @@ import time
 import traceback
 import cProfile
 import logging
+import threading
 
 import logging
 import tkinter
@@ -60,8 +61,12 @@ def miner():
     ore4 = './img/overview/ore_types/scordite.bmp'
     ore5 = 0
 
-    print('main, drones is ', drones)
-    print('detect pc', detect_pcs)
+    print('main, drones is ')
+    time.sleep(3)
+    print('detect pc')
+    app.mainloop()
+    logging.info('beginning run')
+    app.mainloop()
     global playerfound
     global site
     global runs
@@ -504,6 +509,13 @@ class simpleapp_tk(tkinter.Tk):
     def button_callback(self, event):
         now = datetime.datetime.now()
         logger.info(now)
+        # t1 = threading.Thread(target=worker, args=[])
+        # t1.start()
+        miner()
+        # time.sleep(1)
+        # emit.textctrl.insert
+        # logger.info(now)
+        # app.mainloop()
 
 
 class MyHandlerText(logging.StreamHandler):
@@ -520,6 +532,16 @@ class MyHandlerText(logging.StreamHandler):
         self.textctrl.yview(tkinter.END)
 
 
+def worker():
+    # Skeleton worker function, runs in separate thread (see below)
+    while True:
+        # Report time / date at 2-second intervals
+        time.sleep(2)
+        timeStr = time.asctime()
+        msg = 'Current time: ' + timeStr
+        logging.info(msg)
+        logging.StreamHandler('test')
+
 if __name__ == "__main__":
     # create Tk object instance
     app = simpleapp_tk(None)
@@ -530,11 +552,10 @@ if __name__ == "__main__":
     # ...to allow other thread to send msgs to the gui
     # in this example, we set up two handlers just for demonstration (you could add a fileHandler, etc)
     stderrHandler = logging.StreamHandler()  # no arguments => stderr
-    # logger.addHandler(stderrHandler)
+    logger.addHandler(stderrHandler)
     guiHandler = MyHandlerText(app.mytext)
     logger.addHandler(guiHandler)
     logger.setLevel(logging.DEBUG)
-    logger.info("from main")
 
     # start Tk
     app.mainloop()
@@ -602,3 +623,4 @@ def warpout():
         print('warping out!', i)
     lock.release()
 '''
+

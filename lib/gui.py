@@ -11,6 +11,9 @@ from lib import main
 module_logger = logging.getLogger(__name__)
 
 
+def main():
+    module_logger.info('test123')
+
 class simpleapp_tk(tkinter.Tk):
     def __init__(self,parent):
         tkinter.Tk.__init__(self, parent)
@@ -120,6 +123,8 @@ class simpleapp_tk(tkinter.Tk):
 
     def button_callback(self, event):
         now = datetime.datetime.now()
+        time.sleep(3)
+        main()
         module_logger.info(now)
 
 
