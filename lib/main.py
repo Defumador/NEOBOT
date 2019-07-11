@@ -78,20 +78,13 @@ def miner():
             # If no hostiles npcs or players are present, check for asteroids.
             # If no asteroids, blacklist site and warp to next site.
             if lib.overview.focus_overview_tab('general') == 1:
-                if lib.overview.detect_npcs(detect_npcs_var,
-                                            detect_npc_frigate_and_destroyer,
-                                            detect_npc_cruiser_and_battlecruiser) \
-                        == 1:
+                if lib.overview.detect_npcs(detect_npcs_var, npc_frig_dest,
+                                            npc_cruiser_bc) == 1:
                     miner()
-            if lib.overview.detect_pcs(detect_pcs_var, detect_pc_industrial,
-                                       detect_pc_mining_barge,
-                                       detect_pc_frigate_and_destroyer,
-                                       detect_pc_cruiser_and_battlecruiser,
-                                       detect_pc_battleship,
-                                       detect_pc_capital_industrial_and_freighter,
-                                       detect_pc_rookie_ship,
-                                       detect_pc_capsule) \
-                    == 1:
+            if lib.overview.detect_pcs(detect_pcs, pc_indy, pc_barge,
+                                       pc_frig_dest, pc_cruiser_bc, pc_bs,
+                                       pc_capindy_freighter, pc_rookie,
+                                       pc_pod) == 1:
                 playerfound += 1
                 miner()
 
@@ -285,70 +278,6 @@ print("windowy =", windowy)
 #	nav.detect_route()
 #	collector()
 
-'''
-# unit tests
-while mining.inv_full_popup() == 0:
-    if mining.asteroid_depleted_popup() == 1:
-        if mining.detect_asteroids() == 0:
-            # nav.blacklist_local_bookmark()
-            miner()
-        elif mining.detect_asteroids() == 1:
-            mining.target_asteroid()
-            mining.activate_miner()
-            mining.inv_full_popup()
-            continue
-    if threading.Thread(target=mining.detect_pcs()).start() == 1:
-        mining.recall_drones_loop()
-        miner()
-    if threading.Thread(target=mining.detect_pcs()).start() == 1:
-        mining.recall_drones_loop()
-        miner()
-    time.sleep(2)
-'''
-
-'''
-sample threading implementation
-
-import threading
-import time
-
-stop = 0
-lock = threading.Lock()
-
-def shield_check():
-    global stop
-    for i in range(1, 15):
-        time.sleep(1)
-        print('shield_check', i)
-        if stop == 1:
-            print('shield check stopping!')
-            break
-        elif i >= 4:
-            print('shield check warping out!')
-            stop = 1
-            warpout()
-
-def npc_check():
-    global stop
-    for i in range(1, 21):
-        time.sleep(2)
-        print('npc_check', i)
-        if stop == 1:
-            print('npc_check stopping!')
-            break
-        elif i >= 2:
-            print('npc_check warping out!')
-            stop = 1
-            warpout()
-
-def warpout():
-    lock.acquire()
-    for i in range(1, 5):
-        time.sleep(3)
-        print('warping out!', i)
-    lock.release()
-'''
-
 # GUI #########################################################################
 
 
@@ -361,39 +290,35 @@ class simpleapp_tk(tkinter.Tk):
 
         detect_npcs_var = tkinter.IntVar()
 
-        detect_npc_frigate_and_destroyer = tkinter.IntVar()
-        detect_npc_cruiser_and_battlecruiser = tkinter.IntVar()
-        detect_npc_battleship = tkinter.IntVar()
+        npc_frig_dest = tkinter.IntVar()
+        npc_cruiser_bc = tkinter.IntVar()
+        npc_bs = tkinter.IntVar()
 
-        check_pcs = tkinter.IntVar()
+        detect_pcs_gui = tkinter.IntVar()
 
-        detect_pc_industrial = tkinter.IntVar()
-        detect_pc_mining_barge = tkinter.IntVar()
-        detect_pc_frigate_and_destroyer = tkinter.IntVar()
-        detect_pc_capital_industrial_and_freighter = tkinter.IntVar()
-        detect_pc_cruiser_and_battlecruiser = tkinter.IntVar()
-        detect_pc_battleship = tkinter.IntVar()
-        detect_pc_rookie_ship = tkinter.IntVar()
-        detect_pc_capsule = tkinter.IntVar()
+        pc_indy = tkinter.IntVar()
+        pc_barge = tkinter.IntVar()
+        pc_frig_dest = tkinter.IntVar()
+        pc_capindy_freighter = tkinter.IntVar()
+        pc_cruiser_bc = tkinter.IntVar()
+        pc_bs = tkinter.IntVar()
+        pc_rookie = tkinter.IntVar()
+        pc_pod = tkinter.IntVar()
 
         def start():
             global drones, modules
 
-            global detect_npcs_var, detect_npc_frigate_and_destroyer, \
-                detect_npc_cruiser_and_battlecruiser, detect_npc_battleship
+            global detect_npcs_var, npc_frig_dest, npc_cruiser_bc, npc_bs
 
-            global detect_pcs, detect_pc_industrial, detect_pc_mining_barge, \
-                detect_pc_frigate_and_destroyer, \
-                detect_pc_capital_industrial_and_freighter, \
-                detect_pc_cruiser_and_battlecruiser, detect_pc_battleship, \
-                detect_pc_rookie_ship, detect_pc_capsule
+            global detect_pcs, pc_indy, pc_barge, pc_frig_dest, \
+                pc_capindy_freighter, pc_cruiser_bc, pc_bs, pc_rookie, pc_pod
 
             modules = (int(self.combo_modules.get()))
             drones = (int(self.combo_drones.get()))
             logger.debug((str(modules)) + ' modules')
             logger.debug((str(drones)) + ' drones')
 
-            detect_pcs = (int(check_pcs.get()))
+            detect_pcs = (int(detect_pcs_gui.get()))
             logger.debug('detect pcs is ' + (str(detect_pcs)))
             miner()
 
@@ -432,9 +357,9 @@ class simpleapp_tk(tkinter.Tk):
         self.label_drones.grid(column=0, row=5, columnspan=1, sticky='W',
                                padx=5)
 
-        self.check_pcs = tkinter.Checkbutton(self, text='pc check',
-                                             variable=check_pcs)
-        self.check_pcs.grid(column=0, row=6, columnspan=1, sticky='W')
+        self.detect_pcs = tkinter.Checkbutton(self, text='pc check',
+                                              variable=detect_pcs_gui)
+        self.detect_pcs.grid(column=0, row=6, columnspan=1, sticky='W')
         # self.check_pc = tkinter.Checkbutton(self, text='pc frig/des check',
         # variable=pcfd)
         # self.check_pc.grid(column=1, row=5, columnspan=1, sticky='W')
@@ -516,3 +441,67 @@ if __name__ == "__main__":
 
     # start Tk
     app.mainloop()
+
+'''
+# unit tests
+while mining.inv_full_popup() == 0:
+    if mining.asteroid_depleted_popup() == 1:
+        if mining.detect_asteroids() == 0:
+            # nav.blacklist_local_bookmark()
+            miner()
+        elif mining.detect_asteroids() == 1:
+            mining.target_asteroid()
+            mining.activate_miner()
+            mining.inv_full_popup()
+            continue
+    if threading.Thread(target=mining.detect_pcs()).start() == 1:
+        mining.recall_drones_loop()
+        miner()
+    if threading.Thread(target=mining.detect_pcs()).start() == 1:
+        mining.recall_drones_loop()
+        miner()
+    time.sleep(2)
+'''
+
+'''
+sample threading implementation
+
+import threading
+import time
+
+stop = 0
+lock = threading.Lock()
+
+def shield_check():
+    global stop
+    for i in range(1, 15):
+        time.sleep(1)
+        print('shield_check', i)
+        if stop == 1:
+            print('shield check stopping!')
+            break
+        elif i >= 4:
+            print('shield check warping out!')
+            stop = 1
+            warpout()
+
+def npc_check():
+    global stop
+    for i in range(1, 21):
+        time.sleep(2)
+        print('npc_check', i)
+        if stop == 1:
+            print('npc_check stopping!')
+            break
+        elif i >= 2:
+            print('npc_check warping out!')
+            stop = 1
+            warpout()
+
+def warpout():
+    lock.acquire()
+    for i in range(1, 5):
+        time.sleep(3)
+        print('warping out!', i)
+    lock.release()
+'''

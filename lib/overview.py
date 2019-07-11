@@ -176,14 +176,17 @@ def detect_npcs(detect_npcs_var, detect_npc_frigate_and_destroyer,
         return 0
 
 
-def detect_pcs(detect_pcs_var, detect_pc_industrial, detect_pc_mining_barge,
-               detect_pc_frigate_and_destroyer,
-               detect_pc_cruiser_and_battlecruiser, detect_pc_battleship,
-               detect_pc_capital_industrial_and_freighter,
-               detect_pc_rookie_ship, detect_pc_capsule):
-    # Check for player characters by looking for player ship icons in the
-    # overview.
-    # print('detect_pcs -- called')
+def detect_pcs(detect_pcs_var, pc_indy, pc_barge, pc_frig_dest,
+               pc_cruiser_bc, pc_bs, pc_capindy_freighter, pc_rookie, pc_pod):
+    """Check to see if any player characters are on the grid by looking for
+    player ship icons in the Overview. The Overview must be properly
+    configured to allow this. All player ship icons must be gray and must
+    have no standing information next to them.
+    pc_indy=industrials, pc_barge=mining barges and exhumers,
+    pc_frig_dest=frigatess and destroyers,
+    pc_cruiser_bc=cruisers and battlecruisers, pc_bs=battleships,
+    pc_capindy_freighter=capital industrials and freighters,
+    pc_rookie=rookie ships, pc_pod=capsules"""
     conf = 0.95
     if detect_pcs_var == 1:
 
@@ -199,35 +202,35 @@ def detect_pcs(detect_pcs_var, detect_pc_industrial, detect_pc_mining_barge,
 
         # Populate pc_list with only the player icons that the user wishes to
         # check for, as specified by the variables at the top of this file.
-        if detect_pc_industrial == 1:
+        if pc_indy == 1:
             pc_list.append(
                 './img/overview/player_ship_icons/archetype_icons'
                 '/player_industrial.bmp')
-        if detect_pc_mining_barge == 1:
+        if pc_barge == 1:
             pc_list.append(
                 './img/overview/player_ship_icons/archetype_icons'
                 '/player_mining_barge.bmp')
-        if detect_pc_frigate_and_destroyer == 1:
+        if pc_frig_dest == 1:
             pc_list.append(
                 './img/overview/player_ship_icons'
                 '/archetype_icons/player_frigate_and_destroyer.bmp')
-        if detect_pc_cruiser_and_battlecruiser == 1:
+        if pc_cruiser_bc == 1:
             pc_list.append(
                 './img/overview/player_ship_icons'
                 '/archetype_icons/player_cruiser_and_battlecruiser.bmp')
-        if detect_pc_battleship == 1:
+        if pc_bs == 1:
             pc_list.append(
                 './img/overview/player_ship_icons/archetype_icons'
                 '/player_battleship.bmp')
-        if detect_pc_capital_industrial_and_freighter == 1:
+        if pc_capindy_freighter == 1:
             pc_list.append(
                 './img/overview/player_ship_icons/archetype_icons'
                 '/player_capital_industrial_and_freighter.bmp')
-        if detect_pc_rookie_ship == 1:
+        if pc_rookie == 1:
             pc_list.append(
                 './img/overview/player_ship_icons/archetype_icons'
                 '/player_rookie_ship.bmp')
-        if detect_pc_capsule == 1:
+        if pc_pod == 1:
             pc_list.append(
                 './img/overview/player_ship_icons/archetype_icons'
                 '/player_capsule.bmp')
