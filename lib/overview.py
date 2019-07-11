@@ -263,7 +263,7 @@ def focus_overview_tab(tab):
         './img/overview/' + tab + '_overview_tab_selected.bmp',
         # Requires very high confidence since the button looks only slightly
         # different when it's selected.
-        confidence=0.992,
+        confidence=0.998,
         region=(originx, originy,
                 windowx, windowy))
     if tab_selected is not None:

@@ -1,3 +1,6 @@
+drones = 0
+
+
 import logging
 import tkinter
 import datetime

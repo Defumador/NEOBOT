@@ -13,6 +13,11 @@ doesn't have to start over looking for a suitable belt
 BUGS:
     - warp function sometimes breaks if ship is already at full speed when it
     begins a warp. see video 2019-07-07_20-56-59 at 1h2m50s
+    - it's possible for ship to be target jammed while it's moving closer to
+    target its first asteroid. have ship check general tab and for jams while
+    this is happening
+    - ship doesn't go back to checking bookmark 1 if it fails to warp to
+    bookmark 10. see video 2019-07-10
 
 
 multi-client support
