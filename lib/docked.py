@@ -201,9 +201,9 @@ def spec_inv_warning():
 def set_quant_warning():
     # Check if a 'set quantity' window appears, indicating there isn't enough
     # space in the ship's inventory for a full item stack.
-    set_quant = pag.locateCenterOnScreen('./img/warnings/set_quant.bmp',
-                                         confidence=conf,
-                                         region=(originx, originy,
+    set_quant = pag.locateOnScreen('./img/popups/set_quant.bmp',
+                                   confidence=0.85,
+                                   region=(originx, originy,
                                                  windowx, windowy))
     if set_quant is None:
         logging.debug('no set quantity warning')
