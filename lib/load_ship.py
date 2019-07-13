@@ -39,7 +39,7 @@ def drag_to_ship_inv():
                                                 confidence=conf,
                                                 region=(originx, originy,
                                                         windowx, windowy))
-            time.sleep(1)
+            time.sleep(float(random.randint(1000, 2000)) / 1000)
         if ship_inv is not None:
             (namefield_station_invx,
              namefield_station_invy) = namefield_station_inv
@@ -79,7 +79,7 @@ def drag_to_ship_spec_inv():
                                                 confidence=conf,
                                                 region=(originx, originy,
                                                         windowx, windowy))
-            time.sleep(1)
+            time.sleep(float(random.randint(1000, 2000)) / 1000)
         if ship_inv is not None:
             (namefield_station_invx,
              namefield_station_invy) = namefield_station_inv
@@ -107,8 +107,8 @@ def load_ship_bulk():
         docked.focus_inv_window()
         keyboard.select_all()
         drag_to_ship_inv()
-        time.sleep(
-            2)  # After moving stack, wait and look for warnings.
+
+        time.sleep(float(random.randint(1000, 3000)) / 1000)
         nospace = docked.not_enough_space_warning()
         setquant = docked.set_quant_warning()
 
@@ -123,7 +123,8 @@ def load_ship_bulk():
                 docked.focus_inv_window()
                 keyboard.select_all()
                 drag_to_ship_spec_inv()
-                time.sleep(2)
+
+                time.sleep(float(random.randint(1000, 3000)) / 1000)
                 specinvwarning = docked.spec_inv_warning()
                 nospace = docked.not_enough_space_warning()
                 setquant = docked.set_quant_warning()
@@ -161,16 +162,19 @@ def load_ship_individually():
     while items == 1:
         docked.focus_inv_window()
         drag_to_ship_inv()
-        time.sleep(2)
+
+        time.sleep(float(random.randint(1000, 3000)) / 1000)
         nospace = docked.not_enough_space_warning()
         setquant = docked.set_quant_warning()
         print(nospace, setquant)
 
         if nospace == 0 and setquant == 0:
             drag_to_ship_inv()
-            time.sleep(2)
+
+            time.sleep(float(random.randint(1000, 3000)) / 1000)
             nospace = docked.not_enough_space_warning()
             setquant = docked.set_quant_warning()
+
             docked.detect_items()
 
         elif nospace == 0 and setquant == 1:
@@ -183,18 +187,22 @@ def load_ship_individually():
             specinv = docked.detect_spec_inv()
             if specinv == 1:
                 drag_to_ship_spec_inv()
-                time.sleep(2)
+
+                time.sleep(float(random.randint(1000, 3000)) / 1000)
                 specinvwarning = docked.spec_inv_warning()
                 nospace = docked.not_enough_space_warning()
                 setquant = docked.set_quant_warning()
+
                 docked.detect_items()
 
                 while specinvwarning == 0 and setquant == 0 and nospace == 0:
                     drag_to_ship_spec_inv()
-                    time.sleep(2)
+
+                    time.sleep(float(random.randint(1000, 3000)) / 1000)
                     specinvwarning = docked.spec_inv_warning()
                     nospace = docked.not_enough_space_warning()
                     setquant = docked.set_quant_warning()
+
                     docked.detect_items()
 
                 if items is None:
