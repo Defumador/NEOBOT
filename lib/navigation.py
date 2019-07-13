@@ -2,8 +2,10 @@ import sys
 import time
 import logging
 import random
+import threading
 import traceback
 import pyautogui as pag
+# from lib.main import stopvar
 from lib import mouse, keyboard, overview
 from lib.vars import originx, originy, windowx, windowy
 
@@ -222,7 +224,9 @@ def emergency_terminate():
     # If a station cannot be found after 20 loops,
     # warp to the nearest celestial body and keep at a distance of >100 km. 
     # After warp completes, force an unsafe logout in space.
+    threading.Lock()
     logging.debug('EMERGENCY TERMINATE CALLED !!!')
+    return
     tries = 0
     confidence = 0.95
     overview.focus_overview_tab('general')
