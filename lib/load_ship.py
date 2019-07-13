@@ -19,7 +19,7 @@ def drag_to_ship_inv():
     # inventory. This function assumed the relevant window is already open.
     print('drag_to_ship_inv -- moving item stack to ship inventory')
     namefield_station_inv = pag.locateCenterOnScreen(
-        './img/namefield_station_station inventory.bmp',
+        './img/indicators/station_inv_name.bmp',
         confidence=conf, region=(originx, originy, windowx, windowy))
 
     if namefield_station_inv is None:
@@ -29,13 +29,13 @@ def drag_to_ship_inv():
         sys.exit()
 
     elif namefield_station_inv is not None:
-        ship_inv = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
+        ship_inv = pag.locateCenterOnScreen('./img/buttons/ship_inv.bmp',
                                             confidence=conf,
                                             region=(originx, originy,
                                                     windowx, windowy))
         while ship_inv is None:
             print("drag_to_ship_inv -- can't find ship inventory")
-            ship_inv = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
+            ship_inv = pag.locateCenterOnScreen('./img/buttons/ship_inv.bmp',
                                                 confidence=conf,
                                                 region=(originx, originy,
                                                         windowx, windowy))
@@ -60,7 +60,7 @@ def drag_to_ship_spec_inv():
     # inventory.
     print('drag_to_ship_spec_inv -- moving item stack to special inventory')
     namefield_station_inv = pag.locateCenterOnScreen(
-        './img/namefield_station_station inventory.bmp',
+        './img/indicators/station_inv_name.bmp',
         confidence=conf, region=(originx, originy, windowx, windowy))
 
     if namefield_station_inv is None:
@@ -69,13 +69,13 @@ def drag_to_ship_spec_inv():
         traceback.print_stack()
         sys.exit()
     elif namefield_station_inv is not None:
-        ship_inv = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
+        ship_inv = pag.locateCenterOnScreen('./img/buttons/ship_inv.bmp',
                                             confidence=conf,
                                             region=(originx, originy,
                                                     windowx, windowy))
         while ship_inv is None:
             print("drag_to_ship_spec_inv -- can't find ship inventory")
-            ship_inv = pag.locateCenterOnScreen('./img/cargo_hold.bmp',
+            ship_inv = pag.locateCenterOnScreen('./img/buttons/ship_inv.bmp',
                                                 confidence=conf,
                                                 region=(originx, originy,
                                                         windowx, windowy))

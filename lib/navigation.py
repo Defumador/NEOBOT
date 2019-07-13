@@ -14,6 +14,7 @@ sys.setrecursionlimit(9999999)
 logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
+
 def detect_route():
     # Check the top-left corner of the hud to see if a route has actually been
     # set by the user.
