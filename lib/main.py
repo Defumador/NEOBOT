@@ -11,9 +11,8 @@ import datetime
 import tkinter.scrolledtext as ScrolledText
 from tkinter import ttk
 import lib.drones
-import lib.overview
 from lib import docked, load_ship, navigation as nav, unload_ship, mining, \
-    bookmarks, drones, overview
+    bookmarks as bkmk, overview as o
 from lib.vars import system_mining, originx, originy, windowx, windowy
 
 sys.setrecursionlimit(9999999)
@@ -45,6 +44,7 @@ runs = 1
 # recommended per https://docs.python.org/2/library/logging.html
 logger = logging.getLogger(__name__)
 
+
 # logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
 # 'message)s', level=logging.DEBUG)
 
@@ -52,11 +52,13 @@ logger = logging.getLogger(__name__)
 # MAIN SCRIPTS ################################################################
 
 def miner():
-    ore1 = './img/overview/ore_types/plagioclase.bmp'
-    ore2 = './img/overview/ore_types/pyroxeres.bmp'
-    ore3 = './img/overview/ore_types/veldspar.bmp'
-    ore4 = './img/overview/ore_types/scordite.bmp'
-    ore5 = 0
+    # Ores to mine, in order of priority.
+    o1 = './img/overview/ore_types/plagioclase.bmp'
+    o2 = './img/overview/ore_types/pyroxeres.bmp'
+    o3 = './img/overview/ore_types/veldspar.bmp'
+    o4 = './img/overview/ore_types/scordite.bmp'
+    o5 = 0
+
     print('main, drones is', drones)
     global playerfound
     global site
@@ -65,7 +67,7 @@ def miner():
     logging.info('beginning run' + (str(runs)))
     while docked.docked_check() == 0:
         if lib.drones.detect_drones_launched() == 1:
-            lib.overview.focus_client()
+            o.focus_client()
             lib.drones.recall_drones_loop(drones)
         # Increment desired mining site by one as this is the next location
         # ship will warp to.
@@ -73,70 +75,53 @@ def miner():
         # If there aren't any more sites left, loop back around to site 1.
         if site > total_sites:
             site = 1
-        if lib.bookmarks.travel_to_bookmark(site) == 1:
+        if bkmk.travel_to_bookmark(site) == 1:
             # Once arrived at site, check for hostile npcs and human players.
             # If either exist, warp to the next site.
             # If no hostiles npcs or players are present, check for asteroids.
             # If no asteroids, blacklist site and warp to next site.
-            if lib.overview.focus_overview_tab('general') == 1:
-                if lib.overview.detect_npcs(detect_npcs, npc_frig_dest,
-                                            npc_cruiser_bc) == 1:
+            if o.focus_overview_tab('general') == 1:
+                if o.detect_npcs(detect_npcs, npc_frig_dest, npc_cruiser_bc) \
+                        == 1:
                     miner()
-            if lib.overview.detect_pcs(detect_pcs, pc_indy, pc_barge,
-                                       pc_frig_dest, pc_cruiser_bc, pc_bs,
-                                       pc_capindy_freighter, pc_rookie,
-                                       pc_pod) == 1:
+            if o.detect_pcs(detect_pcs, pc_indy, pc_barge, pc_frig_dest,
+                            pc_cruiser_bc, pc_bs, pc_capindy_freighter,
+                            pc_rookie, pc_pod) == 1:
                 playerfound += 1
                 miner()
 
-            lib.overview.focus_overview_tab('mining')
-            target = lib.overview.detect_overview_target(ore1, ore2, ore3,
-                                                         ore4,
-                                                         ore5)
-            while lib.overview.detect_overview_target(ore1, ore2, ore3, ore4,
-                                                      ore5
-                                                      ) is not None:
+            o.focus_overview_tab('mining')
+            target = o.detect_overview_target(o1, o2, o3, o4, o5)
+            while o.detect_overview_target(o1, o2, o3, o4, o5) is not None:
                 lib.drones.launch_drones_loop(drones)
-                if lib.overview.target_overview_target(target) == 0:
+                if o.target_overview_target(target) == 0:
                     miner()
                 mining.activate_miner()
                 # If ship inventory isn't full, continue to mine ore and wait
                 # for popups or errors.
                 # Switch back to the general tab for easier ship detection
-                lib.overview.focus_overview_tab('general')
+                o.focus_overview_tab('general')
                 while mining.inv_full_popup() == 0:
                     if mining.asteroid_depleted_popup() == 1:
-                        target = lib.overview.detect_overview_target(ore1,
-                                                                     ore2,
-                                                                     ore3,
-                                                                     ore4,
-                                                                     ore5)
-                        if lib.overview.detect_overview_target(ore1, ore2,
-                                                               ore3, ore4, ore5
-                                                               ) == 0:
-                            #nav.blacklist_local_bookmark()
+                        target = o.detect_overview_target(o1, o2, o3, o4, o5)
+                        if o.detect_overview_target(o1, o2, o3, o4, o5) == 0:
+                            # nav.blacklist_local_bookmark()
                             miner()
 
-                        elif lib.overview.detect_overview_target(ore1, ore2,
-                                                                 ore3, ore4,
-                                                                 ore5
-                                                                 ) is not None:
-                            if lib.overview.target_overview_target(target) \
-                                    == 0:
+                        elif o.detect_overview_target(o1, o2, o3, o4, o5
+                                                      ) is not None:
+                            if o.target_overview_target(target) == 0:
                                 miner()
                             mining.activate_miner()
                             mining.inv_full_popup()
                             continue
-                    if lib.overview.detect_npcs(detect_npcs, npc_frig_dest,
-                                                npc_cruiser_bc) == 1 or \
-                            lib.overview.detect_pcs(detect_pcs, pc_indy,
-                                                    pc_barge,
-                                                    pc_frig_dest,
-                                                    pc_cruiser_bc, pc_bs,
-                                                    pc_capindy_freighter,
-                                                    pc_rookie,
-                                                    pc_pod) == 1 or \
-                            lib.overview.detect_jam() == 1 or \
+                    if o.detect_npcs(detect_npcs, npc_frig_dest,
+                                     npc_cruiser_bc) == 1 or \
+                            o.detect_pcs(detect_pcs, pc_indy, pc_barge,
+                                         pc_frig_dest, pc_cruiser_bc, pc_bs,
+                                         pc_capindy_freighter, pc_rookie,
+                                         pc_pod) == 1 or \
+                            o.detect_jam(jam) == 1 or \
                             mining.timer(timer_var) == 1:
                         lib.drones.recall_drones_loop(drones)
                         miner()
@@ -148,7 +133,7 @@ def miner():
                     lib.drones.recall_drones_loop(drones)
                     logging.info('finishing run' + (str(runs)))
                     if system_mining == 0:
-                        if lib.bookmarks.set_home() == 1:
+                        if bkmk.set_home() == 1:
                             if navigator() == 1:
                                 unload_ship.unload_ship()
                                 docked.undock_loop()
@@ -159,7 +144,7 @@ def miner():
                     # If ship is mining in the same system it will dock in,
                     # a different set of functions is required.
                     elif system_mining == 1:
-                        lib.bookmarks.dock_at_local_bookmark()
+                        bkmk.dock_at_local_bookmark()
                         unload_ship.unload_ship()
                         docked.undock_loop()
                         playerfound = 0
@@ -167,16 +152,14 @@ def miner():
                         runs += 1
                         miner()
 
-                if lib.overview.detect_overview_target(ore1, ore2, ore3, ore4,
-                                                       ore5
-                                                       ) == 0:
-                    lib.bookmarks.blacklist_local_bookmark()
-        elif lib.bookmarks.travel_to_bookmark(site) == 0:
+                if o.detect_overview_target(o1, o2, o3, o4, o5) == 0:
+                    bkmk.blacklist_local_bookmark()
+        elif bkmk.travel_to_bookmark(site) == 0:
             nav.emergency_terminate()
             sys.exit(0)
     if docked.docked_check() == 1:
         # If docked when script starts, undock_loop.
-        lib.overview.focus_client()
+        o.focus_client()
         docked.undock_loop()
         miner()
 
@@ -189,13 +172,13 @@ def navigator():
     dockedcheck = docked.docked_check()
 
     while dockedcheck == 0:
-        lib.overview.focus_client()
+        o.focus_client()
         selectwaypoint = nav.warp_to_waypoint()
         while selectwaypoint == 1:  # Value of 1 indicates stargate waypoint.
             time.sleep(5)  # Wait for jump to begin.
             detectjump = nav.detect_jump_loop()
             if detectjump == 1:
-                lib.overview.focus_client()
+                o.focus_client()
                 selectwaypoint = nav.warp_to_waypoint()
             else:
                 nav.emergency_terminate()
@@ -228,14 +211,14 @@ def collector():
     print('collector -- running collector')
     dockedcheck = docked.docked_check()
     while dockedcheck == 0:
-        lib.overview.focus_client()
+        o.focus_client()
         selectwaypoint = nav.warp_to_waypoint()
 
         while selectwaypoint == 1:
             time.sleep(3)  # Wait for warp to start.
             detectjump = nav.detect_jump_loop()
             if detectjump == 1:
-                lib.overview.focus_client()
+                o.focus_client()
                 selectwaypoint = nav.warp_to_waypoint()
         while selectwaypoint == 2:
             time.sleep(3)
@@ -251,12 +234,12 @@ def collector():
             sys.exit()
 
     while dockedcheck == 1:
-        athomecheck = lib.bookmarks.detect_at_home()
+        athomecheck = bkmk.detect_at_home()
         # If docked at home station, set a destination waypoint to a remote
         # station and unload cargo from ship into home station inventory.
         if athomecheck == 1:
             unload_ship.unload_ship()
-            lib.bookmarks.set_dest()
+            bkmk.set_dest()
             docked.undock_loop()
             collector()
         elif athomecheck == 0:
@@ -265,17 +248,17 @@ def collector():
             print('collector -- loadship is', loadship)
 
             if loadship == 2 or loadship == 0 or loadship is None:
-                atdestnum = lib.bookmarks.detect_bookmark_location()
+                atdestnum = bkmk.detect_bookmark_location()
                 if atdestnum == -1:
                     docked.undock_loop()
                     collector()
                 else:
-                    lib.bookmarks.set_dest()
-                    lib.bookmarks.blacklist_station()
+                    bkmk.set_dest()
+                    bkmk.blacklist_station()
                     docked.undock_loop()
                     collector()
             elif loadship == 1:  # Value of 1 indicates ship is full.
-                lib.bookmarks.set_home()
+                bkmk.set_home()
                 docked.undock_loop()
                 collector()
 
@@ -293,24 +276,9 @@ print("originy =", originy)
 print("windowx =", windowx)
 print("windowy =", windowy)
 
-#miner()
-
-# cProfile.run('lib.overview.detect_jam()')
-# Method for determining which script to run, as yet to be implemented by gui.
-# selectscript = 2
-#
-# if selectscript == 1:
-#	navigator()
-# elif selectscript == 2:
-#	nav.detect_route()
-#	collector()
 
 # GUI #########################################################################
 
-# def mainthread():
-#    print('called mainthread')
-#    threading.Thread(target=miner(), args=[])
-#    return
 
 gui = tkinter.Tk()
 
@@ -344,105 +312,91 @@ pc_bs_gui.set(1)
 pc_rookie_gui = tkinter.IntVar()
 pc_pod_gui = tkinter.IntVar()
 
-t = tkinter.Label(text="")
-t.grid(column=0, row=0, columnspan=2, sticky='W', padx=0,
-       pady=0)
+detect_jam_gui = tkinter.IntVar()
+detect_jam_gui.set(1)
 
 t = tkinter.Label(text="")
-t.grid(column=0, row=3, columnspan=2, sticky='W', padx=0,
-       pady=0)
+t.grid(column=0, row=0, columnspan=2, sticky='W', padx=0, pady=0)
+
+t = tkinter.Label(text="")
+t.grid(column=0, row=3, columnspan=2, sticky='W', padx=0, pady=0)
 
 combo_modules = ttk.Combobox(values=[1, 2, 3, 4])
 combo_modules.current(1)
 combo_modules.grid(column=1, row=4, columnspan=1, sticky='W')
 combo_modules.config(width='4', height='10')
-m = tkinter.Label(text="mining lasers")
-m.grid(column=0, row=4, columnspan=1, sticky='W', padx=5)
+label_mininglasers = tkinter.Label(text="mining lasers")
+label_mininglasers.grid(column=0, row=4, columnspan=1, sticky='W', padx=20)
 
 combo_drones = ttk.Combobox(values=[0, 1, 2, 3, 4, 5])
 combo_drones.current(2)
 combo_drones.grid(column=1, row=5, columnspan=1, sticky='W')
 combo_drones.config(width='4', height='10')
 label_drones = tkinter.Label(text="drones")
-label_drones.grid(column=0, row=5, columnspan=1, sticky='W',
-                  padx=5, pady=5)
+label_drones.grid(column=0, row=5, columnspan=1, sticky='W', padx=20, pady=5)
 
-detect_pcs = tkinter.Checkbutton(text='pc check',
-                                 variable=detect_pcs_gui)
+detect_pcs = tkinter.Checkbutton(text='pc check', variable=detect_pcs_gui)
 detect_pcs.grid(column=0, row=6, columnspan=1, sticky='W')
 
-pc_indy = tkinter.Checkbutton(text='pc indy check',
-                              variable=pc_indy_gui)
+pc_indy = tkinter.Checkbutton(text='pc indy check', variable=pc_indy_gui)
 pc_indy.grid(column=1, row=6, columnspan=1, sticky='W')
 
-pc_barge = tkinter.Checkbutton(text='pc barge check',
-                               variable=pc_barge_gui)
+pc_barge = tkinter.Checkbutton(text='pc barge check', variable=pc_barge_gui)
 pc_barge.grid(column=0, row=7, columnspan=1, sticky='W')
 
-pc_frig_dest = tkinter.Checkbutton(text='pc frig/dest '
-                                        'check',
+pc_frig_dest = tkinter.Checkbutton(text='pc frig/dest check',
                                    variable=pc_frig_dest_gui)
 pc_frig_dest.grid(column=1, row=7, columnspan=1, sticky='W')
 
-pc_capindy_freighter = tkinter.Checkbutton(text='pc '
-                                                'cap '
-                                                'indy/freighter check',
+pc_capindy_freighter = tkinter.Checkbutton(text='pc capindy/freighter check',
                                            variable=pc_capindy_freighter_gui)
-pc_capindy_freighter.grid(column=0, row=8, columnspan=1,
-                          sticky='W')
+pc_capindy_freighter.grid(column=0, row=8, columnspan=1, sticky='W')
 
-pc_cruiser_bc = tkinter.Checkbutton(text='pc cruiser/bc '
-                                         'check',
+pc_cruiser_bc = tkinter.Checkbutton(text='pc cruiser/bc check',
                                     variable=pc_cruiser_bc_gui)
 pc_cruiser_bc.grid(column=1, row=8, columnspan=1, sticky='W')
 
-pc_bs = tkinter.Checkbutton(text='pc bs check',
-                            variable=pc_bs_gui)
+pc_bs = tkinter.Checkbutton(text='pc bs check', variable=pc_bs_gui)
 pc_bs.grid(column=0, row=9, columnspan=1, sticky='W')
 
-pc_rookie = tkinter.Checkbutton(text='pc rookie check',
-                                variable=pc_rookie_gui)
+pc_rookie = tkinter.Checkbutton(text='pc rookie check', variable=pc_rookie_gui)
 pc_rookie.grid(column=1, row=9, columnspan=1, sticky='W')
 
-pc_pod = tkinter.Checkbutton(text='pc pod check',
-                             variable=pc_pod_gui)
+pc_pod = tkinter.Checkbutton(text='pc pod check', variable=pc_pod_gui)
 pc_pod.grid(column=0, row=10, columnspan=1, sticky='W')
 
-detect_npcs = tkinter.Checkbutton(text='npcs check',
-                                  variable=detect_npcs_gui)
-detect_npcs.grid(column=1, row=10, columnspan=1, sticky='W')
+t = tkinter.Label(text="")
+t.grid(column=0, row=11, columnspan=2, sticky='W', padx=0, pady=0)
 
-npc_frig_dest = tkinter.Checkbutton(text='npc frig/dest '
-                                         'check',
+detect_npcs = tkinter.Checkbutton(text='npc check', variable=detect_npcs_gui)
+detect_npcs.grid(column=0, row=12, columnspan=1, sticky='W')
+
+npc_frig_dest = tkinter.Checkbutton(text='npc frig/dest check',
                                     variable=npc_frig_dest_gui)
-npc_frig_dest.grid(column=0, row=11, columnspan=1, sticky='W')
+npc_frig_dest.grid(column=1, row=12, columnspan=1, sticky='W')
 
 npc_cruiser_bc = tkinter.Checkbutton(text='npc bs check',
                                      variable=npc_cruiser_bc_gui)
-npc_cruiser_bc.grid(column=1, row=11, columnspan=1, sticky='W')
-
-t = tkinter.Label(text="")
-t.grid(column=0, row=12, columnspan=2, sticky='W', padx=0,
-       pady=0)
+npc_cruiser_bc.grid(column=0, row=13, columnspan=1, sticky='W')
 
 
 # self.npc_bs = tkinter.Checkbutton(self, text='npc bs check',
 #                                    variable=npc_bs_gui)
 # self.npc_bs.grid(column=1, row=10, columnspan=1, sticky='W')
 
-# self.detect_jam = tkinter.Checkbutton(self, text='jam check',
-# variable=detect_jam)
-# self.check_pc.grid(column=0, row=10, columnspan=1, sticky='W')
+t = tkinter.Label(text="")
+t.grid(column=0, row=14, columnspan=2, sticky='W', padx=0, pady=0)
 
-# self.mytext = ScrolledText.ScrolledText(self, state="disabled")
-# self.mytext.grid(column=0, row=99, columnspan=99)
-# self.mytext.grid_columnconfigure(0, weight=1)
-# self.mytext.grid_rowconfigure(0, weight=1)
-# self.mytext.config(width='30', height='15')
+detect_jam = tkinter.Checkbutton(text='ecm jamming check',
+                                 variable=detect_jam_gui)
+detect_jam.grid(column=0, row=15, columnspan=1, sticky='W')
+
+t = tkinter.Label(text="")
+t.grid(column=0, row=16, columnspan=2, sticky='W', padx=0, pady=0)
 
 
 def start(event):
-    global drones, modules
+    global drones, modules, jam
 
     global detect_pcs, pc_indy, pc_barge, pc_frig_dest, \
         pc_capindy_freighter, pc_cruiser_bc, pc_bs, pc_rookie, pc_pod
@@ -471,8 +425,7 @@ def start(event):
         pc_capindy_freighter)))
 
     pc_cruiser_bc = (int(pc_cruiser_bc_gui.get()))
-    logger.debug('detect pc cruiser/bc is ' + (str(
-        pc_cruiser_bc)))
+    logger.debug('detect pc cruiser/bc is ' + (str(pc_cruiser_bc)))
 
     pc_bs = (int(pc_bs_gui.get()))
     logger.debug('detect pc bs is ' + (str(pc_bs)))
@@ -494,17 +447,18 @@ def start(event):
 
     npc_bs = (int(npc_bs_gui.get()))
     logger.debug('detect npc bs is ' + (str(npc_bs)))
-    # gui.update()
-    # t2 = threading.Thread(target=miner, args=[])
-    # t2.start()
+
+    jam = (int(detect_jam_gui.get()))
+    logger.debug('detect ecm jamming is ' + (str(detect_jam)))
+
     miner()
     return
 
 
 startbutton = tkinter.Button(text="start")
-startbutton.grid(column=0, row=1, columnspan=3, sticky='N')
+startbutton.grid(column=0, row=1, columnspan=2)
 startbutton.bind("<ButtonRelease-1>", start)
-startbutton.config(width='20', height='1', padx=25, pady=0)
+startbutton.config(width='10', height='1', padx=5, pady=0)
 '''
 termbutton = tkinter.Button(text="stopper", command=stopper)
 termbutton.grid(column=0, row=2, sticky='W')
@@ -518,39 +472,7 @@ endrunbutton = tkinter.Button(text="checker", command=checker)
 endrunbutton.grid(column=1, row=2, columnspan=1, sticky='W')
 endrunbutton.config(width='13', height='1')
 '''
-'''
-class MyHandlerText(logging.StreamHandler):
-    def __init__(self, textctrl):
-        logging.StreamHandler.__init__(self)  # initialize parent
-        self.textctrl = textctrl
 
-    def emit(self, record):
-        msg = self.format(record)
-        self.textctrl.config(state="normal")
-        self.textctrl.insert(tkinter.END, msg + "\n")
-        self.flush()
-        self.textctrl.config(state="disabled")
-        self.textctrl.yview(tkinter.END)
-'''
-'''
-if __name__ == "__main__":
-    # create Tk object instance
-    app = simpleapp_tk(None)
-    app.title('NEOMINER v0.1')
-'''
-    # setup logging handlers using the Tk instance created above
-    # the pattern below can be used in other threads...
-    # ...to allow other thread to send msgs to the gui
-    # in this example, we set up two handlers just for demonstration (you could add a fileHandler, etc)
-    # stderrHandler = logging.StreamHandler()  # no arguments => stderr
-    # logger.addHandler(stderrHandler)
-    # guiHandler = MyHandlerText(app.mytext)
-    # logger.addHandler(guiHandler)
-    #logger.setLevel(logging.DEBUG)
-
-    # start Tk
-
-# miner()
 gui.title('NEOMINER v0.1')
 gui.mainloop()
 '''
@@ -573,47 +495,3 @@ while mining.inv_full_popup() == 0:
         miner()
     time.sleep(2)
 '''
-
-'''
-sample threading implementation
-
-import threading
-import time
-
-stop = 0
-lock = threading.Lock()
-
-def shield_check():
-    global stop
-    for i in range(1, 15):
-        time.sleep(1)
-        print('shield_check', i)
-        if stop == 1:
-            print('shield check stopping!')
-            break
-        elif i >= 4:
-            print('shield check warping out!')
-            stop = 1
-            warpout()
-
-def npc_check():
-    global stop
-    for i in range(1, 21):
-        time.sleep(2)
-        print('npc_check', i)
-        if stop == 1:
-            print('npc_check stopping!')
-            break
-        elif i >= 2:
-            print('npc_check warping out!')
-            stop = 1
-            warpout()
-
-def warpout():
-    lock.acquire()
-    for i in range(1, 5):
-        time.sleep(3)
-        print('warping out!', i)
-    lock.release()
-'''
-

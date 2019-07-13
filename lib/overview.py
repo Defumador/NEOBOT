@@ -35,18 +35,22 @@ logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
 
-def detect_jam():
+def detect_jam(jam):
     # Check overview window for target jamming icon on the right edge
-    overview = pag.screenshot('test.bmp',
-                              region=(
-                                  (originx + (windowx - (int(windowx / 8)))),
-                                  originy, (int(windowx / 8)), windowy))
-    jammed = pag.locate(
-        './img/overview/jammed_overview.bmp', overview, confidence=0.95)
-    if jammed is not None:
-        logging.info('ship has been jammed!')
-        return 1
-    else:
+    if jam == 1:
+        overview = pag.screenshot('test.bmp',
+                                  region=(
+                                      (originx + (windowx - (
+                                          int(windowx / 8)))),
+                                      originy, (int(windowx / 8)), windowy))
+        jammed = pag.locate(
+            './img/overview/jammed_overview.bmp', overview, confidence=0.95)
+        if jammed is not None:
+            logging.info('ship has been jammed!')
+            return 1
+        else:
+            return 0
+    elif jam == 0:
         return 0
 
 
