@@ -268,8 +268,8 @@ def focus_overview():
     x = (originx + (windowx - (int(windowx / 4.5))))
     y = originy
     randx = (random.randint(0, (int(windowx / 4.5) - 30)))
-    randy = (random.randint((int(windowx / 2)), windowy))
-    pag.moveTo((x + randx), (y + randy), 0.2, mouse.path())
+    randy = (random.randint((int(windowx / 2)), (windowy - 10)))
+    pag.moveTo((x + randx), (y + randy), mouse.duration(), mouse.path())
 
     time.sleep(float(random.randint(50, 500)) / 1000)
     mouse.click()
