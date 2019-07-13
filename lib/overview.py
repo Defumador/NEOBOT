@@ -211,7 +211,7 @@ def detect_pcs(detect_pcs_var, pc_indy, pc_barge, pc_frig_dest,
                 logging.debug('found player at' + (str(player_found)))
                 logging.debug('located icon' + (str(pc_icon)))
                 # Break up the tuple so mouse can point at icon for debugging.
-                (x, y, t, w) = player_found
+                (x, y, l, w) = player_found
                 # Coordinates must compensate for the altered coordinate-space
                 # of the screenshot.
                 pag.moveTo((x + (originx + (windowx - (int(windowx / 3.8))))),
@@ -258,6 +258,22 @@ def focus_client():
     time.sleep(float(random.randint(50, 500)) / 1000)
     mouse.click()
     return 1
+
+
+def focus_overview():
+    # Click on a blank area in the client, assuming user has
+    # properly configured the UI.
+    logging.debug('focusing overview')
+
+    x = (originx + (windowx - (int(windowx / 3.8))))
+    y = originy
+    randx = (random.randint(0, (int(windowx / 3.8))))
+    randy = (random.randint((int(windowx / 6)), windowy))
+    pag.moveTo((x + randx), (y + randy), mouse.duration(), mouse.path())
+
+    time.sleep(float(random.randint(50, 500)) / 1000)
+    mouse.click()
+    return
 
 
 def focus_overview_tab(tab):

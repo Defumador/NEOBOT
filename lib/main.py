@@ -172,13 +172,12 @@ def navigator():
     dockedcheck = docked.docked_check()
 
     while dockedcheck == 0:
-        o.focus_client()
+        o.focus_overview()
         selectwaypoint = nav.warp_to_waypoint()
         while selectwaypoint == 1:  # Value of 1 indicates stargate waypoint.
             time.sleep(5)  # Wait for jump to begin.
             detectjump = nav.detect_jump_loop()
             if detectjump == 1:
-                o.focus_client()
                 selectwaypoint = nav.warp_to_waypoint()
             else:
                 nav.emergency_terminate()
@@ -210,15 +209,14 @@ def collector():
     # remote stations are supported.
     print('collector -- running collector')
     dockedcheck = docked.docked_check()
+    o.focus_overview()
     while dockedcheck == 0:
-        o.focus_client()
         selectwaypoint = nav.warp_to_waypoint()
 
         while selectwaypoint == 1:
             time.sleep(3)  # Wait for warp to start.
             detectjump = nav.detect_jump_loop()
             if detectjump == 1:
-                o.focus_client()
                 selectwaypoint = nav.warp_to_waypoint()
         while selectwaypoint == 2:
             time.sleep(3)
