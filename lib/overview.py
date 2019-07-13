@@ -261,19 +261,18 @@ def focus_client():
 
 
 def focus_overview():
-    # Click on a blank area in the client, assuming user has
-    # properly configured the UI.
-    logging.debug('focusing overview')
+    """If undocked, click somewhere on the Overview to focus the client. If
+    docked, click somewhere in the undock window below all the buttons."""
+    while True:
+        logging.debug('focusing overview')
 
-    x = (originx + (windowx - (int(windowx / 3.8))))
-    y = originy
-    randx = (random.randint(0, (int(windowx / 3.8))))
-    randy = (random.randint((int(windowx / 6)), windowy))
-    pag.moveTo((x + randx), (y + randy), mouse.duration(), mouse.path())
+        x = (originx + (windowx - (int(windowx / 4.5) - 10)))
+        y = originy
+        randx = (random.randint(0, (int(windowx / 4.5) - 10)))
+        randy = (random.randint((int(windowx / 2)), windowy))
+        pag.moveTo((x + randx), (y + randy), 0.2, mouse.path())
 
-    time.sleep(float(random.randint(50, 500)) / 1000)
-    mouse.click()
-    return
+        time.sleep(float(random.randint(50, 500)) / 1000)
 
 
 def focus_overview_tab(tab):
