@@ -208,6 +208,8 @@ def collector():
     # station bookmark beginning with the numbers 1-9. This means up to 10
     # remote stations are supported.
     print('collector -- running collector')
+    docked.detect_items()
+    return
     dockedcheck = docked.docked_check()
     o.focus_overview()
     while dockedcheck == 0:

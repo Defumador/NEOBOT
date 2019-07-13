@@ -146,17 +146,13 @@ def detect_items():
     # '0 items found' text. If it isn't present, there must be items in the
     # station's inventory.
     global no_items_station_inv
-    global namefield_station_inv
-    no_items_station_inv = pag.locateCenterOnScreen(
+    no_items_station_inv = pag.locateOnScreen(
         './img/indicators/station_inv_0_items.bmp',
-        confidence=.99,
+        confidence=.9,
         region=(originx, originy, windowx, windowy))
 
     if no_items_station_inv is None:
-        namefield_station_inv = pag.locateCenterOnScreen(
-            './img/indicators/station_inv_name.bmp',
-            confidence=conf,
-            region=(originx, originy, windowx, windowy))
+        logging.debug('items remain')
         return 1
     elif no_items_station_inv is not None:
         logging.debug('no more items')
