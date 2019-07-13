@@ -63,9 +63,9 @@ def warp_to_waypoint():
             continue
         elif station_waypoint is not None:
             logging.debug('found station waypoint')
-            (station_waypointx, station_waypointy) = station_waypoint
-            pag.moveTo((station_waypointx + (random.randint(-8, 8))),
-                       (station_waypointy + (random.randint(-8, 8))),
+            (x, y) = station_waypoint
+            pag.moveTo((x + (random.randint(-8, (int(windowx / 3.8))))),
+                       (y + (random.randint(-8, 8))),
                        mouse.duration(), mouse.path())
             mouse.click()
             time.sleep(float(random.randint(600, 1200)) / 1000)
@@ -82,9 +82,9 @@ def warp_to_waypoint():
     # Check if stargate waypoint was found before loop expired.
     if stargate_waypoint is not None and tries <= 15:
         logging.debug('found stargate waypoint')
-        (stargate_waypointx, stargate_waypointy) = stargate_waypoint
-        pag.moveTo((stargate_waypointx + (random.randint(-8, 8))),
-                   (stargate_waypointy + (random.randint(-8, 8))),
+        (x, y) = stargate_waypoint
+        pag.moveTo((x + (random.randint(-8, (int(windowx / 3.8))))),
+                   (y + (random.randint(-8, 8))),
                    mouse.duration(), mouse.path())
         mouse.click()
         time.sleep(float(random.randint(600, 1200)) / 1000)
@@ -232,7 +232,6 @@ def emergency_terminate():
     # After warp completes, force an unsafe logout in space.
     threading.Lock()
     logging.debug('EMERGENCY TERMINATE CALLED !!!')
-    return
     tries = 0
     confidence = 0.95
     overview.focus_overview_tab('general')
