@@ -41,8 +41,6 @@ total_sites = 10
 # Number of 'runs' completed for mining script
 runs = 1
 # -----------------------------------------------------------------------------
-modules = 0
-drones = 0
 
 # recommended per https://docs.python.org/2/library/logging.html
 logger = logging.getLogger(__name__)
@@ -54,14 +52,12 @@ logger = logging.getLogger(__name__)
 # MAIN SCRIPTS ################################################################
 
 def miner():
-    global drones, modules
     ore1 = './img/overview/ore_types/plagioclase.bmp'
     ore2 = './img/overview/ore_types/pyroxeres.bmp'
     ore3 = './img/overview/ore_types/veldspar.bmp'
     ore4 = './img/overview/ore_types/scordite.bmp'
     ore5 = 0
-    print('main, drones is ', drones)
-    print('detect pc')
+    print('main, drones is', drones)
     global playerfound
     global site
     global runs
@@ -70,7 +66,7 @@ def miner():
     while docked.docked_check() == 0:
         if lib.drones.detect_drones_launched() == 1:
             lib.overview.focus_client()
-            lib.drones.recall_drones_loop()
+            lib.drones.recall_drones_loop(drones)
         # Increment desired mining site by one as this is the next location
         # ship will warp to.
         site += 1
@@ -100,7 +96,7 @@ def miner():
             while lib.overview.detect_overview_target(ore1, ore2, ore3, ore4,
                                                       ore5
                                                       ) is not None:
-                lib.drones.launch_drones_loop()
+                lib.drones.launch_drones_loop(drones)
                 if lib.overview.target_overview_target(target) == 0:
                     miner()
                 mining.activate_miner()
@@ -142,14 +138,14 @@ def miner():
                                                     pc_pod) == 1 or \
                             lib.overview.detect_jam() == 1 or \
                             mining.timer(timer_var) == 1:
-                        lib.drones.recall_drones_loop()
+                        lib.drones.recall_drones_loop(drones)
                         miner()
                     timer_var += 1
                     time.sleep(1)
 
                 if mining.inv_full_popup() == 1:
                     # Once inventory is full, dock at home station and unload.
-                    lib.drones.recall_drones_loop()
+                    lib.drones.recall_drones_loop(drones)
                     logging.info('finishing run' + (str(runs)))
                     if system_mining == 0:
                         if lib.bookmarks.set_home() == 1:

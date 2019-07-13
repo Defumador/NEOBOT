@@ -11,9 +11,8 @@ logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
 
-def launch_drones_loop():
+def launch_drones_loop(drones):
     # User must custom-set the "launch drones" hotkey to be Shift-l
-    from lib.gui import drones
     if drones != 0:
         logging.info('launching drones')
         time.sleep(float(random.randint(10, 800)) / 1000)
@@ -56,8 +55,7 @@ def detect_drones_launched():
         return 0
 
 
-def recall_drones_loop():
-    from lib.gui import drones
+def recall_drones_loop(drones):
     if drones != 0:
         time.sleep(float(random.randint(10, 800)) / 1000)
         pag.keyDown('shift')
