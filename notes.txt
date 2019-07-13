@@ -1,14 +1,3 @@
-mining script:
-    - add support for a 'don't recall drones when escaping pcs or npcs' variable,
-which could be useful in losec space when it's necessary to quickly escape
-ships when they arrive on grid
-    - add support for checking if shields have been depleted while mining. create screenshot of the leftmost area of the instrument cluster in which the shield has been depleted
-- have ship return to previously used belt after dropping off cargo so ship
-doesn't have to start over looking for a suitable belt
-
-- add ocr support so ship will only target asteroid once it's within range. (https://pypi.org/project/pytesseract/) https://github.com/tesseract-ocr/tesseract/wiki/Command-Line-Usage
-
-- improved logging https://github.com/beenje/tkinter-logging-text-widget/blob/master/main.py
 
 BUGS:
     - warp function sometimes breaks if ship is already at full speed when it
@@ -20,6 +9,28 @@ BUGS:
     bookmark 10. see video 2019-07-10_19-32-46 at 3h24m40s
 
 
+IMMEDIATE FEATURES:
+    - change 'print' commands to logging on collector and navigator scripts
+    - add support for orca fleet hangar on collector script
+
+POSSIBLE FEATURES:
+    - have ship return to previously used belt after dropping off cargo so ship
+    doesn't have to start over looking for a suitable belt
+    - add support for checking if shields have been depleted while mining.
+    create screenshot of the leftmost area of the instrument cluster in which the shield has been depleted
+    - add support for a 'don't recall drones when escaping pcs or npcs' variable,
+    which could be useful in losec space when it's necessary to quickly escape
+    ships when they arrive on grid
+    - randomize order miner goes to belts
+
+LONGTERM FEATURES:
+    - ocr support
+    - gui logging https://github
+    .com/beenje/tkinter-logging-text-widget/blob/master/main.py
+
+
+
+
 multi-client support
     - each client will run on a separate thread of NEOBOT
     - NEOBOT will share control of the mouse between each client by making each threat submit inputs to an 'input queue.'
@@ -27,7 +38,6 @@ multi-client support
         - links about python multithreading and queues:
             blog on basig queue use -- https://www.troyfawkes.com/learn-python-multithreading-queues-basics/
             documentation on python's "queue" library -- https://pymotw.com/2/Queue/
-
 
 
 -test situation when ship is at dest9 to see if dest checking loop works fully
@@ -41,7 +51,6 @@ features:
 -add a small chance for a semli-long wait after each jump/undock_loop for increased randomness, make sure session change
 timer doesn't expire though as it would leave ship vulnerable in low-sec systems
 -add image recognition for yellow-highlighted entries in people & places
-
 
 
 multi-thread support:
