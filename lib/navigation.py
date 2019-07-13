@@ -40,21 +40,24 @@ def warp_to_waypoint():
     stargate_waypoint = pag.locateCenterOnScreen(
         './img/overview/stargate_waypoint.bmp',
         confidence=0.96,
-        region=(originx, originy, windowx, windowy))
+        region=((originx + (windowx - (int(windowx / 3.8)))),
+                originy, (int(windowx / 3.8)), windowy))
     # If stargate waypoint not found, look for station waypoint.
     while stargate_waypoint is None and tries <= 15:
         tries += 1
         station_waypoint = pag.locateCenterOnScreen(
             './img/overview/station_waypoint.bmp',
             confidence=0.96,
-            region=(originx, originy, windowx, windowy))
+            region=((originx + (windowx - (int(windowx / 3.8)))),
+                    originy, (int(windowx / 3.8)), windowy))
         # If station waypoint not found, look for stargate waypoint again
         # and restart loop.
         if station_waypoint is None:
             stargate_waypoint = pag.locateCenterOnScreen(
                 './img/overview/stargate_waypoint.bmp',
                 confidence=0.96,
-                region=(originx, originy, windowx, windowy))
+                region=((originx + (windowx - (int(windowx / 3.8)))),
+                        originy, (int(windowx / 3.8)), windowy))
             logging.debug('looking for waypoints ' + (str(tries)))
             time.sleep(float(random.randint(400, 1200)) / 1000)
             continue
@@ -64,9 +67,10 @@ def warp_to_waypoint():
             pag.moveTo((station_waypointx + (random.randint(-8, 8))),
                        (station_waypointy + (random.randint(-8, 8))),
                        mouse.duration(), mouse.path())
-            pag.keyDown('d')  # 'dock' hotkey.
-            time.sleep(float(random.randint(600, 1200)) / 1000)
             mouse.click()
+            time.sleep(float(random.randint(600, 1200)) / 1000)
+            pag.keyDown('d')  # 'dock' hotkey.
+            time.sleep(float(random.randint(100, 800)) / 1000)
             pag.keyUp('d')
             # Move mouse away from overview to prevent tooltips from blocking
             # script from seeing the icons.
@@ -82,9 +86,10 @@ def warp_to_waypoint():
         pag.moveTo((stargate_waypointx + (random.randint(-8, 8))),
                    (stargate_waypointy + (random.randint(-8, 8))),
                    mouse.duration(), mouse.path())
-        pag.keyDown('d')
-        time.sleep(float(random.randint(600, 1200)) / 1000)
         mouse.click()
+        time.sleep(float(random.randint(600, 1200)) / 1000)
+        pag.keyDown('d')  # 'dock' hotkey.
+        time.sleep(float(random.randint(100, 800)) / 1000)
         pag.keyUp('d')
         pag.moveTo(
             (random.randint(150, (int(windowy - (windowy / 4))))),
