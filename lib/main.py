@@ -64,9 +64,6 @@ def miner():
     print('main, drones is ')
     time.sleep(3)
     print('detect pc')
-    app.mainloop()
-    logging.info('beginning run')
-    app.mainloop()
     global playerfound
     global site
     global runs
@@ -331,13 +328,26 @@ class simpleapp_tk(tkinter.Tk):
         npc_bs_gui = tkinter.IntVar()
 
         detect_pcs_gui = tkinter.IntVar()
+        detect_pcs_gui.set(1)
 
         pc_indy_gui = tkinter.IntVar()
+        pc_indy_gui.set(1)
+
         pc_barge_gui = tkinter.IntVar()
+        pc_barge_gui.set(1)
+
         pc_frig_dest_gui = tkinter.IntVar()
+        pc_frig_dest_gui.set(1)
+
         pc_capindy_freighter_gui = tkinter.IntVar()
+        pc_capindy_freighter_gui.set(1)
+
         pc_cruiser_bc_gui = tkinter.IntVar()
+        pc_cruiser_bc_gui.set(1)
+
         pc_bs_gui = tkinter.IntVar()
+        pc_bs_gui.set(1)
+
         pc_rookie_gui = tkinter.IntVar()
         pc_pod_gui = tkinter.IntVar()
 
@@ -359,19 +369,19 @@ class simpleapp_tk(tkinter.Tk):
                     pady=0)
 
         self.combo_modules = ttk.Combobox(self, values=[1, 2, 3, 4])
-        self.combo_modules.current(2)
+        self.combo_modules.current(1)
         self.combo_modules.grid(column=1, row=4, columnspan=1, sticky='W')
         self.combo_modules.config(width='4', height='10')
         self.m = tkinter.Label(self, text="mc")
         self.m.grid(column=0, row=4, columnspan=1, sticky='W', padx=5)
 
         self.combo_drones = ttk.Combobox(self, values=[0, 1, 2, 3, 4, 5])
-        self.combo_drones.current(0)
+        self.combo_drones.current(2)
         self.combo_drones.grid(column=1, row=5, columnspan=1, sticky='W')
         self.combo_drones.config(width='4', height='10')
         self.label_drones = tkinter.Label(self, text="drones")
         self.label_drones.grid(column=0, row=5, columnspan=1, sticky='W',
-                               padx=5)
+                               padx=5, pady=5)
 
         self.detect_pcs = tkinter.Checkbutton(self, text='pc check',
                                               variable=detect_pcs_gui)
@@ -391,7 +401,7 @@ class simpleapp_tk(tkinter.Tk):
         self.pc_frig_dest.grid(column=1, row=7, columnspan=1, sticky='W')
 
         self.pc_capindy_freighter = tkinter.Checkbutton(self, text='pc '
-                                                                   'capital '
+                                                                   'cap '
                                                                    'indy/freighter check',
                                                         variable=pc_capindy_freighter_gui)
         self.pc_capindy_freighter.grid(column=0, row=8, columnspan=1,
@@ -421,11 +431,15 @@ class simpleapp_tk(tkinter.Tk):
         self.npc_frig_dest = tkinter.Checkbutton(self, text='npc frig/dest '
                                                             'check',
                                                  variable=npc_frig_dest_gui)
-        self.npc_frig_dest.grid(column=1, row=11, columnspan=1, sticky='W')
+        self.npc_frig_dest.grid(column=0, row=11, columnspan=1, sticky='W')
 
         self.npc_cruiser_bc = tkinter.Checkbutton(self, text='npc bs check',
                                                   variable=npc_cruiser_bc_gui)
-        self.npc_cruiser_bc.grid(column=0, row=12, columnspan=1, sticky='W')
+        self.npc_cruiser_bc.grid(column=1, row=11, columnspan=1, sticky='W')
+
+        self.t = tkinter.Label(self, text="")
+        self.t.grid(column=0, row=12, columnspan=2, sticky='W', padx=0,
+                    pady=0)
 
         # self.npc_bs = tkinter.Checkbutton(self, text='npc bs check',
         #                                    variable=npc_bs_gui)
@@ -435,11 +449,11 @@ class simpleapp_tk(tkinter.Tk):
         # variable=detect_jam)
         # self.check_pc.grid(column=0, row=10, columnspan=1, sticky='W')
 
-        self.mytext = ScrolledText.ScrolledText(self, state="disabled")
-        self.mytext.grid(column=0, row=99, columnspan=99)
-        self.mytext.grid_columnconfigure(0, weight=1)
-        self.mytext.grid_rowconfigure(0, weight=1)
-        self.mytext.config(width='30', height='15')
+        # self.mytext = ScrolledText.ScrolledText(self, state="disabled")
+        # self.mytext.grid(column=0, row=99, columnspan=99)
+        # self.mytext.grid_columnconfigure(0, weight=1)
+        # self.mytext.grid_rowconfigure(0, weight=1)
+        # self.mytext.config(width='30', height='15')
 
         self.mybutton = tkinter.Button(self, text="ClickMe")
         self.mybutton.grid(column=0, row=2, sticky='W')
@@ -510,12 +524,12 @@ class simpleapp_tk(tkinter.Tk):
         now = datetime.datetime.now()
         logger.info(now)
         # t1 = threading.Thread(target=worker, args=[])
-        # t1.start()
+        #t1.start()
         miner()
         # time.sleep(1)
         # emit.textctrl.insert
         # logger.info(now)
-        # app.mainloop()
+        #app.mainloop()
 
 
 class MyHandlerText(logging.StreamHandler):
@@ -532,16 +546,6 @@ class MyHandlerText(logging.StreamHandler):
         self.textctrl.yview(tkinter.END)
 
 
-def worker():
-    # Skeleton worker function, runs in separate thread (see below)
-    while True:
-        # Report time / date at 2-second intervals
-        time.sleep(2)
-        timeStr = time.asctime()
-        msg = 'Current time: ' + timeStr
-        logging.info(msg)
-        logging.StreamHandler('test')
-
 if __name__ == "__main__":
     # create Tk object instance
     app = simpleapp_tk(None)
@@ -551,11 +555,11 @@ if __name__ == "__main__":
     # the pattern below can be used in other threads...
     # ...to allow other thread to send msgs to the gui
     # in this example, we set up two handlers just for demonstration (you could add a fileHandler, etc)
-    stderrHandler = logging.StreamHandler()  # no arguments => stderr
-    logger.addHandler(stderrHandler)
-    guiHandler = MyHandlerText(app.mytext)
-    logger.addHandler(guiHandler)
-    logger.setLevel(logging.DEBUG)
+    # stderrHandler = logging.StreamHandler()  # no arguments => stderr
+    # logger.addHandler(stderrHandler)
+    # guiHandler = MyHandlerText(app.mytext)
+    # logger.addHandler(guiHandler)
+    #logger.setLevel(logging.DEBUG)
 
     # start Tk
     app.mainloop()

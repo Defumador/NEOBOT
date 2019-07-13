@@ -1,3 +1,4 @@
+'''
 from tkinter import *
 import logging
 import time
@@ -75,3 +76,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+'''

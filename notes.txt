@@ -17,7 +17,7 @@ BUGS:
     target its first asteroid. have ship check general tab and for jams while
     this is happening
     - ship doesn't go back to checking bookmark 1 if it fails to warp to
-    bookmark 10. see video 2019-07-10
+    bookmark 10. see video 2019-07-10_19-32-46 at 3h24m40s
 
 
 multi-client support

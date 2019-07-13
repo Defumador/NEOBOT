@@ -1,7 +1,7 @@
 import random
 import time
 import logging
-from lib.gui import module_logger
+# from lib.gui import module_logger
 
 import pyautogui as pag
 
@@ -15,7 +15,7 @@ def launch_drones_loop():
     # User must custom-set the "launch drones" hotkey to be Shift-l
     from lib.gui import drones
     if drones != 0:
-        module_logger.info('launching drones')
+        logging.info('launching drones')
         time.sleep(float(random.randint(10, 800)) / 1000)
         pag.keyDown('shift')
         time.sleep(float(random.randint(10, 800)) / 1000)
