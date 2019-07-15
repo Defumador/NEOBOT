@@ -19,8 +19,8 @@ logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
 
 
 def set_dest():
-    # Issue a 'set destination' command for the lowest-numbered bookmark that
-    # isn't blacklisted (starting with 1).
+    """Issue a 'set destination' command for the lowest-numbered bookmark that
+    isn't blacklisted (starting with 1)."""
     set_dest_var = pag.locateCenterOnScreen(
         ('./img/dest/dest' + (destnum[1]) + '.bmp'),
         confidence=0.98,
@@ -51,8 +51,8 @@ def set_dest():
 
 
 def detect_at_home():
-    # Check if the ship is at its home station by looking for a bookmark
-    # starting with '000'.
+    """Check if the ship is at its home station by looking for a bookmark
+    starting with '000'."""
     at_home_check_var = pag.locateCenterOnScreen('./img/dest/at_dest0.bmp',
                                                  confidence=conf,
                                                  region=(originx, originy,
@@ -66,7 +66,7 @@ def detect_at_home():
 
 
 def set_home():
-    # Set destination as the bookmark beginning with '000'.
+    """Set destination as the bookmark beginning with '000'."""
     logging.debug('setting home waypoint')
     set_home_var = pag.locateCenterOnScreen('./img/dest/dest0.bmp',
                                             confidence=conf,
@@ -91,9 +91,9 @@ def set_home():
 
 
 def warp_to_local_bookmark(target_site):
-    # Try warping to a specific bookmark in the current system.
-    # If the ship is already at the requested site, return function.
-    # Confidence must be >0.95 because script will confuse 6 with 0
+    """Try warping to a specific bookmark in the current system.
+    If the ship is already at the requested site, return function."""
+    # Confidence must be >0.95 because script will confuse 6 with 0.
     specific_system_bookmark = pag.locateCenterOnScreen(
         ('./img/dest/at_dest' + (bookmark_dict[target_site]) + '.bmp'),
         confidence=0.98,
@@ -165,8 +165,8 @@ def dock_at_local_bookmark():
 
 
 def detect_bookmark_location():
-    # Determine if any bookmarks are green, indicating that bookmark is in the
-    # ship's current system.
+    """Determine if any bookmarks are green, indicating that bookmark is in the
+    ship's current system."""
     global n
     n = 0
     # Confidence must be higher than normal because script frequently
@@ -192,9 +192,9 @@ def detect_bookmark_location():
 
 
 def blacklist_station():
-    # Blacklist the first green bookmark script identifies by editing its
-    # bookmark name. This will prevent further trips to the blacklisted
-    # station.
+    """Blacklist the first green bookmark script identifies by editing its
+    bookmark name. This will prevent further trips to the blacklisted
+    station."""
     at_dest = detect_bookmark_location()
     if at_dest is not None:
         logging.debug('blacklisting station')
@@ -231,9 +231,9 @@ def blacklist_station():
 
 
 def blacklist_local_bookmark():
-    # Determine which bookmark ship is at by looking at the right-click
-    # menu. If a bookmark is on grid with the user's ship, blacklist the
-    # bookmark by editing its name.
+    """Determine which bookmark ship is at by looking at the right-click
+    menu. If a bookmark is on grid with the user's ship, blacklist the
+    bookmark by editing its name."""
     logging.debug('blacklisting local bookmark')
 
     # First check to see if the bookmark even exists.
@@ -312,7 +312,7 @@ def blacklist_local_bookmark():
 
 
 def blacklist_specific_bookmark(target_site):
-    # Blacklist a specific bookmark by changing its name.
+    """Blacklist a specific bookmark by changing its name."""
     logging.debug('blacklisting bookmark ' + (str(target_site)))
     bookmark_to_blacklist = pag.locateCenterOnScreen(
         ('./img/dest/at_dest' + (bookmark_dict[target_site]) + '.bmp'),
@@ -339,14 +339,14 @@ def blacklist_specific_bookmark(target_site):
 
 
 def travel_to_bookmark(target_bookmark):
-    # Find a suitable asteroid field by warping to each bookmark in
-    # numerical order.
-    # Currently only mining in a single system with at least one station is
-    # supported
+    """Find a suitable asteroid field by warping to each bookmark in
+    numerical order.
+    Currently only mining in a single system with at least one station is
+    supported
 
-    # Try warping to bookmark 1 in the system. If bookmark 1 doesn't exist,
-    # is not in the current system, or your ship is already there. Increment
-    # bookmark number by 1 and try again.
+    Try warping to bookmark 1 in the system. If bookmark 1 doesn't exist,
+    is not in the current system, or your ship is already there. Increment
+    bookmark number by 1 and try again."""
     travel_to_bookmark_var = warp_to_local_bookmark(
         target_bookmark)
     while travel_to_bookmark_var == 0 and target_bookmark <= 10:
