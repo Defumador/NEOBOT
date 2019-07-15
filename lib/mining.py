@@ -17,6 +17,17 @@ logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
 
+def activate_miner(mining_lasers):
+  for n in range(1, (mining_lasers + 1)):
+    keyboard.keypress('f' + (str(n)))
+    logging.debug('activating miner ' + (str(n)))
+    time.sleep(float(random.randint(10, 1000)) / 1000)
+    while miner_out_of_range_popup() == 1:
+      time.sleep(float(random.randint(10000, 20000)) / 1000)
+      activate_miner_new(mining_lasers)
+  return 0
+
+    
 def activate_miner():
     # Activate mining lasers in sequential order.
     if mining_lasers == 1:
