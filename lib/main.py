@@ -96,7 +96,7 @@ def miner():
                 lib.drones.launch_drones_loop(drones)
                 if o.target_overview_target(target) == 0:
                     miner()
-                mining.activate_miner()
+                mining.activate_miner(modules)
                 # If ship inventory isn't full, continue to mine ore and wait
                 # for popups or errors.
                 # Switch back to the general tab for easier ship detection
@@ -112,7 +112,7 @@ def miner():
                                                       ) is not None:
                             if o.target_overview_target(target) == 0:
                                 miner()
-                            mining.activate_miner()
+                            mining.activate_miner(modules)
                             mining.inv_full_popup()
                             continue
                     if o.detect_npcs(detect_npcs, npc_frig_dest,
@@ -448,7 +448,7 @@ def start(event):
     jam = (int(detect_jam_gui.get()))
     logger.debug('detect ecm jamming is ' + (str(detect_jam)))
 
-    collector()
+    miner()
     return
 
 

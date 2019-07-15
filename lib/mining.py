@@ -11,24 +11,25 @@ from lib.vars import originx, originy, windowx, windowy
 sys.setrecursionlimit(9999999)
 
 # The number of mining modules the ship has.
-mining_lasers = 2
+# mining_lasers = 2
 
 logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
 
-def activate_miner(mining_lasers):
-  for n in range(1, (mining_lasers + 1)):
-    keyboard.keypress('f' + (str(n)))
-    logging.debug('activating miner ' + (str(n)))
-    time.sleep(float(random.randint(10, 1000)) / 1000)
-    while miner_out_of_range_popup() == 1:
-      time.sleep(float(random.randint(10000, 20000)) / 1000)
-      activate_miner_new(mining_lasers)
-  return 0
+def activate_miner(modules):
+    for n in range(1, (modules + 1)):
+        keyboard.keypress('f' + (str(n)))
+        logging.debug('activating miner ' + (str(n)))
+        time.sleep(float(random.randint(10, 1000)) / 1000)
+        while miner_out_of_range_popup() == 1:
+            time.sleep(float(random.randint(10000, 20000)) / 1000)
+            activate_miner(modules)
+    return 0
 
-    
-def activate_miner():
+
+'''
+def activate_miner_old():
     # Activate mining lasers in sequential order.
     if mining_lasers == 1:
         keyboard.keypress('f1')
@@ -77,6 +78,7 @@ def activate_miner():
             logging.debug('activating miner 4')
             return 1
     return 1
+'''
 
 
 def asteroid_depleted_popup():
