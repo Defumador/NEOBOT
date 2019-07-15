@@ -1,7 +1,7 @@
 import random
 import time
 import logging
-# from lib.gui import module_logger
+from lib.vars import originx, originy, windowx, windowy
 
 import pyautogui as pag
 
@@ -10,6 +10,15 @@ drones_dict = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5"}
 logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
+
+def locate(image, conf=0.95, region=(originx, originy, windowx, windowy))
+  locate_var = pag.locateOnScreen(image, confidence=conf, region=region)
+  if locate_var is not None:
+    logging.debug('found image ' + (str(image)))
+    return locate_var
+  elif locate_var is None:
+    logging.debug('cannot find image ' + (str(image)))
+    return locate_var
 
 def launch_drones_loop(drones):
     # User must custom-set the "launch drones" hotkey to be Shift-l
@@ -26,15 +35,16 @@ def launch_drones_loop(drones):
         time.sleep(float(random.randint(300, 800)) / 1000)
 
         # Wait for drones to launch by looking for '0' in drone bay
-        drones_launched_var = pag.locateOnScreen(
-            './img/indicators/drones/0_drone_in_bay.bmp')
+        #drones_launched_var = pag.locateOnScreen(
+        #    './img/indicators/drones/0_drone_in_bay.bmp')
         tries = 0
-        while drones_launched_var is None and tries <= 25:
-            logging.debug('waiting for donres to launch ' + (str(tries)))
+        while locate('./img/indicators/drones/0_drone_in_bay.bmp') is None and tries <= 25:
+            logging.debug('waiting for drones to launch ' + (str(tries)))
             time.sleep(float(random.randint(500, 2000)) / 1000)
-            drones_launched_var = pag.locateOnScreen(
-                './img/indicators/drones/0_drone_in_bay.bmp')
+            #drones_launched_var = pag.locateOnScreen(
+            #    './img/indicators/drones/0_drone_in_bay.bmp')
             tries += 1
+            locate('./img/indicators/drones/0_drone_in_bay.bmp')
         if drones_launched_var is not None and tries <= 25:
             logging.debug('drones launched ' + (str(tries)))
             return 1
