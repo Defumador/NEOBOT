@@ -1,0 +1,48 @@
+import random
+impory sys
+import logging
+
+import pyautogui as pag
+
+
+def locate(image, conf=0.95, region=(originx, originy, windowx, windowy))
+  locate_var = pag.locateOnScreen(image, confidence=conf, region=region)
+  if locate_var is not None:
+    logging.debug('found image ' + (str(image)))
+    return locate_var
+  elif locate_var is None:
+    logging.debug('cannot find image ' + (str(image)))
+return locate_var
+
+
+def clocate(image, conf=0.95, region=(originx, originy, windowx, windowy))
+  # 'clocate' = 'center locate'
+  clocate_var = pag.locateCenterOnScreen(image, confidence=conf, region=region)
+  if clocate_var is not None:
+    logging.debug('found image ' + (str(image)))
+    return clocate_var
+  elif clocate_var is None:
+    logging.debug('cannot find image ' + (str(image)))
+return clocate_var
+
+
+def olocate(image, conf=0.95, region=(originx, originy, windowx, windowy))
+  # locate within the overview window only
+  clocate_var = pag.locateOnScreen(image, confidence=conf, region=region)
+  if clocate_var is not None:
+    logging.debug('found image ' + (str(image)))
+    return clocate_var
+  elif clocate_var is None:
+    logging.debug('cannot find image ' + (str(image)))
+return clocate_var
+
+
+def oclocate(image, conf=0.95, region=(originx, originy, windowx, windowy))
+  # locate center within the overview window only
+  clocate_var = pag.locateCenterOnScreen(image, confidence=conf, region=region)
+  if clocate_var is not None:
+    logging.debug('found image ' + (str(image)))
+    return clocate_var
+  elif clocate_var is None:
+    logging.debug('cannot find image ' + (str(image)))
+return clocate_var
