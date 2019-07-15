@@ -30,52 +30,49 @@ def path():
     new location."""
     # https://stackoverflow.com/questions/44467329/pyautogui-mouse-movement-with-bezier-curve
     rand = random.randint(1, 19)
-    n = (float(random.randint(0, 1000) / 1000))
+    # n = (float(random.randint(0, 1000) / 1000))
     
     if rand == 1:
-        return pag.easeInQuad(n)
+        return pag.easeInQuad
     elif rand == 2:
-        return pag.easeOutQuad(n)
+        return pag.easeOutQuad
     elif rand == 3:
-        return pag.easeInOutQuad(n)
+        return pag.easeInOutQuad
     
     elif rand == 4:
-        return pag.easeInQuart(n)
+        return pag.easeInQuart
     elif rand == 5:
-        return pag.easeOutQuart(n)
+        return pag.easeOutQuart
     elif rand == 6:
-        return pag.easeInOutQuart(n)
+        return pag.easeInOutQuart
     
     elif rand == 7:
-        return pag.easeInQuint(n)
+        return pag.easeInQuint
     elif rand == 8:
-        return pag.easeOutQuint(n)
+        return pag.easeOutQuint
     elif rand == 9:
-        return pag.easeInOutQuint(n)
+        return pag.easeInOutQuint
     
     elif rand == 10:
-        return pag.easeInBack(n)
+        return pag.easeInBack
     elif rand == 11:
-        return pag.easeOutBack(n)
+        return pag.easeOutBack
     elif rand == 12:
-        return pag.easeInOutBack(n)
+        return pag.easeInOutBack
     
     elif rand == 13:
-        return pag.easeInCirc(n)
+        return pag.easeInCirc
     elif rand == 14:
-        return pag.easeOutCirc(n)
+        return pag.easeOutCirc
     elif rand == 15:
-        return pag.easeInOutCirc(n)
+        return pag.easeInOutCirc
     
     elif rand == 16:
-        return pag.pytweening.easeInSine(n)
+        return pag.pytweening.easeInSine
     elif rand == 17:
-        return pag.pytweening.easeOutSine(n)
+        return pag.pytweening.easeOutSine
     elif rand == 18:
-        return pag.pytweening.easeInOutSine(n)
+        return pag.pytweening.easeInOutSine
     
     elif rand == 19:
-        return pag.pytweening.Linear(n)
-    
-    
-    
+        return pag.pytweening.linear
