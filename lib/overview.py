@@ -64,7 +64,7 @@ def detect_jam(jam):
     # Check overview window for target jamming icon on the right edge
     if jam == 1:
         global oy, oly
-        ox = (originx + (windowx - (int(windowx / 3.8)))) 
+        ox = (originx + (windowx - (int(windowx / 8)))) 
         olx = (int(windowx / 8)
         if clocate('./img/overview/jammed_overview.bmp', region=(ox, oy, olx, oly)) is not None:
             logging.info('ship has been jammed!')
