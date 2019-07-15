@@ -4,69 +4,29 @@ import logging
 
 import pyautogui as pag
 
-from lib import mouse, keyboard
+from lib import mouse, keyboard, locate as lo
 from lib.vars import originx, originy, windowx, windowy
 
 # Specify the target names you wish the script to search for in the Overview.
 # For mining, this would be ore types.
 
-
-# Set which ores to mine. 1 is yes, 0 is no.
-plagioclase = 1
-scordite = 0
-veldspar = 0
-pyroxeres = 1
-# need to add these ores
-kernite = 0
-morphite = 0
-bistot = 0
-arkonor = 0
-crokite = 0
-jaspet = 0
-omber = 0
-ochre = 0
-gneiss = 0
-hedbergite = 0
-hemorphite = 0
-mercoxit = 0
-
 ox = (originx + (windowx - (int(windowx / 3.8)))) 
 oy = originy
-olx = (int(windowx / 3.8)
+olx = (int(windowx / 3.8))
 oly = windowy
 
 logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
 
-def locate(image, conf=0.95, region=(originx, originy, windowx, windowy))
-  locate_var = pag.locateOnScreen(image, confidence=conf, region=region)
-  if locate_var is not None:
-    logging.debug('found image ' + (str(image)))
-    return locate_var
-  elif locate_var is None:
-    logging.debug('cannot find image ' + (str(image)))
-return locate_var
-
-
-def clocate(image, conf=0.95, region=(originx, originy, windowx, windowy))
-  # 'clocate' = 'center locate'
-  clocate_var = pag.locateCenterOnScreen(image, confidence=conf, region=region)
-  if clocate_var is not None:
-    logging.debug('found image ' + (str(image)))
-    return clocate_var
-  elif clocate_var is None:
-    logging.debug('cannot find image ' + (str(image)))
-return clocate_var
-
-
 def detect_jam(jam):
     # Check overview window for target jamming icon on the right edge
     if jam == 1:
         global oy, oly
-        ox = (originx + (windowx - (int(windowx / 8)))) 
-        olx = (int(windowx / 8)
-        if clocate('./img/overview/jammed_overview.bmp', region=(ox, oy, olx, oly)) is not None:
+        ox_jam = (originx + (windowx - (int(windowx / 8))))
+        olx_jam = (int(windowx / 8))
+        if lo.locate('./img/overview/jammed_overview.bmp',
+                     region=(ox_jam, oy, olx_jam, oly)) is not None:
             logging.info('ship has been jammed!')
             return 1
         else:
