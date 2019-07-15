@@ -30,22 +30,43 @@ hedbergite = 0
 hemorphite = 0
 mercoxit = 0
 
+ox = (originx + (windowx - (int(windowx / 3.8)))) 
+oy = originy
+olx = (int(windowx / 3.8)
+oly = windowy
 
 logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
 
+def locate(image, conf=0.95, region=(originx, originy, windowx, windowy))
+  locate_var = pag.locateOnScreen(image, confidence=conf, region=region)
+  if locate_var is not None:
+    logging.debug('found image ' + (str(image)))
+    return locate_var
+  elif locate_var is None:
+    logging.debug('cannot find image ' + (str(image)))
+return locate_var
+
+
+def clocate(image, conf=0.95, region=(originx, originy, windowx, windowy))
+  # 'clocate' = 'center locate'
+  clocate_var = pag.locateCenterOnScreen(image, confidence=conf, region=region)
+  if clocate_var is not None:
+    logging.debug('found image ' + (str(image)))
+    return clocate_var
+  elif clocate_var is None:
+    logging.debug('cannot find image ' + (str(image)))
+return clocate_var
+
+
 def detect_jam(jam):
     # Check overview window for target jamming icon on the right edge
     if jam == 1:
-        overview = pag.screenshot('test.bmp',
-                                  region=(
-                                      (originx + (windowx - (
-                                          int(windowx / 8)))),
-                                      originy, (int(windowx / 8)), windowy))
-        jammed = pag.locate(
-            './img/overview/jammed_overview.bmp', overview, confidence=0.95)
-        if jammed is not None:
+        global oy, oly
+        ox = (originx + (windowx - (int(windowx / 3.8)))) 
+        olx = (int(windowx / 8)
+        if clocate('./img/overview/jammed_overview.bmp', region=(ox, oy, olx, oly)) is not None:
             logging.info('ship has been jammed!')
             return 1
         else:
