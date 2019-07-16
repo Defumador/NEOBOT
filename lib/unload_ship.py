@@ -1,11 +1,15 @@
 import sys
 import time
 import random
+import logging
 import pyautogui as pag
 from lib import mouse, keyboard, docked
 from lib.vars import originx, originy, windowx, windowy, conf
 
 sys.setrecursionlimit(9999999)
+
+logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
+                           'message)s', level=logging.DEBUG)
 
 
 def drag_items_from_ship_inv():
@@ -15,10 +19,9 @@ def drag_items_from_ship_inv():
         confidence=conf,
         region=(originx, originy, windowx, windowy))
 
-    (namefield_station_inv_iconx,
-     namefield_station_inv_icony) = namefield_station_inv_icon
-    pag.moveTo((namefield_station_inv_iconx + (random.randint(-5, 250))),
-               (namefield_station_inv_icony + (random.randint(10, 25))),
+    (x, y) = namefield_station_inv_icon
+    pag.moveTo((x + (random.randint(-5, 250))),
+               (y + (random.randint(10, 25))),
                mouse.duration(), mouse.path())
 
     pag.mouseDown()
@@ -26,19 +29,17 @@ def drag_items_from_ship_inv():
                                            confidence=conf,
                                            region=(originx, originy,
                                                    windowx, windowy))
-    (station_invx, station_invy) = station_inv
-    pag.moveTo((station_invx + (random.randint(-15, 60))),
-               (station_invy + (random.randint(-10, 10))),
+    (x, y) = station_inv
+    pag.moveTo((x + (random.randint(-15, 60))),
+               (y + (random.randint(-10, 10))),
                mouse.duration(), mouse.path())
     pag.mouseUp()
-    print(
-        'drag_items_from_ship_inv -- moved all item stacks from ship '
-        'inventory')
+    logging.debug('moved all item stacks from ship inventory')
     return
 
 
 def unload_ship():
-    print('unload_ship -- began unloading procedure')
+    logging.debug('began unloading procedure')
     docked.open_ship_inv()
     specinv = docked.detect_spec_inv()
     items = docked.detect_items()
@@ -60,15 +61,15 @@ def unload_ship():
                 drag_items_from_ship_inv()
                 time.sleep(2)
                 docked.detect_items()
-                print('unload_ship -- finished unloading procedure')
+                logging.debug('finished unloading procedure')
                 return 1
 
             if items == 0:
-                print('unload_ship -- finished unloading procedure')
+                logging.debug('finished unloading procedure')
                 return 1
 
         elif specinv == 0:
-            print('unload_ship -- nothing to unload')
+            logging.warning('nothing to unload')
             return 1
 
     while items == 1:
@@ -93,9 +94,9 @@ def unload_ship():
             drag_items_from_ship_inv()
             time.sleep(2)
             docked.detect_items()
-            print('unload_ship -- finished unloading procedure')
+            logging.debug('finished unloading procedure')
             return 1
 
     elif specinv == 0:
-        print('unload_ship -- finished unloading procedure')
+        logging.debug('finished unloading procedure')
         return 1

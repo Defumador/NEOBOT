@@ -29,8 +29,7 @@ def path():
     """Randomize the movement behavior of the mouse cursor as it moves to a
     new location."""
     # https://stackoverflow.com/questions/44467329/pyautogui-mouse-movement-with-bezier-curve
-    rand = random.randint(1, 19)
-    # n = (float(random.randint(0, 1000) / 1000))
+    rand = random.randint(1, 22)
     
     if rand == 1:
         return pag.easeInQuad
@@ -76,3 +75,10 @@ def path():
     
     elif rand == 19:
         return pag.pytweening.linear
+
+    elif rand == 20:
+        return pag.pytweening.easeInExpo
+    elif rand == 21:
+        return pag.pytweening.easeOutExpo
+    elif rand == 22:
+        return pag.pytweening.easeInOutExpo

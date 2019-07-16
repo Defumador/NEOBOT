@@ -107,7 +107,7 @@ def target_asteroid():
             keyboard.keypress('ctrl')
             time.sleep(float(random.randint(1000, 2000)) / 1000)
             print('target_asteroid -- locking target')
-            detect_target_lock()
+            detect_target_lock_loop()
             return 1
 
     elif asteroid_l is not None:
@@ -132,7 +132,7 @@ def target_asteroid():
             keyboard.keypress('ctrl')
             time.sleep(float(random.randint(1000, 2000)) / 1000)
             print('target_asteroid -- locking target')
-            detect_target_lock()
+            detect_target_lock_loop()
             return 1
 
     elif asteroid_s is not None:
@@ -155,7 +155,7 @@ def target_asteroid():
             keyboard.keypress('ctrl')
             time.sleep(float(random.randint(1000, 2000)) / 1000)
             print('target_asteroid -- locking target')
-            detect_target_lock()
+            detect_target_lock_loop()
             return 1
 
     else:

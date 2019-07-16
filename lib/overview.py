@@ -19,9 +19,10 @@ logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
 
-def detect_jam(jam):
-    # Check overview window for target jamming icon on the right edge
-    if jam == 1:
+def detect_jam(jam_var):
+    """Check for an ecm-jamming icon on the rightmost column of the
+    overview."""
+    if jam_var == 1:
         global oy, oly
         ox_jam = (originx + (windowx - (int(windowx / 8))))
         olx_jam = (int(windowx / 8))
@@ -31,15 +32,14 @@ def detect_jam(jam):
             return 1
         else:
             return 0
-    elif jam == 0:
+    elif jam_var == 0:
         return 0
 
 
-def detect_npcs(detect_npcs_var, detect_npc_frigate_and_destroyer,
-                detect_npc_cruiser_and_battlecruiser):
-    # Check for hostile non-player characters by looking for red ship icons in
-    # the overview.
-    # print('detect_npcs -- called')
+def detect_npcs(detect_npcs_var, npc_frig_dest,
+                npc_cruiser_bc):
+    """Check for hostile non-player characters by looking for red ship icons in
+    the overview."""
     conf = 0.98
     if detect_npcs_var == 1:
 
@@ -55,10 +55,10 @@ def detect_npcs(detect_npcs_var, detect_npc_frigate_and_destroyer,
 
         # Populate pc_list with only the player icons that the user wishes to
         # check for, as specified by the variables at the top of this file.
-        if detect_npc_frigate_and_destroyer == 1:
+        if npc_frig_dest == 1:
             npc_list.append(
                 './img/overview/npc_ship_icons/npc_hostile_frigate.bmp')
-        if detect_npc_cruiser_and_battlecruiser == 1:
+        if npc_cruiser_bc == 1:
             npc_list.append(
                 './img/overview/npc_ship_icons/npc_hostile_cruiser.bmp')
         # if detect_npc_battleship == 1:
@@ -109,16 +109,15 @@ def detect_overview_target(target1, target2, target3, target4, target5):
     if target5 != 0:
         target_list.append(target5)
 
-    # Iterate through ore_list until an ore is found.
     for target in target_list:
         target = pag.locate(target, overview, confidence=0.90)
         if target is not None:
             logging.debug('found target at ' + (str(target)))
-            (x, y, l, w) = target
+            # (x, y, l, w) = target
             # Move mouse over target for debugging.
-            pag.moveTo((x + (originx + (windowx - (int(windowx / 3.8))))),
-                       (y + originy),
-                       1, mouse.path())
+            # pag.moveTo((x + (originx + (windowx - (int(windowx / 3.8))))),
+            #           (y + originy),
+            #           1, mouse.path())
             return target
         else:
             logging.info('No targets found.')
@@ -205,15 +204,16 @@ def detect_pcs(detect_pcs_var, pc_indy, pc_barge, pc_frig_dest,
         return 0
 
 
-def detect_target_lock():
-    # Wait for ship to finish acquiring target lock.
+def detect_target_lock_loop():
+    """Waits until a target has been locked."""
     target_lock = pag.locateOnScreen(
         './img/indicators/target_lock_attained.bmp',
         confidence=0.95,
         region=(originx, originy,
                 windowx, windowy))
-    tries = 1
+    tries = 0
     while target_lock is None and tries <= 100:
+        tries += 1
         target_lock = pag.locateOnScreen(
             './img/indicators/target_lock_attained.bmp',
             confidence=0.95,
@@ -306,8 +306,7 @@ def target_available():
 
 def target_overview_target(overview_target):
     """Targets the closest user-defined item in the Overview, assuming overview
-    is sorted by distance, with closest objects at the top.
-    """
+    is sorted by distance, with closest objects at the top."""
     if overview_target is not None:
         # Break apart ore_found tuple into coordinates
         (x, y, l, w) = overview_target
@@ -327,9 +326,9 @@ def target_overview_target(overview_target):
         if target_available() == 1 and tries <= 30:
             logging.debug('locking target')
             keyboard.keypress('ctrl')
-            if detect_target_lock() == 1:
+            if detect_target_lock_loop() == 1:
                 return 1
-            elif detect_target_lock() == 0:
+            elif detect_target_lock_loop() == 0:
                 return 0
         elif target_available() == 0 and tries > 30:
             logging.warning(

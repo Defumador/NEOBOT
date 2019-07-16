@@ -1,4 +1,8 @@
-import sys, time, random, traceback
+import sys
+import time
+import random
+import logging
+import traceback
 import pyautogui as pag
 from lib import mouse, keyboard, docked
 from lib.vars import originx, originy, windowx, windowy, conf
@@ -14,16 +18,20 @@ sys.setrecursionlimit(9999999)
 # A return value of 0 indicates the ship cannot be loaded in the manner chosen.
 
 
+logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
+                           'message)s', level=logging.DEBUG)
+
+
 def drag_to_ship_inv():
-    # Click and drag the first item stack from station's inventory to ship's
-    # inventory. This function assumed the relevant window is already open.
-    print('drag_to_ship_inv -- moving item stack to ship inventory')
+    """Click and drag the first item stack from station's inventory to ship's
+    inventory. This function assumed the relevant window is already open."""
+    logging.debug('moving item stack to ship inventory')
     namefield_station_inv = pag.locateCenterOnScreen(
         './img/indicators/station_inv_name.bmp',
         confidence=conf, region=(originx, originy, windowx, windowy))
 
     if namefield_station_inv is None:
-        print("drag_to_ship_inv -- can't find name column")
+        logging.critical("can't find name column")
         traceback.print_exc()
         traceback.print_stack()
         sys.exit()
@@ -34,18 +42,17 @@ def drag_to_ship_inv():
                                             region=(originx, originy,
                                                     windowx, windowy))
         while ship_inv is None:
-            print("drag_to_ship_inv -- can't find ship inventory")
+            logging.critical("can't find ship inventory")
             ship_inv = pag.locateCenterOnScreen('./img/buttons/ship_inv.bmp',
                                                 confidence=conf,
                                                 region=(originx, originy,
                                                         windowx, windowy))
             time.sleep(float(random.randint(1000, 2000)) / 1000)
         if ship_inv is not None:
-            (namefield_station_invx,
-             namefield_station_invy) = namefield_station_inv
+            (x, y) = namefield_station_inv
             (ship_invx, ship_invy) = ship_inv
-            pag.moveTo((namefield_station_invx + (random.randint(-5, 250))),
-                       (namefield_station_invy + (random.randint(10, 25))),
+            pag.moveTo((x + (random.randint(-5, 250))),
+                       (y + (random.randint(10, 25))),
                        mouse.duration(), mouse.path())
             pag.mouseDown()
             pag.moveTo((ship_invx + (random.randint(-5, 60))),
@@ -56,15 +63,14 @@ def drag_to_ship_inv():
 
 
 def drag_to_ship_spec_inv():
-    # Same as previous function, except drag item stack to ship's special
-    # inventory.
-    print('drag_to_ship_spec_inv -- moving item stack to special inventory')
+    """Drag item stack to ship's special inventory."""
+    logging.debug('moving item stack to special inventory')
     namefield_station_inv = pag.locateCenterOnScreen(
         './img/indicators/station_inv_name.bmp',
         confidence=conf, region=(originx, originy, windowx, windowy))
 
     if namefield_station_inv is None:
-        print("drag_to_ship_spec_inv -- can't find name column")
+        logging.critical("can't find name column")
         traceback.print_exc()
         traceback.print_stack()
         sys.exit()
@@ -74,18 +80,17 @@ def drag_to_ship_spec_inv():
                                             region=(originx, originy,
                                                     windowx, windowy))
         while ship_inv is None:
-            print("drag_to_ship_spec_inv -- can't find ship inventory")
+            logging.critical("can't find ship inventory")
             ship_inv = pag.locateCenterOnScreen('./img/buttons/ship_inv.bmp',
                                                 confidence=conf,
                                                 region=(originx, originy,
                                                         windowx, windowy))
             time.sleep(float(random.randint(1000, 2000)) / 1000)
         if ship_inv is not None:
-            (namefield_station_invx,
-             namefield_station_invy) = namefield_station_inv
+            (x, y) = namefield_station_inv
             (ship_invx, ship_invy) = ship_inv
-            pag.moveTo((namefield_station_invx + (random.randint(-5, 250))),
-                       (namefield_station_invy + (random.randint(10, 25))),
+            pag.moveTo((x + (random.randint(-5, 250))),
+                       (y + (random.randint(10, 25))),
                        mouse.duration(), mouse.path())
             pag.mouseDown()
             pag.moveTo((ship_invx + (random.randint(-15, 40))),
@@ -96,8 +101,8 @@ def drag_to_ship_spec_inv():
 
 
 def load_ship_bulk():
-    # Load ship by selecting all item stacks and moving all stacks at once.
-    print('load_ship_bulk -- beginning bulk loading procedure')
+    """Load ship by selecting all item stacks and moving all stacks at once."""
+    logging.debug('beginning bulk loading procedure')
     items = docked.detect_items()
 
     if items is None:
@@ -113,7 +118,7 @@ def load_ship_bulk():
         setquant = docked.set_quant_warning()
 
         if nospace == 0 and setquant == 0:
-            print('load_ship_bulk -- no warnings')
+            logging.debug('no warnings')
             return 2
 
         elif nospace == 1:  # If a warning appears, check if the ship has a
@@ -135,7 +140,7 @@ def load_ship_bulk():
                     if items == 0:
                         return 2
                     else:
-                        print('load_ship_bulk -- more items remaining')
+                        logging.debug('more items remaining')
                         return 0
 
                 elif specinvwarning == 0 and setquant == 1 and nospace \
@@ -154,8 +159,8 @@ def load_ship_bulk():
 
 
 def load_ship_individually():
-    # Load ship one item stack at a time.
-    print('load_ship_individually -- beginning individual loading procedure')
+    """Load ship one item stack at a time."""
+    logging.debug('beginning individual loading procedure')
     docked.open_station_inv()
     items = docked.detect_items()
 
@@ -206,9 +211,7 @@ def load_ship_individually():
                     docked.detect_items()
 
                 if items is None:
-                    print(
-                        'load_ship_individually -- done loading special '
-                        'inventory')
+                    logging.debug('done loading special inventory')
                     return 2
 
                 elif specinvwarning == 1 or setquant == 1 or nospace == 1:
@@ -221,32 +224,29 @@ def load_ship_individually():
 
 
 def load_ship_full():
-    # Utilize both individual and bulk loading functions to load ship.
+    """Utilize both individual and bulk loading functions to load ship."""
     docked.open_station_inv()
     items = docked.detect_items()
 
     if items == 1:
         lsb = load_ship_bulk()
         if lsb == 2:
-            print('load_ship -- ship loaded entire station inventory')
+            logging.debug('ship loaded entire station inventory')
             return 2
 
         elif lsb == 1:
-            print(
-                'load_ship -- ship is full and station inventory has more '
-                'items')
+            logging.debug('ship is full and station inventory has more items')
             return 1
 
         elif lsb == 0:
             lsi = load_ship_individually()
             if lsi == 2:
-                print('load_ship -- ship loaded entire station inventory')
+                logging.debug('ship loaded entire station inventory')
                 return 2
 
             elif lsi == 1:
-                print(
-                    'load_ship -- ship is full and station inventory has '
-                    'more items')
+                logging.debug('ship is full and station inventory has more  '
+                              'items')
                 return 1
 
     elif items == 0:

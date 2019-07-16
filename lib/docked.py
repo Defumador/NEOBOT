@@ -11,7 +11,8 @@ logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
 
 
 def docked_check():
-    # Check if the ship is currently docked by looking for the undock_loop icon.
+    """Check if the ship is currently docked by looking for the undock_loop
+     icon."""
     undock_icon = pag.locateCenterOnScreen('./img/buttons/undock.bmp',
                                            confidence=conf,
                                            region=(originx, originy,
@@ -25,8 +26,8 @@ def docked_check():
 
 
 def open_ship_inv():
-    # Click on the ship's inventory button in the inventory window while
-    # docked.
+    """Click on the ship's inventory button in the inventory window while
+    docked."""
     logging.debug('opening ship inventory')
     tries = 1
     ship_inv = pag.locateCenterOnScreen('./img/buttons/ship_inv.bmp',
@@ -53,9 +54,8 @@ def open_ship_inv():
 
 
 def open_spec_inv_ore():
-    # If a special inventory was found (for ore, minerals, planetary
-    # products etc.) click on it in
-    # inventory window while docked.
+    """If a special inventory was found (for ore, minerals, planetary
+    products etc.) click on it in inventory window while docked."""
     logging.debug('opening special inventory')
     tries = 0
     spec_inv_ore = pag.locateCenterOnScreen('./img/buttons/spec_inv_ore.bmp',
@@ -83,8 +83,8 @@ def open_spec_inv_ore():
 
 
 def open_station_inv():
-    # Click on the station inventory button within the main inventory window
-    # while docked.
+    """Click on the station inventory button within the main inventory window
+    while docked."""
     logging.debug('opening station inventory')
     tries = 0
     station_inv = pag.locateCenterOnScreen('./img/buttons/station_inv.bmp',
@@ -111,10 +111,10 @@ def open_station_inv():
 
 
 def focus_inv_window():
-    # Click somewhere inside the station inventory window to focus it before
-    # any items are selected. Look for the sorting buttons in top right corner
-    # of the inventory window and position the mouse cursor relative to those
-    # buttons to click a non-interactive area within the inventory window.
+    """Click somewhere inside the station inventory window to focus it before
+    any items are selected. Look for the sorting buttons in top right corner
+    of the inventory window and position the mouse cursor relative to those
+    buttons to click a non-interactive area within the inventory window."""
     tries = 0
     sort_station_inv = pag.locateCenterOnScreen(
         './img/buttons/station_sorting.bmp',
@@ -142,9 +142,9 @@ def focus_inv_window():
 
 
 def detect_items():
-    # Look at the bottom-right corner of the station inventory window for the
-    # '0 items found' text. If it isn't present, there must be items in the
-    # station's inventory.
+    """Look at the bottom-right corner of the station inventory window for the
+    '0 items found' text. If it isn't present, there must be items in the
+    station's inventory."""
     global no_items_station_inv
     no_items_station_inv = pag.locateOnScreen(
         './img/indicators/station_inv_0_items.bmp',
@@ -160,8 +160,7 @@ def detect_items():
 
 
 def detect_spec_inv():
-    # Look for different kinds of special inventory locations on your
-    # ship.
+    """Look for different kinds of special inventory locations on your ship."""
     no_additional_invs = pag.locateCenterOnScreen(
         './img/indicators/no_additional_bays.bmp',
         confidence=conf, region=(originx, originy, windowx, windowy))
@@ -179,9 +178,9 @@ def detect_spec_inv():
 
 
 def spec_inv_warning():
-    # Look for a popup indicating the selected inventory items aren't
-    # compatible with the ship's special inventory. This warning is partially
-    # transparent so confidence rating must be slightly lower than normal.
+    """Look for a popup indicating the selected inventory items aren't
+    compatible with the ship's special inventory. This warning is partially
+    transparent so confidence rating must be slightly lower than normal."""
     spec_inv_warning_var = pag.locateCenterOnScreen(
         './img/popups/spec_inv.bmp',
         confidence=0.8,
@@ -195,8 +194,8 @@ def spec_inv_warning():
 
 
 def set_quant_warning():
-    # Check if a 'set quantity' window appears, indicating there isn't enough
-    # space in the ship's inventory for a full item stack.
+    """Check if a 'set quantity' window appears, indicating there isn't enough
+    space in the ship's inventory for a full item stack."""
     set_quant = pag.locateOnScreen('./img/popups/set_quant.bmp',
                                    confidence=0.85,
                                    region=(originx, originy,
@@ -206,7 +205,10 @@ def set_quant_warning():
         return 0
     else:
         logging.debug('detected set quantity warning')
-        keyboard.enter()
+        time.sleep(float(random.randint(100, 800)) / 1000)
+        pag.keyDown('enter')
+        time.sleep(float(random.randint(5, 100)) / 1000)
+        pag.keyUp('enter')
         return 1
 
 
@@ -223,14 +225,17 @@ def not_enough_space_warning():
         return 0
     else:
         logging.debug('detected not enough space warning')
-        keyboard.enter()
+        time.sleep(float(random.randint(100, 800)) / 1000)
+        pag.keyDown('enter')
+        time.sleep(float(random.randint(5, 100)) / 1000)
+        pag.keyUp('enter')
         return 1
 
 
 def undock_loop():
-    # Undock from the station with the default hotkey. The undock_loop has been
-    # completed once the script sees the cyan ship icon in the top left corner
-    # of the client window, indicating a session change has just ocurred.
+    """Undock from the station with the default hotkey. The undock_loop has been
+    completed once the script sees the cyan ship icon in the top left corner
+    of the client window, indicating a session change has just ocurred."""
     logging.info('undocking')
     pag.keyDown('ctrl')
     time.sleep(float(random.randint(100, 800)) / 1000)
@@ -246,8 +251,8 @@ def undock_loop():
                                         windowy))
     tries = 0
     while undocking is not None and tries <= 25:
-        logging.debug('waiting for session change to begin' + (str(tries)))
         tries += 1
+        logging.debug('waiting for session change to begin' + (str(tries)))
         time.sleep(int((random.randint(1000, 2000) / 1000)))
         undocking = pag.locateCenterOnScreen('./img/buttons/undocking.bmp',
                                                  confidence=0.90, region=(
@@ -265,10 +270,10 @@ def undock_loop():
         tries = 0
 
         while session_change is None and tries <= 30:
+            tries += 1
             time.sleep(int((random.randint(1000, 2000) / 1000)))
             logging.debug('waiting for session change to complete ' +
                           (str(tries)))
-            tries += 1
             session_change = pag.locateCenterOnScreen(
                 './img/indicators/session_change_undocked.bmp',
                 confidence=0.55,

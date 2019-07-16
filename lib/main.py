@@ -10,7 +10,7 @@ import tkinter
 import datetime
 import tkinter.scrolledtext as ScrolledText
 from tkinter import ttk
-import lib.drones
+import drones
 from lib import docked, load_ship, navigation as nav, unload_ship, mining, \
     bookmarks as bkmk, overview as o
 from lib.vars import system_mining, originx, originy, windowx, windowy
@@ -59,16 +59,16 @@ def miner():
     o4 = './img/overview/ore_types/scordite.bmp'
     o5 = 0
 
-    print('main, drones is', drones)
+    print('main, drones is', drone_num)
     global playerfound
     global site
     global runs
     timer_var = 0
     logging.info('beginning run' + (str(runs)))
     while docked.docked_check() == 0:
-        if lib.drones.detect_drones_launched() == 1:
+        if drones.detect_drones_launched() == 1:
             o.focus_client()
-            lib.drones.recall_drones_loop(drones)
+            drones.recall_drones_loop(drone_num)
         # Increment desired mining site by one as this is the next location
         # ship will warp to.
         site += 1
@@ -93,10 +93,10 @@ def miner():
             o.focus_overview_tab('mining')
             target = o.detect_overview_target(o1, o2, o3, o4, o5)
             while o.detect_overview_target(o1, o2, o3, o4, o5) is not None:
-                lib.drones.launch_drones_loop(drones)
+                drones.launch_drones_loop(drone_num)
                 if o.target_overview_target(target) == 0:
                     miner()
-                mining.activate_miner(modules)
+                mining.activate_miner(module_num)
                 # If ship inventory isn't full, continue to mine ore and wait
                 # for popups or errors.
                 # Switch back to the general tab for easier ship detection
@@ -105,14 +105,13 @@ def miner():
                     if mining.asteroid_depleted_popup() == 1:
                         target = o.detect_overview_target(o1, o2, o3, o4, o5)
                         if o.detect_overview_target(o1, o2, o3, o4, o5) == 0:
-                            # nav.blacklist_local_bookmark()
                             miner()
 
                         elif o.detect_overview_target(o1, o2, o3, o4, o5
                                                       ) is not None:
                             if o.target_overview_target(target) == 0:
                                 miner()
-                            mining.activate_miner(modules)
+                            mining.activate_miner(module_num)
                             mining.inv_full_popup()
                             continue
                     if o.detect_npcs(detect_npcs, npc_frig_dest,
@@ -121,16 +120,16 @@ def miner():
                                          pc_frig_dest, pc_cruiser_bc, pc_bs,
                                          pc_capindy_freighter, pc_rookie,
                                          pc_pod) == 1 or \
-                            o.detect_jam(jam) == 1 or \
+                            o.detect_jam(jam_var) == 1 or \
                             mining.timer(timer_var) == 1:
-                        lib.drones.recall_drones_loop(drones)
+                        drones.recall_drones_loop(drone_num)
                         miner()
                     timer_var += 1
                     time.sleep(1)
 
                 if mining.inv_full_popup() == 1:
                     # Once inventory is full, dock at home station and unload.
-                    lib.drones.recall_drones_loop(drones)
+                    drones.recall_drones_loop(drone_num)
                     logging.info('finishing run' + (str(runs)))
                     if system_mining == 0:
                         if bkmk.set_home() == 1:
@@ -165,9 +164,9 @@ def miner():
 
 
 def navigator():
-    # A standard warp-to-zero autopilot script. Warp to the destination, then
-    # terminate.
-    print('navigator -- running navigator')
+    """A standard warp-to-zero autopilot script. Warp to the destination, then
+    terminate."""
+    logging.debug('running navigator')
     nav.detect_route()
     dockedcheck = docked.docked_check()
 
@@ -180,19 +179,20 @@ def navigator():
             if detectjump == 1:
                 selectwaypoint = nav.warp_to_waypoint()
             else:
+                logging.critical('error detecting jump')
                 nav.emergency_terminate()
                 traceback.print_exc()
                 traceback.print_stack()
-                sys.exit('navigator -- error detecting jump')
+                sys.exit()
 
         while selectwaypoint == 2:  # Value of 2 indicates a station waypoint.
             time.sleep(5)
             detectdock = nav.detect_dock_loop()
             if detectdock == 1:
-                print('navigator -- arrived at destination')
+                logging.info('arrived at destination')
                 return 1
         else:
-            print('navigator -- likely at destination')
+            logging.warning('likely at destination')
             return 1
 
     while dockedcheck == 1:
@@ -202,12 +202,12 @@ def navigator():
 
 
 def collector():
-    # Haul all items from a predetermined list of stations to a single 'home'
-    # station, as specified by the user. The home station is identified by a
-    # station bookmark beginning with '000', while the remote stations are any
-    # station bookmark beginning with the numbers 1-9. This means up to 10
-    # remote stations are supported.
-    print('collector -- running collector')
+    """Haul all items from a predetermined list of stations to a single 'home'
+    station, as specified by the user. The home station is identified by a
+    station bookmark beginning with '000', while the remote stations are any
+    station bookmark beginning with the numbers 1-9. This means up to 10
+    remote stations are supported."""
+    logging.debug('running collector')
     dockedcheck = docked.docked_check()
     while dockedcheck == 0:
         selectwaypoint = nav.warp_to_waypoint()
@@ -223,9 +223,8 @@ def collector():
             if detectdock == 1:
                 collector()
         else:
-            print(
-                'collector -- error with at_dest_check_var and '
-                'at_home_check_var')
+            logging.critical('error with at_dest_check_var and '
+                             'at_home_check_var')
             traceback.print_exc()
             traceback.print_stack()
             sys.exit()
@@ -240,9 +239,9 @@ def collector():
             docked.undock_loop()
             collector()
         elif athomecheck == 0:
-            print('collector -- not at home')
+            logging.debug('not at home')
             loadship = load_ship.load_ship_full()
-            print('collector -- loadship is', loadship)
+            logging.debug('loadship is', loadship)
 
             if loadship == 2 or loadship == 0 or loadship is None:
                 atdestnum = bkmk.detect_bookmark_location()
@@ -260,7 +259,7 @@ def collector():
                 collector()
 
         else:
-            print('collector -- error with detect_at_home and at_dest_check')
+            logging.critical('error with detect_at_home and at_dest_check')
             traceback.print_exc()
             traceback.print_stack()
             sys.exit()
@@ -393,17 +392,17 @@ t.grid(column=0, row=16, columnspan=2, sticky='W', padx=0, pady=0)
 
 
 def start(event):
-    global drones, modules, jam
+    global drone_num, module_num, jam_var
 
     global detect_pcs, pc_indy, pc_barge, pc_frig_dest, \
         pc_capindy_freighter, pc_cruiser_bc, pc_bs, pc_rookie, pc_pod
 
     global detect_npcs, npc_frig_dest, npc_cruiser_bc, npc_bs
 
-    modules = (int(combo_modules.get()))
-    drones = (int(combo_drones.get()))
-    logger.debug((str(modules)) + ' modules')
-    logger.debug((str(drones)) + ' drones')
+    module_num = (int(combo_modules.get()))
+    drone_num = (int(combo_drones.get()))
+    logger.debug((str(module_num)) + ' modules')
+    logger.debug((str(drone_num)) + ' drones')
 
     detect_pcs = (int(detect_pcs_gui.get()))
     logger.debug('detect pcs is ' + (str(detect_pcs)))
@@ -445,7 +444,7 @@ def start(event):
     npc_bs = (int(npc_bs_gui.get()))
     logger.debug('detect npc bs is ' + (str(npc_bs)))
 
-    jam = (int(detect_jam_gui.get()))
+    jam_var = (int(detect_jam_gui.get()))
     logger.debug('detect ecm jamming is ' + (str(detect_jam)))
 
     miner()

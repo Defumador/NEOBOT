@@ -12,9 +12,9 @@ logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
 
-def launch_drones_loop(drones):
+def launch_drones_loop(drone_num):
     # User must custom-set the "launch drones" hotkey to be Shift-l
-    if drones != 0:
+    if drone_num != 0:
         logging.info('launching drones')
         time.sleep(float(random.randint(5, 500)) / 1000)
         pag.keyDown('shift')
@@ -53,8 +53,8 @@ def detect_drones_launched():
         return 0
 
 
-def recall_drones_loop(drones):
-    if drones != 0:
+def recall_drones_loop(drone_num):
+    if drone_num != 0:
         time.sleep(float(random.randint(5, 500)) / 1000)
         pag.keyDown('shift')
         time.sleep(float(random.randint(5, 500)) / 1000)
@@ -68,12 +68,12 @@ def recall_drones_loop(drones):
         # Wait for all drones to return to drone bay. Very sensitive to the
         # drones variable. Won't work unless the drones variable is correct.
         tries = 0
-        while lo.locate('./img/indicators/drones/' + (drones_dict[drones])
+        while lo.locate('./img/indicators/drones/' + (drones_dict[drone_num])
                         + '_drone_in_bay.bmp') is None and tries <= 25:
             tries += 1
             time.sleep(float(random.randint(1000, 2000)) / 1000)
 
-        if lo.locate('./img/indicators/drones/' + (drones_dict[drones])
+        if lo.locate('./img/indicators/drones/' + (drones_dict[drone_num])
                      + '_drone_in_bay.bmp') is not None and tries <= 25:
             logging.debug('drones returned to bay ' + (str(tries)))
             return 1

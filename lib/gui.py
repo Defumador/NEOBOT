@@ -1,4 +1,4 @@
-drones = 0
+drone_num = 0
 '''
 import time
 import threading

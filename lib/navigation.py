@@ -16,8 +16,8 @@ logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
 
 
 def detect_route():
-    # Check the top-left corner of the hud to see if a route has actually been
-    # set by the user.
+    """Check the top-left corner of the hud to see if a route has actually been
+    set by the user."""
     route_set_var = pag.locateCenterOnScreen('./img/indicators/detect_route.bmp',
                                              confidence=0.85,
                                              region=(originx, originy,
@@ -30,8 +30,8 @@ def detect_route():
 
 
 def warp_to_waypoint():
-    # Click on the current waypoint and use warp hotkey to warp to waypoint.
-    # Currently supports warping to stargate and station waypoints.
+    """Click on the current waypoint and use warp hotkey to warp to waypoint.
+     Currently supports warping to stargate and station waypoints."""
     logging.debug('looking for waypoints')
     tries = 0
     # Speed up image searching by checking right half of eve window only. This
@@ -106,10 +106,10 @@ def warp_to_waypoint():
 
 
 def detect_warp_loop():
-    # Detect when a warp has been completed by waiting for the 'warping' text
-    # to disappear from the spedometer. Wait for the ship to begin its warp
-    # before checking though, otherwise the script will think the warp has
-    # already been completed.
+    """Detect when a warp has been completed by waiting for the 'warping' text
+    to disappear from the spedometer. Wait for the ship to begin its warp
+    before checking though, otherwise the script will think the warp has
+    already been completed."""
     warp_duration = 1
     time.sleep(1)
     warp_drive_active = pag.locateCenterOnScreen(
