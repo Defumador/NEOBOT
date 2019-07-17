@@ -12,7 +12,7 @@ except ImportError:
 
 
 
-
+'''
 class TextHandler(logging.Handler):
     # This class allows you to log to a Tkinter Text or ScrolledText widget
     # Adapted from Moshe Kaplan: https://gist.github.com/moshekaplan/c425f861de7bbf28ef06
@@ -33,7 +33,7 @@ class TextHandler(logging.Handler):
             self.text.yview(tk.END)
         # This is necessary because we can't modify the Text from other threads
         self.text.after(0, append)
-
+'''
 
 class myGUI(tk.Frame):
 
@@ -42,11 +42,17 @@ class myGUI(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.root = parent
-        self.build_gui()
+        #self.build_gui()
         self.mainWidgets()
     
     def mainWidgets(self):
-
+        #global dynamiclabel
+        #dynamiclabel = tk.StringVar()
+        #dynamiclabel.set("this label updates upon change")
+        global lab
+        lab = tk.Label(text='test1')
+        lab.grid(column=1, row=7, columnspan=1, sticky='W', padx=20)
+        
         #self.label1 = tk.Label(self, text="Main window label", bg="green")
         #self.label1.grid(row=3, column=0)
 
@@ -81,14 +87,14 @@ class myGUI(tk.Frame):
         pc_barge = tk.Checkbutton(text='pc barge check')
         pc_barge.grid(column=0, row=7, columnspan=1, sticky='W')
 
-        pc_frig_dest = tk.Checkbutton(text='pc frig/dest check')
-        pc_frig_dest.grid(column=1, row=7, columnspan=1, sticky='W')
+        #pc_frig_dest = tk.Checkbutton(text='pc frig/dest check')
+        #pc_frig_dest.grid(column=1, row=7, columnspan=1, sticky='W')
         #self.window = mainWidgets(self)
         #self.window.grid(row=5, column=10, rowspan=2)
-
-    def build_gui(self):                    
+                       
         # Build GUI
         self.root.title('TEST')
+        '''
         self.root.option_add('*tearOff', 'FALSE')
         self.grid(column=0, row=0, sticky='ew', padx=10, pady=5, columnspan=100)
         self.grid_columnconfigure(0, weight=1, uniform='a')
@@ -113,54 +119,41 @@ class myGUI(tk.Frame):
         # Add the handler to logger
         logger = logging.getLogger()        
         logger.addHandler(text_handler)
-    
-    def clear_log(self):
-      self.st.configure(state='normal')
-      self.st.delete(1.0, END)
-      self.st.configure(state='disabled')
-
-def worker():
-  print('hello')
-  logging.info('1')
-  time.sleep(1)
-  logging.info('2')
-  logging.info('3')
-  time.sleep(1)
-  logging.info('4')
-  logging.info('5')
-  time.sleep(1)
-  logging.info('6')
-  logging.info('7')
-  time.sleep(1)
-  logging.info('8')
-  return
-  #raise threading.ThreadError('done')
-    # Skeleton worker function, runs in separate thread (see below)   
+     '''
 
 
 def start():
-  t2 = threading.Thread(target=worker, args=[])
-  t2.start()
-  #root = tk.Tk()
-  tk.mainloop()
-  t2.join()
-  time.sleep(3)
-  myGUI.clear_log()
-  #logging.info('message 1 test') 
-  #time.sleep(1)
-  #logging.info('message 2 test') 
+  global lab
+  lab.configure(text="star123ted")
+  lab.update()
+
+  time.sleep(1)
+
+  #logging.info('hellooo121212')
+  #root1 = tk.Tk()
+  #root1.update()
+
+  time.sleep(1)
+
+  lab.configure(text="star12323ted")
+  lab.update()
+
+  time.sleep(1)
+
+  lab.configure(text="star12334343323ted")
+  lab.update()
   return
 
 def main():
 
-    root = tk.Tk()
-    myGUI(root)
+  root = tk.Tk()
+  myGUI(root)
     #Frame1(root)
 
    # t1 = threading.Thread(target=worker, args=[])
    # t1.start()
 
-    root.mainloop()
+  root.mainloop()
    # t1.join()
 
 main()
