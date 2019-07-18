@@ -35,53 +35,108 @@ def detect_jam(jam_var):
     elif jam_var == 0:
         return 0
 
-
-def detect_npcs(detect_npcs_var, npc_frig_dest,
-                npc_cruiser_bc):
-    """Check for hostile non-player characters by looking for red ship icons in
-    the overview."""
-    conf = 0.98
+    
+def build_ship_list(detect_npcs_var, npc_frig_dest,
+                npc_cruiser_bc, detect_pcs_var, pc_indy, pc_barge, pc_frig_dest,
+               pc_cruiser_bc, pc_bs, pc_capindy_freighter, pc_rookie, pc_pod):
+    """Build lists of npc and pc ship icons, through which another function can iterate and
+    check if any of those icons are present on the overview."""
     if detect_npcs_var == 1:
-
-        # Search within the rightmost third of the client. Bot assumes
-        # overview is on the right half of the screen. This is about
-        # twice as fast as searching the entire 1024x768 client.
-        overview = pag.screenshot(
-            region=((originx + (windowx - (int(windowx / 3.8)))),
-                    originy, (int(windowx / 3.8)), windowy))
-
-        # Create an empty list to be filled with player icon paths
         npc_list = []
-
-        # Populate pc_list with only the player icons that the user wishes to
-        # check for, as specified by the variables at the top of this file.
         if npc_frig_dest == 1:
             npc_list.append(
                 './img/overview/npc_ship_icons/npc_hostile_frigate.bmp')
         if npc_cruiser_bc == 1:
             npc_list.append(
                 './img/overview/npc_ship_icons/npc_hostile_cruiser.bmp')
-        # if detect_npc_battleship == 1:
-        #    npc_list.append(
-        #        './img/overview/npc_ship_icons/npc_hostile_battleship.bmp')
 
-        # Scan the 'overview' screenshot for each player icon in the list.
-        for npc_icon in npc_list:
-            hostile_npc_found = pag.locate(npc_icon, overview, confidence=conf)
+    if detect_pcs_var == 1:
+        pc_list = []
+        if pc_indy == 1:
+            pc_list.append(
+                './img/overview/player_ship_icons/archetype_icons'
+                '/player_industrial.bmp')
+        if pc_barge == 1:
+            pc_list.append(
+                './img/overview/player_ship_icons/archetype_icons'
+                '/player_mining_barge.bmp')
+        if pc_frig_dest == 1:
+            pc_list.append(
+                './img/overview/player_ship_icons'
+                '/archetype_icons/player_frigate_and_destroyer.bmp')
+        if pc_cruiser_bc == 1:
+            pc_list.append(
+                './img/overview/player_ship_icons'
+                '/archetype_icons/player_cruiser_and_battlecruiser.bmp')
+        if pc_bs == 1:
+            pc_list.append(
+                './img/overview/player_ship_icons/archetype_icons'
+                '/player_battleship.bmp')
+        if pc_capindy_freighter == 1:
+            pc_list.append(
+                './img/overview/player_ship_icons/archetype_icons'
+                '/player_capital_industrial_and_freighter.bmp')
+        if pc_rookie == 1:
+            pc_list.append(
+                './img/overview/player_ship_icons/archetype_icons'
+                '/player_rookie_ship.bmp')
+        if pc_pod == 1:
+            pc_list.append(
+                './img/overview/player_ship_icons/archetype_icons'
+                '/player_capsule.bmp')
+    return pc_list, npc_list
+    
+    
+def detect_ships(npc_list, pc_list):
+    """Check if any of the ship icons in the given lists are currently
+    present on the overview, searching the rightmost quarter of the screen
+    only."""
+    # Search within the rightmost quarter of the client. Script assumes
+    # overview is on the right half of the screen. This is about
+    # twice as fast as searching an entire 1024x768 client window.
+    
+    # Use the same screenshot for both checks. 
+    # If either list is empty, skip checking.
+    if len(npc_list) != 0 or len(pc_list) != 0:
+        overview = pag.screenshot(
+            region=((originx + (windowx - (int(windowx / 3.8)))),
+                    originy, (int(windowx / 3.8)), windowy))
+    
+        if len(npc_list) != 0:
+            conf = 0.98
+            for npc_icon in npc_list:
+                hostile_npc_found = pag.locate(npc_icon, overview, confidence=conf)
 
-            if hostile_npc_found is not None:
-                logging.debug('found ship at ' + (str(hostile_npc_found)))
-                logging.debug('located icon ' + (str(npc_icon)))
-                # Break up the tuple so mouse can point at icon for debugging.
-                # (x, y, t, w) = hostile_npc_found
-                # Coordinates must compensate for the altered coordinate-space
-                # of the screenshot.
-                # pag.moveTo((x + (originx + (windowx - (int(windowx / 2))))),
-                #           (y + originy),
-                #           0, mouse.path())
-                return 1
-        logging.debug('passed npc check')
-        return 0
+                if hostile_npc_found is not None:
+                    logging.debug('found ship at ' + (str(hostile_npc_found)))
+                    logging.debug('located icon ' + (str(npc_icon)))
+                    # Break up the tuple so mouse can point at icon for debugging.
+                    # (x, y, t, w) = hostile_npc_found
+                    # Coordinates must compensate for the altered coordinate-space
+                    # of the screenshot.
+                    # pag.moveTo((x + (originx + (windowx - (int(windowx / 2))))),
+                    #           (y + originy),
+                    #           0, mouse.path())
+                    return 1
+            logging.debug('passed npc check')
+            
+        if len(pc_list) != 0:
+            conf = 0.95
+            for pc_icon in pc_list:
+                player_found = pag.locate(pc_icon, overview, confidence=conf)
+
+                if player_found is not None:
+                    logging.debug('found player at' + (str(player_found)))
+                    logging.debug('located icon' + (str(pc_icon)))
+                    (x, y, l, w) = player_found
+                    # Coordinates must compensate for the altered coordinate-space
+                    # of the screenshot.
+                    pag.moveTo((x + (originx + (windowx - (int(windowx / 3.8))))),
+                               (y + originy),
+                               0, mouse.path())
+                    return 1
+            logging.debug('passed pc check')
+            return 0
     else:
         return 0
 
@@ -122,88 +177,8 @@ def detect_overview_target(target1, target2, target3, target4, target5):
         else:
             logging.info('No targets found.')
             return 0
-
-
-def detect_pcs(detect_pcs_var, pc_indy, pc_barge, pc_frig_dest,
-               pc_cruiser_bc, pc_bs, pc_capindy_freighter, pc_rookie, pc_pod):
-    """Check to see if any player characters are on the grid by looking for
-    player ship icons in the Overview. The Overview must be properly
-    configured to allow this. All player ship icons must be gray and must
-    have no standing information next to them.
-    pc_indy=industrials, pc_barge=mining barges and exhumers,
-    pc_frig_dest=frigatess and destroyers,
-    pc_cruiser_bc=cruisers and battlecruisers, pc_bs=battleships,
-    pc_capindy_freighter=capital industrials and freighters,
-    pc_rookie=rookie ships, pc_pod=capsules"""
-    conf = 0.95
-    if detect_pcs_var == 1:
-
-        # Search within the rightmost third of the client. Bot assumes
-        # overview is on the right half of the screen. This is about
-        # twice as fast as searching the entire 1024x768 client.
-        overview = pag.screenshot(
-            region=((originx + (windowx - (int(windowx / 3.8)))),
-                    originy, (int(windowx / 3.8)), windowy))
-
-        # Create an empty list to be filled with player icon paths
-        pc_list = []
-
-        # Populate pc_list with only the player icons that the user wishes to
-        # check for, as specified by the variables at the top of this file.
-        if pc_indy == 1:
-            pc_list.append(
-                './img/overview/player_ship_icons/archetype_icons'
-                '/player_industrial.bmp')
-        if pc_barge == 1:
-            pc_list.append(
-                './img/overview/player_ship_icons/archetype_icons'
-                '/player_mining_barge.bmp')
-        if pc_frig_dest == 1:
-            pc_list.append(
-                './img/overview/player_ship_icons'
-                '/archetype_icons/player_frigate_and_destroyer.bmp')
-        if pc_cruiser_bc == 1:
-            pc_list.append(
-                './img/overview/player_ship_icons'
-                '/archetype_icons/player_cruiser_and_battlecruiser.bmp')
-        if pc_bs == 1:
-            pc_list.append(
-                './img/overview/player_ship_icons/archetype_icons'
-                '/player_battleship.bmp')
-        if pc_capindy_freighter == 1:
-            pc_list.append(
-                './img/overview/player_ship_icons/archetype_icons'
-                '/player_capital_industrial_and_freighter.bmp')
-        if pc_rookie == 1:
-            pc_list.append(
-                './img/overview/player_ship_icons/archetype_icons'
-                '/player_rookie_ship.bmp')
-        if pc_pod == 1:
-            pc_list.append(
-                './img/overview/player_ship_icons/archetype_icons'
-                '/player_capsule.bmp')
-
-        # Scan the 'overview' screenshot for each player icon in the list.
-        for pc_icon in pc_list:
-            player_found = pag.locate(pc_icon, overview, confidence=conf)
-
-            if player_found is not None:
-                logging.debug('found player at' + (str(player_found)))
-                logging.debug('located icon' + (str(pc_icon)))
-                # Break up the tuple so mouse can point at icon for debugging.
-                (x, y, l, w) = player_found
-                # Coordinates must compensate for the altered coordinate-space
-                # of the screenshot.
-                pag.moveTo((x + (originx + (windowx - (int(windowx / 3.8))))),
-                           (y + originy),
-                           0, mouse.path())
-                return 1
-        logging.debug('passed pc check')
-        return 0
-    else:
-        return 0
-
-
+        
+        
 def detect_target_lock_loop():
     """Waits until a target has been locked."""
     target_lock = pag.locateOnScreen(
