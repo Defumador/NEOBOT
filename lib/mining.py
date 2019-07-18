@@ -28,59 +28,6 @@ def activate_miner(module_num):
     return 0
 
 
-'''
-def activate_miner_old():
-    # Activate mining lasers in sequential order.
-    if mining_lasers == 1:
-        keyboard.keypress('f1')
-        logging.debug('activating miner 1')
-        while miner_out_of_range_popup() == 1:
-            time.sleep(float(random.randint(10000, 20000)) / 1000)
-            activate_miner()
-        return 1
-
-    elif mining_lasers == 2:
-        keyboard.keypress('f1')
-        logging.debug('activating miner 1')
-        while miner_out_of_range_popup() == 1:
-            time.sleep(float(random.randint(10000, 20000)) / 1000)
-            keyboard.keypress('f1')
-        else:
-            keyboard.keypress('f2')
-            logging.debug('activating miner 2')
-            return 1
-
-    elif mining_lasers == 3:
-        keyboard.keypress('f1')
-        logging.debug('activating miner 1')
-        while miner_out_of_range_popup() == 1:
-            time.sleep(float(random.randint(10000, 20000)) / 1000)
-            keyboard.keypress('f1')
-        else:
-            keyboard.keypress('f2')
-            logging.debug('activating miner 2')
-            keyboard.keypress('f3')
-            logging.debug('activating miner 3')
-            return 1
-
-    elif mining_lasers == 4:
-        keyboard.keypress('f1')
-        logging.debug('activating miner 1')
-        while miner_out_of_range_popup() == 1:
-            time.sleep(float(random.randint(10000, 20000)) / 1000)
-            keyboard.keypress('f1')
-        else:
-            keyboard.keypress('f2')
-            logging.debug('activating miner 2')
-            keyboard.keypress('f3')
-            logging.debug('activating miner 3')
-            keyboard.keypress('f4')
-            logging.debug('activating miner 4')
-            return 1
-    return 1
-'''
-
-
 def asteroid_depleted_popup():
     # Check for popup indicating the asteroid currently being mined has been
     # depleted.

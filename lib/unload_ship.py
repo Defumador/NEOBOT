@@ -45,7 +45,7 @@ def unload_ship():
         time.sleep(float(random.randint(0, 2000)) / 1000)
         drag_items_from_ship_inv()
         time.sleep(2)
-        items == docked.detect_items()
+        items = docked.detect_items()
 
     if items == 0:
         logging.debug('finished unloading main inventory')

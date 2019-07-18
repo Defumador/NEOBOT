@@ -41,17 +41,16 @@ def build_ship_list(detect_npcs_var, npc_frig_dest,
                pc_cruiser_bc, pc_bs, pc_capindy_freighter, pc_rookie, pc_pod):
     """Build lists of npc and pc ship icons, through which another function can iterate and
     check if any of those icons are present on the overview."""
+    npc_list = []
     if detect_npcs_var == 1:
-        npc_list = []
         if npc_frig_dest == 1:
             npc_list.append(
                 './img/overview/npc_ship_icons/npc_hostile_frigate.bmp')
         if npc_cruiser_bc == 1:
             npc_list.append(
                 './img/overview/npc_ship_icons/npc_hostile_cruiser.bmp')
-
+    pc_list = []
     if detect_pcs_var == 1:
-        pc_list = []
         if pc_indy == 1:
             pc_list.append(
                 './img/overview/player_ship_icons/archetype_icons'

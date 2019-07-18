@@ -16,7 +16,7 @@ def is_docked():
     if lo.locate('./img/buttons/undock.bmp') is None:
         logging.debug('not docked')
         return 0
-    elif undock_icon is not None:
+    else:
         logging.debug('docked')
         return 1
 
@@ -26,14 +26,16 @@ def open_ship_inv():
     docked."""
     logging.debug('opening ship inventory')
     tries = 0
-    
-    while lo.clocate('./img/buttons/ship_inv.bmp') is None and tries <= 25:
+    ship_inv = lo.clocate('./img/buttons/ship_inv.bmp')
+
+    while ship_inv is None and tries <= 25:
         logging.error('cannot find ship inventory')
         tries += 1
         time.sleep(float(random.randint(500, 2000)) / 1000)
-        
-    if lo.clocate('./img/buttons/ship_inv.bmp') is not None and tries <= 25:
-        (x, y) = clocate_var
+        ship_inv = lo.clocate('./img/buttons/ship_inv.bmp')
+
+    if ship_inv is not None and tries <= 25:
+        (x, y) = ship_inv
         pag.moveTo((x + (random.randint(-4, 50))),
                    (y + (random.randint(-6, 6))),
                    mouse.duration(), mouse.path())
@@ -50,14 +52,16 @@ def open_spec_inv(type):
     # TODO: add support for other special inventory spots like fleet hangars
     logging.debug('opening' + type + 'inventory')
     tries = 0
+    spec_inv = lo.clocate('./img/buttons/spec_inv_' + type + '.bmp')
 
-    while lo.clocate('./img/buttons/spec_inv_' + type + '.bmp') is None and tries <= 25:
+    while spec_inv is None and tries <= 25:
         logging.error('cannot find' + type + 'inventory' + (str(tries)))
         tries += 1
         time.sleep(float(random.randint(500, 2000)) / 1000)
-        
-    if lo.clocate('./img/buttons/spec_inv_' + type + '.bmp') is not None and tries <= 25:
-        (x y) = clocate_var
+        spec_inv = lo.clocate('./img/buttons/spec_inv_' + type + '.bmp')
+
+    if spec_inv is not None and tries <= 25:
+        (x, y) = spec_inv
         pag.moveTo((x + (random.randint(-4, 50))),
                    (y + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
@@ -73,14 +77,16 @@ def open_station_inv():
     while docked."""
     logging.debug('opening station inventory')
     tries = 0
+    station_inv = lo.clocate('./img/buttons/station_inv.bmp')
 
-    while lo.clocate('./img/buttons/station_inv.bmp') is None and tries <= 25:
+    while station_inv is None and tries <= 25:
         logging.error('cannot find station inventory icon')
         tries += 1
         time.sleep(float(random.randint(500, 2000)) / 1000)
-        
-    if lo.clocate('./img/buttons/station_inv.bmp') is not None and tries <= 25:
-        (x, y) = clocate_var
+        station_inv = lo.clocate('./img/buttons/station_inv.bmp')
+
+    if station_inv is not None and tries <= 25:
+        (x, y) = station_inv
         pag.moveTo((x + (random.randint(-6, 50))),
                    (y + (random.randint(-6, 6))),
                    mouse.duration(), mouse.path())
@@ -97,14 +103,16 @@ def focus_inv_window():
     of the inventory window and position the mouse cursor relative to those
     buttons to click a non-interactive area within the inventory window."""
     tries = 0
-    
-    while lo.clocate('./img/buttons/station_sorting.bmp') is None and tries <= 25:
+    window = lo.clocate('./img/buttons/station_sorting.bmp')
+
+    while window is None and tries <= 25:
         logging.error('cannot find sorting icon')
         tries += 1
         time.sleep(float(random.randint(500, 2000)) / 1000)
+        window = lo.clocate('./img/buttons/station_sorting.bmp')
 
-    if lo.clocate('./img/buttons/station_sorting.bmp') is not None and tries <= 25:
-        (x, y) = clocate_var
+    if window is not None and tries <= 25:
+        (x, y) = window
         pag.moveTo((x - (random.randint(0, 250))),
                    (y + (random.randint(50, 300))),
                    mouse.duration(), mouse.path())
@@ -119,8 +127,6 @@ def detect_items():
     """Look at the bottom-right corner of the station inventory window for the
     '0 items found' text. If it isn't present, there must be items in the
     station's inventory."""
-    global no_items_station_inv
-
     if lo.locate('./img/indicators/station_inv_0_items.bmp', conf=0.9) is None:
         logging.debug('items remain')
         return 1
@@ -209,13 +215,15 @@ def undock_loop():
         # change indicator.
         tries = 0
 
-        while ('./img/indicators/session_change_undocked.bmp', conf=0.55) is None and tries <= 30:
+        while lo.locate('./img/indicators/session_change_undocked.bmp',
+                        conf=0.55) is None and tries <= 30:
             tries += 1
             time.sleep(int((random.randint(500, 1000) / 1000)))
             logging.debug('waiting for session change to complete ' +
                           (str(tries)))
 
-        if ('./img/indicators/session_change_undocked.bmp', conf=0.55) is not None and tries <= 30:
+        if lo.locate('./img/indicators/session_change_undocked.bmp',
+                     conf=0.55) is not None and tries <= 30:
             logging.debug('undock completed ' + (str(tries)))
             return 1
           
@@ -224,10 +232,10 @@ def undock_loop():
         # an undock, but at this point the session change icon is probably
         # gone.
         else:
-            if docked_check() == 1:
+            if is_docked() == 1:
                 logging.error('cannot undock')
                 sys.exit()
-            elif docked_check() == 0:
+            elif is_docked() == 0:
                 logging.warning('undock tentatively completed')
                 return 1
     else:

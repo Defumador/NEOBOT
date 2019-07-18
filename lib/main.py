@@ -65,7 +65,7 @@ def miner():
     global runs
     timer_var = 0
     logging.info('beginning run' + (str(runs)))
-    while docked.docked_check() == 0:
+    while docked.is_docked() == 0:
         if drones.detect_drones_launched() == 1:
             o.focus_client()
             drones.recall_drones_loop(drone_num)
@@ -156,7 +156,7 @@ def miner():
         elif bkmk.travel_to_bookmark(site) == 0:
             nav.emergency_terminate()
             sys.exit(0)
-    if docked.docked_check() == 1:
+    if docked.is_docked() == 1:
         # If docked when script starts, undock_loop.
         o.focus_client()
         docked.undock_loop()
@@ -168,7 +168,7 @@ def navigator():
     terminate."""
     logging.debug('running navigator')
     nav.detect_route()
-    dockedcheck = docked.docked_check()
+    dockedcheck = docked.is_docked()
 
     while dockedcheck == 0:
         o.focus_overview()
@@ -208,7 +208,7 @@ def collector():
     station bookmark beginning with the numbers 1-9. This means up to 10
     remote stations are supported."""
     logging.debug('running collector')
-    dockedcheck = docked.docked_check()
+    dockedcheck = docked.is_docked()
     while dockedcheck == 0:
         selectwaypoint = nav.warp_to_waypoint()
 
