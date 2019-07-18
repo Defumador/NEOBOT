@@ -2,7 +2,7 @@ import random
 import time
 import logging
 
-from lib import locate as lo
+from lib import keyboard as key, locate as lo
 
 import pyautogui as pag
 
@@ -17,14 +17,7 @@ def launch_drones_loop(drone_num):
     if drone_num != 0:
         logging.info('launching drones')
         time.sleep(float(random.randint(5, 500)) / 1000)
-        pag.keyDown('shift')
-        time.sleep(float(random.randint(5, 500)) / 1000)
-        pag.keyDown('l')
-        time.sleep(float(random.randint(5, 500)) / 1000)
-        pag.keyUp('shift')
-        time.sleep(float(random.randint(5, 500)) / 1000)
-        pag.keyUp('l')
-        time.sleep(float(random.randint(100, 500)) / 1000)
+        key.hotkey('shift','l')
 
         tries = 0
         while lo.locate('./img/indicators/drones/0_drone_in_bay.bmp') is None \
@@ -40,7 +33,7 @@ def launch_drones_loop(drone_num):
 
         else:
             logging.warning('timed out waiting for drones to launch')
-            return 1
+            return 0
     else:
         return 1
 
@@ -56,14 +49,7 @@ def detect_drones_launched():
 def recall_drones_loop(drone_num):
     if drone_num != 0:
         time.sleep(float(random.randint(5, 500)) / 1000)
-        pag.keyDown('shift')
-        time.sleep(float(random.randint(5, 500)) / 1000)
-        pag.keyDown('r')
-        time.sleep(float(random.randint(5, 500)) / 1000)
-        pag.keyUp('shift')
-        time.sleep(float(random.randint(5, 500)) / 1000)
-        pag.keyUp('r')
-        time.sleep(float(random.randint(5, 500)) / 1000)
+        key.hotkey('shift','r')
 
         # Wait for all drones to return to drone bay. Very sensitive to the
         # drones variable. Won't work unless the drones variable is correct.
@@ -81,6 +67,6 @@ def recall_drones_loop(drone_num):
         else:
             logging.warning('timed out waiting for drones to return '
                             + (str(tries)))
-            return 1
+            return 0
     else:
         return 0
