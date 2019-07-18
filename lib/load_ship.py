@@ -26,7 +26,9 @@ def drag_to_ship_inv():
     """Click and drag the first item stack from station's inventory to ship's
     inventory. This function assumed the relevant window is already open."""
     logging.debug('moving item stack to ship inventory')
-    if lo.clocate('./img/indicators/station_inv_name.bmp') is None:
+
+    station_inv = lo.clocate('./img/indicators/station_inv_name.bmp')
+    if station_inv is None:
         logging.critical("can't find name column")
         traceback.print_exc()
         traceback.print_stack()
@@ -34,15 +36,16 @@ def drag_to_ship_inv():
 
     else:
         tries = 0
-        while lo.clocate('./img/buttons/ship_inv.bmp') is None and tries <= 25:
+        ship_inv = lo.clocate('./img/buttons/ship_inv.bmp')
+        while ship_inv is None and tries <= 25:
             tries += 1
             logging.critical("can't find ship inventory")
             time.sleep(float(random.randint(1000, 2000)) / 1000)
-            namefield_station_in = clocate_var
-            
-        if lo.clocate('./img/buttons/ship_inv.bmp') is not None and tries <= 25:
-            (x, y) = namefield_station_inv
-            (sx, sy) = clocate_var
+            ship_inv = lo.clocate('./img/buttons/ship_inv.bmp')
+
+        if ship_inv is not None and tries <= 25:
+            (x, y) = station_inv
+            (sx, sy) = ship_inv
             pag.moveTo((x + (random.randint(-5, 250))),
                        (y + (random.randint(10, 25))),
                        mouse.duration(), mouse.path())
@@ -61,18 +64,18 @@ def drag_to_ship_spec_inv(type):
     """Drag item stack to ship's special inventory."""
     logging.debug('moving item stack to special inventory')
 
-    if lo.locate('./img/indicators/station_inv_name.bmp') is not None:
+    station_inv = lo.locate('./img/indicators/station_inv_name.bmp')
+    if station_inv is not None:
         tries = 0
-        namefield_station_inv = locate_var
-        
-        while lo.clocate('./img/buttons/spec_inv_' + type + '.bmp') is None and tries <= 25:
+        spec_inv = lo.clocate('./img/buttons/spec_inv_' + type + '.bmp')
+        while spec_inv is None and tries <= 25:
             tries += 1
             logging.critical("can't find ship inventory")
             time.sleep(float(random.randint(1000, 2000)) / 1000)
-            
-        if lo.locate('./img/buttons/spec_inv_' + type + '.bmp') is not None and tries <= 25:
-            (x, y) = namefield_station_inv
-            spec_inv = locate_var
+            spec_inv = lo.clocate('./img/buttons/spec_inv_' + type + '.bmp')
+
+        if spec_inv is not None and tries <= 25:
+            (x, y) = station_inv
             (sx, sy) = spec_inv
             pag.moveTo((x + (random.randint(-5, 250))),
                        (y + (random.randint(10, 25))),
@@ -102,7 +105,7 @@ def load_ship_bulk():
 
     else:
         docked.focus_inv_window()
-        keyboard.select_all()
+        key.hotkey('ctrl', 'a')
         drag_to_ship_inv()
 
         time.sleep(float(random.randint(1500, 3000)) / 1000)
@@ -117,8 +120,8 @@ def load_ship_bulk():
         # check if it has a special inventory. Iterate through a
         # list of possible special inventory types.
         specinv_list = ['ore','fleet']
-        elif nospace == 1:
-            for invtype in specinv_list
+        if nospace == 1:
+            for invtype in specinv_list:
                 if docked.detect_spec_inv(invtype) == 1:
                     docked.focus_inv_window()
                     key.hotkey('ctrl','a')
@@ -181,8 +184,8 @@ def load_ship_individually():
         # If a warning appears but item stacks are still present, check if ship
         # has a special inventory.
         specinv_list = ['ore','fleet']
-        elif nospace == 1:
-            for invtype in specinv_list
+        if nospace == 1:
+            for invtype in specinv_list:
                 items = docked.detect_items()
                 if docked.detect_spec_inv(invtype) == 1:
                     drag_to_ship_spec_inv(invtype)

@@ -54,10 +54,10 @@ def unload_ship():
         for invtype in specinv_list:
             if docked.detect_spec_inv(invtype) == 1:
                 time.sleep(float(random.randint(0, 2000)) / 1000)
-                docked.open_spec_inv_ore(invtype)
+                docked.open_spec_inv(invtype)
                 items = docked.detect_items()
-                
-                while items == 1:
+
+                while docked.detect_items() == 1:
                     time.sleep(float(random.randint(0, 2000)) / 1000)
                     docked.focus_inv_window()
                     time.sleep(float(random.randint(0, 2000)) / 1000)
@@ -65,7 +65,6 @@ def unload_ship():
                     time.sleep(float(random.randint(0, 2000)) / 1000)
                     drag_items_from_ship_inv()
                     time.sleep(float(random.randint(0, 2000)) / 1000)
-                    items == docked.detect_items()
                     logging.debug('finished unloading' + (str(invtype)) + 'inventory')
                     return 1
                 if items == 0:
