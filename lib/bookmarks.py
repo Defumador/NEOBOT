@@ -140,7 +140,8 @@ def warp_to_local_bookmark(target_site):
 
 
 def dock_at_local_bookmark():
-    # Dock at the first bookmark beginning with a '0'
+    """Dock at the first bookmark beginning with a '0' in its name, assuming it's
+    in the same system as you."""
     dock_at_station_bookmark_var = pag.locateCenterOnScreen(
         './img/dest/at_dest0.bmp',
         confidence=conf,
@@ -313,6 +314,9 @@ def blacklist_local_bookmark():
 
 def blacklist_specific_bookmark(target_site):
     """Blacklist a specific bookmark by changing its name."""
+    # TODO: possible blacklist bookmarks instead by deleting them, which
+    # could lead to fewer bugs as sometimes the 'rename bookmark' window
+    # does not behave as expected.
     logging.debug('blacklisting bookmark ' + (str(target_site)))
     bookmark_to_blacklist = pag.locateCenterOnScreen(
         ('./img/dest/at_dest' + (bookmark_dict[target_site]) + '.bmp'),
