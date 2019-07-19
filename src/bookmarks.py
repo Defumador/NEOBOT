@@ -9,8 +9,6 @@ from src import mouse, keyboard, navigation as nav
 from src.navigation import wait_for_dock
 from src.vars import originx, originy, windowx, windowy, conf
 
-destnum = {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7",
-           8: "8", 9: "9", 10: "10"}
 bookmark_dict = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7",
                  8: "8", 9: "9", 10: "10"}
 
@@ -175,7 +173,7 @@ def blacklist_station():
     if at_dest is not None:
         logging.debug('blacklisting station')
         at_dest = pag.locateCenterOnScreen(
-            ('./img/dest/at_dest' + (destnum[n]) + '.bmp'),
+            ('./img/dest/at_dest' + (str(n)) + '.bmp'),
             confidence=conf,
             region=(originx, originy, windowx, windowy))
 
