@@ -275,15 +275,12 @@ def select_overview_tab(tab):
 def is_target_lockable():
     """Looks for a highlighted 'target' icon in the 'selected item' window, indicating
     the selected target is close enough in order to achieve a lock."""
-    target_lock_available = pag.locateOnScreen(
-        './img/indicators/target_lock_available.bmp',
-        confidence=0.9999,  # High confidence required since greyed-out icon
+      # High confidence required since greyed-out icon
         # looks so similar to enabled icon.
-        region=(originx, originy, windowx, windowy), grayscale=True)
-    if target_lock_available is not None:
+    if lo.locate('./img/indicators/target_lock_available.bmp', conf=0.9999) is not None:
         logging.debug('within targeting range')
         return 1
-    elif target_lock_available is None:
+    elif lo.locate('./img/indicators/target_lock_available.bmp', conf=0.9999) is None:
         logging.debug('outside of targeting range')
         return 0
 
