@@ -244,25 +244,19 @@ def select_overview_tab(tab):
     """Switches to the specified tab on the overview. If the provided tab is already
     selected, this function does nothing. Assumes default overview configuration."""
     logging.debug('focusing ' + (str(tab)) + ' tab')
-    tab_selected = pag.locateCenterOnScreen(
-        './img/overview/' + tab + '_overview_tab_selected.bmp',
-        # Requires very high confidence since the button looks only slightly
-        # different when it's selected.
-        confidence=0.998,
-        region=(originx, originy,
-                windowx, windowy))
-    if tab_selected is not None:
-        logging.debug('tab ' + (str(tab)) + ' -- already selected')
+    
+    # Requires very high confidence since the button looks only slightly
+    # different when it's selected.
+    selected = lo.locate('./img/overview/' + (str(tab)) + '_overview_tab_selected.bmp', conf=0.998)
+    
+    if selected is not None:
+        logging.debug('tab ' + (str(tab)) + ' already selected')
         return 1
-    else:
-        tab_unselected = pag.locateCenterOnScreen(
-            './img/overview/' + tab + '_overview_tab.bmp',
-            confidence=0.95,
-            region=(originx, originy,
-                    windowx, windowy))
-
-        if tab_unselected is not None:
-            (x, y) = tab_unselected
+    elif selected is None:
+        unselected = lo.oclocate('./img/overview/' + (str(tab)) + '_overview_tab.bmp')
+        
+        if unselected is not None:
+            (x, y) = unselected
             pag.moveTo((x + (random.randint(-12, 12))),
                        (y + (random.randint(-6, 6))),
                        mouse.duration(), mouse.path())
