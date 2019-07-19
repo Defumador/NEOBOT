@@ -175,9 +175,9 @@ def set_quant_warning():
 
 
 def not_enough_space_warning():
-    # Check if a 'not enough space' warning appears, indicating the item stacks
-    # selected will not fit into the ship's inventory, or inventory is
-    # already full.
+    """Checks if a 'not enough space' warning appears, indicating the item
+    stacks selected will not fit into the ship's inventory, or inventory is
+    already full."""
     if lo.locate('./img/warnings/not_enough_space.bmp') is not None:
         logging.debug('detected not enough space warning')
         time.sleep(float(random.randint(100, 800)) / 1000)
@@ -486,6 +486,7 @@ def load_ship():
 
 
 def unload_ship():
+    """Unloads ship inventory and deposits it in the station's inventory."""
     logging.debug('began unloading procedure')
     open_ship_inv()
     items = look_for_items()
@@ -531,7 +532,7 @@ def unload_ship():
 
 
 def drag_items_from_ship_inv():
-    # Click and drag all items from ship inventory to station inventory.
+    """Clicks and drags all items from ship inventory to station inventory."""
     (x1, y1) = lo.clocate('./img/indicators/station_inv_name.bmp')
     (x2, y2) = lo.clocate('./img/buttons/station_inv.bmp')
 
