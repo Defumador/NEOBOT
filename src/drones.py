@@ -11,7 +11,8 @@ logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
 
 
 def launch_drones(drone_num):
-    # User must custom-set the "launch drones" hotkey to be Shift-l
+    """Launches drones and waits for them to leave the drone bay. User must
+    custom-set the "launch drones" hotkey to be Shift-l."""
     if drone_num != 0:
         logging.info('launching drones')
         time.sleep(float(random.randint(5, 500)) / 1000)
@@ -37,6 +38,7 @@ def launch_drones(drone_num):
 
 
 def are_drones_launched():
+    """Checks if any drones are present in the drone bay."""
     if lo.locate('./img/indicators/drones/0_drone_in_bay.bmp') is not None:
         logging.debug('drones are in space')
         return 1
@@ -45,6 +47,7 @@ def are_drones_launched():
 
 
 def recall_drones(drone_num):
+    """Recalls drones and waits for them to return to the drone bay."""
     if drone_num != 0:
         time.sleep(float(random.randint(5, 500)) / 1000)
         key.hotkey('shift', 'r')
