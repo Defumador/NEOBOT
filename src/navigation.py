@@ -50,9 +50,9 @@ def warp_to_waypoint():
         (x, y) = stargate
         # Subtract 10 from right edge to prevent script from
         # accidentally clicking outside the client window.
-        pag.moveTo((x + (random.randint(-8, 30)))),
-                   (y + (random.randint(-8, 8))),
-                   mouse.duration(), mouse.path())
+        pag.moveTo((x + (random.randint(-8, 30)))), \
+        (y + (random.randint(-8, 8))), \
+        mouse.duration(), mouse.path()
         mouse.click()
         key.keypress('d')  # 'dock / jump' hotkey.
         mouse.move_away('l')
@@ -61,15 +61,15 @@ def warp_to_waypoint():
     if station is not None and tries <= 15:
         logging.debug('found station waypoint')
         (x, y) = station
-        pag.moveTo((x + (random.randint(-8, 30)))),
+        pag.moveTo((x + (random.randint(-8, 30))),
                    (y + (random.randint(-8, 8))),
                    mouse.duration(), mouse.path())
         mouse.click()
         key.keypress('d')
         mouse.move_away('l')
         return 2
-    
-    if stargate is None and station is None tries > 15:
+
+    if stargate is None and station is None and tries > 15:
         logging.error('no waypoints found')
         return 0
 
@@ -115,30 +115,30 @@ def wait_for_jump():
     tries = 0
     # Confidence must be lower than normal since icon is partially
         # transparent.
-    while lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55)
-    is None and tries <= 180:
+    while lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55) \
+            is None and tries <= 180:
         tries += 1
         logging.debug('waiting for jump ' + (str(tries)))
         time.sleep(1)
 
-        if lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55)
-        is not None and tries >= 50:
+        if lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55) \
+                is not None and tries >= 50:
 
-            if lo.locate('./img/warnings/low_security_system.bmp', conf=0.9)
-            is not None:
+            if lo.locate('./img/warnings/low_security_system.bmp', conf=0.9) \
+                    is not None:
                 key.keypress('enter')
                 continue
             else:
                 continue
 
-    if lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55)
-    is not None and tries <= 180:
+    if lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55) \
+            is not None and tries <= 180:
         logging.debug('jump detected ' + (str(tries)))
         time.sleep(float(random.randint(900, 2400)) / 1000)
         return 1
 
-    elif lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55)
-    is none and tries > 180:
+    elif lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55) \
+            is None and tries > 180:
         logging.error('timed out looking for jump ' + (str(tries)))
         emergency_terminate()
         traceback.print_stack()
@@ -214,7 +214,7 @@ def emergency_terminate():
         tries = 0
         confidence = 1
         overview.select_overview_tab('warpto')
-        planet = lo.oclocate('./img/overview/planet.bmp', confidence=confidence)
+        planet = lo.oclocate('./img/overview/planet.bmp', conf=confidence)
         while planet is None and tries <= 50:
             logging.debug('looking for planet ' + (str(tries)) + ' ' +
                           (str(confidence)))
@@ -223,7 +223,7 @@ def emergency_terminate():
             if (tries % 3) == 0:
                 confidence -= 0.01
             time.sleep(float(random.randint(600, 2000)) / 1000)
-            planet = lo.oclocate('./img/overview/planet.bmp', confidence=confidence)
+            planet = lo.oclocate('./img/overview/planet.bmp', conf=confidence)
 
         if planet is not None and tries <= 50:
             logging.debug('emergency warping to planet ' + (str(tries)))
@@ -233,7 +233,7 @@ def emergency_terminate():
                        mouse.duration(), mouse.path())
             mouse.click()
             time.sleep(float(random.randint(600, 1200)) / 1000)
-            keyboard.keypress('s')
+            key.keypress('s')
             mouse.move_away('l')
             wait_for_warp_to_complete()
             emergency_logout()
