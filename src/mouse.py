@@ -1,5 +1,6 @@
 import time, random
 import pyautogui as pag
+from src import mouse
 from src.vars import windowx, windowy
 
 
@@ -8,14 +9,14 @@ def move_away(direction):
     the client window, away from wherever it clicked,
     to prevent tooltips from interfering with the script."""
     time.sleep(float(random.randint(0, 500)) / 1000)
-    if direction == 'r'
+    if direction == 'r':
         pag.moveTo((random.randint(0, (windowy - 100))),
                    (random.randint(0, ((windowx - 100) - (windowx / 2)))),
                    mouse.duration(), mouse.path())
         time.sleep(float(random.randint(0, 500)) / 1000)
         return
-    
-    elif direction == 'l'
+
+    elif direction == 'l':
         pag.moveTo((random.randint(0, (windowy - 100))),
                    (random.randint(0, ((windowx - 100) / 2))),
                    mouse.duration(), mouse.path())
