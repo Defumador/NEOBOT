@@ -202,13 +202,15 @@ def undock_loop():
     # Wait for the 'undock' button to change to 'undocking', indicating the
     # undock action has been confirmed.
     tries = 0
-    
-    while lo.locate('./img/buttons/undocking.bmp', conf=0.9) is None and tries <= 25:
-        tries += 1
-        logging.debug('waiting for session change to begin' + (str(tries)))
-        time.sleep(int((random.randint(1000, 2000) / 1000)))
 
-    if lo.locate('./img/buttons/undocking.bmp', conf=0.9) is not None and tries <= 25:
+    while lo.olocate('./img/buttons/undocking.bmp', conf=0.9) is None and \
+            tries <= 25:
+        tries += 1
+        logging.debug('waiting for session change to begin ' + (str(tries)))
+        time.sleep(int((random.randint(500, 2000) / 1000)))
+
+    if lo.olocate('./img/buttons/undocking.bmp', conf=0.9) is not None and \
+            tries <= 25:
         logging.debug('session change underway ' + (str(tries)))
 
         # Now wait for the undock to complete by looking for the session
@@ -216,14 +218,14 @@ def undock_loop():
         tries = 0
 
         while lo.locate('./img/indicators/session_change_undocked.bmp',
-                        conf=0.55) is None and tries <= 30:
+                        conf=0.55) is None and tries <= 100:
             tries += 1
-            time.sleep(int((random.randint(500, 1000) / 1000)))
+            time.sleep(int((random.randint(500, 2000) / 1000)))
             logging.debug('waiting for session change to complete ' +
                           (str(tries)))
 
         if lo.locate('./img/indicators/session_change_undocked.bmp',
-                     conf=0.55) is not None and tries <= 30:
+                     conf=0.55) is not None and tries <= 100:
             logging.debug('undock completed ' + (str(tries)))
             return 1
           
@@ -231,13 +233,15 @@ def undock_loop():
         # look for the undock button instead since ship has likely completed
         # an undock, but at this point the session change icon is probably
         # gone.
-        else:
+        elif lo.locate('./img/indicators/session_change_undocked.bmp',
+                       conf=0.55) is None and tries > 100:
             if is_docked() == 1:
                 logging.error('cannot undock')
                 sys.exit()
             elif is_docked() == 0:
                 logging.warning('undock tentatively completed')
                 return 1
-    else:
+    elif lo.locate('./img/buttons/undocking.bmp', conf=0.9) is None and \
+            tries > 25:
         logging.error('timed out waiting for session change')
         sys.exit()
