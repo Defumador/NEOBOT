@@ -17,36 +17,29 @@ bookmark_dict = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7",
 logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
-
 def set_dest():
     """Issue a 'set destination' command for the lowest-numbered bookmark that
     isn't blacklisted (starting with 1)."""
-    set_dest_var = pag.locateCenterOnScreen(
-        ('./img/dest/dest' + (destnum[1]) + '.bmp'),
-        confidence=0.98,
-        region=(originx, originy, windowx, windowy))
-
     target_dest = 1
-    while set_dest_var is None:
+    dest = lo.clocate('./img/dest/dest' + (str(target_dest)) + '.bmp', conf=0.98)
+
+    while dest is None:
         target_dest += 1
-        set_dest_var = pag.locateCenterOnScreen(
-            ('./img/dest/dest' + (destnum[target_dest]) + '.bmp'),
-            confidence=0.98,
-            region=(originx, originy, windowx, windowy))
-        logging.debug('looking for dest ' + (str((destnum[target_dest]))))
+        logging.debug('looking for dest ' + (str(target_dest)))
+        dest = lo.clocate('./img/dest/dest' + (str(target_dest)) + '.bmp', conf=0.98)
 
     if set_dest_var is not None:
         logging.debug('setting destination waypoint')
-        (next_destx), (next_desty) = set_dest_var
-        pag.moveTo((next_destx + (random.randint(-1, 200))),
-                   (next_desty + (random.randint(-3, 3))),
+        (x, y) = dest
+        pag.moveTo((x + (random.randint(-1, 200))),
+                   (y + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
         mouse.click_right()
         pag.moveRel((0 + (random.randint(10, 80))),
                     (0 + (random.randint(20, 25))),
                     mouse.duration(), mouse.path())
         mouse.click()
-        time.sleep(2)
+        time.sleep(float(random.randint(1000, 2000)) / 1000)
         return
 
 
