@@ -23,7 +23,7 @@ logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
 
 
 def is_jammed(jam_var):
-    """Check for an ecm-jamming icon on the rightmost column of the
+    """Checks for an ecm-jamming icon on the rightmost column of the
     overview."""
     if jam_var == 1:
         global oy, oly
@@ -42,7 +42,8 @@ def is_jammed(jam_var):
 def build_ship_list(detect_npcs_var, npc_frig_dest,
                 npc_cruiser_bc, detect_pcs_var, pc_indy, pc_barge, pc_frig_dest,
                pc_cruiser_bc, pc_bs, pc_capindy_freighter, pc_rookie, pc_pod):
-    """Build lists of npc and pc ship icons, through which another function can iterate and
+    """Builds a list of npc ship icons and a list of player ship icons,
+    through which the 'look_for_ship' function can iterate and
     check if any of those icons are present on the overview."""
     npc_list = []
     if detect_npcs_var == 1:
@@ -94,9 +95,10 @@ def build_ship_list(detect_npcs_var, npc_frig_dest,
 
 
 def look_for_ship(npc_list, pc_list):
-    """Check if any of the ship icons in the given lists are currently
-    present on the overview, searching the rightmost quarter of the screen
-    only."""
+    """Checks if any of the ship icons in the given lists are currently
+    present on the overview. Searches the rightmost
+    quarter of the user's client only (just the overview)."""
+    
     # Search within the rightmost quarter of the client. Script assumes
     # overview is on the right half of the screen. This is about
     # twice as fast as searching an entire 1024x768 client window.
@@ -151,10 +153,9 @@ def look_for_ship(npc_list, pc_list):
 
 
 def look_for_targets(target1, target2, target3, target4, target5):
-    """Iterate through a list of user-defined targets. If one is found,
-    return its location to the calling function. Searches the rightmost
+    """Iterates through a list of user-defined targets. If one is found,
+    returns its location to the calling function. Searches the rightmost
     quarter of the user's client only (just the overview)."""
-
     overview = pag.screenshot(
         region=((originx + (windowx - (int(windowx / 3.8)))),
                 originy, (int(windowx / 3.8)), windowy))
@@ -190,7 +191,8 @@ def look_for_targets(target1, target2, target3, target4, target5):
 
 
 def wait_for_target_lock():
-    """Waits until a target has been locked."""
+    """Waits until a target has been locked by looking for
+    the 'unlock target' icon in the 'selected item' window."""
     target_lock = pag.locateOnScreen(
         './img/indicators/target_lock_attained.bmp',
         confidence=0.95,
@@ -215,8 +217,8 @@ def wait_for_target_lock():
 
 
 def focus_client():
-    # Click on a blank area in the client, assuming user has
-    # properly configured the UI.
+    """Clicks on a blank area in the left half of the client client,
+    assuming user has properly configured the UI for the mining script."""
     logging.debug('focusing client')
     pag.moveTo((originx + (random.randint(50, 300))),
                (originy + (random.randint(300, 500))),
@@ -227,8 +229,10 @@ def focus_client():
 
 
 def focus_overview():
-    """If undocked, click somewhere on the Overview to focus the client. If
-    docked, click somewhere in the undock window below all the buttons."""
+    """Clicks somewhere on the lower half of the overview
+    (assuming it's on the right quarter of the client) to focus the client.
+    If ship is docked, this click whill occur somewhere in the
+    station services below all the buttons."""
     logging.debug('focusing overview')
 
     x = (originx + (windowx - (int(windowx / 4.5))))
@@ -243,7 +247,8 @@ def focus_overview():
 
 
 def select_overview_tab(tab):
-    # Switch to the specified tab of the overview
+    """Switches to the specified tab on the overview. If the provided tab is already
+    selected, this function does nothing. Assumes default overview configuration."""
     logging.debug('focusing ' + (str(tab)) + ' tab')
     tab_selected = pag.locateCenterOnScreen(
         './img/overview/' + tab + '_overview_tab_selected.bmp',
@@ -274,8 +279,8 @@ def select_overview_tab(tab):
 
 
 def is_target_lockable():
-    # Look for the target icon in the 'selected item' window, indicating
-    # target is close enough in order to achieve a lock.
+    """Looks for a highlighted 'target' icon in the 'selected item' window, indicating
+    the selected target is close enough in order to achieve a lock."""
     target_lock_available = pag.locateOnScreen(
         './img/indicators/target_lock_available.bmp',
         confidence=0.9999,  # High confidence required since greyed-out icon
@@ -290,7 +295,7 @@ def is_target_lockable():
 
 
 def initiate_target_lock(overview_target):
-    """Targets the closest user-defined item in the Overview, assuming overview
+    """Targets the closest user-defined item on the overview, assuming overview
     is sorted by distance, with closest objects at the top."""
     if overview_target is not None:
         # Break apart ore_found tuple into coordinates
