@@ -1,9 +1,30 @@
 import time, random
 import pyautogui as pag
+from src.vars import windowx, windowy
 
+
+def move_away(direction):
+    """Moves the mouse to a random spot on right half or the left half of
+    the client window, away from wherever it clicked,
+    to prevent tooltips from interfering with the script."""
+    time.sleep(float(random.randint(0, 500)) / 1000)
+    if direction == 'r'
+        pag.moveTo((random.randint(0, (windowy - 100))),
+                   (random.randint(0, ((windowx - 100) - (windowx / 2)))),
+                   mouse.duration(), mouse.path())
+        time.sleep(float(random.randint(0, 500)) / 1000)
+        return
+    
+    elif direction == 'l'
+        pag.moveTo((random.randint(0, (windowy - 100))),
+                   (random.randint(0, ((windowx - 100) / 2))),
+                   mouse.duration(), mouse.path())
+        time.sleep(float(random.randint(0, 500)) / 1000)
+        return 
+    
 
 def click():
-    """Click the primary mouse button, waiting both before and after for a
+    """Clicks the primary mouse button, waiting both before and after for a
     randomized period of time."""
     time.sleep(float(random.randint(0, 500)) / 1000)
     pag.click(duration=(float(random.randint(0, 100) / 1000)))
@@ -12,6 +33,8 @@ def click():
 
 
 def click_right():
+    """Clicks the secondary mouse button, waiting both before and after for a
+    randomized period of time."""
     time.sleep(float(random.randint(0, 500)) / 1000)
     pag.click(button='right', duration=(float(random.randint(0, 100) / 1000)))
     time.sleep(float(random.randint(0, 500)) / 1000)
@@ -19,15 +42,16 @@ def click_right():
 
 
 def duration():
-    """Randomize the amount of time the mouse cursor takes to move to a
+    """Randomizes the amount of time the mouse cursor takes to move to a
     new location."""
     movetimevar = (float(random.randint(50, 1500) / 1000))
     return movetimevar
 
 
 def path():
-    """Randomize the movement behavior of the mouse cursor as it moves to a
+    """Randomizes the movement behavior of the mouse cursor as it moves to a
     new location."""
+    # TODO: implement bezier-curve mouse behavior
     # https://stackoverflow.com/questions/44467329/pyautogui-mouse-movement-with-bezier-curve
     rand = random.randint(1, 22)
     
