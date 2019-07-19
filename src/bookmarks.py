@@ -9,9 +9,6 @@ from src import mouse, keyboard, navigation as nav
 from src.navigation import wait_for_dock
 from src.vars import originx, originy, windowx, windowy, conf
 
-bookmark_dict = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7",
-                 8: "8", 9: "9", 10: "10"}
-
 logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
@@ -77,7 +74,7 @@ def warp_to_local_bookmark(target_site):
     If the ship is already at the requested site, return function."""
     # Confidence must be >0.95 because script will confuse 6 with 0.
     specific_system_bookmark = pag.locateCenterOnScreen(
-        ('./img/dest/at_dest' + (bookmark_dict[target_site]) + '.bmp'),
+        ('./img/dest/at_dest' + (str(target_site)) + '.bmp'),
         confidence=0.98,
         region=(originx, originy, windowx, windowy))
     (specific_system_bookmarkx, specific_system_bookmarky) = \
@@ -213,7 +210,7 @@ def blacklist_local_bookmark():
     # First check to see if the bookmark even exists.
     bookmark = 1
     bookmark_to_blacklist = pag.locateCenterOnScreen(
-        ('./img/dest/at_dest' + (bookmark_dict[bookmark]) + '.bmp'),
+        ('./img/dest/at_dest' + (str(bookmark)) + '.bmp'),
         confidence=0.95,
         region=(originx, originy, windowx, windowy))
 
@@ -221,7 +218,7 @@ def blacklist_local_bookmark():
     while bookmark_to_blacklist is not None:
 
         bookmark_to_blacklist = pag.locateCenterOnScreen(
-            ('./img/dest/at_dest' + (bookmark_dict[bookmark]) + '.bmp'),
+            ('./img/dest/at_dest' + (str(bookmark)) + '.bmp'),
             confidence=0.95,
             region=(originx, originy, windowx, windowy))
 
@@ -292,7 +289,7 @@ def blacklist_set_bookmark(target_site):
     # does not behave as expected.
     logging.debug('blacklisting bookmark ' + (str(target_site)))
     bookmark_to_blacklist = pag.locateCenterOnScreen(
-        ('./img/dest/at_dest' + (bookmark_dict[target_site]) + '.bmp'),
+        ('./img/dest/at_dest' + (str(target_site)) + '.bmp'),
         confidence=conf,
         region=(originx, originy, windowx, windowy))
 
