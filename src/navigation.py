@@ -6,22 +6,18 @@ import threading
 import traceback
 import pyautogui as pag
 # from src.main import stopvar
-from src import mouse, keyboard, overview
+from src import mouse, keyboard as key, overview, locate as lo
 from src.vars import originx, originy, windowx, windowy
 
 sys.setrecursionlimit(9999999)
-
 logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
 
 def has_route():
-    """Check the top-left corner of the hud to see if a route has actually been
+    """Checks the top-left corner of the client window to see if a route has actually been
     set by the user."""
-    route_set_var = pag.locateCenterOnScreen('./img/indicators/detect_route.bmp',
-                                             confidence=0.85,
-                                             region=(originx, originy,
-                                                     windowx, windowy))
+    route_set_var = lo.locate('./img/indicators/detect_route.bmp', conf=0.85)
     if route_set_var is None:
         logging.error('no route set!')
         sys.exit(0)
@@ -30,169 +26,119 @@ def has_route():
 
 
 def warp_to_waypoint():
-    """Click on the current waypoint and use warp hotkey to warp to waypoint.
-     Currently supports warping to stargate and station waypoints."""
+    """Clicks on the current waypoint and uses the warp hotkey to warp to waypoint.
+     Currently only supports warping to stargate and station waypoints."""
+    # TODO: add support for warping to citadels and engineering complexes
     logging.debug('looking for waypoints')
     tries = 0
     # Speed up image searching by checking right half of eve window only. This
     # obviously requires the user to place the overview on the right half of
     # the client window.
-    stargate_waypoint = pag.locateCenterOnScreen(
-        './img/overview/stargate_waypoint.bmp',
-        confidence=0.96,
-        region=((originx + (windowx - (int(windowx / 3.8)))),
-                originy, (int(windowx / 3.8)), windowy))
-    # If stargate waypoint not found, look for station waypoint.
-    while stargate_waypoint is None and tries <= 15:
-        tries += 1
-        station_waypoint = pag.locateCenterOnScreen(
-            './img/overview/station_waypoint.bmp',
-            confidence=0.96,
-            region=((originx + (windowx - (int(windowx / 3.8)))),
-                    originy, (int(windowx / 3.8)), windowy))
-        # If station waypoint not found, look for stargate waypoint again
-        # and restart loop.
-        if station_waypoint is None:
-            stargate_waypoint = pag.locateCenterOnScreen(
-                './img/overview/stargate_waypoint.bmp',
-                confidence=0.96,
-                region=((originx + (windowx - (int(windowx / 3.8)))),
-                        originy, (int(windowx / 3.8)), windowy))
-            logging.debug('looking for waypoints ' + (str(tries)))
-            time.sleep(float(random.randint(400, 1200)) / 1000)
-            continue
-        elif station_waypoint is not None:
-            logging.debug('found station waypoint')
-            (x, y) = station_waypoint
-            # Subtract 10 from right edge to prevent script from
-            # accidentally clicking outside the client window.
-            pag.moveTo((x + (random.randint(-8, (int(windowx / 3.8) - 10)))),
-                       (y + (random.randint(-8, 8))),
-                       mouse.duration(), mouse.path())
-            mouse.click()
-            time.sleep(float(random.randint(100, 1200)) / 1000)
-            pag.keyDown('d')  # 'dock / jump' hotkey.
-            time.sleep(float(random.randint(50, 700)) / 1000)
-            pag.keyUp('d')
-            # Move mouse away from overview to prevent tooltips from blocking
-            # script from seeing the icons.
-            pag.moveTo((random.randint(0, (windowy - 100))),
-                       (random.randint(0, ((windowx - 100) / 2))),
-                       mouse.duration(), mouse.path())
-            return 2
+    stargate = lo.oclocate('./img/overview/stargate_waypoint.bmp', conf=0.96)
+    station = lo.oclocate('./img/overview/station_waypoint.bmp', conf=0.96)
 
-    # Check if stargate waypoint was found before loop expired.
-    if stargate_waypoint is not None and tries <= 15:
+    # If stargate waypoint not found, look for station waypoint.
+    while stargate is None and station is None and tries <= 15:
+        tries += 1
+        time.sleep(float(random.randint(500, 1500)) / 1000)
+        logging.debug('looking for waypoints ' + (str(tries)))
+        stargate = lo.oclocate('./img/overview/stargate_waypoint.bmp', conf=0.96)
+        station = lo.oclocate('./img/overview/station_waypoint.bmp', conf=0.96)
+        
+    if stargate is not None and tries <= 15:
         logging.debug('found stargate waypoint')
-        (x, y) = stargate_waypoint
-        pag.moveTo((x + (random.randint(-8, (int(windowx / 3.8) - 10)))),
+        (x, y) = stargate
+        # Subtract 10 from right edge to prevent script from
+        # accidentally clicking outside the client window.
+        pag.moveTo((x + (random.randint(-8, 30)))),
                    (y + (random.randint(-8, 8))),
                    mouse.duration(), mouse.path())
         mouse.click()
-        time.sleep(float(random.randint(100, 1200)) / 1000)
-        pag.keyDown('d')  # 'dock / jump' hotkey.
-        time.sleep(float(random.randint(50, 600)) / 1000)
-        pag.keyUp('d')
-        pag.moveTo(
-            (random.randint(150, (int(windowy - (windowy / 4))))),
-            (random.randint(150, (int(windowx - (windowx / 4))))),
-            mouse.duration(), mouse.path())
-        return 1
-    elif stargate_waypoint is None and tries > 15:
+        key.keypress('d')  # 'dock / jump' hotkey.
+        mouse.move_away('l')
+        return 2
+
+    if station is not None and tries <= 15:
+        logging.debug('found station waypoint')
+        (x, y) = station
+        pag.moveTo((x + (random.randint(-8, 30)))),
+                   (y + (random.randint(-8, 8))),
+                   mouse.duration(), mouse.path())
+        mouse.click()
+        key.keypress('d')
+        mouse.move_away('l')
+        return 2
+    
+    if stargate is None and station is None tries > 15:
         logging.error('no waypoints found')
-        emergency_terminate()
-        traceback.print_stack()
-        sys.exit()
+        return 0
 
 
 def wait_for_warp_to_complete():
-    """Detect when a warp has been completed by waiting for the 'warping' text
-    to disappear from the spedometer. Wait for the ship to begin its warp
-    before checking though, otherwise the script will think the warp has
-    already been completed."""
+    """Detects when a warp has started and been
+    completed by watching the spedometer."""
     warp_duration = 1
-    time.sleep(1)
-    warp_drive_active = pag.locateCenterOnScreen(
-        './img/indicators/warping.bmp',
-        confidence=0.90,
-        region=(originx, originy, windowx,
-                windowy))
-
+    
     # Wait for warp to begin by waiting until the spedometer is full. Ship
     # might be stuck on something so this could take an variable amount of
     # time.
-    while warp_drive_active is None and warp_duration <= 300:
+    while lo.locate('./img/indicators/warping.bmp', conf=0.90) is None \
+    and warp_duration <= 300:
+        warp_duration += 1
         logging.debug('waiting for warp to start ' + (str(warp_duration)))
-        time.sleep(float(random.randint(1000, 3000)) / 1000)
-        warp_duration += 1
-        warp_drive_active = pag.locateCenterOnScreen(
-            './img/indicators/warping.bmp',
-            confidence=0.9,
-            region=(originx, originy, windowx,
-                    windowy))
+        time.sleep(float(random.randint(500, 3000)) / 1000)
 
-    # Wait up to 300 seconds before concluding there was an error with the
-    # function.
-    while warp_drive_active is not None and warp_duration <= 150:
-        # print('warp icon found at', warp_drive_active)
+    # Once warp begins, wait for warp to end by waiting for spedometer to empty.
+    time.sleep(float(random.randint(1000, 3000)) / 1000)
+    while lo.locate('./img/indicators/warping.bmp', conf=0.90) is not None \
+    and warp_duration <= 150:
+        warp_duration += 1
         logging.debug('warping ' + (str(warp_duration)))
-        warp_duration += 1
-        time.sleep(2)
-        warp_drive_active = pag.locateCenterOnScreen(
-            './img/indicators/warping.bmp',
-            confidence=0.9,
-            region=(originx, originy, windowx,
-                    windowy))
+        time.sleep(float(random.randint(1000, 3000)) / 1000)
 
-    if warp_drive_active is None and warp_duration <= 150:
+    if lo.locate('./img/indicators/warping.bmp', conf=0.90) is None \
+    and warp_duration <= 150:
         time.sleep(float(random.randint(1000, 3000)) / 1000)
         logging.debug('warp completed')
         return 1
     else:
-        logging.error('timed out waiting for warp')
-        emergency_terminate()
+        logging.error('error warping or timed out waiting for warp to \
+                      complete')
         return 0
 
 
 def wait_for_jump():
-    # Detect a jump by looking for the cyan session-change icon in top left
-    # corner of the eve client window. If a jump hasn't been detected after
-    # 50 checks, check if the 'low security system warning' window has appeared
-    # and is preventing the ship from jumping.
+    """Waits for a jump by looking for the cyan session-change icon in top left
+    corner of the client window. If a jump hasn't been detected after
+    50 checks, check if the 'low security system warning' window has appeared
+    and is preventing the ship from jumping."""
     tries = 0
-    detect_jump_var = pag.locateCenterOnScreen(
-        './img/indicators/session_change_cloaked.bmp',
-        # Confidence must be lower than normal since icon is partially
+    # Confidence must be lower than normal since icon is partially
         # transparent.
-        confidence=0.55, region=(originx, originy, windowx, windowy))
-
-    while detect_jump_var is None and tries <= 180:
+    while lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55)
+    is None and tries <= 180:
         tries += 1
         logging.debug('waiting for jump ' + (str(tries)))
-        time.sleep(1.5)
-        detect_jump_var = pag.locateCenterOnScreen(
-            './img/indicators/session_change_cloaked.bmp',
-            confidence=0.55,
-            region=(originx, originy, windowx, windowy))
+        time.sleep(1)
 
-        if detect_jump_var is not None and tries >= 50:
-            low_sec_popup = pag.locateCenterOnScreen(
-                './img/warnings/low_security_system.bmp',
-                confidence=0.9,
-                region=(originx, originy, windowx, windowy))
+        if lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55)
+        is not None and tries >= 50:
 
-            if low_sec_popup is not None:
-                keyboard.keypress('enter')
+            if lo.locate('./img/warnings/low_security_system.bmp', conf=0.9)
+            is not None:
+                key.keypress('enter')
                 continue
             else:
                 continue
 
-    if detect_jump_var is not None and tries <= 180:
+    if lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55)
+    is not None and tries <= 180:
         logging.debug('jump detected ' + (str(tries)))
         time.sleep(float(random.randint(900, 2400)) / 1000)
         return 1
 
-    else:
+    elif lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55)
+    is none and tries > 180:
         logging.error('timed out looking for jump ' + (str(tries)))
         emergency_terminate()
         traceback.print_stack()
@@ -200,98 +146,75 @@ def wait_for_jump():
 
 
 def wait_for_dock():
-    # Detect a station dock by looking for undock_loop icon on the right half of the
-    # eve client window.
+    """Waits for a dock by looking for the undock button on the right half of the
+    eve client window."""
     tries = 0
-    detect_dock_var = pag.locateCenterOnScreen('./img/buttons/undock.bmp',
-                                               confidence=0.91,
-                                               region=(originx, originy,
-                                                       windowx, windowy))
-    while detect_dock_var is None and tries <= 100:
+
+    while lo.locate('./img/buttons/undock.bmp', conf=0.91) is None and tries <= 100:
         tries += 1
         logging.debug('waiting for dock ' + (str(tries)))
-        time.sleep(3)
-        detect_dock_var = pag.locateCenterOnScreen('./img/buttons/undock.bmp',
-                                                   confidence=0.91,
-                                                   region=(originx, originy,
-                                                           windowx, windowy))
-    if detect_dock_var is not None and tries <= 100:
-        logging.debug('detected dock ' + (str(tries)))
         time.sleep(float(random.randint(2000, 5000)) / 1000)
+        
+    if lo.locate('./img/buttons/undock.bmp', conf=0.91) is not None and tries <= 100:
+        logging.debug('detected dock ' + (str(tries)))
+        time.sleep(float(random.randint(500, 3000)) / 1000)
         return 1
-    else:
+    
+    elif lo.locate('./img/buttons/undock.bmp', conf=0.91) is None and tries > 100:
         logging.error('timed out looking for dock ' + (str(tries)))
         return 0
 
 
 def emergency_terminate():
-    # If a function breaks or times out while undocked, look for the nearest
-    # station and dock immediately. Incrementally lower the confidence required
-    # to match station icon each time the loop runs in order to guarantee
-    # a warp.
-    # If a station cannot be found after 20 loops,
-    # warp to the nearest celestial body and keep at a distance of >100 km. 
-    # After warp completes, force an unsafe logout in space.
-    threading.Lock()
+    """Looks for the nearest station and docks immediately. Incrementally lowers
+    the confidence required to match the station icon each time the loop runs
+    in order to increase the chances of a warp. If a station cannot be found after a
+    certain number of checks, warp to the nearest planet. After warp completes,
+    simulate a client disconnection by forcing an unsafe logout in space."""
     logging.debug('EMERGENCY TERMINATE CALLED !!!')
     tries = 0
-    confidence = 0.95
+    confidence = 1
     overview.select_overview_tab('general')
-    station_icon = pag.locateCenterOnScreen('./img/overview/station.bmp',
-                                            confidence=confidence,
-                                            region=((originx + (windowx - (
-                                                int(windowx / 3.8)))),
-                                                    originy,
-                                                    (int(windowx / 3.8)),
-                                                    windowy))
+    station_icon = lo.oclocate('./img/overview/station.bmp', conf=confidence)
 
     # Look for a station to dock at until confidence is <0.85
     while station_icon is None and tries <= 15:
+        tries += 1
+        confidence -= 0.01
         logging.debug('looking for station to dock at, confidence = '
                       + (str(confidence)) + ' ' + (str(tries)))
-        tries += 1
-        time.sleep(float(random.randint(600, 1200)) / 1000)
-        station_icon = pag.locateCenterOnScreen('./img/station_icon.bmp',
-                                                confidence=confidence,
-                                                region=((originx + (windowx - (
-                                                    int(windowx / 3.8)))),
-                                                        originy,
-                                                        (int(windowx / 3.8)),
-                                                        windowy))
+        # Keep time interval relatively short since ship may be in combat.
+        time.sleep(float(random.randint(500, 1000)) / 1000)
+        station_icon = lo.oclocate('./img/overview/station.bmp', conf=confidence)
+        
     if station_icon is not None and tries <= 15:
         logging.debug('emergency docking ' + (str(tries)))
-        (station_iconx, station_icony) = station_icon
-        pag.moveTo((station_iconx + (random.randint(-2, 50))),
-                   (station_icony + (random.randint(-2, 2))),
+        (x, y) = station_icon
+        pag.moveTo((x + (random.randint(-2, 50))),
+                   (y + (random.randint(-2, 2))),
                    mouse.duration(), mouse.path())
         mouse.click()
         time.sleep(float(random.randint(600, 1200)) / 1000)
         pag.keyDown('d')
         time.sleep(float(random.randint(600, 1200)) / 1000)
         pag.keyUp('d')
-        pag.moveTo(
-            (random.randint(150, (int(windowy - (windowy / 4))))),
-            (random.randint(150, (int(windowx - (windowx / 4))))),
-            mouse.duration(), mouse.path())
+        mouse.move_away('l')
         if wait_for_dock() == 1:
             emergency_logout()
         elif wait_for_dock() == 0:
-            time.sleep(float(random.randint(60000, 120000)) / 1000)
+            time.sleep(float(random.randint(20000, 40000)) / 1000)
             emergency_logout()
         return 0
 
     # If confidence lowers below threshold, try warping to a planet
     # instead.
-    else:
+    if station_icon is None and tries > 15:
         logging.debug('could not find station to emergency dock at, warping to'
-                      'celestial body instead ' + (str(tries)))
+                      'planet instead ' + (str(tries)))
+        tries = 0
         confidence = 1
         overview.select_overview_tab('warpto')
-        planet = pag.locateCenterOnScreen(
-            './img/overview/planet.bmp',
-            confidence=confidence,
-            region=((originx + (windowx - (int(windowx / 3.8)))),
-                    originy, (int(windowx / 3.8)), windowy))
+        planet = lo.oclocate('./img/overview/planet.bmp', confidence=confidence)
         while planet is None and tries <= 50:
             logging.debug('looking for planet ' + (str(tries)) + ' ' +
                           (str(confidence)))
@@ -300,11 +223,7 @@ def emergency_terminate():
             if (tries % 3) == 0:
                 confidence -= 0.01
             time.sleep(float(random.randint(600, 2000)) / 1000)
-            planet = pag.locateCenterOnScreen(
-                './img/overview/planet.bmp',
-                confidence=confidence,
-                region=((originx + (windowx - (int(windowx / 3.8)))),
-                        originy, (int(windowx / 3.8)), windowy))
+            planet = lo.oclocate('./img/overview/planet.bmp', confidence=confidence)
 
         if planet is not None and tries <= 50:
             logging.debug('emergency warping to planet ' + (str(tries)))
@@ -315,11 +234,7 @@ def emergency_terminate():
             mouse.click()
             time.sleep(float(random.randint(600, 1200)) / 1000)
             keyboard.keypress('s')
-            pag.moveTo((random.randint(150, (
-                int(windowy - (windowy / 4))))),
-                       (random.randint(150, (
-                           int(windowx - (windowx / 4))))),
-                       mouse.duration(), mouse.path())
+            mouse.move_away('l')
             wait_for_warp_to_complete()
             emergency_logout()
             return 0
@@ -330,8 +245,8 @@ def emergency_terminate():
 
 
 def emergency_logout():
-    # use hotkey to forcefully kill client session, don't use the 'log off
-    # safely' feature
+    """Forcefully kill the client session, don't use the 'log off
+    safely' feature."""
     # ALT SHIFT Q
     logging.warning('emergency logout called')
     time.sleep(float(random.randint(1000, 5000)) / 1000)
