@@ -54,17 +54,18 @@ def recall_drones_loop(drone_num):
         # Wait for all drones to return to drone bay. Very sensitive to the
         # drones variable. Won't work unless the drones variable is correct.
         tries = 0
-        while lo.locate('./img/indicators/drones/' + drone_num
-                        + '_drone_in_bay.bmp') is None and tries <= 25:
+        while lo.locate('./img/indicators/drones/' + (str(drone_num))
+                        + '_drone_in_bay.bmp') is None and tries <= 30:
             tries += 1
             time.sleep(float(random.randint(1000, 2000)) / 1000)
 
-        if lo.locate('./img/indicators/drones/' + drone_num
-                     + '_drone_in_bay.bmp') is not None and tries <= 25:
+        if lo.locate('./img/indicators/drones/' + (str(drone_num))
+                     + '_drone_in_bay.bmp') is not None and tries <= 30:
             logging.debug('drones returned to bay ' + (str(tries)))
             return 1
 
-        else:
+        elif lo.locate('./img/indicators/drones/' + (str(drone_num))
+                       + '_drone_in_bay.bmp') is None and tries > 30:
             logging.warning('timed out waiting for drones to return '
                             + (str(tries)))
             return 0
