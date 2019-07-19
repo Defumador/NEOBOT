@@ -81,14 +81,17 @@ def miner():
             # If no hostiles npcs or players are present, check for asteroids.
             # If no asteroids, blacklist site and warp to next site.
             if o.focus_overview_tab('general') == 1:
-                if o.detect_npcs(detect_npcs, npc_frig_dest, npc_cruiser_bc) \
-                        == 1:
+                global npc_list, pc_list
+                (npc_list, pc_list) = o.build_ship_list(detect_npcs,
+                                                        npc_frig_dest,
+                                                        npc_cruiser_bc,
+                                                        detect_pcs, pc_indy,
+                                                        pc_barge, pc_frig_dest,
+                                                        pc_cruiser_bc, pc_bs,
+                                                        pc_capindy_freighter,
+                                                        pc_rookie, pc_pod)
+                if o.detect_ships(npc_list, pc_list) == 1:
                     miner()
-            if o.detect_pcs(detect_pcs, pc_indy, pc_barge, pc_frig_dest,
-                            pc_cruiser_bc, pc_bs, pc_capindy_freighter,
-                            pc_rookie, pc_pod) == 1:
-                playerfound += 1
-                miner()
 
             o.focus_overview_tab('mining')
             target = o.detect_overview_target(o1, o2, o3, o4, o5)
@@ -114,14 +117,9 @@ def miner():
                             mining.activate_miner(module_num)
                             mining.inv_full_popup()
                             continue
-                    if o.detect_npcs(detect_npcs, npc_frig_dest,
-                                     npc_cruiser_bc) == 1 or \
-                            o.detect_pcs(detect_pcs, pc_indy, pc_barge,
-                                         pc_frig_dest, pc_cruiser_bc, pc_bs,
-                                         pc_capindy_freighter, pc_rookie,
-                                         pc_pod) == 1 or \
-                            o.detect_jam(jam_var) == 1 or \
-                            mining.timer(timer_var) == 1:
+                    if o.detect_ships(npc_list, pc_list) == 1 or \
+                            o.detect_jam(jam_var) == 1 or mining.timer(
+                        timer_var) == 1:
                         drones.recall_drones_loop(drone_num)
                         miner()
                     timer_var += 1

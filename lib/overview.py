@@ -51,6 +51,9 @@ def build_ship_list(detect_npcs_var, npc_frig_dest,
                 './img/overview/npc_ship_icons/npc_hostile_cruiser.bmp')
     pc_list = []
     if detect_pcs_var == 1:
+        logging.debug('detect pcs is' + (str(detect_pcs_var)))
+        logging.debug('pc bs is' + (str(pc_bs)))
+        logging.debug('pc list is' + (str(pc_list)))
         if pc_indy == 1:
             pc_list.append(
                 './img/overview/player_ship_icons/archetype_icons'
@@ -83,7 +86,8 @@ def build_ship_list(detect_npcs_var, npc_frig_dest,
             pc_list.append(
                 './img/overview/player_ship_icons/archetype_icons'
                 '/player_capsule.bmp')
-    return pc_list, npc_list
+        logging.debug('pc list is now' + (str(pc_list)))
+    return npc_list, pc_list
     
     
 def detect_ships(npc_list, pc_list):
@@ -96,6 +100,9 @@ def detect_ships(npc_list, pc_list):
     
     # Use the same screenshot for both checks. 
     # If either list is empty, skip checking.
+    logging.debug('npc_list is ' + (str(npc_list)) + ' and pc_list is ' + (
+        str(pc_list)))
+
     if len(npc_list) != 0 or len(pc_list) != 0:
         overview = pag.screenshot(
             region=((originx + (windowx - (int(windowx / 3.8)))),
@@ -122,7 +129,7 @@ def detect_ships(npc_list, pc_list):
         if len(pc_list) != 0:
             conf = 0.95
             for pc_icon in pc_list:
-                player_found = pag.locate(pc_icon, overview, confidence=conf)
+                player_found = lo.olocate(pc_icon)
 
                 if player_found is not None:
                     logging.debug('found player at' + (str(player_found)))
