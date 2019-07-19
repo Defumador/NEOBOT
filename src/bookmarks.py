@@ -56,13 +56,10 @@ def is_home():
 
 def set_home():
     """Set destination as the bookmark beginning with '000'."""
-    logging.debug('setting home waypoint')
-    set_home_var = pag.locateCenterOnScreen('./img/dest/dest0.bmp',
-                                            confidence=conf,
-                                            region=(originx, originy,
-                                                    windowx, windowy))
-    if set_home_var is not None:
-        (homex, homey) = set_home_var
+    home = lo.clocate('./img/dest/dest0.bmp')
+    if home is not None:
+        logging.debug('setting home waypoint')
+        (x, y) = home
         pag.moveTo((homex + (random.randint(-1, 200))),
                    (homey + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
@@ -76,9 +73,7 @@ def set_home():
         logging.error('could not find home waypoint!')
         return 0
 
-    # !! needs work to transition to windowx,windowy
-
-
+    
 def warp_to_local_bookmark(target_site):
     """Try warping to a specific bookmark in the current system.
     If the ship is already at the requested site, return function."""
