@@ -29,6 +29,8 @@ def is_jammed(jam_var):
         global oy, oly
         ox_jam = (originx + (windowx - (int(windowx / 8))))
         olx_jam = (int(windowx / 8))
+        # Custom region in lo.locate is useful to reduce the
+        # search-space as this function is called frequently.
         if lo.locate('./img/overview/jammed_overview.bmp',
                      region=(ox_jam, oy, olx_jam, oly)) is not None:
             logging.info('ship has been jammed!')
@@ -186,7 +188,7 @@ def look_for_targets(target1, target2, target3, target4, target5):
             #           1, mouse.path())
             return target
         else:
-            logging.info('No targets found.')
+            logging.warning('no targets found')
             return 0
 
 
@@ -269,8 +271,8 @@ def select_overview_tab(tab):
 def is_target_lockable():
     """Looks for a highlighted 'target' icon in the 'selected item' window, indicating
     the selected target is close enough in order to achieve a lock."""
-      # High confidence required since greyed-out icon
-        # looks so similar to enabled icon.
+    # High confidence required since greyed-out target lock icon looks
+    # so similar to enabled icon.
     if lo.locate('./img/indicators/target_lock_available.bmp', conf=0.9999) is not None:
         logging.debug('within targeting range')
         return 1
@@ -283,7 +285,7 @@ def initiate_target_lock(overview_target):
     """Targets the closest user-defined item on the overview, assuming overview
     is sorted by distance, with closest objects at the top."""
     if overview_target is not None:
-        # Break apart ore_found tuple into coordinates
+        # Break apart tuple into coordinates
         (x, y, l, w) = overview_target
         # Adjust coordinates for screen
         x = (x + (originx + (windowx - (int(windowx / 3.8)))))
@@ -295,9 +297,10 @@ def initiate_target_lock(overview_target):
         keyboard.keypress('w')
         tries = 0
         while is_target_lockable() == 0 and tries <= 30:
-            time.sleep(float(random.randint(1000, 2000)) / 1000)
             tries += 1
             logging.debug('target not yet within range ' + (str(tries)))
+            time.sleep(float(random.randint(1000, 2000)) / 1000)
+              
         if is_target_lockable() == 1 and tries <= 30:
             logging.debug('locking target')
             keyboard.keypress('ctrl')
