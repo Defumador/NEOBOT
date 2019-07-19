@@ -4,6 +4,7 @@ import pyautogui
 
 
 def keypress(key):
+    """Holds down the specified key for a short period of time."""
     time.sleep(float(random.randint(500, 1000)) / 1000)
     pyautogui.keyDown(key)
     time.sleep(float(random.randint(5, 190)) / 1000)
