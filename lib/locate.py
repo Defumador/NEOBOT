@@ -14,7 +14,9 @@ def locate(image, conf=0.95, region=(originx, originy, windowx, windowy)):
         logging.debug('found image ' + (str(image)))
         return locate_var
     elif locate_var is None:
-        # logging.debug('cannot find image ' + (str(image)))
+        # logging.debug('cannot find image ' + (str(image) + ' confidence is
+        ## ' + (
+        #    str(conf))))
         return locate_var
 
 
@@ -26,7 +28,9 @@ def clocate(image, conf=0.95, region=(originx, originy, windowx, windowy)):
         logging.debug('found image ' + (str(image)))
         return clocate_var
     elif clocate_var is None:
-        # logging.debug('cannot find image ' + (str(image)))
+        logging.debug(
+            'cannot find image ' + (str(image) + ' confidence is ' + (
+                str(conf))))
         return clocate_var
 
 
@@ -38,7 +42,9 @@ def olocate(image, conf=0.95, region=(overviewx, originy, overviewlx,
         logging.debug('found image ' + (str(image)))
         return olocate_var
     elif olocate_var is None:
-        # logging.debug('cannot find image ' + (str(image)))
+        # logging.debug(
+        #    'cannot find image ' + (str(image) + ' confidence is ' + (
+        #        str(conf))))
         return olocate_var
 
 
@@ -51,5 +57,7 @@ def oclocate(image, conf=0.95, region=(overviewx, originy, overviewlx,
         logging.debug('found image ' + (str(image)))
         return oclocate_var
     elif oclocate_var is None:
-        # logging.debug('cannot find image ' + (str(image)))
+        # logging.debug(
+        #    'cannot find image ' + (str(image) + ' confidence is ' + (
+        #        str(conf))))
         return oclocate_var
