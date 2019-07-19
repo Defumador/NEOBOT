@@ -448,7 +448,7 @@ def start(event):
     jam_var = (int(detect_jam_gui.get()))
     logger.debug('detect ecm jamming is ' + (str(detect_jam)))
 
-    doc.load_ship()
+    miner()
     return
 
 

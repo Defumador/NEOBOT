@@ -5,7 +5,7 @@ import logging
 
 import pyautogui as pag
 
-from src import mouse, keyboard, navigation as nav
+from src import mouse, keyboard, navigation as nav, locate as lo
 from src.navigation import wait_for_dock
 from src.vars import originx, originy, windowx, windowy, conf
 
@@ -23,7 +23,7 @@ def set_dest():
         logging.debug('looking for dest ' + (str(target_dest)))
         dest = lo.clocate('./img/dest/dest' + (str(target_dest)) + '.bmp', conf=0.98)
 
-    if set_dest_var is not None:
+    if dest is not None:
         logging.debug('setting destination waypoint')
         (x, y) = dest
         pag.moveTo((x + (random.randint(-1, 200))),
@@ -55,8 +55,8 @@ def set_home():
     if home is not None:
         logging.debug('setting home waypoint')
         (x, y) = home
-        pag.moveTo((homex + (random.randint(-1, 200))),
-                   (homey + (random.randint(-3, 3))),
+        pag.moveTo((x + (random.randint(-1, 200))),
+                   (y + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
         mouse.click_right()
         pag.moveRel((0 + (random.randint(10, 80))),
@@ -78,7 +78,8 @@ def travel_to_bookmark(target_site_num):
     is not in the current system, or your ship is already there. Increment
     bookmark number by 1 and try again."""
 
-    while warp_to_local_bookmark(target_site_num) == 0 and target_bookmark <= 10:
+    while warp_to_local_bookmark(
+            target_site_num) == 0 and target_site_num <= 10:
         target_site_num += 1
 
         # TODO: change the '10' constant to equal total number of bookmarks set
@@ -87,7 +88,7 @@ def travel_to_bookmark(target_site_num):
         # warping to so script doesn't try warping there again.
         if nav.wait_for_warp_to_complete() == 1:
             return 1
-    elif bookmark_site == 0 and target_bookmark > 10:
+    elif warp_to_local_bookmark(target_site_num) == 0 and target_site_num > 10:
         logging.warning('ran out of sites to check for')
         return 0
    
@@ -112,7 +113,7 @@ def warp_to_local_bookmark(target_site_num):
         
         # If the 'approach location' option is found, return function.
         if lo.locate('./img/buttons/detect_warp_to_bookmark.bmp', conf=0.90) is not None:
-            logging.debug('already at bookmark ' + (str(target_site)))
+            logging.debug('already at bookmark ' + (str(target_site_bookmark)))
             keyboard.keypress('esc')  # Close right-click menu.
             return 0
 
@@ -121,7 +122,8 @@ def warp_to_local_bookmark(target_site_num):
             warp_to_site = lo.clocate('./img/buttons/warp_to_bookmark.bmp', conf=0.90)
 
             if warp_to_site is not None:
-                logging.info('warping to bookmark ' + (str(target_site)))
+                logging.info(
+                    'warping to bookmark ' + (str(target_site_bookmark)))
                 pag.moveRel((0 + (random.randint(10, 80))),
                             (0 + (random.randint(10, 15))),
                             mouse.duration(), mouse.path())
