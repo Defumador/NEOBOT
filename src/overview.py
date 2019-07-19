@@ -193,25 +193,19 @@ def look_for_targets(target1, target2, target3, target4, target5):
 def wait_for_target_lock():
     """Waits until a target has been locked by looking for
     the 'unlock target' icon in the 'selected item' window."""
-    target_lock = pag.locateOnScreen(
-        './img/indicators/target_lock_attained.bmp',
-        confidence=0.95,
-        region=(originx, originy,
-                windowx, windowy))
     tries = 0
-    while target_lock is None and tries <= 100:
+    while lo.locate('./img/indicators/target_lock_attained.bmp') is None \
+    and tries <= 100:
         tries += 1
-        target_lock = pag.locateOnScreen(
-            './img/indicators/target_lock_attained.bmp',
-            confidence=0.95,
-            region=(originx, originy,
-                    windowx, windowy))
+        logging.debug('locking target ' + (str(tries)))
         time.sleep(float(random.randint(100, 500)) / 1000)
-        logging.debug('locking target' + (str(tries)))
-    if target_lock is not None and tries <= 100:
+
+    if lo.locate('./img/indicators/target_lock_attained.bmp') is not None \
+    and tries <= 100:
         logging.debug('lock attained')
         return 1
-    elif target_lock is None and tries > 100:
+    if lo.locate('./img/indicators/target_lock_attained.bmp') is None \
+    and tries > 100:
         logging.error('timed out waiting for target lock')
         return 0
 
