@@ -126,15 +126,11 @@ def warp_to_local_bookmark(target_site):
 def dock_at_local_bookmark():
     """Dock at the first bookmark beginning with a '0' in its name, assuming it's
     in the same system as you."""
-    dock_at_station_bookmark_var = pag.locateCenterOnScreen(
-        './img/dest/at_dest0.bmp',
-        confidence=conf,
-        region=(originx, originy,
-                windowx, windowy))
-    if dock_at_station_bookmark_var is not None:
-        (homex, homey) = dock_at_station_bookmark_var
-        pag.moveTo((homex + (random.randint(-1, 200))),
-                   (homey + (random.randint(-3, 3))),
+    dock = lo.clocate('./img/dest/at_dest0.bmp')
+    if dock is not None:
+        (x, y) = dock
+        pag.moveTo((x + (random.randint(-1, 200))),
+                   (y + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
         mouse.click_right()
 
@@ -156,23 +152,18 @@ def detect_bookmark_location():
     n = 0
     # Confidence must be higher than normal because script frequently
     # mistakes dest3 for dest2.
-    at_dest = pag.locateCenterOnScreen(
-        ('./img/dest/at_dest' + (destnum[n]) + '.bmp'),
-        confidence=0.98,
-        region=(originx, originy, windowx, windowy))
+    at_dest = lo.locate('./img/dest/at_dest' + (str(n)) + '.bmp', conf=0.98)
 
     while at_dest is None:
         n += 1
-        at_dest = pag.locateCenterOnScreen(
-            ('./img/dest/at_dest' + (destnum[n]) + '.bmp'),
-            confidence=0.98,
-            region=(originx, originy, windowx, windowy))
-        logging.debug('looking if at destination ' + (str((destnum[n]))))
+        logging.debug('looking if at destination ' + (str(n)))
+        at_dest = lo.locate('./img/dest/at_dest' + (str(n)) + '.bmp', conf=0.98)
+           
         if n == 9 and at_dest is None:
             print('out of destinations to look for')
             return -1
     if at_dest is not None:
-        logging.debug('at dest ' + (str((destnum[n]))))
+        logging.debug('at dest ' + (str(n)))
         return n
 
 
