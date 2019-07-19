@@ -2,9 +2,7 @@ import random
 import time
 import logging
 
-from lib import keyboard as key, locate as lo
-
-import pyautogui as pag
+from src import keyboard as key, locate as lo
 
 drones_dict = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5"}
 
@@ -12,7 +10,7 @@ logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
 
-def launch_drones_loop(drone_num):
+def launch_drones(drone_num):
     # User must custom-set the "launch drones" hotkey to be Shift-l
     if drone_num != 0:
         logging.info('launching drones')
@@ -38,7 +36,7 @@ def launch_drones_loop(drone_num):
         return 1
 
 
-def detect_drones_launched():
+def are_drones_launched():
     if lo.locate('./img/indicators/drones/0_drone_in_bay.bmp') is not None:
         logging.debug('drones are in space')
         return 1
@@ -46,7 +44,7 @@ def detect_drones_launched():
         return 0
 
 
-def recall_drones_loop(drone_num):
+def recall_drones(drone_num):
     if drone_num != 0:
         time.sleep(float(random.randint(5, 500)) / 1000)
         key.hotkey('shift', 'r')

@@ -1,6 +1,6 @@
 import random
 import logging
-from lib.vars import originx, originy, windowx, windowy
+from src.vars import originx, originy, windowx, windowy
 
 import pyautogui as pag
 

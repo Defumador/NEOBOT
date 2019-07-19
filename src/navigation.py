@@ -5,9 +5,9 @@ import random
 import threading
 import traceback
 import pyautogui as pag
-# from lib.main import stopvar
-from lib import mouse, keyboard, overview
-from lib.vars import originx, originy, windowx, windowy
+# from src.main import stopvar
+from src import mouse, keyboard, overview
+from src.vars import originx, originy, windowx, windowy
 
 sys.setrecursionlimit(9999999)
 
@@ -15,7 +15,7 @@ logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
 
-def detect_route():
+def has_route():
     """Check the top-left corner of the hud to see if a route has actually been
     set by the user."""
     route_set_var = pag.locateCenterOnScreen('./img/indicators/detect_route.bmp',
@@ -105,7 +105,7 @@ def warp_to_waypoint():
         sys.exit()
 
 
-def detect_warp_loop():
+def wait_for_warp_to_complete():
     """Detect when a warp has been completed by waiting for the 'warping' text
     to disappear from the spedometer. Wait for the ship to begin its warp
     before checking though, otherwise the script will think the warp has
@@ -154,7 +154,7 @@ def detect_warp_loop():
         return 0
 
 
-def detect_jump_loop():
+def wait_for_jump():
     # Detect a jump by looking for the cyan session-change icon in top left
     # corner of the eve client window. If a jump hasn't been detected after
     # 50 checks, check if the 'low security system warning' window has appeared
@@ -199,7 +199,7 @@ def detect_jump_loop():
         sys.exit()
 
 
-def detect_dock_loop():
+def wait_for_dock():
     # Detect a station dock by looking for undock_loop icon on the right half of the
     # eve client window.
     tries = 0
@@ -236,7 +236,7 @@ def emergency_terminate():
     logging.debug('EMERGENCY TERMINATE CALLED !!!')
     tries = 0
     confidence = 0.95
-    overview.focus_overview_tab('general')
+    overview.select_overview_tab('general')
     station_icon = pag.locateCenterOnScreen('./img/overview/station.bmp',
                                             confidence=confidence,
                                             region=((originx + (windowx - (
@@ -273,9 +273,9 @@ def emergency_terminate():
             (random.randint(150, (int(windowy - (windowy / 4))))),
             (random.randint(150, (int(windowx - (windowx / 4))))),
             mouse.duration(), mouse.path())
-        if detect_dock_loop() == 1:
+        if wait_for_dock() == 1:
             emergency_logout()
-        elif detect_dock_loop() == 0:
+        elif wait_for_dock() == 0:
             time.sleep(float(random.randint(60000, 120000)) / 1000)
             emergency_logout()
         return 0
@@ -286,7 +286,7 @@ def emergency_terminate():
         logging.debug('could not find station to emergency dock at, warping to'
                       'celestial body instead ' + (str(tries)))
         confidence = 1
-        overview.focus_overview_tab('warpto')
+        overview.select_overview_tab('warpto')
         planet = pag.locateCenterOnScreen(
             './img/overview/planet.bmp',
             confidence=confidence,
@@ -320,7 +320,7 @@ def emergency_terminate():
                        (random.randint(150, (
                            int(windowx - (windowx / 4))))),
                        mouse.duration(), mouse.path())
-            detect_warp_loop()
+            wait_for_warp_to_complete()
             emergency_logout()
             return 0
         else:

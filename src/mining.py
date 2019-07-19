@@ -5,8 +5,8 @@ import logging
 
 import pyautogui as pag
 
-from lib import keyboard
-from lib.vars import originx, originy, windowx, windowy
+from src import keyboard
+from src.vars import originx, originy, windowx, windowy
 
 sys.setrecursionlimit(9999999)
 
@@ -48,7 +48,7 @@ elif asteroid_depleted_popup_var is not None:
 '''
 
 
-def inv_full_popup():
+def ship_full_popup():
     # Check for momentary popup indicating cargo/ore hold is full.
     # This popup lasts about 5 seconds.
     inv_full_popup_var = pag.locateCenterOnScreen(
@@ -80,7 +80,7 @@ def miner_out_of_range_popup():
         return 0
 
 
-def timer(timer_var):
+def time_at_site(timer_var):
     # Timeout timer for mining. If, for some reason, miner gets stuck in
     # belt, restart script after a certain period of time.
     logging.debug('time spent at site is ' + (str(timer_var)) + 's')

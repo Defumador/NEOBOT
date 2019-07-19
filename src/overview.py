@@ -4,8 +4,8 @@ import logging
 
 import pyautogui as pag
 
-from lib import mouse, keyboard, locate as lo
-from lib.vars import originx, originy, windowx, windowy
+from src import mouse, keyboard, locate as lo
+from src.vars import originx, originy, windowx, windowy
 
 # Specify the target names you wish the script to search for in the Overview.
 # For mining, this would be ore types.
@@ -19,7 +19,10 @@ logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
 
-def detect_jam(jam_var):
+# TODO: function to sort overview by distance
+
+
+def is_jammed(jam_var):
     """Check for an ecm-jamming icon on the rightmost column of the
     overview."""
     if jam_var == 1:
@@ -88,9 +91,9 @@ def build_ship_list(detect_npcs_var, npc_frig_dest,
                 '/player_capsule.bmp')
         logging.debug('pc list is now' + (str(pc_list)))
     return npc_list, pc_list
-    
-    
-def detect_ships(npc_list, pc_list):
+
+
+def look_for_ship(npc_list, pc_list):
     """Check if any of the ship icons in the given lists are currently
     present on the overview, searching the rightmost quarter of the screen
     only."""
@@ -147,9 +150,10 @@ def detect_ships(npc_list, pc_list):
         return 0
 
 
-def detect_overview_target(target1, target2, target3, target4, target5):
+def look_for_targets(target1, target2, target3, target4, target5):
     """Iterate through a list of user-defined targets. If one is found,
-    return its location to the calling function."""
+    return its location to the calling function. Searches the rightmost
+    quarter of the user's client only (just the overview)."""
 
     overview = pag.screenshot(
         region=((originx + (windowx - (int(windowx / 3.8)))),
@@ -183,9 +187,9 @@ def detect_overview_target(target1, target2, target3, target4, target5):
         else:
             logging.info('No targets found.')
             return 0
-        
-        
-def detect_target_lock_loop():
+
+
+def wait_for_target_lock():
     """Waits until a target has been locked."""
     target_lock = pag.locateOnScreen(
         './img/indicators/target_lock_attained.bmp',
@@ -238,7 +242,7 @@ def focus_overview():
     return 1
 
 
-def focus_overview_tab(tab):
+def select_overview_tab(tab):
     # Switch to the specified tab of the overview
     logging.debug('focusing ' + (str(tab)) + ' tab')
     tab_selected = pag.locateCenterOnScreen(
@@ -269,7 +273,7 @@ def focus_overview_tab(tab):
             return 0
 
 
-def target_available():
+def is_target_lockable():
     # Look for the target icon in the 'selected item' window, indicating
     # target is close enough in order to achieve a lock.
     target_lock_available = pag.locateOnScreen(
@@ -285,7 +289,7 @@ def target_available():
         return 0
 
 
-def target_overview_target(overview_target):
+def initiate_target_lock(overview_target):
     """Targets the closest user-defined item in the Overview, assuming overview
     is sorted by distance, with closest objects at the top."""
     if overview_target is not None:
@@ -300,18 +304,18 @@ def target_overview_target(overview_target):
         mouse.click()
         keyboard.keypress('w')
         tries = 0
-        while target_available() == 0 and tries <= 30:
+        while is_target_lockable() == 0 and tries <= 30:
             time.sleep(float(random.randint(1000, 2000)) / 1000)
             tries += 1
             logging.debug('target not yet within range ' + (str(tries)))
-        if target_available() == 1 and tries <= 30:
+        if is_target_lockable() == 1 and tries <= 30:
             logging.debug('locking target')
             keyboard.keypress('ctrl')
-            if detect_target_lock_loop() == 1:
+            if wait_for_target_lock() == 1:
                 return 1
-            elif detect_target_lock_loop() == 0:
+            elif wait_for_target_lock() == 0:
                 return 0
-        elif target_available() == 0 and tries > 30:
+        elif is_target_lockable() == 0 and tries > 30:
             logging.warning(
                 'timed out waiting for target to get within range!')
             return 0

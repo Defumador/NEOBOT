@@ -5,9 +5,9 @@ import logging
 
 import pyautogui as pag
 
-from lib import mouse, keyboard, navigation as nav
-from lib.navigation import detect_dock_loop
-from lib.vars import originx, originy, windowx, windowy, conf
+from src import mouse, keyboard, navigation as nav
+from src.navigation import wait_for_dock
+from src.vars import originx, originy, windowx, windowy, conf
 
 destnum = {0: "0", 1: "1", 2: "2", 3: "3", 4: "4", 5: "5", 6: "6", 7: "7",
            8: "8", 9: "9", 10: "10"}
@@ -50,7 +50,7 @@ def set_dest():
         return
 
 
-def detect_at_home():
+def is_home():
     """Check if the ship is at its home station by looking for a bookmark
     starting with '000'."""
     at_home_check_var = pag.locateCenterOnScreen('./img/dest/at_dest0.bmp',
@@ -162,7 +162,7 @@ def dock_at_local_bookmark():
         # (see video 2019-07-06_13-26-14 at 33m50s for bug).
         time.sleep(float(random.randint(500, 800)) / 1000)
         mouse.click()
-        detect_dock_loop()
+        wait_for_dock()
 
 
 def detect_bookmark_location():
@@ -312,7 +312,7 @@ def blacklist_local_bookmark():
             return 0
 
 
-def blacklist_specific_bookmark(target_site):
+def blacklist_set_bookmark(target_site):
     """Blacklist a specific bookmark by changing its name."""
     # TODO: possible blacklist bookmarks instead by deleting them, which
     # could lead to fewer bugs as sometimes the 'rename bookmark' window
@@ -361,7 +361,7 @@ def travel_to_bookmark(target_bookmark):
     if travel_to_bookmark_var == 1 and target_bookmark <= 10:
         # Once a valid site is found, remember the site number the ship is
         # warping to so script doesn't try warping there again.
-        if nav.detect_warp_loop() == 1:
+        if nav.wait_for_warp_to_complete() == 1:
             return 1
     else:
         logging.warning('ran out of sites to check for')

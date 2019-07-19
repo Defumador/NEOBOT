@@ -10,10 +10,13 @@ import tkinter
 import datetime
 import tkinter.scrolledtext as ScrolledText
 from tkinter import ttk
-import drones
-from lib import docked, load_ship, navigation as nav, unload_ship, mining, \
+# import drones
+
+# import src.docked
+# import src.drones
+from src import docked as doc, drones, navigation as nav, mining as mng, \
     bookmarks as bkmk, overview as o
-from lib.vars import system_mining, originx, originy, windowx, windowy
+from src.vars import system_mining, originx, originy, windowx, windowy
 
 sys.setrecursionlimit(9999999)
 playerfound = 0
@@ -59,16 +62,16 @@ def miner():
     o4 = './img/overview/ore_types/scordite.bmp'
     o5 = 0
 
-    print('main, drones is', drone_num)
+    print('main, drones is ', drone_num)
     global playerfound
     global site
     global runs
     timer_var = 0
-    logging.info('beginning run' + (str(runs)))
-    while docked.is_docked() == 0:
-        if drones.detect_drones_launched() == 1:
+    logging.info('beginning run ' + (str(runs)))
+    while doc.is_docked() == 0:
+        if drones.are_drones_launched() == 1:
             o.focus_client()
-            drones.recall_drones_loop(drone_num)
+            drones.recall_drones(drone_num)
         # Increment desired mining site by one as this is the next location
         # ship will warp to.
         site += 1
@@ -80,7 +83,7 @@ def miner():
             # If either exist, warp to the next site.
             # If no hostiles npcs or players are present, check for asteroids.
             # If no asteroids, blacklist site and warp to next site.
-            if o.focus_overview_tab('general') == 1:
+            if o.select_overview_tab('general') == 1:
                 global npc_list, pc_list
                 (npc_list, pc_list) = o.build_ship_list(detect_npcs,
                                                         npc_frig_dest,
@@ -90,50 +93,50 @@ def miner():
                                                         pc_cruiser_bc, pc_bs,
                                                         pc_capindy_freighter,
                                                         pc_rookie, pc_pod)
-                if o.detect_ships(npc_list, pc_list) == 1:
+                if o.look_for_ship(npc_list, pc_list) == 1:
                     miner()
 
-            o.focus_overview_tab('mining')
-            target = o.detect_overview_target(o1, o2, o3, o4, o5)
-            while o.detect_overview_target(o1, o2, o3, o4, o5) is not None:
-                drones.launch_drones_loop(drone_num)
-                if o.target_overview_target(target) == 0:
+            o.select_overview_tab('mining')
+            target = o.look_for_targets(o1, o2, o3, o4, o5)
+            while o.look_for_targets(o1, o2, o3, o4, o5) is not None:
+                drones.launch_drones(drone_num)
+                if o.initiate_target_lock(target) == 0:
                     miner()
-                mining.activate_miner(module_num)
+                mng.activate_miner(module_num)
                 # If ship inventory isn't full, continue to mine ore and wait
                 # for popups or errors.
                 # Switch back to the general tab for easier ship detection
-                o.focus_overview_tab('general')
-                while mining.inv_full_popup() == 0:
-                    if mining.asteroid_depleted_popup() == 1:
-                        target = o.detect_overview_target(o1, o2, o3, o4, o5)
-                        if o.detect_overview_target(o1, o2, o3, o4, o5) == 0:
+                o.select_overview_tab('general')
+                while mng.ship_full_popup() == 0:
+                    if mng.asteroid_depleted_popup() == 1:
+                        target = o.look_for_targets(o1, o2, o3, o4, o5)
+                        if o.look_for_targets(o1, o2, o3, o4, o5) == 0:
                             miner()
 
-                        elif o.detect_overview_target(o1, o2, o3, o4, o5
-                                                      ) is not None:
-                            if o.target_overview_target(target) == 0:
+                        elif o.look_for_targets(o1, o2, o3, o4, o5
+                                                ) is not None:
+                            if o.initiate_target_lock(target) == 0:
                                 miner()
-                            mining.activate_miner(module_num)
-                            mining.inv_full_popup()
+                            mng.activate_miner(module_num)
+                            mng.ship_full_popup()
                             continue
-                    if o.detect_ships(npc_list, pc_list) == 1 or \
-                            o.detect_jam(jam_var) == 1 or mining.timer(
+                    if o.look_for_ship(npc_list, pc_list) == 1 or \
+                            o.is_jammed(jam_var) == 1 or mng.time_at_site(
                         timer_var) == 1:
-                        drones.recall_drones_loop(drone_num)
+                        drones.recall_drones(drone_num)
                         miner()
                     timer_var += 1
                     time.sleep(1)
 
-                if mining.inv_full_popup() == 1:
+                if mng.ship_full_popup() == 1:
                     # Once inventory is full, dock at home station and unload.
-                    drones.recall_drones_loop(drone_num)
-                    logging.info('finishing run' + (str(runs)))
+                    drones.recall_drones(drone_num)
+                    logging.info('finishing run ' + (str(runs)))
                     if system_mining == 0:
                         if bkmk.set_home() == 1:
                             if navigator() == 1:
-                                unload_ship.unload_ship()
-                                docked.undock_loop()
+                                doc.unload_ship()
+                                doc.wait_for_undock()
                                 playerfound = 0
                                 time.sleep(3)
                                 runs += 1
@@ -142,22 +145,22 @@ def miner():
                     # a different set of functions is required.
                     elif system_mining == 1:
                         bkmk.dock_at_local_bookmark()
-                        unload_ship.unload_ship()
-                        docked.undock_loop()
+                        doc.unload_ship()
+                        doc.wait_for_undock()
                         playerfound = 0
                         time.sleep(3)
                         runs += 1
                         miner()
 
-                if o.detect_overview_target(o1, o2, o3, o4, o5) == 0:
+                if o.look_for_targets(o1, o2, o3, o4, o5) == 0:
                     bkmk.blacklist_local_bookmark()
         elif bkmk.travel_to_bookmark(site) == 0:
             nav.emergency_terminate()
             sys.exit(0)
-    if docked.is_docked() == 1:
+    if doc.is_docked() == 1:
         # If docked when script starts, undock_loop.
         o.focus_client()
-        docked.undock_loop()
+        doc.wait_for_undock()
         miner()
 
 
@@ -165,15 +168,15 @@ def navigator():
     """A standard warp-to-zero autopilot script. Warp to the destination, then
     terminate."""
     logging.debug('running navigator')
-    nav.detect_route()
-    dockedcheck = docked.is_docked()
+    nav.has_route()
+    dockedcheck = doc.is_docked()
 
     while dockedcheck == 0:
         o.focus_overview()
         selectwaypoint = nav.warp_to_waypoint()
         while selectwaypoint == 1:  # Value of 1 indicates stargate waypoint.
             time.sleep(5)  # Wait for jump to begin.
-            detectjump = nav.detect_jump_loop()
+            detectjump = nav.wait_for_jump()
             if detectjump == 1:
                 selectwaypoint = nav.warp_to_waypoint()
             else:
@@ -185,7 +188,7 @@ def navigator():
 
         while selectwaypoint == 2:  # Value of 2 indicates a station waypoint.
             time.sleep(5)
-            detectdock = nav.detect_dock_loop()
+            detectdock = nav.wait_for_dock()
             if detectdock == 1:
                 logging.info('arrived at destination')
                 return 1
@@ -194,7 +197,7 @@ def navigator():
             return 1
 
     while dockedcheck == 1:
-        docked.undock_loop()
+        doc.wait_for_undock()
         time.sleep(5)
         navigator()
 
@@ -206,18 +209,18 @@ def collector():
     station bookmark beginning with the numbers 1-9. This means up to 10
     remote stations are supported."""
     logging.debug('running collector')
-    dockedcheck = docked.is_docked()
+    dockedcheck = doc.is_docked()
     while dockedcheck == 0:
         selectwaypoint = nav.warp_to_waypoint()
 
         while selectwaypoint == 1:
             time.sleep(3)  # Wait for warp to start.
-            detectjump = nav.detect_jump_loop()
+            detectjump = nav.wait_for_jump()
             if detectjump == 1:
                 selectwaypoint = nav.warp_to_waypoint()
         while selectwaypoint == 2:
             time.sleep(3)
-            detectdock = nav.detect_dock_loop()
+            detectdock = nav.wait_for_dock()
             if detectdock == 1:
                 collector()
         else:
@@ -228,32 +231,32 @@ def collector():
             sys.exit()
 
     while dockedcheck == 1:
-        athomecheck = bkmk.detect_at_home()
+        athomecheck = bkmk.is_home()
         # If docked at home station, set a destination waypoint to a remote
         # station and unload cargo from ship into home station inventory.
         if athomecheck == 1:
-            unload_ship.unload_ship()
+            doc.unload_ship()
             bkmk.set_dest()
-            docked.undock_loop()
+            doc.wait_for_undock()
             collector()
         elif athomecheck == 0:
             logging.debug('not at home')
-            loadship = load_ship.load_ship_full()
-            logging.debug('loadship is', loadship)
+            loadship = doc.load_ship()
+            logging.debug('loadship is ' + (str(loadship)))
 
             if loadship == 2 or loadship == 0 or loadship is None:
                 atdestnum = bkmk.detect_bookmark_location()
                 if atdestnum == -1:
-                    docked.undock_loop()
+                    doc.wait_for_undock()
                     collector()
                 else:
                     bkmk.set_dest()
                     bkmk.blacklist_station()
-                    docked.undock_loop()
+                    doc.wait_for_undock()
                     collector()
             elif loadship == 1:  # Value of 1 indicates ship is full.
                 bkmk.set_home()
-                docked.undock_loop()
+                doc.wait_for_undock()
                 collector()
 
         else:
@@ -445,7 +448,7 @@ def start(event):
     jam_var = (int(detect_jam_gui.get()))
     logger.debug('detect ecm jamming is ' + (str(detect_jam)))
 
-    miner()
+    doc.load_ship()
     return
 
 
