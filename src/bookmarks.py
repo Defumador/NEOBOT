@@ -46,14 +46,10 @@ def set_dest():
 def is_home():
     """Check if the ship is at its home station by looking for a bookmark
     starting with '000'."""
-    at_home_check_var = pag.locateCenterOnScreen('./img/dest/at_dest0.bmp',
-                                                 confidence=conf,
-                                                 region=(originx, originy,
-                                                         windowx, windowy))
-    if at_home_check_var is None:
+    if lo.locate('./img/dest/at_dest0.bmp') is None:
         logging.debug('not at home station')
         return 0
-    elif at_home_check_var is not None:
+    elif lo.locate('./img/dest/at_dest0.bmp') is not None:
         logging.debug('at home station')
         return 1
 
