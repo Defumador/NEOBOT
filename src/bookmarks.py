@@ -69,51 +69,66 @@ def set_home():
         return 0
 
     
-def warp_to_local_bookmark(target_site):
-    """Try warping to a specific bookmark in the current system.
-    If the ship is already at the requested site, return function."""
-    # Confidence must be >0.95 because script will confuse 6 with 0.
-    specific_system_bookmark = pag.locateCenterOnScreen(
-        ('./img/dest/at_dest' + (str(target_site)) + '.bmp'),
-        confidence=0.98,
-        region=(originx, originy, windowx, windowy))
-    (specific_system_bookmarkx, specific_system_bookmarky) = \
-        specific_system_bookmark
+def travel_to_bookmark(target_site_num):
+    # TODO: rename to 'iterate_through_bookmarks' or something
+    """Tries warping to the provided bookmark. If not possible, warps
+    to the next numerical bookmark up.
 
+    Ex: try warping to bookmark X in the system. If bookmark X doesn't exist,
+    is not in the current system, or your ship is already there. Increment
+    bookmark number by 1 and try again."""
+
+    while warp_to_local_bookmark(target_site_num) == 0 and target_bookmark <= 10:
+        target_site_num += 1
+
+        # TODO: change the '10' constant to equal total number of bookmarks set
+    if warp_to_local_bookmark(target_site_num) == 1 and target_site_num <= 10:
+        # Once a valid site is found, remember the site number the ship is
+        # warping to so script doesn't try warping there again.
+        if nav.wait_for_warp_to_complete() == 1:
+            return 1
+    elif bookmark_site == 0 and target_bookmark > 10:
+        logging.warning('ran out of sites to check for')
+        return 0
+   
+
+def warp_to_local_bookmark(target_site_num):
+    """Tries warping to the provided bookmark, assuming the bookmark
+    is in the current system. If the ship is already at the
+    requested site, return the function."""
+    # Confidence must be >0.95 because script will confuse 6 with 0.
+    target_site_bookmark = lo.clocate('./img/dest/at_dest' + (str(target_site_num)) + '.bmp', conf=0.98)
+   
     # If the target site has been found, right click on the target to see if
     # the 'approach location' option is there. If so, return function
     # because ship is already at that location. If the option is not there,
     # check for a 'warp to' option, if it's present, warp to location.
-    if specific_system_bookmark is not None:
-        pag.moveTo((specific_system_bookmarkx + (random.randint(10, 200))),
-                   (specific_system_bookmarky + (random.randint(-3, 3))),
+    if target_site_bookmark is not None:
+        (x, y) = target_site_bookmark
+        pag.moveTo((x + (random.randint(10, 200))),
+                   (y + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
         mouse.click_right()
-
-        at_target_site = pag.locateCenterOnScreen(
-            './img/buttons/detect_warp_to_bookmark.bmp',
-            confidence=0.90, region=(originx, originy, windowx, windowy))
-
-        if at_target_site is not None:
+        
+        # If the 'approach location' option is found, return function.
+        if lo.locate('./img/buttons/detect_warp_to_bookmark.bmp', conf=0.90) is not None:
             logging.debug('already at bookmark ' + (str(target_site)))
             keyboard.keypress('esc')  # Close right-click menu.
             return 0
 
-        elif at_target_site is None:
-            warp_to_target = pag.locateCenterOnScreen(
-                './img/buttons/warp_to_bookmark.bmp',
-                confidence=0.90, region=(originx, originy, windowx, windowy))
+        # Otherwise, warp to location.
+        elif lo.locate('./img/buttons/detect_warp_to_bookmark.bmp', conf=0.90) is None:
+            warp_to_site = lo.clocate('./img/buttons/warp_to_bookmark.bmp', conf=0.90)
 
-            if warp_to_target is not None:
+            if warp_to_site is not None:
                 logging.info('warping to bookmark ' + (str(target_site)))
                 pag.moveRel((0 + (random.randint(10, 80))),
                             (0 + (random.randint(10, 15))),
                             mouse.duration(), mouse.path())
                 mouse.click()
-                time.sleep(float(random.randint(500, 800)) / 1000)
-                time.sleep(1)
+                time.sleep(float(random.randint(1500, 1800)) / 1000)
                 return 1
-            else:
+            elif warp_to_site is None:
                 logging.error('unable to warp to target site, is ship docked?')
                 return 0
 
@@ -310,25 +325,3 @@ def blacklist_set_bookmark(target_site):
     time.sleep(float(random.randint(0, 1000)) / 1000)
     keyboard.keypress('enter')
     return 1
-
-
-def travel_to_bookmark(target_bookmark):
-    """Try warping to the provided bookmark. If not possible, warp
-    to the next numerical bookmark up.
-
-    Try warping to bookmark X in the system. If bookmark X doesn't exist,
-    is not in the current system, or your ship is already there. Increment
-    bookmark number by 1 and try again."""
-    bookmark_site = warp_to_local_bookmark(target_bookmark)
-    while bookmark_site == 0 and target_bookmark <= 10:
-        target_bookmark += 1
-        bookmark_site = warp_to_local_bookmark(target_bookmark)
-
-    if bookmark_site == 1 and target_bookmark <= 10:
-        # Once a valid site is found, remember the site number the ship is
-        # warping to so script doesn't try warping there again.
-        if nav.wait_for_warp_to_complete() == 1:
-            return 1
-    elif bookmark_site == 0 and target_bookmark > 10:
-        logging.warning('ran out of sites to check for')
-        return 0
