@@ -313,26 +313,22 @@ def blacklist_set_bookmark(target_site):
 
 
 def travel_to_bookmark(target_bookmark):
-    """Find a suitable asteroid field by warping to each bookmark in
-    numerical order.
-    Currently only mining in a single system with at least one station is
-    supported
+    """Try warping to the provided bookmark. If not possible, warp
+    to the next numerical bookmark up.
 
-    Try warping to bookmark 1 in the system. If bookmark 1 doesn't exist,
+    Try warping to bookmark X in the system. If bookmark X doesn't exist,
     is not in the current system, or your ship is already there. Increment
     bookmark number by 1 and try again."""
-    travel_to_bookmark_var = warp_to_local_bookmark(
-        target_bookmark)
-    while travel_to_bookmark_var == 0 and target_bookmark <= 10:
+    bookmark_site = warp_to_local_bookmark(target_bookmark)
+    while bookmark_site == 0 and target_bookmark <= 10:
         target_bookmark += 1
-        travel_to_bookmark_var = warp_to_local_bookmark(
-            target_bookmark)
-        continue
-    if travel_to_bookmark_var == 1 and target_bookmark <= 10:
+        bookmark_site = warp_to_local_bookmark(target_bookmark)
+
+    if bookmark_site == 1 and target_bookmark <= 10:
         # Once a valid site is found, remember the site number the ship is
         # warping to so script doesn't try warping there again.
         if nav.wait_for_warp_to_complete() == 1:
             return 1
-    else:
+    elif bookmark_site == 0 and target_bookmark > 10:
         logging.warning('ran out of sites to check for')
         return 0
