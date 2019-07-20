@@ -57,9 +57,9 @@ def build_ship_list(detect_npcs_var, npc_frig_dest,
                 './img/overview/npc_ship_icons/npc_hostile_cruiser.bmp')
     pc_list = []
     if detect_pcs_var == 1:
-        logging.debug('detect pcs is' + (str(detect_pcs_var)))
-        logging.debug('pc bs is' + (str(pc_bs)))
-        logging.debug('pc list is' + (str(pc_list)))
+        # logging.debug('detect pcs is' + (str(detect_pcs_var)))
+        # logging.debug('pc bs is' + (str(pc_bs)))
+        # logging.debug('pc list is' + (str(pc_list)))
         if pc_indy == 1:
             pc_list.append(
                 './img/overview/player_ship_icons/archetype_icons'
@@ -92,7 +92,7 @@ def build_ship_list(detect_npcs_var, npc_frig_dest,
             pc_list.append(
                 './img/overview/player_ship_icons/archetype_icons'
                 '/player_capsule.bmp')
-        logging.debug('pc list is now' + (str(pc_list)))
+        #logging.debug('pc list is now' + (str(pc_list)))
     return npc_list, pc_list
 
 
@@ -282,9 +282,11 @@ def is_target_lockable():
 
 
 def initiate_target_lock(overview_target):
-    """Targets the closest user-defined item on the overview, assuming overview
-    is sorted by distance, with closest objects at the top. If cannot lock
-    target the first try, tries two more times before giving up."""
+    """Selects closest user-defined item on the overview, assuming overview
+    is sorted by distance, with closest objects at the top. Orbits the
+    selected item and waits until ship is close enough to target-lock the
+    item. If cannot lock target the first try, tries two more times before
+    giving up."""
     if overview_target is not None:
         # Break apart tuple into coordinates
         (x, y, l, w) = overview_target
@@ -295,7 +297,7 @@ def initiate_target_lock(overview_target):
                    (y + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
         mouse.click()
-        keyboard.keypress('w')
+        keyboard.keypress('w')  # 'orbit' hotkey
         # Try 3 times to get a target lock. This could be useful is ship is
         # being jammed while trying to lock target, but ship's drones
         # eventually destroy the enemy ship jamming the player ship.
