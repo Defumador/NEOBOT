@@ -5,7 +5,7 @@ import logging
 
 import pyautogui as pag
 
-from src import keyboard
+from src import keyboard, locate as lo
 from src.vars import originx, originy, windowx, windowy
 
 sys.setrecursionlimit(9999999)
@@ -42,21 +42,12 @@ def activate_miner(module_num):
 def asteroid_depleted_popup():
     """Checks for popup indicating the asteroid currently being mined has been
     depleted."""
-    logging.debug('asteroid still available')
-    return 0
-
-
-'''
-asteroid_depleted_popup_var = pag.locateCenterOnScreen(
-    './img/overview/asteroid_depleted.bmp',
-    confidence=0.90,
-    region=(originx, originy, windowx, windowy))
-if asteroid_depleted_popup_var is None:
-    return 0
-elif asteroid_depleted_popup_var is not None:
-    print('asteroid_depleted_popup -- detected')
-    return 1
-'''
+    depleted = lo.locate('./img/popups/asteroid_depleted.bmp', conf=0.90)
+    if depleted is not None:
+        logging.debug('asteroid empty')
+        return 1
+    elif depleted is None:
+        return 0
 
 
 def ship_full_popup():
