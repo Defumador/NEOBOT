@@ -39,7 +39,8 @@ def launch_drones(drone_num):
 
 def are_drones_launched():
     """Checks if any drones are present in the drone bay."""
-    if lo.locate('./img/indicators/drones/0_drone_in_bay.bmp') is not None:
+    if lo.locate('./img/indicators/drones/0_drone_in_bay.bmp', conf=0.99) is \
+            not None:
         logging.debug('drones are in space')
         return 1
     else:
