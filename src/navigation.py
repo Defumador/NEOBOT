@@ -78,7 +78,8 @@ def wait_for_warp_to_complete():
     """Detects when a warp has started and been
     completed by watching the spedometer."""
     warp_duration = 1
-
+    # TODO: force ship to wait a minimum period of time while beginning to
+    #  warp, similar to what tinyminer does to eliminate possible issues
     # Wait for warp to begin by waiting until the speedometer is full. Ship
     # might be stuck on something so this could take an variable amount of
     # time.
