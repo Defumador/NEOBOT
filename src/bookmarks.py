@@ -95,7 +95,7 @@ def iterate_through_bookmarks_rand(total_site_num):
         return 0
 
 
-def iterate_through_bookmarks(target_site_num):
+def iterate_through_bookmarks(target_site_num, total_site_num):
     """Tries warping to the provided bookmark. If not possible, warps
     to the next numerical bookmark up.
 
@@ -106,16 +106,12 @@ def iterate_through_bookmarks(target_site_num):
     # Try running through bookmarks twice before giving up.
     for iterations in range(1, 3):
         warping_to_bookmark = warp_to_local_bookmark(target_site_num)
-        # logging.debug('warping_to_bookmark is ' + (str(warping_to_bookmark)))
 
-        while warping_to_bookmark == 0 and target_site_num <= 10:
+        while warping_to_bookmark == 0 and target_site_num <= total_site_num:
             target_site_num += 1
             warping_to_bookmark = warp_to_local_bookmark(target_site_num)
-            # logging.debug('warping_to_bookmark is now ' + (str(
-            #    warping_to_bookmark)))
 
-        # TODO: change the '10' constant to equal total number of bookmarks set
-        if warping_to_bookmark == 1 and target_site_num <= 10:
+        if warping_to_bookmark == 1 and target_site_num <= total_site_num:
             # Once a valid site is found, remember the site number the ship is
             # warping to so script doesn't try warping there again.
             if nav.wait_for_warp_to_complete() == 1:
@@ -123,7 +119,7 @@ def iterate_through_bookmarks(target_site_num):
 
         # If script runs out of bookmarks to check for, it resets the target
         # site to 1 and goes through them again.
-        elif warping_to_bookmark == 0 and target_site_num > 10:
+        elif warping_to_bookmark == 0 and target_site_num > total_site_num:
             logging.debug('out of sites to check for, wrapping back around' +
                           (str(iterations)))
             target_site_num = 1
