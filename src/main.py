@@ -100,10 +100,10 @@ def miner():
                 o.select_overview_tab('general')
                 while mng.ship_full_popup() == 0:
                     if mng.asteroid_depleted_popup() == 1:
+                        o.select_overview_tab('mining')
                         target = o.look_for_targets(o1, o2, o3, o4, o5)
                         if target == 0:
                             miner()
-
                         elif target != 0:
                             if o.initiate_target_lock(target) == 0:
                                 miner()
