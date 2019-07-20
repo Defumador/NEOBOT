@@ -26,7 +26,7 @@ def activate_miner(module_num):
         while out_of_range == 1 and tries <= 25:
             tries += 1
             time.sleep(float(random.randint(10000, 20000)) / 1000)
-            activate_miner(module_num)
+            out_of_range = miner_out_of_range_popup()
         if out_of_range == 0 and tries <= 25:
             continue
         elif out_of_range == 1 and tries > 25:
