@@ -299,7 +299,7 @@ def initiate_target_lock(overview_target):
                    (y + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
         mouse.click()
-        keyboard.keypress('w')  # 'orbit' hotkey
+        keyboard.keypress('e')  # 'keep at range' hotkey
         # Try 3 times to get a target lock. This could be useful is ship is
         # being jammed while trying to lock target, but ship's drones
         # eventually destroy the enemy ship jamming the player ship.
