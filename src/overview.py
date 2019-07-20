@@ -177,19 +177,21 @@ def look_for_targets(target1, target2, target3, target4, target5):
     if target5 != 0:
         target_list.append(target5)
 
-    for target in target_list:
-        target = pag.locate(target, overview, confidence=0.85)
+    for t in target_list:
+        target = pag.locate(t, overview, confidence=0.85)
         if target is not None:
-            logging.debug('found target at ' + (str(target)))
+            logging.debug('found ' + (str(t)) + ' at ' + (str(target)))
             # (x, y, l, w) = target
             # Move mouse over target for debugging.
             # pag.moveTo((x + (originx + (windowx - (int(windowx / 3.8))))),
             #           (y + originy),
             #           1, mouse.path())
             return target
-        else:
-            logging.warning('no targets found')
-            return 0
+        elif target is None:
+            logging.debug('target ' + (str(t)) + ' not found')
+
+    logging.info('no targets found')
+    return 0
 
 
 def wait_for_target_lock():
