@@ -25,12 +25,16 @@ def activate_miner(module_num):
         tries = 0
         while out_of_range == 1 and tries <= 25:
             tries += 1
-            time.sleep(float(random.randint(10000, 20000)) / 1000)
+            time.sleep(float(random.randint(15000, 30000)) / 1000)
             out_of_range = miner_out_of_range_popup()
+            if out_of_range == 0 and tries <= 25:
+                logging.debug('activating miner ' + (str(n)))
+                keyboard.keypress('f' + (str(n)))
         if out_of_range == 0 and tries <= 25:
             continue
         elif out_of_range == 1 and tries > 25:
-            logging.error('timed out waiting for miner to get within range')
+            logging.error('timed out waiting for ship to get within '
+                          'module range')
             return 0
     return 1
 
