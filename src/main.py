@@ -145,7 +145,7 @@ def miner():
                     logging.debug('no targets, restarting')
                     miner()
                     # bkmk.blacklist_local_bookmark()
-        elif bkmk.iterate_through_bookmarks(site) == 0:
+        elif bkmk.iterate_through_bookmarks_rand(total_sites) == 0:
             nav.emergency_terminate()
             sys.exit(0)
     if doc.is_docked() == 1:
