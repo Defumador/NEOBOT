@@ -88,7 +88,7 @@ def wait_for_warp_to_complete():
         warp_duration += 1
         logging.debug('waiting for warp to start ' + (str(warp_duration)))
         time.sleep(float(random.randint(500, 1000)) / 1000)
-        warping = lo.locate('./img/indicators/warping2.bmp', conf=0.98)
+        warping = lo.locate('./img/indicators/warping2.bmp', conf=0.96)
 
     # Once warp begins, wait for warp to end by waiting for speedometer to
     # empty.
@@ -97,7 +97,8 @@ def wait_for_warp_to_complete():
         warp_duration += 1
         logging.debug('warping ' + (str(warp_duration)))
         time.sleep(float(random.randint(1000, 3000)) / 1000)
-        warping = lo.locate('./img/indicators/warping2.bmp', conf=0.98)
+        # Look for a different image to determine when the warp as ended.
+        warping = lo.locate('./img/indicators/warping3.bmp', conf=0.9)
 
     if warping is None and warp_duration <= 150:
         time.sleep(float(random.randint(1000, 3000)) / 1000)
