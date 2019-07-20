@@ -78,7 +78,7 @@ def miner():
         # If there aren't any more sites left, loop back around to site 1.
         if site > total_sites:
             site = 1
-        if bkmk.travel_to_bookmark(site) == 1:
+        if bkmk.iterate_through_bookmarks(site) == 1:
             # Once arrived at site, check for hostile npcs and human players.
             # If either exist, warp to the next site.
             # If no hostiles npcs or players are present, check for asteroids.
@@ -154,7 +154,7 @@ def miner():
                     logging.debug('no targets, restarting')
                     miner()
                     # bkmk.blacklist_local_bookmark()
-        elif bkmk.travel_to_bookmark(site) == 0:
+        elif bkmk.iterate_through_bookmarks(site) == 0:
             nav.emergency_terminate()
             sys.exit(0)
     if doc.is_docked() == 1:

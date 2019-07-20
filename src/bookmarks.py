@@ -12,6 +12,7 @@ from src.vars import originx, originy, windowx, windowy, conf
 logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
+
 def set_dest():
     """Issue a 'set destination' command for the lowest-numbered bookmark that
     isn't blacklisted (starting with 1)."""
@@ -68,33 +69,42 @@ def set_home():
         logging.error('could not find home waypoint!')
         return 0
 
-    
-def travel_to_bookmark(target_site_num):
-    # TODO: rename to 'iterate_through_bookmarks' or something
+
+def iterate_through_bookmarks(target_site_num):
     """Tries warping to the provided bookmark. If not possible, warps
     to the next numerical bookmark up.
 
     Ex: try warping to bookmark X in the system. If bookmark X doesn't exist,
     is not in the current system, or your ship is already there. Increment
     bookmark number by 1 and try again."""
-    warping_to_bookmark = warp_to_local_bookmark(target_site_num)
-    # logging.debug('warping_to_bookmark is ' + (str(warping_to_bookmark)))
 
-    while warping_to_bookmark == 0 and target_site_num <= 10:
-        target_site_num += 1
+    # Try running through bookmarks twice before giving up.
+    for tries in range(1, 3):
         warping_to_bookmark = warp_to_local_bookmark(target_site_num)
-        # logging.debug('warping_to_bookmark is now ' + (str(
-        #    warping_to_bookmark)))
+        # logging.debug('warping_to_bookmark is ' + (str(warping_to_bookmark)))
+
+        while warping_to_bookmark == 0 and target_site_num <= 10:
+            target_site_num += 1
+            warping_to_bookmark = warp_to_local_bookmark(target_site_num)
+            # logging.debug('warping_to_bookmark is now ' + (str(
+            #    warping_to_bookmark)))
 
         # TODO: change the '10' constant to equal total number of bookmarks set
-    if warping_to_bookmark == 1 and target_site_num <= 10:
-        # Once a valid site is found, remember the site number the ship is
-        # warping to so script doesn't try warping there again.
-        if nav.wait_for_warp_to_complete() == 1:
-            return 1
-    elif warping_to_bookmark == 0 and target_site_num > 10:
-        logging.warning('ran out of sites to check for')
-        return 0
+        if warping_to_bookmark == 1 and target_site_num <= 10:
+            # Once a valid site is found, remember the site number the ship is
+            # warping to so script doesn't try warping there again.
+            if nav.wait_for_warp_to_complete() == 1:
+                return 1
+
+        # If script runs out of bookmarks to check for, it resets the target
+        # site to 1 and goes through them again.
+        elif warping_to_bookmark == 0 and target_site_num > 10:
+            logging.debug('out of sites to check for, wrapping back around' +
+                          (str(tries)))
+            target_site_num = 1
+
+    logging.error('no sites to warp to!')
+    return 0
    
 
 def warp_to_local_bookmark(target_site_num):
