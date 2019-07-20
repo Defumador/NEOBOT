@@ -70,6 +70,31 @@ def set_home():
         return 0
 
 
+def iterate_through_bookmarks_rand(total_site_num):
+    """Randomly attempts to warp to any bookmark up to the provided number.
+
+    Ex: try warping to bookmark X in the system. If bookmark X doesn't exist,
+    is not in the current system, or your ship is already there, try warping
+    to bookmark Y in the system."""
+    target_site_num = (random.randint(1, total_site_num))
+    warping_to_bookmark = warp_to_local_bookmark(target_site_num)
+
+    tries = 0
+    while warping_to_bookmark == 0 and tries <= (total_site_num + 10):
+        tries += 1
+        target_site_num = (random.randint(1, total_site_num))
+        warping_to_bookmark = warp_to_local_bookmark(target_site_num)
+
+    if warping_to_bookmark == 1 and tries <= (total_site_num + 10):
+        if nav.wait_for_warp_to_complete() == 1:
+            return 1
+
+    # If script randomly checks (total_site_num + 10) bookmarks, give up.
+    elif warping_to_bookmark == 0 and tries > (total_site_num + 10):
+        logging.error('timed out checking randomly for bookmarks!')
+        return 0
+
+
 def iterate_through_bookmarks(target_site_num):
     """Tries warping to the provided bookmark. If not possible, warps
     to the next numerical bookmark up.
@@ -79,7 +104,7 @@ def iterate_through_bookmarks(target_site_num):
     bookmark number by 1 and try again."""
 
     # Try running through bookmarks twice before giving up.
-    for tries in range(1, 3):
+    for iterations in range(1, 3):
         warping_to_bookmark = warp_to_local_bookmark(target_site_num)
         # logging.debug('warping_to_bookmark is ' + (str(warping_to_bookmark)))
 
@@ -100,10 +125,10 @@ def iterate_through_bookmarks(target_site_num):
         # site to 1 and goes through them again.
         elif warping_to_bookmark == 0 and target_site_num > 10:
             logging.debug('out of sites to check for, wrapping back around' +
-                          (str(tries)))
+                          (str(iterations)))
             target_site_num = 1
 
-    logging.error('no sites to warp to!')
+    logging.error('gave up looking for sites to warp to!')
     return 0
    
 
