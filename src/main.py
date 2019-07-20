@@ -21,7 +21,7 @@ from src.vars import system_mining, originx, originy, windowx, windowy
 sys.setrecursionlimit(9999999)
 playerfound = 0
 
-# TERMINOLOGY #################################################################
+# TERMINOLOGY ##################################################################
 
 # A 'warning' is a persistent dialogue window that appears in the center of
 # the screen and dims the rest of the screen. Warnings can only be dismissed
@@ -30,19 +30,15 @@ playerfound = 0
 # A 'popup' is a partially transparent block of text that appears in the
 # main play area for about five seconds.
 
-# A function with the word 'loop' in its name will not return until a certain
-# condition has been met or it times out.
+# A 'site' is just shorthand for a user-set numbered bookmark that the ship can
+# warp to, usually an asteroid belt.
 
-###############################################################################
+################################################################################
 
-# These variables are for the mining script only ------------------------------
-# Script begins at location 0, assumed to be your home station.
-site = 7
+# These variables are for the mining script only -------------------------------
 # Total number of saved bookmark locations. This variable is set by the user.
 total_sites = 10
-# Number of 'runs' completed for mining script
-runs = 1
-# -----------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 # recommended per https://docs.python.org/2/library/logging.html
 logger = logging.getLogger(__name__)
@@ -52,7 +48,7 @@ logger = logging.getLogger(__name__)
 # 'message)s', level=logging.DEBUG)
 
 
-# MAIN SCRIPTS ################################################################
+# MAIN SCRIPTS #################################################################
 
 def miner():
     # Ores to mine, in order of priority.
@@ -65,20 +61,17 @@ def miner():
     print('main, drones is ', drone_num)
     global playerfound
     global site
-    global runs
+    # Number of 'runs' completed for mining script. This is a constant and will
+    # always start as 1
+    runs_var = 1
     timer_var = 0
-    logging.info('beginning run ' + (str(runs)))
+    logging.info('beginning run ' + (str(runs_var)))
     while doc.is_docked() == 0:
         if drones.are_drones_launched() == 1:
             o.focus_client()
             drones.recall_drones(drone_num)
-        # Increment desired mining site by one as this is the next location
-        # ship will warp to.
-        site += 1
-        # If there aren't any more sites left, loop back around to site 1.
-        if site > total_sites:
             site = 1
-        if bkmk.iterate_through_bookmarks(site) == 1:
+        if bkmk.iterate_through_bookmarks_rand(total_sites) == 1:
             # Once arrived at site, check for hostile npcs and human players.
             # If either exist, warp to the next site.
             # If no hostiles npcs or players are present, check for asteroids.
@@ -130,7 +123,7 @@ def miner():
                 if mng.ship_full_popup() == 1:
                     # Once inventory is full, dock at home station and unload.
                     drones.recall_drones(drone_num)
-                    logging.info('finishing run ' + (str(runs)))
+                    logging.info('finishing run ' + (str(runs_var)))
                     if system_mining == 0:
                         if bkmk.set_home() == 1:
                             if navigator() == 1:
@@ -138,7 +131,7 @@ def miner():
                                 doc.wait_for_undock()
                                 playerfound = 0
                                 time.sleep(3)
-                                runs += 1
+                                runs_var += 1
                                 miner()
                     # If ship is mining in the same system it will dock in,
                     # a different set of functions is required.
@@ -148,7 +141,7 @@ def miner():
                         doc.wait_for_undock()
                         playerfound = 0
                         time.sleep(3)
-                        runs += 1
+                        runs_var += 1
                         miner()
                 if target == 0:
                     logging.debug('no targets, restarting')
