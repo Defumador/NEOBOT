@@ -39,6 +39,20 @@ def activate_miner(module_num):
     return 1
 
 
+def no_object_selected_indicator():
+    """Checks if the 'selected item' window displays 'no object selected,
+    ' this could be useful in the rare case in which an asteroid is destroyed
+    but no 'asteroid depleted' popup appears."""
+    # For evidence of an asteroid being destroyed with no 'asteroid depleted'
+    # popup, see 2019-07-20_15-23-06 at 2h53m58s
+    no_object_selected = lo.locate('./img/indicators/no_object_selected')
+    if no_object_selected is not None:
+        logging.info('target no longer exists')
+        return 1
+    elif no_object_selected is None:
+        return 0
+
+
 def asteroid_depleted_popup():
     """Checks for popup indicating the asteroid currently being mined has been
     depleted."""

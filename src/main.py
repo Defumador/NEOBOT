@@ -112,7 +112,8 @@ def miner():
                             continue
                     if o.look_for_ship(npc_list, pc_list) == 1 or \
                             o.is_jammed(jam_var) == 1 or mng.time_at_site(
-                        timer_var) == 1:
+                        timer_var) == 1 or mng.no_object_selected_indicator() \
+                            == 1:
                         drones.recall_drones(drone_num)
                         miner()
                     timer_var += 1
