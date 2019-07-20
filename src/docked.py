@@ -115,7 +115,7 @@ def focus_inv_window():
     if window is not None and tries <= 25:
         (x, y) = window
         pag.moveTo((x - (random.randint(0, 250))),
-                   (y + (random.randint(50, 300))),
+                   (y + (random.randint(60, 300))),
                    mouse.duration(), mouse.path())
         mouse.click()
         return 1
