@@ -78,10 +78,13 @@ def travel_to_bookmark(target_site_num):
     is not in the current system, or your ship is already there. Increment
     bookmark number by 1 and try again."""
     warping_to_bookmark = warp_to_local_bookmark(target_site_num)
+    # logging.debug('warping_to_bookmark is ' + (str(warping_to_bookmark)))
 
     while warping_to_bookmark == 0 and target_site_num <= 10:
         target_site_num += 1
-        warp_to_local_bookmark(target_site_num)
+        warping_to_bookmark = warp_to_local_bookmark(target_site_num)
+        # logging.debug('warping_to_bookmark is now ' + (str(
+        #    warping_to_bookmark)))
 
         # TODO: change the '10' constant to equal total number of bookmarks set
     if warping_to_bookmark == 1 and target_site_num <= 10:
@@ -111,15 +114,17 @@ def warp_to_local_bookmark(target_site_num):
                    (y + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
         mouse.click_right()
-        
+        approach_location = lo.locate(
+            './img/buttons/detect_warp_to_bookmark.bmp', conf=0.90)
+
         # If the 'approach location' option is found, return function.
-        if lo.locate('./img/buttons/detect_warp_to_bookmark.bmp', conf=0.90) is not None:
+        if approach_location is not None:
             logging.debug('already at bookmark ' + (str(target_site_bookmark)))
             keyboard.keypress('esc')  # Close right-click menu.
             return 0
 
         # Otherwise, warp to location.
-        elif lo.locate('./img/buttons/detect_warp_to_bookmark.bmp', conf=0.90) is None:
+        elif approach_location is None:
             warp_to_site = lo.clocate('./img/buttons/warp_to_bookmark.bmp', conf=0.90)
 
             if warp_to_site is not None:
