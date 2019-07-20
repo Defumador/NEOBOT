@@ -178,7 +178,7 @@ def look_for_targets(target1, target2, target3, target4, target5):
         target_list.append(target5)
 
     for target in target_list:
-        target = pag.locate(target, overview, confidence=0.90)
+        target = pag.locate(target, overview, confidence=0.85)
         if target is not None:
             logging.debug('found target at ' + (str(target)))
             # (x, y, l, w) = target
