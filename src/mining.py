@@ -15,15 +15,24 @@ logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
 
 
 def activate_miner(module_num):
-    """Activates mining modules based on the number passed to this function."""
+    """Activates mining modules based on the number passed to this function.
+    If the module is out of range, script will try to wait until ship gets
+    within range before activating any more modules."""
     for n in range(1, (module_num + 1)):
         keyboard.keypress('f' + (str(n)))
         logging.debug('activating miner ' + (str(n)))
-        time.sleep(float(random.randint(10, 1000)) / 1000)
-        while miner_out_of_range_popup() == 1:
+        out_of_range = miner_out_of_range_popup()
+        tries = 0
+        while out_of_range == 1 and tries <= 25:
+            tries += 1
             time.sleep(float(random.randint(10000, 20000)) / 1000)
             activate_miner(module_num)
-    return 0
+        if out_of_range == 0 and tries <= 25:
+            continue
+        elif out_of_range == 1 and tries > 25:
+            logging.error('timed out waiting for miner to get within range')
+            return 0
+    return 1
 
 
 def asteroid_depleted_popup():
