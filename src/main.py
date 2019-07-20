@@ -58,13 +58,21 @@ def miner():
     o4 = './img/overview/ore_types/scordite.bmp'
     o5 = 0
 
-    print('main, drones is ', drone_num)
     global playerfound
     global site
-    # Number of 'runs' completed for mining script. This is a constant and will
-    # always start as 1
+    # Number of 'runs' completed by the mining script. This will always start
+    # as 1
     runs_var = 1
     timer_var = 0
+    global npc_list, pc_list
+    # Build the lists of ship icons to check for based on the user-specified
+    # checkboxes in the GUI.
+    (npc_list, pc_list) = o.build_ship_list(detect_npcs, npc_frig_dest,
+                                            npc_cruiser_bc, detect_pcs, pc_indy,
+                                            pc_barge, pc_frig_dest,
+                                            pc_cruiser_bc, pc_bs,
+                                            pc_capindy_freighter, pc_rookie,
+                                            pc_pod)
     logging.info('beginning run ' + (str(runs_var)))
     while doc.is_docked() == 0:
         if drones.are_drones_launched() == 1:
@@ -73,22 +81,12 @@ def miner():
             site = 1
         if bkmk.iterate_through_bookmarks_rand(total_sites) == 1:
             # Once arrived at site, check for hostile npcs and human players.
-            # If either exist, warp to the next site.
+            # If either exist, warp to another site.
             # If no hostiles npcs or players are present, check for asteroids.
-            # If no asteroids, blacklist site and warp to next site.
+            # If no asteroids exist,  warp to another site.
             if o.select_overview_tab('general') == 1:
-                global npc_list, pc_list
-                (npc_list, pc_list) = o.build_ship_list(detect_npcs,
-                                                        npc_frig_dest,
-                                                        npc_cruiser_bc,
-                                                        detect_pcs, pc_indy,
-                                                        pc_barge, pc_frig_dest,
-                                                        pc_cruiser_bc, pc_bs,
-                                                        pc_capindy_freighter,
-                                                        pc_rookie, pc_pod)
                 if o.look_for_ship(npc_list, pc_list) == 1:
                     miner()
-
             o.select_overview_tab('mining')
             target = o.look_for_targets(o1, o2, o3, o4, o5)
             while target != 0:
