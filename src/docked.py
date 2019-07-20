@@ -205,14 +205,14 @@ def wait_for_undock():
     # undock action has been confirmed.
     tries = 0
 
-    while lo.olocate('./img/buttons/undocking.bmp', conf=0.9) is None and \
-            tries <= 25:
+    while lo.olocate('./img/buttons/undocking.bmp', conf=0.8) is None and \
+            tries <= 250:
         tries += 1
         logging.debug('waiting for session change to begin ' + (str(tries)))
-        time.sleep(int((random.randint(500, 2000) / 1000)))
+        time.sleep(int((random.randint(100, 200) / 1000)))
 
-    if lo.olocate('./img/buttons/undocking.bmp', conf=0.9) is not None and \
-            tries <= 25:
+    if lo.olocate('./img/buttons/undocking.bmp', conf=0.8) is not None and \
+            tries <= 250:
         logging.debug('session change underway ' + (str(tries)))
 
         # Now wait for the undock to complete by looking for the session
