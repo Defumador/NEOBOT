@@ -98,7 +98,7 @@ def miner():
 
             o.select_overview_tab('mining')
             target = o.look_for_targets(o1, o2, o3, o4, o5)
-            while o.look_for_targets(o1, o2, o3, o4, o5) is not None:
+            while target != 0:
                 drones.launch_drones(drone_num)
                 if o.initiate_target_lock(target) == 0:
                     miner()
@@ -110,11 +110,10 @@ def miner():
                 while mng.ship_full_popup() == 0:
                     if mng.asteroid_depleted_popup() == 1:
                         target = o.look_for_targets(o1, o2, o3, o4, o5)
-                        if o.look_for_targets(o1, o2, o3, o4, o5) == 0:
+                        if target == 0:
                             miner()
 
-                        elif o.look_for_targets(o1, o2, o3, o4, o5
-                                                ) is not None:
+                        elif target != 0:
                             if o.initiate_target_lock(target) == 0:
                                 miner()
                             mng.activate_miner(module_num)
@@ -151,9 +150,10 @@ def miner():
                         time.sleep(3)
                         runs += 1
                         miner()
-
-                if o.look_for_targets(o1, o2, o3, o4, o5) == 0:
-                    bkmk.blacklist_local_bookmark()
+                if target == 0:
+                    logging.debug('no targets, restarting')
+                    miner()
+                    # bkmk.blacklist_local_bookmark()
         elif bkmk.travel_to_bookmark(site) == 0:
             nav.emergency_terminate()
             sys.exit(0)
