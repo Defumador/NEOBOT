@@ -197,17 +197,17 @@ def wait_for_target_lock():
     the 'unlock target' icon in the 'selected item' window."""
     tries = 0
     while lo.locate('./img/indicators/target_lock_attained.bmp') is None \
-    and tries <= 100:
+            and tries <= 50:
         tries += 1
-        logging.debug('locking target ' + (str(tries)))
+        logging.debug('waiting for target to lock ' + (str(tries)))
         time.sleep(float(random.randint(100, 500)) / 1000)
 
     if lo.locate('./img/indicators/target_lock_attained.bmp') is not None \
-    and tries <= 100:
+            and tries <= 50:
         logging.debug('lock attained')
         return 1
     if lo.locate('./img/indicators/target_lock_attained.bmp') is None \
-    and tries > 100:
+            and tries > 50:
         logging.error('timed out waiting for target lock')
         return 0
 
@@ -283,7 +283,8 @@ def is_target_lockable():
 
 def initiate_target_lock(overview_target):
     """Targets the closest user-defined item on the overview, assuming overview
-    is sorted by distance, with closest objects at the top."""
+    is sorted by distance, with closest objects at the top. If cannot lock
+    target the first try, tries two more times before giving up."""
     if overview_target is not None:
         # Break apart tuple into coordinates
         (x, y, l, w) = overview_target
@@ -295,23 +296,32 @@ def initiate_target_lock(overview_target):
                    mouse.duration(), mouse.path())
         mouse.click()
         keyboard.keypress('w')
-        tries = 0
-        while is_target_lockable() == 0 and tries <= 30:
-            tries += 1
-            logging.debug('target not yet within range ' + (str(tries)))
-            time.sleep(float(random.randint(1000, 2000)) / 1000)
-              
-        if is_target_lockable() == 1 and tries <= 30:
-            logging.debug('locking target')
-            keyboard.keypress('ctrl')
-            if wait_for_target_lock() == 1:
-                return 1
-            elif wait_for_target_lock() == 0:
-                return 0
-        elif is_target_lockable() == 0 and tries > 30:
-            logging.warning(
-                'timed out waiting for target to get within range!')
-            return 0
+        # Try 3 times to get a target lock. This could be useful is ship is
+        # being jammed while trying to lock target, but ship's drones
+        # eventually destroy the enemy ship jamming the player ship.
+        for tries in range(1, 4):
+            approachtime = 0
+            while is_target_lockable() == 0 and approachtime <= 30:
+                approachtime += 1
+                logging.debug(
+                    'target not yet within range ' + (str(approachtime)))
+                time.sleep(float(random.randint(1000, 2000)) / 1000)
+
+            if is_target_lockable() == 1 and approachtime <= 30:
+                logging.debug('try ' + (str(tries)) + ' to lock target')
+                keyboard.keypress('ctrl')
+                lock_attained = wait_for_target_lock()
+                if lock_attained == 1:
+                    return 1
+                elif lock_attained == 0:
+                    continue
+
+            elif is_target_lockable() == 0 and approachtime > 30:
+                logging.warning(
+                    'timed out waiting for target to get within range!')
+                continue
+        logging.error('tried 3 times to lock target')
+        return 0
     else:
         logging.info('no targets available')
         return 0
