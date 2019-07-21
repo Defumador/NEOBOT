@@ -93,7 +93,7 @@ def miner():
                 drones.launch_drones(drone_num)
                 if o.initiate_target_lock(target) == 0:
                     miner()
-                mng.activate_miner(module_num)
+                mng.activate_miners(module_num)
                 # If ship inventory isn't full, continue to mine ore and wait
                 # for popups or errors.
                 # Switch back to the general tab for easier ship detection
@@ -106,6 +106,10 @@ def miner():
                     timer_var += 1
                     time.sleep(1)
                     if mng.asteroid_depleted_popup() == 1:
+                        # Sleep to wait for all mining modules to disable
+                        # themselves automatically
+                        logging.info('waiting for modules to deactivate')
+                        time.sleep(10)
                         o.select_overview_tab('mining')
                         target = o.look_for_targets(o1, o2, o3, o4, o5)
                         if target == 0:
@@ -113,7 +117,7 @@ def miner():
                         elif target != 0:
                             if o.initiate_target_lock(target) == 0:
                                 miner()
-                            mng.activate_miner(module_num)
+                            mng.activate_miners(module_num)
                             ship_full = mng.ship_full_popup()
                             continue
 
