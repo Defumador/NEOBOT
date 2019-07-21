@@ -100,7 +100,7 @@ def miner():
                 o.select_overview_tab('general')
                 ship_full = mng.ship_full_popup()
 
-                # main mining loop # -----------------------------------------------------------
+                # main mining loop # -------------------------------------------
                 while ship_full == 0:
                     ship_full = mng.ship_full_popup()
                     timer_var += 1
@@ -159,7 +159,7 @@ def miner():
                     logging.debug('no targets, restarting')
                     miner()
                     # bkmk.blacklist_local_bookmark()
-        # end of main mining loop ------------------------------------------------------
+        # end of main mining loop ----------------------------------------------
 
         elif bkmk.iterate_through_bookmarks_rand(total_sites) == 0:
             nav.emergency_terminate()
