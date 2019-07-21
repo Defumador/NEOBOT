@@ -98,7 +98,13 @@ def miner():
                 # for popups or errors.
                 # Switch back to the general tab for easier ship detection
                 o.select_overview_tab('general')
-                while mng.ship_full_popup() == 0:
+                ship_full = mng.ship_full_popup()
+
+                # main mining loop # -----------------------------------------------------------
+                while ship_full == 0:
+                    ship_full = mng.ship_full_popup()
+                    timer_var += 1
+                    time.sleep(1)
                     if mng.asteroid_depleted_popup() == 1:
                         o.select_overview_tab('mining')
                         target = o.look_for_targets(o1, o2, o3, o4, o5)
@@ -108,18 +114,20 @@ def miner():
                             if o.initiate_target_lock(target) == 0:
                                 miner()
                             mng.activate_miner(module_num)
-                            mng.ship_full_popup()
+                            ship_full = mng.ship_full_popup()
                             continue
-                    if o.look_for_ship(npc_list, pc_list) == 1 or \
-                            o.is_jammed(jam_var) == 1 or mng.time_at_site(
-                        timer_var) == 1 or mng.no_object_selected_indicator() \
-                            == 1:
-                        drones.recall_drones(drone_num)
-                        miner()
-                    timer_var += 1
-                    time.sleep(1)
 
-                if mng.ship_full_popup() == 1:
+                    # Only run the below checks every 2nd 'cycle' for better
+                    # efficiency and reduced cpu usage
+                    if (timer_var % 2) == 0:
+                        if o.look_for_ship(npc_list, pc_list) == 1 or \
+                                o.is_jammed(jam_var) == 1 or \
+                                mng.time_at_site(timer_var) == 1 or \
+                                mng.no_object_selected_indicator() == 1:
+                            drones.recall_drones(drone_num)
+                            miner()
+
+                if ship_full == 1:
                     # Once inventory is full, dock at home station and unload.
                     drones.recall_drones(drone_num)
                     logging.info('finishing run ' + (str(runs_var)))
@@ -142,10 +150,13 @@ def miner():
                         time.sleep(3)
                         runs_var += 1
                         miner()
+
                 if target == 0:
                     logging.debug('no targets, restarting')
                     miner()
                     # bkmk.blacklist_local_bookmark()
+        # end of main mining loop ------------------------------------------------------
+
         elif bkmk.iterate_through_bookmarks_rand(total_sites) == 0:
             nav.emergency_terminate()
             sys.exit(0)
