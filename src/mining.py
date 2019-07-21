@@ -14,7 +14,7 @@ logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
                            'message)s', level=logging.DEBUG)
 
 
-def activate_miner(module_num):
+def activate_miners(module_num):
     """Activates mining modules based on the number passed to this function.
     If the module is out of range, script will try to wait until ship gets
     within range before activating any more modules."""
