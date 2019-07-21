@@ -206,11 +206,11 @@ def wait_for_target_lock():
         time.sleep(float(random.randint(100, 500)) / 1000)
 
     if lo.locate('./img/indicators/target_lock_attained.bmp') is not None \
-            and tries <= 50:
+            and tries <= 70:
         logging.debug('lock attained')
         return 1
     if lo.locate('./img/indicators/target_lock_attained.bmp') is None \
-            and tries > 50:
+            and tries > 70:
         logging.error('timed out waiting for target lock')
         return 0
 
@@ -301,10 +301,10 @@ def initiate_target_lock(overview_target):
                    mouse.duration(), mouse.path())
         mouse.click()
         keyboard.keypress('e')  # 'keep at range' hotkey
-        # Try 3 times to get a target lock. This could be useful is ship is
+        # Try 5 times to get a target lock. This is useful if ship is
         # being jammed while trying to lock target, but ship's drones
-        # eventually destroy the enemy ship jamming the player ship.
-        for tries in range(1, 4):
+        # eventually destroy the enemy ship that is jamming the player ship.
+        for tries in range(1, 6):
             approachtime = 0
             while is_target_lockable() == 0 and approachtime <= 30:
                 approachtime += 1
