@@ -45,11 +45,12 @@ def no_object_selected_indicator():
     but no 'asteroid depleted' popup appears."""
     # For evidence of an asteroid being destroyed with no 'asteroid depleted'
     # popup, see 2019-07-20_15-23-06 at 2h53m58s
-    no_object_selected = lo.locate('./img/indicators/no_object_selected')
+    no_object_selected = lo.locate('./img/indicators/no_object_selected.bmp')
     if no_object_selected is not None:
         logging.info('target no longer exists')
         return 1
     elif no_object_selected is None:
+        logging.debug('target still exists')
         return 0
 
 
@@ -61,6 +62,7 @@ def asteroid_depleted_popup():
         logging.debug('asteroid empty')
         return 1
     elif depleted is None:
+        logging.debug('asteroid still available')
         return 0
 
 

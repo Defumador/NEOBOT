@@ -107,8 +107,8 @@ def look_for_ship(npc_list, pc_list):
     
     # Use the same screenshot for both checks. 
     # If either list is empty, skip checking.
-    logging.debug('npc_list is ' + (str(npc_list)) + ' and pc_list is ' + (
-        str(pc_list)))
+    # logging.debug('npc_list is ' + (str(npc_list)) + ' and pc_list is ' + (
+    #    str(pc_list)))
 
     if len(npc_list) != 0 or len(pc_list) != 0:
         overview = pag.screenshot(
@@ -141,12 +141,13 @@ def look_for_ship(npc_list, pc_list):
                 if player_found is not None:
                     logging.debug('found player at' + (str(player_found)))
                     logging.debug('located icon' + (str(pc_icon)))
-                    (x, y, l, w) = player_found
+                    #(x, y, l, w) = player_found
                     # Coordinates must compensate for the altered coordinate-space
                     # of the screenshot.
-                    pag.moveTo((x + (originx + (windowx - (int(windowx / 3.8))))),
-                               (y + originy),
-                               0, mouse.path())
+                    # pag.moveTo((x + (originx + (windowx - (int(windowx /
+                    # 3.8))))),
+                    #           (y + originy),
+                    #           0, mouse.path())
                     return 1
             logging.debug('passed pc check')
             return 0
