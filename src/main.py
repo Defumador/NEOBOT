@@ -18,6 +18,20 @@ from src import docked as doc, drones, navigation as nav, mining as mng, \
     bookmarks as bkmk, overview as o
 from src.vars import system_mining, originx, originy, windowx, windowy
 
+# TODO: add a 'unsuitable_site' counter that increases every time the miner
+# script finds many sites in a row without any asteroids. This is to prevent
+# the script from, in the rare case that all sites are empty, constantly
+# warping around, looking for suitable sites when, in fact, there aren't any.
+# This variable will reset to 0 when the ship locates an asteroid.
+
+# TODO: add support for mining drones.
+
+# TODO: for mining script, add a user-defined sleep variable that waits for
+# a short duration between the ship locking a target and the ship activating
+# its mining lasers. This is to prevent the ship from constantly attempting
+# to activate its lasers on a target that has been locked but is not yet in
+# range, which can look suspicious.
+
 sys.setrecursionlimit(9999999)
 playerfound = 0
 
