@@ -79,6 +79,10 @@ def cvlocate_example(image, conf=0.95, region=(originx, originy, windowx, window
         top_left = max_loc
         # get the bottom right location of the match by adding the template's dimensions to the top right location
         bottom_right = (top_left[0] + w, top_left[1] + h)
+        
+        # get center coordinates
+        center = ((int((top_left[0] + w) / 2)), (int((top_left[1] + h) / 2))
+        (cenx, ceny) = center
                             
         # draw a rectangle around the match
         cv2.rectangle(img,top_left, bottom_right, 255, 2)
@@ -100,6 +104,7 @@ def cvlocate_example(image, conf=0.95, region=(originx, originy, windowx, window
                             
         print('top_left is', top_left)
         print('bottom_right is', bottom_right)
+        print('center is (x,y)', cenx, ceny)
                             
         print('res is', res)
                             
