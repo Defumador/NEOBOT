@@ -38,6 +38,8 @@ def cvlocate_example(image, conf=0.95, region=(originx, originy, windowx, window
         else:
             top_left = max_loc
         bottom_right = (top_left[0] + w, top_left[1] + h)
+        
+        cv2.imshow("image", image)
 
         cv2.rectangle(img,top_left, bottom_right, 255, 2)
 
@@ -57,9 +59,11 @@ def cvlocate_example(image, conf=0.95, region=(originx, originy, windowx, window
     # for cv2.imread, a '0' denotes converting the image to grayscale
     # replace the 0 with 'CV_LOAD_IMAGE_ANYDEPTH' for color
     # see https://docs.opencv.org/2.4/modules/highgui/doc/reading_and_writing_images_and_video.html#Mat%20imread(const%20string&%20filename,%20int%20flags)
-    img = cv2.imread(image,0)
+    img = cv2.imread(image)
     img2 = img.copy()
-    template = cv2.imread(client,0)
+    template = cv2.imread(client)
+    # get dimensions of the template image
+    # the [::-1] inverts the order of w,h because the template is normally ordered in h,w
     w, h = template.shape[::-1]
 
     img = img2.copy()
@@ -67,12 +71,16 @@ def cvlocate_example(image, conf=0.95, region=(originx, originy, windowx, window
 
     # Apply template Matching
     res = cv2.matchTemplate(img,template,method)
+    # pull the best match out of the results
     min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(res)
 
+    # only continue if the match is higher than a certain minimum confidence threshold
     if max_loc > threshold
         top_left = max_loc
+        # get the bottom right location of the match by adding the template's dimensions to the top right location
         bottom_right = (top_left[0] + w, top_left[1] + h)
-
+                            
+        # draw a rectangle around the match
         cv2.rectangle(img,top_left, bottom_right, 255, 2)
 
         plt.subplot(121),plt.imshow(res,cmap = 'gray')
@@ -80,6 +88,8 @@ def cvlocate_example(image, conf=0.95, region=(originx, originy, windowx, window
         plt.subplot(122),plt.imshow(img,cmap = 'gray')
         plt.title('Detected Point'), plt.xticks([]), plt.yticks([])                  
         plt.suptitle(method)
+                            
+        cv2.imshow("image", image)
                             
         plt.show()
         print('client is', client)
@@ -101,7 +111,7 @@ def cvlocate_example(image, conf=0.95, region=(originx, originy, windowx, window
     else:
         print('didnt reach threshold')
     return
-##############################################################   
+#############################################################################   
                             
                             
 # screen class from https://github.com/vbidin/aspirant/blob/master/src/screen.py
