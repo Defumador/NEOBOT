@@ -19,12 +19,6 @@ from src import docked as doc, drones, navigation as nav, mining as mng, \
     bookmarks as bkmk, overview as o
 from src.vars import system_mining, originx, originy, windowx, windowy
 
-# TODO: add a 'unsuitable_site' counter that increases every time the miner
-# script finds many sites in a row without any asteroids. This is to prevent
-# the script from, in the rare case that all sites are empty, constantly
-# warping around, looking for suitable sites when, in fact, there aren't any.
-# This variable will reset to 0 when the ship locates an asteroid.
-
 # TODO: add support for mining drones.
 
 # TODO: for mining script, add a user-defined sleep variable that waits for
@@ -53,6 +47,7 @@ playerfound = 0
 # These variables are for the mining script only -------------------------------
 # Total number of saved bookmark locations. This variable is set by the user.
 total_sites = 10
+unsuitable_site = 0
 # ------------------------------------------------------------------------------
 
 # recommended per https://docs.python.org/2/library/logging.html
@@ -74,6 +69,7 @@ def miner():
     o5 = 0
 
     global playerfound
+    global unsuitable_site
     # Number of 'runs' completed by the mining script. This will always start
     # as 1
     runs_var = 1
@@ -88,7 +84,7 @@ def miner():
                                             pc_capindy_freighter, pc_rookie,
                                             pc_pod)
     logging.info('beginning run ' + (str(runs_var)))
-    while doc.is_docked() == 0:
+    while doc.is_docked() == 0 and unsuitable_site <= 10:
         if drones.are_drones_launched() == 1:
             o.focus_client()
             drones.recall_drones(drone_num)
@@ -99,10 +95,12 @@ def miner():
             # If no asteroids exist,  warp to another site.
             if o.select_overview_tab('general') == 1:
                 if o.look_for_ship(npc_list, pc_list) == 1:
+                    unsuitable_site += 1
                     miner()
             o.select_overview_tab('mining')
             target = o.look_for_targets(o1, o2, o3, o4, o5)
             while target != 0:
+                unsuitable_site = 0
                 drones.launch_drones(drone_num)
                 if o.initiate_target_lock(target) == 0:
                     miner()
@@ -168,20 +166,28 @@ def miner():
                         runs_var += 1
                         miner()
 
-                if target == 0:
-                    logging.debug('no targets, restarting')
-                    miner()
-                    # bkmk.blacklist_local_bookmark()
+            if target == 0:
+                unsuitable_site += 1
+                logging.debug('no targets, restarting')
+                miner()
         # end of main mining loop ----------------------------------------------
 
         elif bkmk.iterate_through_bookmarks_rand(total_sites) == 0:
             nav.emergency_terminate()
             sys.exit(0)
-    if doc.is_docked() == 1:
+    if doc.is_docked() == 1 and unsuitable_site <= 10:
         # If docked when script starts, undock_loop.
         o.focus_client()
         doc.wait_for_undock()
         miner()
+    if doc.is_docked() == 1 and unsuitable_site > 10:
+        logging.debug('unsuitable site limit reached')
+        sys.exit()
+    if doc.is_docked() == 0 and unsuitable_site > 10:
+        logging.debug('unsuitable site limit reached')
+        nav.emergency_terminate()
+        nav.emergency_logout()
+        sys.exit()
 
 
 def navigator():
