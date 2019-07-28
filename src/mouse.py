@@ -1,6 +1,5 @@
 import time, random
 import pyautogui as pag
-from src import mouse
 from src.vars import windowx, windowy
 
 #####################################################################
@@ -31,7 +30,7 @@ def bezmove():
     degree = 3 if cp > 3 else cp - 1  # Degree of b-spline. 3 is recommended.
                                       # Must be less than number of control points.
     tck, u = scipy.interpolate.splprep([x, y], k=degree)
-    u = scipy.linspace(0, 1, num=max(pyautogui.size()))
+    u = scipy.linspace(0, 1, num=max(pag.size()))
     points = scipy.interpolate.splev(u, tck)
 
     # Move mouse.
@@ -52,14 +51,14 @@ def move_away(direction):
     if direction == 'r':
         pag.moveTo((random.randint(0, (windowy - 100))),
                    (random.randint(0, ((windowx - 100) - (windowx / 2)))),
-                   mouse.duration(), mouse.path())
+                   duration(), path())
         time.sleep(float(random.randint(0, 500)) / 1000)
         return
 
     elif direction == 'l':
         pag.moveTo((random.randint(0, (windowy - 100))),
                    (random.randint(0, ((windowx - 100) / 2))),
-                   mouse.duration(), mouse.path())
+                   duration(), path())
         time.sleep(float(random.randint(0, 500)) / 1000)
         return 
     
