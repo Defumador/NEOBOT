@@ -74,7 +74,6 @@ def miner():
     o5 = 0
 
     global playerfound
-    global site
     # Number of 'runs' completed by the mining script. This will always start
     # as 1
     runs_var = 1
@@ -93,7 +92,6 @@ def miner():
         if drones.are_drones_launched() == 1:
             o.focus_client()
             drones.recall_drones(drone_num)
-            site = 1
         if bkmk.iterate_through_bookmarks_rand(total_sites) == 1:
             # Once arrived at site, check for hostile npcs and human players.
             # If either exist, warp to another site.
