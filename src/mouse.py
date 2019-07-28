@@ -1,4 +1,6 @@
-import time, random
+# encoding: utf-8
+import time
+import random
 import pyautogui as pag
 from src.vars import windowx, windowy
 
@@ -9,7 +11,9 @@ from src.vars import windowx, windowy
 import scipy
 from scipy import interpolate
 
+
 def bezmove():
+    # This function is currently not implemented as it is not yet working.
     cp = random.randint(3, 5)  # Number of control points. Must be at least 2.
     x1, y1 = pag.position()  # Starting position
     x2, y2 = 444, 631  # Destination
