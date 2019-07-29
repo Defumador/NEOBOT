@@ -5,6 +5,7 @@ import traceback
 import cProfile
 import logging
 import threading
+import random
 
 import logging
 import tkinter
@@ -104,7 +105,7 @@ def miner():
                 drones.launch_drones(drone_num)
                 if o.initiate_target_lock(target) == 0:
                     miner()
-                time.sleep(10)
+                time.sleep(float(random.randint(5000, 15000)) / 1000)
                 mng.activate_miners(module_num)
                 # If ship inventory isn't full, continue to mine ore and wait
                 # for popups or errors.
@@ -132,7 +133,8 @@ def miner():
                             # This sleep is experimental, and prevents the
                             # script from attempting to mine an asteroid that
                             # is too far away.
-                            time.sleep(10)
+                            time.sleep(
+                                float(random.randint(5000, 15000)) / 1000)
                             mng.activate_miners(module_num)
                             ship_full = mng.ship_full_popup()
                             continue
