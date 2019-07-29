@@ -133,7 +133,7 @@ def miner():
                     # efficiency and reduced cpu usage
                     if (timer_var % 2) == 0:
                         if o.look_for_ship(npc_list, pc_list) == 1 or \
-                                o.is_jammed(jam_var) == 1 or \
+                                o.is_jammed(detect_jam) == 1 or \
                                 mng.time_at_site(timer_var) == 1 or \
                                 mng.no_object_selected_indicator() == 1:
                             drones.recall_drones(drone_num)
@@ -417,7 +417,7 @@ t.grid(column=0, row=16, columnspan=2, sticky='W', padx=0, pady=0)
 
 
 def start(event):
-    global drone_num, module_num, jam_var
+    global drone_num, module_num, detect_jam
 
     global detect_pcs, pc_indy, pc_barge, pc_frig_dest, \
         pc_capindy_freighter, pc_cruiser_bc, pc_bs, pc_rookie, pc_pod
@@ -469,7 +469,7 @@ def start(event):
     npc_bs = (int(npc_bs_gui.get()))
     logging.debug('detect npc bs is ' + (str(npc_bs)))
 
-    jam_var = (int(detect_jam_gui.get()))
+    detect_jam = (int(detect_jam_gui.get()))
     logging.debug('detect ecm jamming is ' + (str(detect_jam)))
 
     miner()
