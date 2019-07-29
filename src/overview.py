@@ -307,13 +307,13 @@ def initiate_target_lock(overview_target):
         # eventually destroy the enemy ship that is jamming the player ship.
         for tries in range(1, 6):
             approachtime = 0
-            while is_target_lockable() == 0 and approachtime <= 30:
+            while is_target_lockable() == 0 and approachtime <= 50:
                 approachtime += 1
                 logging.debug(
                     'target not yet within range ' + (str(approachtime)))
                 time.sleep(float(random.randint(1000, 2000)) / 1000)
 
-            if is_target_lockable() == 1 and approachtime <= 30:
+            if is_target_lockable() == 1 and approachtime <= 50:
                 logging.debug('try ' + (str(tries)) + ' to lock target')
                 keyboard.keypress('ctrl')
                 lock_attained = wait_for_target_lock()
@@ -322,10 +322,10 @@ def initiate_target_lock(overview_target):
                 elif lock_attained == 0:
                     continue
 
-            elif is_target_lockable() == 0 and approachtime > 30:
+            elif is_target_lockable() == 0 and approachtime > 50:
                 logging.warning(
                     'timed out waiting for target to get within range!')
-                continue
+                return 0
         logging.error('tried 3 times to lock target')
         return 0
     else:
