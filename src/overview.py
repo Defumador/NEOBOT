@@ -16,10 +16,6 @@ oy = originy
 olx = (int(windowx / 3.8))
 oly = windowy
 
-logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
-                           'message)s', level=logging.DEBUG)
-
-
 # TODO: function to sort overview by distance
 
 
@@ -207,11 +203,11 @@ def wait_for_target_lock():
         time.sleep(float(random.randint(100, 500)) / 1000)
 
     if lo.locate('./img/indicators/target_lock_attained.bmp') is not None \
-            and tries <= 70:
+            and tries <= 50:
         logging.debug('lock attained')
         return 1
     if lo.locate('./img/indicators/target_lock_attained.bmp') is None \
-            and tries > 70:
+            and tries > 50:
         logging.error('timed out waiting for target lock')
         return 0
 
@@ -305,6 +301,8 @@ def initiate_target_lock(overview_target):
         # Try 5 times to get a target lock. This is useful if ship is
         # being jammed while trying to lock target, but ship's drones
         # eventually destroy the enemy ship that is jamming the player ship.
+        # TODO: while approaching target, switch to general tab and check for
+        #  jamming from enemy ships
         for tries in range(1, 6):
             approachtime = 0
             while is_target_lockable() == 0 and approachtime <= 50:

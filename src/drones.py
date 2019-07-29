@@ -7,9 +7,6 @@ from src import keyboard as key, locate as lo
 
 drones_dict = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5"}
 
-logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
-                           'message)s', level=logging.DEBUG)
-
 
 def launch_drones(drone_num):
     """Launches drones and waits for them to leave the drone bay. User must

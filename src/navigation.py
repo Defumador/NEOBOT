@@ -11,8 +11,6 @@ from src import mouse, keyboard as key, overview, locate as lo
 from src.vars import originx, originy, windowx, windowy
 
 sys.setrecursionlimit(9999999)
-logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
-                           'message)s', level=logging.DEBUG)
 
 
 def has_route():

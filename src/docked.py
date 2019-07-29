@@ -9,7 +9,7 @@ import pyautogui as pag
 from src import mouse, keyboard, locate as lo, keyboard as key
 from src.vars import originx, originy, windowx, windowy, conf
 
-logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
+logging.basicConfig(format='(%(asctime)s) %(funcName)s - %('
                            'message)s', level=logging.DEBUG)
 
 

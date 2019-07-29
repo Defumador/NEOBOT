@@ -10,8 +10,9 @@ from src import mouse, keyboard, navigation as nav, locate as lo
 from src.navigation import wait_for_dock
 from src.vars import originx, originy, windowx, windowy, conf
 
-logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
-                           'message)s', level=logging.DEBUG)
+
+# logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
+#                           'message)s', level=logging.DEBUG)
 
 
 def set_dest():

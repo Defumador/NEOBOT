@@ -11,9 +11,6 @@ from src.vars import originx, originy, windowx, windowy
 
 sys.setrecursionlimit(9999999)
 
-logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
-                           'message)s', level=logging.DEBUG)
-
 
 def activate_miners(module_num):
     """Activates mining modules based on the number passed to this function.

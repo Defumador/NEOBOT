@@ -52,14 +52,6 @@ unsuitable_site = 0
 runs_var = 1
 # ------------------------------------------------------------------------------
 
-# recommended per https://docs.python.org/2/library/logging.html
-logger = logging.getLogger(__name__)
-
-
-# logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
-# 'message)s', level=logging.DEBUG)
-
-
 # MAIN SCRIPTS #################################################################
 
 def miner():
@@ -434,51 +426,51 @@ def start(event):
 
     module_num = (int(combo_modules.get()))
     drone_num = (int(combo_drones.get()))
-    logger.debug((str(module_num)) + ' modules')
-    logger.debug((str(drone_num)) + ' drones')
+    logging.debug((str(module_num)) + ' modules')
+    logging.debug((str(drone_num)) + ' drones')
 
     detect_pcs = (int(detect_pcs_gui.get()))
-    logger.debug('detect pcs is ' + (str(detect_pcs)))
+    logging.debug('detect pcs is ' + (str(detect_pcs)))
 
     pc_indy = (int(pc_indy_gui.get()))
-    logger.debug('detect pc indy is ' + (str(pc_indy)))
+    logging.debug('detect pc indy is ' + (str(pc_indy)))
 
     pc_barge = (int(pc_barge_gui.get()))
-    logger.debug('detect pc barge is ' + (str(pc_barge)))
+    logging.debug('detect pc barge is ' + (str(pc_barge)))
 
     pc_frig_dest = (int(pc_frig_dest_gui.get()))
-    logger.debug('detect pc frig/dest is ' + (str(pc_frig_dest)))
+    logging.debug('detect pc frig/dest is ' + (str(pc_frig_dest)))
 
     pc_capindy_freighter = (int(pc_capindy_freighter_gui.get()))
-    logger.debug('detect pc capital indy/freighter is ' + (str(
+    logging.debug('detect pc capital indy/freighter is ' + (str(
         pc_capindy_freighter)))
 
     pc_cruiser_bc = (int(pc_cruiser_bc_gui.get()))
-    logger.debug('detect pc cruiser/bc is ' + (str(pc_cruiser_bc)))
+    logging.debug('detect pc cruiser/bc is ' + (str(pc_cruiser_bc)))
 
     pc_bs = (int(pc_bs_gui.get()))
-    logger.debug('detect pc bs is ' + (str(pc_bs)))
+    logging.debug('detect pc bs is ' + (str(pc_bs)))
 
     pc_rookie = (int(pc_rookie_gui.get()))
-    logger.debug('detect pc rookie is ' + (str(pc_rookie)))
+    logging.debug('detect pc rookie is ' + (str(pc_rookie)))
 
     pc_pod = (int(pc_pod_gui.get()))
-    logger.debug('detect pc pod is ' + (str(pc_pod)))
+    logging.debug('detect pc pod is ' + (str(pc_pod)))
 
     detect_npcs = (int(detect_npcs_gui.get()))
-    logger.debug('detect npcs is ' + (str(detect_npcs)))
+    logging.debug('detect npcs is ' + (str(detect_npcs)))
 
     npc_frig_dest = (int(npc_frig_dest_gui.get()))
-    logger.debug('detect npc frig/dest is ' + (str(npc_frig_dest)))
+    logging.debug('detect npc frig/dest is ' + (str(npc_frig_dest)))
 
     npc_cruiser_bc = (int(npc_cruiser_bc_gui.get()))
-    logger.debug('detect npc cruiser/bc is ' + (str(npc_cruiser_bc)))
+    logging.debug('detect npc cruiser/bc is ' + (str(npc_cruiser_bc)))
 
     npc_bs = (int(npc_bs_gui.get()))
-    logger.debug('detect npc bs is ' + (str(npc_bs)))
+    logging.debug('detect npc bs is ' + (str(npc_bs)))
 
     jam_var = (int(detect_jam_gui.get()))
-    logger.debug('detect ecm jamming is ' + (str(detect_jam)))
+    logging.debug('detect ecm jamming is ' + (str(detect_jam)))
 
     miner()
     return
