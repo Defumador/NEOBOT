@@ -49,6 +49,7 @@ playerfound = 0
 # Total number of saved bookmark locations. This variable is set by the user.
 total_sites = 10
 unsuitable_site = 0
+runs_var = 1
 # ------------------------------------------------------------------------------
 
 # recommended per https://docs.python.org/2/library/logging.html
@@ -69,13 +70,10 @@ def miner():
     o4 = './img/overview/ore_types/scordite.bmp'
     o5 = 0
 
-    global playerfound
-    global unsuitable_site
+    global playerfound, unsuitable_site, runs_var, pc_list, npc_list
     # Number of 'runs' completed by the mining script. This will always start
     # as 1
-    runs_var = 1
     timer_var = 0
-    global npc_list, pc_list
     # Build the lists of ship icons to check for based on the user-specified
     # checkboxes in the GUI.
     (npc_list, pc_list) = o.build_ship_list(detect_npcs, npc_frig_dest,
@@ -175,6 +173,7 @@ def miner():
 
             if target == 0:
                 unsuitable_site += 1
+                logging.debug('unsuitable_site is' + (str(unsuitable_site)))
                 logging.debug('no targets, restarting')
                 miner()
         # end of main mining loop ----------------------------------------------
