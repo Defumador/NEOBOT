@@ -21,14 +21,14 @@ def hslocate(needle, haystack=0, conf=0.95, grayscale=False):
             #            str(image) + ' confidence is ' + (str(conf))))
             return locate_var
     else:
-        locate_var = pag.locate(needle, haystack, confidence=conf)
+        locate_var = pag.locate(needle, haystack, confidence=conf, grayscale=grayscale)
         if locate_var is not None:
             logging.debug('found needle image ' + (str(needle)) + ' within haystack image' + (str(haystack)))
             return locate_var
-        elif locate_var is None:
+        else:
             # logging.debug('cannot find image ' + (
             #            str(image) + ' confidence is ' + (str(conf))))
-            return locate_var
+            return 0
 
 
 def locate(image, conf=0.95, region=(originx, originy, windowx, windowy)):
