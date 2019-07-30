@@ -41,6 +41,7 @@ def is_jammed(detect_jam, haystack=0):
             return 1
         else:
             return 0 
+        
     elif detect_jam == 0:
         return 0
 
@@ -104,21 +105,18 @@ def look_for_ship(npc_list, pc_list, haystack=0):
     present on the overview. If a haystack image is provided, searches
     within that instead."""
     
-    # Search within the rightmost quarter of the client. Script assumes
-    # overview is on the right half of the screen. This is about
-    # twice as fast as searching an entire 1024x768 client window.
-    
-    # Use the same screenshot for both checks. 
-    # If either list is empty, skip checking.
-    # logging.debug('npc_list is ' + (str(npc_list)) + ' and pc_list is ' + (
-    #    str(pc_list)))
+    # Search within the rightmost quarter of the client by default.
+    # Script assumes overview is on the right half of the screen.
+    # This is about twice as fast as searching a 1024x768 client window.
 
     if haystack == 0:
+        # If no haystack image is given, take and use a screenshot of the overview
         if len(npc_list) != 0 or len(pc_list) != 0:
             overview = pag.screenshot(
                 region=((originx + (windowx - (int(windowx / 3.8)))),
                         originy, (int(windowx / 3.8)), windowy))
 
+            # Only search for icons if the list has at least 1 item
             if len(npc_list) != 0:
                 conf = 0.98
                 for npc in npc_list:
@@ -167,6 +165,8 @@ def look_for_ship(npc_list, pc_list, haystack=0):
                     logging.info('unwanted player ship detected')
                     return 1
             logging.debug('passed pc check')
+            return 0
+        elif len(npc_list) == 0 and len(pc_list) == 0:
             return 0
 
 
@@ -300,10 +300,10 @@ def is_target_lockable():
 
 
 def initiate_target_lock(overview_target):
-    """Selects closest user-defined item on the overview, assuming overview
+    """Selects topmost user-defined item on the overview, assuming overview
     is sorted by distance, with closest objects at the top. Orbits the
     selected item and waits until ship is close enough to target-lock the
-    item. If cannot lock target the first try, tries two more times before
+    item. If cannot lock target the first try, tries 4 more times before
     giving up."""
     if overview_target is not None:
         # Break apart tuple into coordinates
@@ -316,33 +316,39 @@ def initiate_target_lock(overview_target):
                    mouse.duration(), mouse.path())
         mouse.click()
         keyboard.keypress('e')  # 'keep at range' hotkey
-        # Try 5 times to get a target lock. This is useful if ship is
-        # being jammed while trying to lock target, but ship's drones
-        # eventually destroy the enemy ship that is jamming the player ship.
-        # TODO: while approaching target, switch to general tab and check for
-        #  jamming from enemy ships
+        # Change to the general tab to detect jamming
+        select_overview_tab('general')
+        # Try 5 times to get a target lock.
         for tries in range(1, 6):
+            # Limit how long the ship spends approaching its target before giving up
             approachtime = 0
-            while is_target_lockable() == 0 and approachtime <= 50:
+            while is_target_lockable() == 0 and approachtime <= 50 and is_jammed(1) == 0:
                 approachtime += 1
                 logging.debug(
                     'target not yet within range ' + (str(approachtime)))
-                time.sleep(float(random.randint(1000, 2000)) / 1000)
+                time.sleep(float(random.randint(10, 20)) / 10)
 
-            if is_target_lockable() == 1 and approachtime <= 50:
-                logging.debug('try ' + (str(tries)) + ' to lock target')
-                keyboard.keypress('ctrl')
+            if is_target_lockable() == 1 and approachtime <= 50 and is_jammed(1) == 0:
+                logging.debug('try #' + (str(tries)) + ' to lock target')
+                keyboard.keypress('ctrl')  # lock target hotkey
                 lock_attained = wait_for_target_lock()
                 if lock_attained == 1:
                     return 1
+                # if wait_for_target_lock() times out, continue 'for' loop and try locking
+                # target again
                 elif lock_attained == 0:
                     continue
+                
+            if is_jammed(1) == 1:
+                logging.info('jammed while approaching target')
+                return 0
 
-            elif is_target_lockable() == 0 and approachtime > 50:
+            if approachtime > 50:
                 logging.warning(
                     'timed out waiting for target to get within range!')
                 return 0
-        logging.error('tried 3 times to lock target')
+            
+        logging.error('tried ' + (str(tries)) + ' times to lock target')
         return 0
     else:
         logging.info('no targets available')
