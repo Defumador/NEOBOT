@@ -76,7 +76,7 @@ def miner():
                                             pc_pod)
     logging.info('beginning run ' + (str(runs_var)))
     
-    while doc.is_docked() == 0 and unsuitable_site <= 10:
+    while doc.is_docked() == 0 and unsuitable_site <= total_sites:
         if drones.are_drones_launched() == 1:
             o.focus_client()
             drones.recall_drones(drone_num)
@@ -178,17 +178,17 @@ def miner():
             nav.emergency_terminate()
             sys.exit(0)
             
-    if doc.is_docked() == 1 and unsuitable_site <= 10:
+    if doc.is_docked() == 1 and unsuitable_site <= total_sites:
         # If docked when script starts, undock_loop.
         o.focus_client()
         doc.wait_for_undock()
         miner()
         
-    if doc.is_docked() == 1 and unsuitable_site > 10:
+    if doc.is_docked() == 1 and unsuitable_site > total_sites:
         logging.debug('unsuitable site limit reached')
         sys.exit()
         
-    if doc.is_docked() == 0 and unsuitable_site > 10:
+    if doc.is_docked() == 0 and unsuitable_site > total_sites:
         logging.debug('unsuitable site limit reached')
         nav.emergency_terminate()
         nav.emergency_logout()
