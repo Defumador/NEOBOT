@@ -38,47 +38,43 @@ def activate_miners(module_num):
     return 1
 
 
-def no_object_selected_indicator():
+def no_object_selected_indicator(haystack=0):
     """Checks if the 'selected item' window displays 'no object selected,
     ' this could be useful in the rare case in which an asteroid is destroyed
     but no 'asteroid depleted' popup appears."""
     # For evidence of an asteroid being destroyed with no 'asteroid depleted'
     # popup, see 2019-07-20_15-23-06 at 2h53m58s
-    no_object_selected = lo.locate('./img/indicators/no_object_selected.bmp')
-    if no_object_selected is not None:
+    no_object = lo.hslocate('./img/indicators/no_object_selected.bmp', haystack=haystack, conf=0.9)
+    if no_object is not None:
         logging.info('target no longer exists')
         return 1
-    elif no_object_selected is None:
+    elif no_object == 0:
         logging.debug('target still exists')
         return 0
 
 
-def asteroid_depleted_popup():
+def asteroid_depleted_popup(haystack=0):
     """Checks for popup indicating the asteroid currently being mined has been
     depleted."""
-    depleted = lo.locate('./img/popups/asteroid_depleted.bmp', conf=0.90)
+    depleted = lo.hslocate('./img/popups/asteroid_depleted.bmp', haystack=haystack, conf=0.9)
     if depleted is not None:
         logging.debug('asteroid empty')
         return 1
-    elif depleted is None:
+    elif depleted == 0:
         logging.debug('asteroid still available')
         return 0
 
 
-def ship_full_popup():
+def ship_full_popup(haystack=0):
     """Checks for momentary popup indicating that the ship's inventory is full.
     This popup lasts about 5 seconds."""
-    inv_full_popup_var = pag.locateCenterOnScreen(
-        './img/popups/ship_inv_full.bmp',
-        confidence=0.9,
-        region=(originx, originy,
-                windowx, windowy))
-    if inv_full_popup_var is None:
-        logging.debug('inventory not yet full')
-        return 0
-    elif inv_full_popup_var is not None:
+    ship_full = lo.hslocate('./img/popups/ship_inv_full.bmp', haystack=haystack, conf=0.9)
+    if ship_full is not None:
         logging.info('inventory full')
         return 1
+    elif ship_full == 0:
+        logging.debug('inventory not yet full')
+        return 0
 
 
 def miner_out_of_range_popup():
