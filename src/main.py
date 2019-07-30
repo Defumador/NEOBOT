@@ -75,6 +75,7 @@ def miner():
                                             pc_capindy_freighter, pc_rookie,
                                             pc_pod)
     logging.info('beginning run ' + (str(runs_var)))
+    
     while doc.is_docked() == 0 and unsuitable_site <= 10:
         if drones.are_drones_launched() == 1:
             o.focus_client()
@@ -105,10 +106,13 @@ def miner():
 
                 # main mining loop # -------------------------------------------
                 while ship_full == 0:
-                    ship_full = mng.ship_full_popup()
+                    overview = pag.screenshot(region = (originx + (windowx - (int(windowx / 3.8)))), originy, (int(windowx / 3.8)), windowy)
+                    client = pag.screenshot(region = (originx, originy, windowx, windowy))
+                    ship_full = mng.ship_full_popup(haystack=client)
                     timer_var += 1
                     time.sleep(1)
-                    if mng.asteroid_depleted_popup() == 1:
+                    
+                    if mng.asteroid_depleted_popup(haystack=client) == 1:
                         # Sleep to wait for all mining modules to disable
                         # themselves automatically
                         logging.info('waiting for modules to deactivate')
@@ -134,20 +138,15 @@ def miner():
                         drones.recall_drones(drone_num)
                         miner()
                         
-                    # hash a screenshot of the overview. only run look_for_ship and
-                    # is_jammed checks if the hash is different from the last hash
-                    #overview = pag.screenshot(region = (originx + (windowx - (int(windowx / 3.8)))), originy, (int(windowx / 3.8)), windowy)
-                    #hash = binascii.crc32(overview)
-                    #if hash != 
-                        if o.look_for_ship(npc_list, pc_list) == 1 or \
-                           o.is_jammed(detect_jam) == 1 or \
-                            drones.recall_drones(drone_num)
-                            miner()
-
+                    if o.look_for_ship(npc_list, pc_list, haystack=overview) == 1 or \
+                                       o.is_jammed(detect_jam, haystack=overview) == 1:
+                        drones.recall_drones(drone_num)
+                        miner()
+                # end of main mining loop ----------------------------------------------
                 if ship_full == 1:
                     # Once inventory is full, dock at home station and unload.
                     drones.recall_drones(drone_num)
-                    logging.info('finishing run ' + (str(runs_var)))
+                    logging.info('finishing up run ' + (str(runs_var)))
                     if system_mining == 0:
                         if bkmk.set_home() == 1:
                             if navigator() == 1:
@@ -173,19 +172,22 @@ def miner():
                 logging.debug('unsuitable_site is' + (str(unsuitable_site)))
                 logging.debug('no targets, restarting')
                 miner()
-        # end of main mining loop ----------------------------------------------
+        
 
         elif bkmk.iterate_through_bookmarks_rand(total_sites) == 0:
             nav.emergency_terminate()
             sys.exit(0)
+            
     if doc.is_docked() == 1 and unsuitable_site <= 10:
         # If docked when script starts, undock_loop.
         o.focus_client()
         doc.wait_for_undock()
         miner()
+        
     if doc.is_docked() == 1 and unsuitable_site > 10:
         logging.debug('unsuitable site limit reached')
         sys.exit()
+        
     if doc.is_docked() == 0 and unsuitable_site > 10:
         logging.debug('unsuitable site limit reached')
         nav.emergency_terminate()
