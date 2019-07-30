@@ -49,6 +49,8 @@ playerfound = 0
 # Total number of saved bookmark locations. This variable is set by the user.
 total_sites = 10
 unsuitable_site = 0
+# Number of 'runs' completed by the mining script. This will always start
+# at 1
 runs_var = 1
 # ------------------------------------------------------------------------------
 
@@ -63,8 +65,7 @@ def miner():
     o5 = 0
 
     global playerfound, unsuitable_site, runs_var, pc_list, npc_list
-    # Number of 'runs' completed by the mining script. This will always start
-    # as 1
+
     timer_var = 0
     # Build the lists of ship icons to check for based on the user-specified
     # checkboxes in the GUI.
@@ -96,7 +97,7 @@ def miner():
                 drones.launch_drones(drone_num)
                 if o.initiate_target_lock(target) == 0:
                     miner()
-                time.sleep(float(random.randint(5000, 15000)) / 1000)
+                time.sleep(float(random.randint(50, 150)) / 10)
                 mng.activate_miners(module_num)
                 # If ship inventory isn't full, continue to mine ore and wait
                 # for popups or errors.
@@ -128,7 +129,7 @@ def miner():
                             # script from attempting to mine an asteroid that
                             # is too far away.
                             time.sleep(
-                                float(random.randint(5000, 15000)) / 1000)
+                                float(random.randint(50, 150)) / 10)
                             mng.activate_miners(module_num)
                             ship_full = mng.ship_full_popup()
                             continue
@@ -179,7 +180,6 @@ def miner():
             sys.exit(0)
             
     if doc.is_docked() == 1 and unsuitable_site <= total_sites:
-        # If docked when script starts, undock_loop.
         o.focus_client()
         doc.wait_for_undock()
         miner()
