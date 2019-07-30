@@ -19,10 +19,10 @@ oly = windowy
 # TODO: function to sort overview by distance
 
 
-def is_jammed(jam_var):
-    """Checks for an ecm-jamming icon on the rightmost column of the
-    overview."""
-    if jam_var == 1:
+def is_jammed(detect_jam, haystack=0):
+    """Checks for an ecm-jamming icon in the overview.
+    If a haystack image is provided, search within that instead."""
+    if detect_jam == 1 and haystack == 0:
         global oy, oly
         ox_jam = (originx + (windowx - (int(windowx / 8))))
         olx_jam = (int(windowx / 8))
@@ -34,7 +34,14 @@ def is_jammed(jam_var):
             return 1
         else:
             return 0
-    elif jam_var == 0:
+        
+    elif detect_jam == 1 and haystack != 0:
+        if lo.hslocate('./img/overview/jammed_overview.bmp', haystack, grayscale=True) != 0:
+            logging.info('ship has been jammed!')
+            return 1
+        else:
+            return 0 
+    elif detect_jam == 0:
         return 0
 
     
@@ -89,14 +96,13 @@ def build_ship_list(detect_npcs_var, npc_frig_dest,
             pc_list.append(
                 './img/overview/player_ship_icons/archetype_icons'
                 '/player_capsule.bmp')
-        #logging.debug('pc list is now' + (str(pc_list)))
     return npc_list, pc_list
 
 
-def look_for_ship(npc_list, pc_list):
+def look_for_ship(npc_list, pc_list, haystack=0):
     """Checks if any of the ship icons in the given lists are currently
-    present on the overview. Searches the rightmost
-    quarter of the user's client only (just the overview)."""
+    present on the overview. If a haystack image is provided, searches
+    within that instead."""
     
     # Search within the rightmost quarter of the client. Script assumes
     # overview is on the right half of the screen. This is about
@@ -107,49 +113,61 @@ def look_for_ship(npc_list, pc_list):
     # logging.debug('npc_list is ' + (str(npc_list)) + ' and pc_list is ' + (
     #    str(pc_list)))
 
-    if len(npc_list) != 0 or len(pc_list) != 0:
-        overview = pag.screenshot(
-            region=((originx + (windowx - (int(windowx / 3.8)))),
-                    originy, (int(windowx / 3.8)), windowy))
-    
-        if len(npc_list) != 0:
-            conf = 0.98
-            for npc_icon in npc_list:
-                hostile_npc_found = pag.locate(npc_icon, overview, confidence=conf)
+    if haystack == 0:
+        if len(npc_list) != 0 or len(pc_list) != 0:
+            overview = pag.screenshot(
+                region=((originx + (windowx - (int(windowx / 3.8)))),
+                        originy, (int(windowx / 3.8)), windowy))
 
-                if hostile_npc_found is not None:
-                    logging.debug('found ship at ' + (str(hostile_npc_found)))
-                    logging.debug('located icon ' + (str(npc_icon)))
-                    # Break up the tuple so mouse can point at icon for debugging.
-                    # (x, y, t, w) = hostile_npc_found
-                    # Coordinates must compensate for the altered coordinate-space
-                    # of the screenshot.
-                    # pag.moveTo((x + (originx + (windowx - (int(windowx / 2))))),
-                    #           (y + originy),
-                    #           0, mouse.path())
-                    return 1
-            logging.debug('passed npc check')
-            
+            if len(npc_list) != 0:
+                conf = 0.98
+                for npc in npc_list:
+                    npc_found = pag.locate(npc, overview, confidence=conf)
+                    if npc_found is not None:
+                        logging.debug('found ' + (str(npc_icon)) + ' at ' + (str(npc_found)))
+                        # Break up the tuple so mouse can point at icon for debugging.
+                        # (x, y, t, w) = hostile_npc_found
+                        # Coordinates must compensate for the altered coordinate-space
+                        # of the screenshot.
+                        # pag.moveTo((x + (originx + (windowx - (int(windowx / 2))))),
+                        #           (y + originy),
+                        #           0, mouse.path())
+                        return 1
+                logging.debug('passed npc check')
+
+            if len(pc_list) != 0:
+                conf = 0.95
+                for pc in pc_list:
+                    pc_found = pag.locate(pc, overview, confidence=conf)
+                    if pc_found is not None:
+                        logging.debug('found ' + (str(pc_icon)) + ' at ' + (str(pc_found)))
+                        return 1
+                logging.debug('passed pc check')
+                return 0
+        elif len(npc_list) == 0 and len(pc_list) == 0:
+            return 0
+        
+    elif haystack != 0:
+        if len(npc_list) != 0:
+                conf = 0.98
+                for npc in npc_list:
+                    npc_found = lo.hslocate(npc, haystack, conf=conf)
+                    if npc_found != 0:
+                        logging.debug('found ' + (str(npc_icon)) + ' at ' + (str(npc_found)))
+                        logging.info('unwanted npc ship detected')
+                        return 1
+                logging.debug('passed npc check')
+
         if len(pc_list) != 0:
             conf = 0.95
-            for pc_icon in pc_list:
-                player_found = lo.olocate(pc_icon)
-
-                if player_found is not None:
-                    logging.debug('found player at' + (str(player_found)))
-                    logging.debug('located icon' + (str(pc_icon)))
-                    #(x, y, l, w) = player_found
-                    # Coordinates must compensate for the altered coordinate-space
-                    # of the screenshot.
-                    # pag.moveTo((x + (originx + (windowx - (int(windowx /
-                    # 3.8))))),
-                    #           (y + originy),
-                    #           0, mouse.path())
+            for pc in pc_list:
+                pc_found = lo.hslocate(pc, haystack, conf=conf)
+                if pc_found != 0:
+                    logging.debug('found ' + (str(pc_icon)) + ' at ' + (str(pc_found)))
+                    logging.info('unwanted player ship detected')
                     return 1
             logging.debug('passed pc check')
             return 0
-    else:
-        return 0
 
 
 def look_for_targets(target1, target2, target3, target4, target5):
