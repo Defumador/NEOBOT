@@ -8,6 +8,29 @@ overviewx = (originx + (windowx - (int(windowx / 3.8))))
 overviewlx = (int(windowx / 3.8))
 
 
+def hslocate(needle, haystack=0, conf=0.95, grayscale=False):
+    """Searches the haystack image for the provided needle image, returns a tuple.
+    If a haystack image is not provided, search the client window instead."""
+    if haystack == 0:
+        locate_var = pag.locateOnScreen(needle, confidence=conf, region=(originx, originy, windowx, windowy))
+        if locate_var is not None:
+            logging.debug('found image ' + (str(needle)))
+            return locate_var
+        elif locate_var is None:
+            # logging.debug('cannot find image ' + (
+            #            str(image) + ' confidence is ' + (str(conf))))
+            return locate_var
+    else:
+        locate_var = pag.locate(needle, haystack, confidence=conf)
+        if locate_var is not None:
+            logging.debug('found needle image ' + (str(needle)) + ' within haystack image' + (str(haystack)))
+            return locate_var
+        elif locate_var is None:
+            # logging.debug('cannot find image ' + (
+            #            str(image) + ' confidence is ' + (str(conf))))
+            return locate_var
+
+
 def locate(image, conf=0.95, region=(originx, originy, windowx, windowy)):
     """Searches the client window for the provided image, returns a tuple."""
     locate_var = pag.locateOnScreen(image, confidence=conf, region=region)
