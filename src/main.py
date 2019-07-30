@@ -129,13 +129,18 @@ def miner():
                             ship_full = mng.ship_full_popup()
                             continue
 
-                    # Only run the below checks every 2nd 'cycle' for better
-                    # efficiency and reduced cpu usage
-                    if (timer_var % 2) == 0:
+                    if mng.time_at_site(timer_var) == 1 or \
+                      mng.no_object_selected_indicator() == 1:
+                        drones.recall_drones(drone_num)
+                        miner()
+                        
+                    # hash a screenshot of the overview. only run look_for_ship and
+                    # is_jammed checks if the hash is different from the last hash
+                    #overview = pag.screenshot(region = (originx + (windowx - (int(windowx / 3.8)))), originy, (int(windowx / 3.8)), windowy)
+                    #hash = binascii.crc32(overview)
+                    #if hash != 
                         if o.look_for_ship(npc_list, pc_list) == 1 or \
-                                o.is_jammed(detect_jam) == 1 or \
-                                mng.time_at_site(timer_var) == 1 or \
-                                mng.no_object_selected_indicator() == 1:
+                           o.is_jammed(detect_jam) == 1 or \
                             drones.recall_drones(drone_num)
                             miner()
 
