@@ -11,13 +11,9 @@ from src.navigation import wait_for_dock
 from src.vars import originx, originy, windowx, windowy, conf
 
 
-# logging.basicConfig(format='(%(levelno)s) %(asctime)s - %(funcName)s -- %('
-#                           'message)s', level=logging.DEBUG)
-
-
 def set_dest():
-    """Issue a 'set destination' command for the lowest-numbered bookmark that
-    isn't blacklisted (starting with 1)."""
+    """Issues a 'set destination' command for the lowest-numbered bookmark that
+    isn't blacklisted."""
     target_dest = 1
     dest = lo.clocate('./img/dest/dest' + (str(target_dest)) + '.bmp', conf=0.98)
 
@@ -42,8 +38,8 @@ def set_dest():
 
 
 def is_home():
-    """Check if the ship is at its home station by looking for a bookmark
-    starting with '000'."""
+    """Checks if the ship is at its home station by looking for a
+    gree bookmark starting with '000'."""
     if lo.locate('./img/dest/at_dest0.bmp') is None:
         logging.debug('not at home station')
         return 0
@@ -53,7 +49,7 @@ def is_home():
 
 
 def set_home():
-    """Set destination as the bookmark beginning with '000'."""
+    """Sets destination to the first bookmark beginning with '000'."""
     home = lo.clocate('./img/dest/dest0.bmp')
     if home is not None:
         logging.debug('setting home waypoint')
@@ -93,20 +89,21 @@ def iterate_through_bookmarks_rand(total_site_num):
 
     # If script randomly checks (total_site_num + 10) bookmarks, give up.
     elif warping_to_bookmark == 0 and tries > (total_site_num + 10):
-        logging.error('timed out checking randomly for bookmarks!')
+        logging.error('failed to warp after checking ' + (str(tries)) ' bookmarks)
         return 0
 
 
 def iterate_through_bookmarks(target_site_num, total_site_num):
-    """Tries warping to the provided bookmark. If not possible, warps
-    to the next numerical bookmark up.
+    """Tries warping to the target bookmark. If not possible, warps
+    to the next consecutive bookmark by number, up to the total
+    number of bookmarks.
 
     Ex: try warping to bookmark X in the system. If bookmark X doesn't exist,
-    is not in the current system, or your ship is already there. Increment
-    bookmark number by 1 and try again."""
+    is not in the current system, or your ship is already there. try
+    warping to bookmark X+1."""
 
     # Try running through bookmarks twice before giving up.
-    for iterations in range(1, 3):
+    for iterations in range(1, 4):
         warping_to_bookmark = warp_to_local_bookmark(target_site_num)
 
         while warping_to_bookmark == 0 and target_site_num <= total_site_num:
@@ -120,9 +117,9 @@ def iterate_through_bookmarks(target_site_num, total_site_num):
                 return 1
 
         # If script runs out of bookmarks to check for, it resets the target
-        # site to 1 and goes through them again.
+        # site to 1 and goes through them again until the 'for' loop completes.
         elif warping_to_bookmark == 0 and target_site_num > total_site_num:
-            logging.debug('out of sites to check for, wrapping back around' +
+            logging.debug('out of sites to check for, starting over' +
                           (str(iterations)))
             target_site_num = 1
 
@@ -131,16 +128,12 @@ def iterate_through_bookmarks(target_site_num, total_site_num):
    
 
 def warp_to_local_bookmark(target_site_num):
-    """Tries warping to the provided bookmark, assuming the bookmark
-    is in the current system. If the ship is already at the
-    requested site, return the function."""
+    """Tries warping to the provided target bookmark, assuming the bookmark
+    is in the current system. If the ship is already at or near the
+    requested bookmark, return the function."""
     # Confidence must be >0.95 because script will confuse 6 with 0.
     target_site_bookmark = lo.clocate('./img/dest/at_dest' + (str(target_site_num)) + '.bmp', conf=0.98)
-   
-    # If the target site has been found, right click on the target to see if
-    # the 'approach location' option is there. If so, return function
-    # because ship is already at that location. If the option is not there,
-    # check for a 'warp to' option, if it's present, warp to location.
+
     if target_site_bookmark is not None:
         (x, y) = target_site_bookmark
         pag.moveTo((x + (random.randint(10, 200))),
@@ -150,13 +143,15 @@ def warp_to_local_bookmark(target_site_num):
         approach_location = lo.locate(
             './img/buttons/detect_warp_to_bookmark.bmp', conf=0.90)
 
-        # If the 'approach location' option is found, return function.
+        # If the 'approach location' option is found in the right-click menu, the ship
+        # is already near the bookmark.
         if approach_location is not None:
             logging.debug('already at bookmark ' + (str(target_site_bookmark)))
             keyboard.keypress('esc')  # Close right-click menu.
             return 0
 
-        # Otherwise, warp to location.
+        # If the 'approach location' option is not found, look for a 'warp to' option
+        # and select it.
         elif approach_location is None:
             warp_to_site = lo.clocate('./img/buttons/warp_to_bookmark.bmp', conf=0.90)
 
@@ -175,8 +170,8 @@ def warp_to_local_bookmark(target_site_num):
 
 
 def dock_at_local_bookmark():
-    """Dock at the first bookmark beginning with a '0' in its name, assuming it's
-    in the same system as you."""
+    """Docks at the first bookmark beginning with a '0' in its name, assuming it's
+    in the same system as you and the bookmark is a station."""
     dock = lo.clocate('./img/dest/at_dest0.bmp')
     if dock is not None:
         (x, y) = dock
@@ -188,21 +183,20 @@ def dock_at_local_bookmark():
         pag.moveRel((0 + (random.randint(10, 80))),
                     (0 + (random.randint(35, 40))),
                     mouse.duration(), mouse.path())
-        # Sleep used to fix possible bug in which script doesn't
-        # clock on 'dock' after opening right-click menu.
+        # Sleep used to fix bug in which client doesn't immediately
+        # highlight 'dock' after opening right-click menu.
         # (see video 2019-07-06_13-26-14 at 33m50s for bug).
-        time.sleep(float(random.randint(500, 800)) / 1000)
+        time.sleep(float(random.randint(700, 1000)) / 1000)
         mouse.click()
         wait_for_dock()
 
 
 def detect_bookmark_location():
-    """Determine if any bookmarks are green, indicating that bookmark is in the
+    """Checks if any bookmarks are green, indicating that the bookmark is in the
     ship's current system."""
     global n
     n = 0
-    # Confidence must be higher than normal because script frequently
-    # mistakes dest3 for dest2.
+    # Confidence must be higher than normal or script mistakes dest3 for dest2.
     at_dest = lo.locate('./img/dest/at_dest' + (str(n)) + '.bmp', conf=0.98)
 
     while at_dest is None:
@@ -217,11 +211,12 @@ def detect_bookmark_location():
         logging.debug('at dest ' + (str(n)))
         return n
 
+# The below blacklisting functions have had little testing.
 
 def blacklist_station():
-    """Blacklist the first green bookmark script identifies by editing its
-    bookmark name. This will prevent further trips to the blacklisted
-    station."""
+    """Blacklists the first green bookmark by editing its name.
+    This will prevent other functions from identifying the bookmark
+    as a potential site."""
     at_dest = detect_bookmark_location()
     if at_dest is not None:
         logging.debug('blacklisting station')
@@ -258,7 +253,7 @@ def blacklist_station():
 
 
 def blacklist_local_bookmark():
-    """Determine which bookmark ship is at by looking at the right-click
+    """Determines which bookmark ship is at by looking at the right-click
     menu. If a bookmark is on grid with the user's ship, blacklist the
     bookmark by editing its name."""
     logging.debug('blacklisting local bookmark')
@@ -270,7 +265,7 @@ def blacklist_local_bookmark():
         confidence=0.95,
         region=(originx, originy, windowx, windowy))
 
-    # If bookmark exists, check right-click menu .
+    # If bookmark exists, check right-click menu.
     while bookmark_to_blacklist is not None:
 
         bookmark_to_blacklist = pag.locateCenterOnScreen(
@@ -326,7 +321,7 @@ def blacklist_local_bookmark():
                 return 1
 
             # If 'approach location' is not present,
-            # close the right-click menu and check the next bookmark
+            # close the right-click menu and check the next bookmark.
             if at_bookmark is None:
                 logging.debug('not at bookmark ' + (str(bookmark)))
                 keyboard.keypress('esc')
@@ -340,9 +335,9 @@ def blacklist_local_bookmark():
 
 def blacklist_set_bookmark(target_site):
     """Blacklist a specific bookmark by changing its name."""
-    # TODO: possible blacklist bookmarks instead by deleting them, which
+    # TODO: possibly blacklist bookmarks instead by deleting them, which
     # could lead to fewer bugs as sometimes the 'rename bookmark' window
-    # does not behave as expected.
+    # does not behave consistently.
     logging.debug('blacklisting bookmark ' + (str(target_site)))
     bookmark_to_blacklist = pag.locateCenterOnScreen(
         ('./img/dest/at_dest' + (str(target_site)) + '.bmp'),
@@ -355,6 +350,7 @@ def blacklist_set_bookmark(target_site):
                mouse.duration(), mouse.path())
 
     time.sleep(float(random.randint(1000, 2000)) / 1000)
+    # Multiple clicks to focus the text input field.
     mouse.click()
     time.sleep(float(random.randint(1000, 2000)) / 1000)
     mouse.click()
