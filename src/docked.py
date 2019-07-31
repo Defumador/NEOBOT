@@ -9,13 +9,10 @@ import pyautogui as pag
 from src import mouse, keyboard, locate as lo, keyboard as key
 from src.vars import originx, originy, windowx, windowy, conf
 
-logging.basicConfig(format='(%(asctime)s) %(funcName)s - %('
-                           'message)s', level=logging.DEBUG)
-
 
 def is_docked():
-    """Check if the ship is currently docked by looking for the undock
-     icon."""
+    """Checks if the ship is currently docked by looking for the undock
+     button."""
     if lo.locate('./img/buttons/undock.bmp') is None:
         logging.debug('not docked')
         return 0
@@ -25,14 +22,14 @@ def is_docked():
 
 
 def open_ship_inv():
-    """Click on the ship's inventory button in the inventory window while
-    docked."""
+    """Clicks on the ship's inventory button within the inventory window.
+    Assumes the ship is docked and the inventory window is already open."""
     logging.debug('opening ship inventory')
     tries = 0
     ship_inv = lo.clocate('./img/buttons/ship_inv.bmp')
 
     while ship_inv is None and tries <= 25:
-        logging.error('cannot find ship inventory')
+        logging.error('cannot find ship inventory ' + (str(tries)))
         tries += 1
         time.sleep(float(random.randint(500, 2000)) / 1000)
         ship_inv = lo.clocate('./img/buttons/ship_inv.bmp')
@@ -44,20 +41,21 @@ def open_ship_inv():
                    mouse.duration(), mouse.path())
         mouse.click()
         return 1
-    else:
-        logging.error('function timed out!')
+    elif tries > 25:
+        logging.error('timed out looking for ship inventory')
         return 0
 
 
 def open_specinv(invtype):
-    """If a special inventory was found (for ore, minerals, planetary
-    products etc.) click on it in inventory window while docked."""
-    logging.debug('opening' + invtype + 'inventory')
+    """Opens the ship's specified special inventory
+    (for storing ore, minerals, planetary products etc.)
+    Assumes the ship is docked and the inventory window is already open."""
+    logging.debug('opening ' + invtype + ' inventory')
     tries = 0
     spec_inv = lo.clocate('./img/buttons/spec_inv_' + invtype + '.bmp')
 
     while spec_inv is None and tries <= 25:
-        logging.error('cannot find' + invtype + 'inventory' + (str(tries)))
+        logging.error('cannot find ' + invtype + ' inventory ' + (str(tries)))
         tries += 1
         time.sleep(float(random.randint(500, 2000)) / 1000)
         spec_inv = lo.clocate('./img/buttons/spec_inv_' + invtype + '.bmp')
@@ -69,20 +67,20 @@ def open_specinv(invtype):
                    mouse.duration(), mouse.path())
         mouse.click()
         return 1
-    else:
-        logging.error('function timed out!')
+    elif tries > 25:
+        logging.error('timed out looking for ' + invtype + ' inventory')
         return 0
 
 
 def open_station_inv():
-    """Click on the station inventory button within the main inventory window
-    while docked."""
+    """Clicks on the station inventory button within the main inventory window.
+    Assumes the ship is docked and the inventory window is already open."""
     logging.debug('opening station inventory')
     tries = 0
     station_inv = lo.clocate('./img/buttons/station_inv.bmp')
 
     while station_inv is None and tries <= 25:
-        logging.error('cannot find station inventory icon')
+        logging.error('cannot find station inventory icon ' + (str(tries)))
         tries += 1
         time.sleep(float(random.randint(500, 2000)) / 1000)
         station_inv = lo.clocate('./img/buttons/station_inv.bmp')
@@ -94,21 +92,21 @@ def open_station_inv():
                    mouse.duration(), mouse.path())
         mouse.click()
         return 1
-    else:
-        logging.error('function timed out!')
+    elif tries > 25:
+        logging.error('timed out looking for station inventory')
         return 0
 
 
 def focus_inv_window():
-    """Click somewhere inside the station inventory window to focus it before
-    any items are selected. Look for the sorting buttons in top right corner
-    of the inventory window and position the mouse cursor relative to those
-    buttons to click a non-interactive area within the inventory window."""
+    """Clicks somewhere inside the station inventory window to focus it.
+    Looks for the sorting buttons in top right corner
+    of the inventory window and positions the mouse cursor relative to those
+    buttons to click an inavtive area within the inventory window."""
     tries = 0
     window = lo.clocate('./img/buttons/station_sorting.bmp')
 
     while window is None and tries <= 25:
-        logging.error('cannot find sorting icon')
+        logging.error('cannot find sorting icon ' + (str(tries)))
         tries += 1
         time.sleep(float(random.randint(500, 2000)) / 1000)
         window = lo.clocate('./img/buttons/station_sorting.bmp')
@@ -120,13 +118,13 @@ def focus_inv_window():
                    mouse.duration(), mouse.path())
         mouse.click()
         return 1
-    else:
-        logging.error('function timed out!')
+    elif tries > 25:
+        logging.error('timed out looking for sorting buttons')
         return 0
 
 
 def look_for_items():
-    """Look at the bottom-right corner of the station inventory window for the
+    """Looks at the bottom-right corner of the station inventory window for the
     '0 items found' text. If it isn't present, there must be items in the
     station's inventory."""
     if lo.locate('./img/indicators/station_inv_0_items.bmp', conf=0.9) is None:
@@ -139,7 +137,7 @@ def look_for_items():
 
 
 def look_for_specinv(invtype):
-    """Look for different kinds of special inventory locations on your ship."""
+    """Looks for different kinds of special inventory icons on your ship."""
     if lo.locate('./img/buttons/spec_inv_' + invtype + '.bmp') is not None:
         logging.debug('found ' + (str(invtype)) + ' inventory')
         return 1
