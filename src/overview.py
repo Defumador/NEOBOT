@@ -122,7 +122,8 @@ def look_for_ship(npc_list, pc_list, haystack=0):
                 for npc in npc_list:
                     npc_found = pag.locate(npc, overview, confidence=conf)
                     if npc_found is not None:
-                        logging.debug('found ' + (str(npc_icon)) + ' at ' + (str(npc_found)))
+                        logging.debug(
+                            'found ' + (str(npc)) + ' at ' + (str(npc_found)))
                         # Break up the tuple so mouse can point at icon for debugging.
                         # (x, y, t, w) = hostile_npc_found
                         # Coordinates must compensate for the altered coordinate-space
@@ -138,7 +139,8 @@ def look_for_ship(npc_list, pc_list, haystack=0):
                 for pc in pc_list:
                     pc_found = pag.locate(pc, overview, confidence=conf)
                     if pc_found is not None:
-                        logging.debug('found ' + (str(pc_icon)) + ' at ' + (str(pc_found)))
+                        logging.debug(
+                            'found ' + (str(pc)) + ' at ' + (str(pc_found)))
                         return 1
                 logging.debug('passed pc check')
                 return 0
@@ -151,7 +153,8 @@ def look_for_ship(npc_list, pc_list, haystack=0):
                 for npc in npc_list:
                     npc_found = lo.hslocate(npc, haystack, conf=conf)
                     if npc_found != 0:
-                        logging.debug('found ' + (str(npc_icon)) + ' at ' + (str(npc_found)))
+                        logging.debug(
+                            'found ' + (str(npc)) + ' at ' + (str(npc_found)))
                         logging.info('unwanted npc ship detected')
                         return 1
                 logging.debug('passed npc check')
@@ -161,7 +164,8 @@ def look_for_ship(npc_list, pc_list, haystack=0):
             for pc in pc_list:
                 pc_found = lo.hslocate(pc, haystack, conf=conf)
                 if pc_found != 0:
-                    logging.debug('found ' + (str(pc_icon)) + ' at ' + (str(pc_found)))
+                    logging.debug(
+                        'found ' + (str(pc)) + ' at ' + (str(pc_found)))
                     logging.info('unwanted player ship detected')
                     return 1
             logging.debug('passed pc check')
@@ -338,7 +342,7 @@ def initiate_target_lock(overview_target):
                 # target again
                 elif lock_attained == 0:
                     continue
-                
+
             if is_jammed(1) == 1:
                 logging.info('jammed while approaching target')
                 return 0
@@ -347,7 +351,7 @@ def initiate_target_lock(overview_target):
                 logging.warning(
                     'timed out waiting for target to get within range!')
                 return 0
-            
+
         logging.error('tried ' + (str(tries)) + ' times to lock target')
         return 0
     else:

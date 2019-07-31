@@ -13,7 +13,7 @@ import datetime
 import tkinter.scrolledtext as ScrolledText
 from tkinter import ttk
 # import drones
-
+import pyautogui as pag
 # import src.docked
 # import src.drones
 from src import docked as doc, drones, navigation as nav, mining as mng, \
@@ -103,15 +103,22 @@ def miner():
                 # for popups or errors.
                 # Switch back to the general tab for easier ship detection
                 o.select_overview_tab('general')
-                ship_full = mng.ship_full_popup()
-
+                client = pag.screenshot(
+                    region=(originx, originy, windowx, windowy))
+                ship_full = mng.ship_full_popup(haystack=client)
+                logging.info('got to here')
                 # main mining loop # -------------------------------------------
                 while ship_full == 0:
-                    overview = pag.screenshot(region = (originx + (windowx - (int(windowx / 3.8)))), originy, (int(windowx / 3.8)), windowy)
+                    overview = pag.screenshot(region=((originx + (windowx -
+                                                                  (int(
+                                                                      windowx / 3.8)))),
+                                                      originy,
+                                                      (int(windowx / 3.8)),
+                                                      windowy))
                     client = pag.screenshot(region = (originx, originy, windowx, windowy))
                     ship_full = mng.ship_full_popup(haystack=client)
                     timer_var += 1
-                    time.sleep(1)
+                    # time.sleep(1)
                     
                     if mng.asteroid_depleted_popup(haystack=client) == 1:
                         # Sleep to wait for all mining modules to disable

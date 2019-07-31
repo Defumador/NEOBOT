@@ -45,7 +45,7 @@ def no_object_selected_indicator(haystack=0):
     # For evidence of an asteroid being destroyed with no 'asteroid depleted'
     # popup, see 2019-07-20_15-23-06 at 2h53m58s
     no_object = lo.hslocate('./img/indicators/no_object_selected.bmp', haystack=haystack, conf=0.9)
-    if no_object is not None:
+    if no_object != 0:
         logging.info('target no longer exists')
         return 1
     elif no_object == 0:
@@ -57,7 +57,7 @@ def asteroid_depleted_popup(haystack=0):
     """Checks for popup indicating the asteroid currently being mined has been
     depleted."""
     depleted = lo.hslocate('./img/popups/asteroid_depleted.bmp', haystack=haystack, conf=0.9)
-    if depleted is not None:
+    if depleted != 0:
         logging.debug('asteroid empty')
         return 1
     elif depleted == 0:
@@ -69,7 +69,7 @@ def ship_full_popup(haystack=0):
     """Checks for momentary popup indicating that the ship's inventory is full.
     This popup lasts about 5 seconds."""
     ship_full = lo.hslocate('./img/popups/ship_inv_full.bmp', haystack=haystack, conf=0.9)
-    if ship_full is not None:
+    if ship_full != 0:
         logging.info('inventory full')
         return 1
     elif ship_full == 0:
