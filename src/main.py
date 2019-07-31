@@ -4,18 +4,12 @@ import time
 import traceback
 import cProfile
 import logging
-import threading
 import random
 
-import logging
 import tkinter
-import datetime
-import tkinter.scrolledtext as ScrolledText
 from tkinter import ttk
-# import drones
 import pyautogui as pag
-# import src.docked
-# import src.drones
+
 from src import docked as doc, drones, navigation as nav, mining as mng, \
     bookmarks as bkmk, overview as o
 from src.vars import system_mining, originx, originy, windowx, windowy
@@ -103,22 +97,21 @@ def miner():
                 # for popups or errors.
                 # Switch back to the general tab for easier ship detection
                 o.select_overview_tab('general')
-                client = pag.screenshot(
-                    region=(originx, originy, windowx, windowy))
+                client = pag.screenshot(region=(
+                    originx, originy, windowx, windowy))
                 ship_full = mng.ship_full_popup(haystack=client)
-                logging.info('got to here')
+
                 # main mining loop # -------------------------------------------
                 while ship_full == 0:
-                    overview = pag.screenshot(region=((originx + (windowx -
-                                                                  (int(
-                                                                      windowx / 3.8)))),
-                                                      originy,
-                                                      (int(windowx / 3.8)),
-                                                      windowy))
-                    client = pag.screenshot(region = (originx, originy, windowx, windowy))
+                    overview = pag.screenshot(region=(
+                        (originx + (windowx - (int(windowx / 3.8)))),
+                        originy, (int(windowx / 3.8)), windowy))
+                    client = pag.screenshot(region=(
+                        originx, originy, windowx, windowy))
+
                     ship_full = mng.ship_full_popup(haystack=client)
                     timer_var += 1
-                    # time.sleep(1)
+                    time.sleep(1)
                     
                     if mng.asteroid_depleted_popup(haystack=client) == 1:
                         # Sleep to wait for all mining modules to disable
@@ -142,15 +135,17 @@ def miner():
                             continue
 
                     if mng.time_at_site(timer_var) == 1 or \
-                      mng.no_object_selected_indicator() == 1:
+                            mng.no_object_selected_indicator() == 1:
                         drones.recall_drones(drone_num)
                         miner()
-                        
-                    if o.look_for_ship(npc_list, pc_list, haystack=overview) == 1 or \
-                                       o.is_jammed(detect_jam, haystack=overview) == 1:
+
+                    if o.look_for_ship(npc_list, pc_list, haystack=overview) \
+                            == 1 \
+                            or o.is_jammed(detect_jam, haystack=overview) == 1:
                         drones.recall_drones(drone_num)
                         miner()
-                # end of main mining loop ----------------------------------------------
+                # end of main mining loop --------------------------------------
+
                 if ship_full == 1:
                     # Once inventory is full, dock at home station and unload.
                     drones.recall_drones(drone_num)
@@ -180,7 +175,6 @@ def miner():
                 logging.debug('unsuitable_site is' + (str(unsuitable_site)))
                 logging.debug('no targets, restarting')
                 miner()
-        
 
         elif bkmk.iterate_through_bookmarks_rand(total_sites) == 0:
             nav.emergency_terminate()
