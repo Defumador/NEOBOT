@@ -285,20 +285,25 @@ def is_target_lockable():
 
 def wait_for_target_lock():
     """Waits until a target has been locked by looking for
-    the 'unlock target' icon in the 'selected item' window."""
+    the 'unlock target' icon in the 'selected item' window. While waiting for a
+    target lock, switch to the 'general' overview tab and check for jamming."""
     tries = 0
+    select_overview_tab('general')
     while lo.locate('./img/indicators/target_lock_attained.bmp') is None \
-            and tries <= 50:
+            and tries <= 50 and is_jammed(1) == 0:
         tries += 1
         logging.debug('waiting for target to lock ' + (str(tries)))
-        time.sleep(float(random.randint(100, 500)) / 1000)
+        time.sleep(float(random.randint(1, 5)) / 10)
 
     if lo.locate('./img/indicators/target_lock_attained.bmp') is not None \
-            and tries <= 50:
+            and tries <= 50 and is_jammed(1) == 0:
         logging.debug('lock attained')
         return 1
-    if lo.locate('./img/indicators/target_lock_attained.bmp') is None \
-            and tries > 50:
+    
+    elif is_jammed(1) == 1:
+        logging.warning('ship jammed while locking target')
+        return 0
+    elif tries > 50:
         logging.error('timed out waiting for target lock')
         return 0
 
