@@ -174,66 +174,6 @@ def look_for_ship(npc_list, pc_list, haystack=0):
             return 0
 
 
-def look_for_targets(target1, target2, target3, target4, target5):
-    """Iterates through a list of user-defined targets. If one is found,
-    returns its location to the calling function. Searches the rightmost
-    quarter of the user's client only (just the overview)."""
-    overview = pag.screenshot(
-        region=((originx + (windowx - (int(windowx / 3.8)))),
-                originy, (int(windowx / 3.8)), windowy))
-
-    target_list = []
-    # Populate target_list with only the targets that the user wishes to
-    # check for, as specified by the variables at the top of this file. For
-    # mining, these targets would be types of ore.
-    if target1 != 0:
-        target_list.append(target1)
-    if target2 != 0:
-        target_list.append(target2)
-    if target3 != 0:
-        target_list.append(target3)
-    if target4 != 0:
-        target_list.append(target4)
-    if target5 != 0:
-        target_list.append(target5)
-
-    for t in target_list:
-        target = pag.locate(t, overview, confidence=0.85)
-        if target is not None:
-            logging.debug('found ' + (str(t)) + ' at ' + (str(target)))
-            # (x, y, l, w) = target
-            # Move mouse over target for debugging.
-            # pag.moveTo((x + (originx + (windowx - (int(windowx / 3.8))))),
-            #           (y + originy),
-            #           1, mouse.path())
-            return target
-        elif target is None:
-            logging.debug('target ' + (str(t)) + ' not found')
-
-    logging.info('no targets found')
-    return 0
-
-
-def wait_for_target_lock():
-    """Waits until a target has been locked by looking for
-    the 'unlock target' icon in the 'selected item' window."""
-    tries = 0
-    while lo.locate('./img/indicators/target_lock_attained.bmp') is None \
-            and tries <= 50:
-        tries += 1
-        logging.debug('waiting for target to lock ' + (str(tries)))
-        time.sleep(float(random.randint(100, 500)) / 1000)
-
-    if lo.locate('./img/indicators/target_lock_attained.bmp') is not None \
-            and tries <= 50:
-        logging.debug('lock attained')
-        return 1
-    if lo.locate('./img/indicators/target_lock_attained.bmp') is None \
-            and tries > 50:
-        logging.error('timed out waiting for target lock')
-        return 0
-
-
 def focus_client():
     """Clicks on a blank area in the left half of the client client,
     assuming user has properly configured the UI for the mining script."""
@@ -290,6 +230,46 @@ def select_overview_tab(tab):
             return 0
 
 
+def look_for_targets(target1, target2, target3, target4, target5):
+    """Iterates through a list of user-defined targets. If one is found,
+    returns its location to the calling function. Searches the rightmost
+    quarter of the user's client only (just the overview)."""
+    overview = pag.screenshot(
+        region=((originx + (windowx - (int(windowx / 3.8)))),
+                originy, (int(windowx / 3.8)), windowy))
+
+    target_list = []
+    # Populate target_list with only the targets that the user wishes to
+    # check for, as specified by the variables at the top of this file. For
+    # mining, these targets would be types of ore.
+    if target1 != 0:
+        target_list.append(target1)
+    if target2 != 0:
+        target_list.append(target2)
+    if target3 != 0:
+        target_list.append(target3)
+    if target4 != 0:
+        target_list.append(target4)
+    if target5 != 0:
+        target_list.append(target5)
+
+    for t in target_list:
+        target = pag.locate(t, overview, confidence=0.85)
+        if target is not None:
+            logging.debug('found ' + (str(t)) + ' at ' + (str(target)))
+            # (x, y, l, w) = target
+            # Move mouse over target for debugging.
+            # pag.moveTo((x + (originx + (windowx - (int(windowx / 3.8))))),
+            #           (y + originy),
+            #           1, mouse.path())
+            return target
+        elif target is None:
+            logging.debug('target ' + (str(t)) + ' not found')
+
+    logging.info('no targets found')
+    return 0
+
+
 def is_target_lockable():
     """Looks for a highlighted 'target' icon in the 'selected item' window, indicating
     the selected target is close enough in order to achieve a lock."""
@@ -300,6 +280,26 @@ def is_target_lockable():
         return 1
     elif lo.locate('./img/indicators/target_lock_available.bmp', conf=0.9999) is None:
         logging.debug('outside of targeting range')
+        return 0
+
+
+def wait_for_target_lock():
+    """Waits until a target has been locked by looking for
+    the 'unlock target' icon in the 'selected item' window."""
+    tries = 0
+    while lo.locate('./img/indicators/target_lock_attained.bmp') is None \
+            and tries <= 50:
+        tries += 1
+        logging.debug('waiting for target to lock ' + (str(tries)))
+        time.sleep(float(random.randint(100, 500)) / 1000)
+
+    if lo.locate('./img/indicators/target_lock_attained.bmp') is not None \
+            and tries <= 50:
+        logging.debug('lock attained')
+        return 1
+    if lo.locate('./img/indicators/target_lock_attained.bmp') is None \
+            and tries > 50:
+        logging.error('timed out waiting for target lock')
         return 0
 
 
@@ -334,6 +334,9 @@ def initiate_target_lock(overview_target):
 
             if is_target_lockable() == 1 and approachtime <= 50 and is_jammed(1) == 0:
                 logging.debug('try #' + (str(tries)) + ' to lock target')
+                # TODO: select target by hand instead of using hotkey as the
+                #  hotkey no longer works if script changes to general tab
+                #  before locking target
                 keyboard.keypress('ctrl')  # lock target hotkey
                 lock_attained = wait_for_target_lock()
                 if lock_attained == 1:
