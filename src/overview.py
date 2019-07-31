@@ -8,14 +8,6 @@ import pyautogui as pag
 from src import mouse, keyboard, locate as lo
 from src.vars import originx, originy, windowx, windowy
 
-# Specify the target names you wish the script to search for in the Overview.
-# For mining, this would be ore types.
-
-ox = (originx + (windowx - (int(windowx / 3.8)))) 
-oy = originy
-olx = (int(windowx / 3.8))
-oly = windowy
-
 # TODO: function to sort overview by distance
 
 
@@ -23,16 +15,16 @@ def is_jammed(detect_jam, haystack=0):
     """Checks for an ecm-jamming icon in the overview.
     If a haystack image is provided, search within that instead."""
     if detect_jam == 1 and haystack == 0:
-        global oy, oly
         ox_jam = (originx + (windowx - (int(windowx / 8))))
         olx_jam = (int(windowx / 8))
         # Custom region in lo.locate is useful to reduce the
         # search-space as this function is called frequently.
         if lo.locate('./img/overview/jammed_overview.bmp',
-                     region=(ox_jam, oy, olx_jam, oly)) is not None:
+                     region=(ox_jam, originy, olx_jam, windowy)) is not None:
             logging.info('ship has been jammed!')
             return 1
         else:
+            logging.debug('no jamming detected')
             return 0
         
     elif detect_jam == 1 and haystack != 0:
@@ -40,6 +32,7 @@ def is_jammed(detect_jam, haystack=0):
             logging.info('ship has been jammed!')
             return 1
         else:
+            logging.debug('no jamming detected')
             return 0 
         
     elif detect_jam == 0:
@@ -51,7 +44,7 @@ def build_ship_list(detect_npcs_var, npc_frig_dest,
                pc_cruiser_bc, pc_bs, pc_capindy_freighter, pc_rookie, pc_pod):
     """Builds a list of npc ship icons and a list of player ship icons,
     through which the 'look_for_ship' function can iterate and
-    check if any of those icons are present on the overview."""
+    check if any of those icons are present in the overview."""
     npc_list = []
     if detect_npcs_var == 1:
         if npc_frig_dest == 1:
@@ -110,7 +103,7 @@ def look_for_ship(npc_list, pc_list, haystack=0):
     # This is about twice as fast as searching a 1024x768 client window.
 
     if haystack == 0:
-        # If no haystack image is given, take and use a screenshot of the overview
+        # If no haystack image is given, take and use a screenshot of the overview.
         if len(npc_list) != 0 or len(pc_list) != 0:
             overview = pag.screenshot(
                 region=((originx + (windowx - (int(windowx / 3.8)))),
@@ -155,7 +148,7 @@ def look_for_ship(npc_list, pc_list, haystack=0):
                     if npc_found != 0:
                         logging.debug(
                             'found ' + (str(npc)) + ' at ' + (str(npc_found)))
-                        logging.info('unwanted npc ship detected')
+                        logging.info('unwanted npc detected')
                         return 1
                 logging.debug('passed npc check')
 
@@ -166,7 +159,7 @@ def look_for_ship(npc_list, pc_list, haystack=0):
                 if pc_found != 0:
                     logging.debug(
                         'found ' + (str(pc)) + ' at ' + (str(pc_found)))
-                    logging.info('unwanted player ship detected')
+                    logging.info('unwanted player detected')
                     return 1
             logging.debug('passed pc check')
             return 0
@@ -175,22 +168,22 @@ def look_for_ship(npc_list, pc_list, haystack=0):
 
 
 def focus_client():
-    """Clicks on a blank area in the left half of the client client,
-    assuming user has properly configured the UI for the mining script."""
+    """Clicks on a blank area in the left half of the client window,
+    assuming user has properly configured the UI."""
     logging.debug('focusing client')
     pag.moveTo((originx + (random.randint(50, 300))),
                (originy + (random.randint(300, 500))),
                mouse.duration(), mouse.path())
-    time.sleep(float(random.randint(50, 500)) / 1000)
+
     mouse.click()
     return 1
 
 
 def focus_overview():
     """Clicks somewhere on the lower half of the overview
-    (assuming it's on the right quarter of the client) to focus the client.
-    If ship is docked, this click whill occur somewhere in the
-    station services below all the buttons."""
+    (assuming it's on the rightmost quarter of the client window)
+    to focus the client. If ship is docked, this click whill occur
+    somewhere in the station services window below all the buttons."""
     logging.debug('focusing overview')
 
     x = (originx + (windowx - (int(windowx / 4.5))))
@@ -199,23 +192,23 @@ def focus_overview():
     randy = (random.randint((int(windowx / 2)), (windowy - 10)))
     pag.moveTo((x + randx), (y + randy), mouse.duration(), mouse.path())
 
-    time.sleep(float(random.randint(50, 500)) / 1000)
     mouse.click()
     return 1
 
 
 def select_overview_tab(tab):
-    """Switches to the specified tab on the overview. If the provided tab is already
-    selected, this function does nothing. Assumes default overview configuration."""
+    """Switches to the specified overview tab. If the specified tab is already
+    selected, this function does nothing. Assumes the default overview configuration."""
     logging.debug('focusing ' + (str(tab)) + ' tab')
     
-    # Requires very high confidence since the button looks only slightly
-    # different when it's selected.
+    # Requires very high confidence since the overview tab buttons look only slightly
+    # different when selected.
     selected = lo.locate('./img/overview/' + (str(tab)) + '_overview_tab_selected.bmp', conf=0.998)
     
     if selected is not None:
         logging.debug('tab ' + (str(tab)) + ' already selected')
         return 1
+    
     elif selected is None:
         unselected = lo.oclocate('./img/overview/' + (str(tab)) + '_overview_tab.bmp')
         
@@ -226,22 +219,24 @@ def select_overview_tab(tab):
                        mouse.duration(), mouse.path())
             mouse.click()
             return 1
-        else:
+        elif unselected is None:
+            logging.error('unable to find overview tabs')
             return 0
 
 
 def look_for_targets(target1, target2, target3, target4, target5):
-    """Iterates through a list of user-defined targets. If one is found,
-    returns its location to the calling function. Searches the rightmost
-    quarter of the user's client only (just the overview)."""
+    """Searches the overview for any of the provided targets. If one is found,
+    returns its location to the calling function. The parameters passed to
+    this function must be filepaths to the images of the targets to look
+    for."""
     overview = pag.screenshot(
         region=((originx + (windowx - (int(windowx / 3.8)))),
                 originy, (int(windowx / 3.8)), windowy))
 
     target_list = []
-    # Populate target_list with only the targets that the user wishes to
-    # check for, as specified by the variables at the top of this file. For
-    # mining, these targets would be types of ore.
+    # Populate the target_list with only the targets that the user wishes to
+    # check for, as specified function's parameters. For
+    # mining, these targets would be filepaths to images of of ore names.
     if target1 != 0:
         target_list.append(target1)
     if target2 != 0:
@@ -271,7 +266,7 @@ def look_for_targets(target1, target2, target3, target4, target5):
 
 
 def is_target_lockable():
-    """Looks for a highlighted 'target' icon in the 'selected item' window, indicating
+    """Looks for a highlighted 'target this object' icon in the 'selected item' window, indicating
     the selected target is close enough in order to achieve a lock."""
     # High confidence required since greyed-out target lock icon looks
     # so similar to enabled icon.
@@ -279,80 +274,86 @@ def is_target_lockable():
         logging.debug('within targeting range')
         return 1
     elif lo.locate('./img/indicators/target_lock_available.bmp', conf=0.9999) is None:
-        logging.debug('outside of targeting range')
+        logging.debug('outside targeting range')
         return 0
 
 
 def wait_for_target_lock():
     """Waits until a target has been locked by looking for
     the 'unlock target' icon in the 'selected item' window. While waiting for a
-    target lock, switch to the 'general' overview tab and check for jamming."""
+    target lock, switches to the 'general' overview tab and checks for jamming."""
     tries = 0
     select_overview_tab('general')
     while lo.locate('./img/indicators/target_lock_attained.bmp') is None \
             and tries <= 50 and is_jammed(1) == 0:
         tries += 1
-        logging.debug('waiting for target to lock ' + (str(tries)))
+        logging.debug('waiting for target lock ' + (str(tries)))
         time.sleep(float(random.randint(1, 5)) / 10)
 
     if lo.locate('./img/indicators/target_lock_attained.bmp') is not None \
             and tries <= 50 and is_jammed(1) == 0:
-        logging.debug('lock attained')
+        logging.debug('target locked')
         return 1
     
     elif is_jammed(1) == 1:
         logging.warning('ship jammed while locking target')
         return 0
     elif tries > 50:
-        logging.error('timed out waiting for target lock')
+        logging.warning('timed out waiting for target lock')
         return 0
 
 
-def initiate_target_lock(overview_target):
-    """Selects topmost user-defined item on the overview, assuming overview
-    is sorted by distance, with closest objects at the top. Orbits the
-    selected item and waits until ship is close enough to target-lock the
-    item. If cannot lock target the first try, tries 4 more times before
-    giving up."""
-    if overview_target is not None:
-        # Break apart tuple into coordinates
-        (x, y, l, w) = overview_target
-        # Adjust coordinates for screen
+def initiate_target_lock(target):
+    """Selects topmost user-defined target on the overview. Approaches the
+    selected target and attempts to lock the target once ship is close
+    enough. Tries multiple times to lock the target before giving up. Checks
+    for jamming attempts while approaching the target."""
+    if target is not None:
+        # Break apart tuple into coordinates.
+        (x, y, l, w) = target
+        # Adjust coordinates for screen.
         x = (x + (originx + (windowx - (int(windowx / 3.8)))))
         y = (y + originy)
         pag.moveTo((x + (random.randint(-100, 20))),
                    (y + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
+        # Click on target.
         mouse.click()
-        keyboard.keypress('e')  # 'keep at range' hotkey
-        # Change to the general tab to detect jamming
+        # Press 'keep at range' hotkey. This is used instead
+        # 'orbit' because if another mining ship depletes the asteroid,
+        # your ship will continue flying forever in a straight line.
+        keyboard.keypress('e')
+        # Change to the general tab to detect jamming.
         select_overview_tab('general')
+        
         # Try 5 times to get a target lock.
         for tries in range(1, 6):
             # Limit how long the ship spends approaching its target before giving up
             approachtime = 0
+            
             while is_target_lockable() == 0 and approachtime <= 50 and is_jammed(1) == 0:
                 approachtime += 1
                 logging.debug(
                     'target not yet within range ' + (str(approachtime)))
                 time.sleep(float(random.randint(10, 20)) / 10)
 
+            # Once target is in range, attempt to lock it.
             if is_target_lockable() == 1 and approachtime <= 50 and is_jammed(1) == 0:
                 logging.debug('try #' + (str(tries)) + ' to lock target')
                 # TODO: select target by hand instead of using hotkey as the
                 #  hotkey no longer works if script changes to general tab
                 #  before locking target
-                keyboard.keypress('ctrl')  # lock target hotkey
-                lock_attained = wait_for_target_lock()
-                if lock_attained == 1:
+                keyboard.keypress('ctrl')  # lock target hotkey.
+                target_locked = wait_for_target_lock()
+                if target_locked == 1:
                     return 1
-                # if wait_for_target_lock() times out, continue 'for' loop and try locking
-                # target again
-                elif lock_attained == 0:
+                elif target_locked == 0:
+                    # if wait_for_target_lock() times out, continue 'for' loop and try locking
+                    # target again
                     continue
 
             if is_jammed(1) == 1:
-                logging.info('jammed while approaching target')
+                logging.warning('jammed while approaching target')
                 return 0
 
             if approachtime > 50:
@@ -360,7 +361,7 @@ def initiate_target_lock(overview_target):
                     'timed out waiting for target to get within range!')
                 return 0
 
-        logging.error('tried ' + (str(tries)) + ' times to lock target')
+        logging.warning('tried ' + (str(tries)) + ' times to lock target but failed')
         return 0
     else:
         logging.info('no targets available')
