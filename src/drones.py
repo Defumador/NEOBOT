@@ -46,24 +46,25 @@ def recall_drones(drone_num):
     if drone_num != 0:
         time.sleep(float(random.randint(5, 500)) / 1000)
         key.hotkey('shift', 'r')
+        time.sleep(float(random.randint(1000, 2000)) / 1000)
 
         # Wait for all drones to return to drone bay. Very sensitive to the
         # drones variable. Won't work unless the drones variable is correct.
-        tries = 0
-        while lo.locate('./img/indicators/drones/' + (str(drone_num))
-                        + '_drone_in_bay.bmp') is None and tries <= 30:
-            tries += 1
-            time.sleep(float(random.randint(1000, 2000)) / 1000)
+        for tries in range(1, 30)
+            drones_returned = lo.mlocate('./img/indicators/drones/' + (str(drone_num))
+                                                + '_drone_in_bay.bmp', grayscale=True)
 
-        if lo.locate('./img/indicators/drones/' + (str(drone_num))
-                     + '_drone_in_bay.bmp') is not None and tries <= 30:
-            logging.debug('drones returned to bay ' + (str(tries)))
-            return 1
+            if drones_returned == 1:
+                logging.debug('drones returned to bay')
+                return 1
 
-        elif lo.locate('./img/indicators/drones/' + (str(drone_num))
-                       + '_drone_in_bay.bmp') is None and tries > 30:
-            logging.warning('timed out waiting for drones to return '
-                            + (str(tries)))
-            return 0
-    else:
+            elif drones_returned == 0:
+                logging.info('waiting for drones to return to bay ' + (str(tries)))
+                time.sleep(float(random.randint(1000, 2000)) / 1000)
+                return 0
+            
+        logging.warning('timed out waiting for drones to return '
+                                            + (str(tries)))
+        return 0
+    elif drone_num == 0:
         return 0
