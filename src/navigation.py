@@ -29,50 +29,43 @@ def warp_to_waypoint():
      Currently only supports warping to stargate and station waypoints."""
     # TODO: add support for warping to citadels and engineering complexes
     logging.debug('looking for waypoints')
-    tries = 0
     # Speed up image searching by looking within overview only. This
     # obviously requires the user to place the overview on the right side of
     # the client window.
-    stargate = lo.oclocate('./img/overview/stargate_waypoint.bmp', conf=0.96)
-    station = lo.oclocate('./img/overview/station_waypoint.bmp', conf=0.96)
-
-    # If a stargate waypoint is not found, look for a station waypoint.
-    while stargate is None and station is None and tries <= 15:
-        tries += 1
-        time.sleep(float(random.randint(500, 1500)) / 1000)
-        logging.debug('looking for waypoints ' + (str(tries)))
+    
+    for tries in range(1, 15)
         stargate = lo.oclocate('./img/overview/stargate_waypoint.bmp', conf=0.96)
-        station = lo.oclocate('./img/overview/station_waypoint.bmp', conf=0.96)
+        if stargate is not None:
+            logging.debug('found stargate waypoint')
+            (x, y) = stargate
+            pag.moveTo((x + (random.randint(-8, 30)))), 
+                        (y + (random.randint(-8, 8))), 
+                        mouse.duration(), mouse.path()
+            mouse.click()
+            key.keypress('d')  # 'dock / jump' hotkey.
+            # Move mouse to the left side of the client to prevent
+            # tooltips from interfering with image searches.
+            mouse.move_away('l')
+            return 2
         
-    if stargate is not None and tries <= 15:
-        logging.debug('found stargate waypoint')
-        (x, y) = stargate
-        # Subtract 10 from right edge to prevent mouse from
-        # accidentally clicking outside the client window.
-        pag.moveTo((x + (random.randint(-8, 30)))), \
-        (y + (random.randint(-8, 8))), \
-        mouse.duration(), mouse.path()
-        mouse.click()
-        key.keypress('d')  # 'dock / jump' hotkey.
-        mouse.move_away('l')
-        return 2
+        station = lo.oclocate('./img/overview/station_waypoint.bmp', conf=0.96)
+        if station is not None:
+            logging.debug('found station waypoint')
+            (x, y) = station
+            pag.moveTo((x + (random.randint(-8, 30))),
+                       (y + (random.randint(-8, 8))),
+                       mouse.duration(), mouse.path())
+            mouse.click()
+            key.keypress('d')
+            mouse.move_away('l')
+            return 2
 
-    if station is not None and tries <= 15:
-        logging.debug('found station waypoint')
-        (x, y) = station
-        pag.moveTo((x + (random.randint(-8, 30))),
-                   (y + (random.randint(-8, 8))),
-                   mouse.duration(), mouse.path())
-        mouse.click()
-        key.keypress('d')
-        # Move mouse to the left side of the client to prevent
-        # tooltips from interfering with image searches.
-        mouse.move_away('l')
-        return 2
-
-    if stargate is None and station is None and tries > 15:
-        logging.error('no waypoints found')
-        return 0
+        if stargate is None and station is None:
+            time.sleep(float(random.randint(500, 1500)) / 1000)
+            logging.debug('looking for waypoints ' + (str(tries)))
+        
+    logging.error('no waypoints found')
+    return 0
 
 
 def wait_for_warp_to_complete():
