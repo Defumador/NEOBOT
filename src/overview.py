@@ -317,7 +317,6 @@ def initiate_target_lock(target):
         pag.moveTo((x + (random.randint(-100, 20))),
                    (y + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
-        # Click on target.
         mouse.click()
         # Press 'keep at range' hotkey. This is used instead
         # 'orbit' because if another mining ship depletes the asteroid,
@@ -328,41 +327,38 @@ def initiate_target_lock(target):
         
         # Try 5 times to get a target lock.
         for tries in range(1, 6):
-            # Limit how long the ship spends approaching its target before giving up
-            approachtime = 0
+            # Limit how long the ship spends approaching its target before giving up 
+            for approachtime in range(1, 50)
             
-            while is_target_lockable() == 0 and approachtime <= 50 and is_jammed(1) == 0:
-                approachtime += 1
-                logging.debug(
-                    'target not yet within range ' + (str(approachtime)))
-                time.sleep(float(random.randint(10, 20)) / 10)
+                # Once target is in range, attempt to lock it.
+                if is_target_lockable() == 1 is_jammed(1) == 0:
+                    logging.debug('try #' + (str(tries)) + ' to lock target')
+                    # TODO: select target by hand instead of using hotkey as the
+                    #  hotkey no longer works if script changes to general tab
+                    #  before locking target
+                    target_locked = wait_for_target_lock()
+                    if target_locked == 1:
+                        return 1
+                    elif target_locked == 0:
+                        # if wait_for_target_lock() times out, continue the outer 'for' loop and try locking
+                        # target again
+                        break
+                        
+                elif is_target_lockable() == 0 and is_jammed(1) == 0:
+                    logging.debug(
+                        'target not yet within range ' + (str(approachtime)))
+                    time.sleep(float(random.randint(10, 20)) / 10)
 
-            # Once target is in range, attempt to lock it.
-            if is_target_lockable() == 1 and approachtime <= 50 and is_jammed(1) == 0:
-                logging.debug('try #' + (str(tries)) + ' to lock target')
-                # TODO: select target by hand instead of using hotkey as the
-                #  hotkey no longer works if script changes to general tab
-                #  before locking target
-                keyboard.keypress('ctrl')  # lock target hotkey.
-                target_locked = wait_for_target_lock()
-                if target_locked == 1:
-                    return 1
-                elif target_locked == 0:
-                    # if wait_for_target_lock() times out, continue 'for' loop and try locking
-                    # target again
-                    continue
+                elif is_jammed(1) == 1:
+                    logging.warning('jammed while approaching target')
+                    return 0
 
-            if is_jammed(1) == 1:
-                logging.warning('jammed while approaching target')
-                return 0
-
-            if approachtime > 50:
-                logging.warning(
-                    'timed out waiting for target to get within range!')
-                return 0
+            logging.warning('timed out waiting for target to get within range!')
+            return 0
 
         logging.warning('tried ' + (str(tries)) + ' times to lock target but failed')
         return 0
+    
     else:
         logging.info('no targets available')
         return 0
