@@ -152,19 +152,6 @@ def focus_inv_window():
         return 0
 
 
-def look_for_items():
-    """Looks at the bottom-right corner of the station inventory window for the
-    '0 items found' text. If it isn't present, there must be items in the
-    station's inventory."""
-    if lo.locate('./img/indicators/station_inv_0_items.bmp', conf=0.9) is None:
-        logging.debug('items remain')
-        return 1
-    elif lo.locate('./img/indicators/station_inv_0_items.bmp',
-                   conf=0.9) is not None:
-        logging.debug('no more items')
-        return 0
-
-
 def look_for_specinv(invtype):
     """Looks for different kinds of special inventory icons on your ship."""
     if lo.mlocate('./img/buttons/spec_inv_' + invtype + '.bmp', loctype='l') != 0:
@@ -416,7 +403,7 @@ def load_ship_individual():
     open_station_inv()
     items = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9, loctype='l')
 
-    while items == 1:
+    while items == 0:
         focus_inv_window()
         drag_to_ship_inv()
 
@@ -441,7 +428,7 @@ def load_ship_individual():
         specinv_list = ['ore', 'fleet']
         if nospace == 1:
             for invtype in specinv_list:
-                items = look_for_items()
+                items = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9, loctype='l')
                 if look_for_specinv(invtype) == 1:
                     drag_to_ship_specinv(invtype)
 
@@ -449,19 +436,19 @@ def load_ship_individual():
                     specinvwarning = specinv_warning()
                     nospace = not_enough_space_warning()
                     setquant = set_quant_warning()
-                    items = look_for_items()
+                    items = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9, loctype='l')
 
                     while specinvwarning == 0 and setquant == 0 and nospace == 0 and \
-                            items == 1:
+                            items == 0:
                         drag_to_ship_specinv(invtype)
 
                         time.sleep(float(random.randint(1500, 3000)) / 1000)
                         specinvwarning = specinv_warning()
                         nospace = not_enough_space_warning()
                         setquant = set_quant_warning()
-                        items = look_for_items()
+                        items = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9, loctype='l')
 
-                    if items == 0:
+                    if items == 1:
                         logging.debug(
                             'done loading' + (str(invtype)) + 'inventory')
                         return 2
@@ -478,7 +465,7 @@ def load_ship_individual():
         else:
             logging.debug('station empty')
             return 2
-    if items == 0:
+    if items == 1:
         logging.debug('station empty')
         return 2
 
@@ -486,9 +473,9 @@ def load_ship_individual():
 def load_ship():
     """Utilize both individual and bulk loading functions to load ship."""
     open_station_inv()
-    items = look_for_items()
+    items = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9, loctype='l')
 
-    if items == 1:
+    if items == 0:
         lsb = load_ship_bulk()
         if lsb == 2:
             logging.debug('ship loaded entire station inventory')
@@ -509,7 +496,7 @@ def load_ship():
                               'items')
                 return 1
 
-    elif items == 0:
+    elif items == 1:
         return 0
 
 
@@ -517,9 +504,9 @@ def unload_ship():
     """Unloads ship inventory and deposits it in the station's inventory."""
     logging.debug('began unloading procedure')
     open_ship_inv()
-    items = look_for_items()
+    items = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9, loctype='l')
 
-    if items == 1:
+    if items == 0:
         time.sleep(float(random.randint(0, 2000)) / 1000)
         focus_inv_window()
         time.sleep(float(random.randint(0, 2000)) / 1000)
@@ -529,7 +516,7 @@ def unload_ship():
         time.sleep(2)
         items = look_for_items()
 
-    if items == 0:
+    if items == 1:
         logging.debug('finished unloading main inventory')
 
         specinv_list = ['ore', 'fleet']
@@ -537,9 +524,9 @@ def unload_ship():
             if look_for_specinv(invtype) == 1:
                 time.sleep(float(random.randint(0, 2000)) / 1000)
                 open_specinv(invtype)
-                items = look_for_items()
+                items = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9, loctype='l')
 
-                while look_for_items() == 1:
+                while items == 0:
                     time.sleep(float(random.randint(0, 2000)) / 1000)
                     focus_inv_window()
                     time.sleep(float(random.randint(0, 2000)) / 1000)
@@ -550,7 +537,7 @@ def unload_ship():
                     logging.debug('finished unloading ' + (str(invtype)) +
                                   ' inventory')
                     return 1
-                if items == 0:
+                if items == 1:
                     logging.debug('finished unloading procedure')
                     return 1
 
