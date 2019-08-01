@@ -47,26 +47,23 @@ def open_specinv(invtype):
     """Opens the ship's specified special inventory
     (for storing ore, minerals, planetary products etc.)
     Assumes the ship is docked and the inventory window is already open."""
-    logging.debug('opening ' + invtype + ' inventory')
-    tries = 0
-    spec_inv = lo.clocate('./img/buttons/spec_inv_' + invtype + '.bmp')
-
-    while spec_inv is None and tries <= 25:
-        logging.error('cannot find ' + invtype + ' inventory ' + (str(tries)))
-        tries += 1
-        time.sleep(float(random.randint(500, 2000)) / 1000)
+    logging.debug('opening ' + invtype + ' inventory')  
+    for tries in range(1, 25)
         spec_inv = lo.clocate('./img/buttons/spec_inv_' + invtype + '.bmp')
+        if spec_inv is not None:
+            (x, y) = spec_inv
+            pag.moveTo((x + (random.randint(-4, 50))),
+                       (y + (random.randint(-3, 3))),
+                       mouse.duration(), mouse.path())
+            mouse.click()
+            return 1
 
-    if spec_inv is not None and tries <= 25:
-        (x, y) = spec_inv
-        pag.moveTo((x + (random.randint(-4, 50))),
-                   (y + (random.randint(-3, 3))),
-                   mouse.duration(), mouse.path())
-        mouse.click()
-        return 1
-    elif tries > 25:
-        logging.error('timed out looking for ' + invtype + ' inventory')
-        return 0
+        if spec_inv is None:
+            logging.error('cannot find ' + invtype + ' inventory ' + (str(tries)))
+            time.sleep(float(random.randint(500, 2000)) / 1000)
+
+    logging.error('timed out looking for ' + invtype + ' inventory')
+    return 0
 
 
 def open_station_inv():
