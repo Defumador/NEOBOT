@@ -108,10 +108,10 @@ def iterate_through_bookmarks(target_site_num, total_site_num):
 
         for tries in range((target_site_num - 1), total_site_num):
             if warping_to_bookmark == 1:
-            # Once a valid site is found, remember the site number the ship is
-            # warping to so script doesn't try warping there again.
-            if nav.wait_for_warp_to_complete() == 1:
-                return 1
+                # Once a valid site is found, remember the site number the ship is
+                # warping to so script doesn't try warping there again.
+                if nav.wait_for_warp_to_complete() == 1:
+                    return 1
 
         # If script runs out of bookmarks to check for, it resets the target
         # site to 1 and goes through them again until the 'for' loop completes.
