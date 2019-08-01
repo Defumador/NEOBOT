@@ -12,6 +12,7 @@ from src.vars import originx, originy, windowx, windowy
 
 sys.setrecursionlimit(9999999)
 
+# TODO: Perhaps change the timeout-enabled 'while' loops to for loops
 
 def has_route():
     """Checks the top-left corner of the client window to see if a route has actually been
@@ -134,13 +135,13 @@ def wait_for_jump():
 
     if lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55) \
             is not None and tries <= 240:
-        logging.debug('jump detected ' + (str(tries)))
+        logging.debug('jump detected')
         time.sleep(float(random.randint(1000, 2000)) / 1000)
         return 1
 
     elif lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55) \
             is None and tries > 240:
-        logging.error('timed out looking for jump ' + (str(tries)))
+        logging.error('timed out waiting for jump')
         emergency_terminate()
         traceback.print_stack()
         sys.exit()
@@ -182,8 +183,8 @@ def emergency_terminate():
     while station_icon is None and tries <= 15:
         tries += 1
         confidence -= 0.01
-        logging.debug('looking for station to dock at, confidence = '
-                      + (str(confidence)) + ' ' + (str(tries)))
+        logging.debug('looking for station to dock at' + (str(tries)) + ', confidence is '
+                      + (str(confidence)))
         # Keep time interval relatively short since ship may be in combat.
         time.sleep(float(random.randint(500, 1000)) / 1000)
         station_icon = lo.oclocate('./img/overview/station.bmp', conf=confidence)
@@ -211,13 +212,13 @@ def emergency_terminate():
     # instead.
     if station_icon is None and tries > 15:
         logging.debug('could not find station to emergency dock at, warping to'
-                      'planet instead ' + (str(tries)))
+                      'planet instead')
         tries = 0
         confidence = 1
         overview.select_overview_tab('warpto')
         planet = lo.oclocate('./img/overview/planet.bmp', conf=confidence)
         while planet is None and tries <= 50:
-            logging.debug('looking for planet ' + (str(tries)) + ' ' +
+            logging.debug('looking for planet ' + (str(tries)) + ', confidence is ' +
                           (str(confidence)))
             tries += 1
             # Lower confidence on every third try.
@@ -227,7 +228,7 @@ def emergency_terminate():
             planet = lo.oclocate('./img/overview/planet.bmp', conf=confidence)
 
         if planet is not None and tries <= 50:
-            logging.debug('emergency warping to planet ' + (str(tries)))
+            logging.debug('emergency warping to planet')
             (x, y) = planet
             pag.moveTo((x + (random.randint(-2, 50))),
                        (y + (random.randint(-2, 2))),
@@ -240,7 +241,7 @@ def emergency_terminate():
             emergency_logout()
             return 0
         else:
-            logging.debug('timed out looking for planet ' + (str(tries)))
+            logging.debug('timed out looking for planet')
             emergency_logout()
         return 1
 
