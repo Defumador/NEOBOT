@@ -75,22 +75,20 @@ def iterate_through_bookmarks_rand(total_site_num):
     is not in the current system, or your ship is already there, try warping
     to bookmark Y in the system."""
     target_site_num = (random.randint(1, total_site_num))
-    warping_to_bookmark = warp_to_local_bookmark(target_site_num)
-
-    tries = 0
-    while warping_to_bookmark == 0 and tries <= (total_site_num + 10):
-        tries += 1
-        target_site_num = (random.randint(1, total_site_num))
+    
+    for iterations in range(1, (total_site_num + 10))
         warping_to_bookmark = warp_to_local_bookmark(target_site_num)
-
-    if warping_to_bookmark == 1 and tries <= (total_site_num + 10):
-        if nav.wait_for_warp_to_complete() == 1:
-            return 1
+        
+        if warping_to_bookmark == 1:
+            if nav.wait_for_warp_to_complete() == 1:
+                return 1
+        
+        if warping_to_bookmark == 0:
+            target_site_num = (random.randint(1, total_site_num))
 
     # If script randomly checks (total_site_num + 10) bookmarks, give up.
-    elif warping_to_bookmark == 0 and tries > (total_site_num + 10):
-        logging.error('failed to warp after checking ' + (str(tries)) ' bookmarks)
-        return 0
+    logging.error('failed to warp after checking ' + (str(tries)) ' bookmarks)
+    return 0
 
 
 def iterate_through_bookmarks(target_site_num, total_site_num):
