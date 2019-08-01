@@ -19,8 +19,6 @@ def click_image(needle, haystack=0, loctype='c', button='left', rx1=0, rx2=0, ry
         haystack: the image to search for the needle within. Must be a PIL image variable.
         loctype: if the haystack parameter is 0, this parameter is used to create a haystack.
             c: (default) searches client for the xy center of the needle. Returns x,y coordinates
-            l: searches the client for the needle. Returns an x,y,w,h tuple.
-            o: Searches the overview for the needle.
             co: Searches the overview for the xy center of the needle.
         button: the mouse button to click when the script locates the image.
         rx1 / ry1: the minimum x/y value to generate a random variable from.
@@ -28,7 +26,7 @@ def click_image(needle, haystack=0, loctype='c', button='left', rx1=0, rx2=0, ry
     logging.debug('searching for and clicking on ' + (str(needle)))
     for tries in range(1, 10)
         target_image = lo.mlocate(needle=(str(needle)), loctype=loctype, haystack=haystack)
-        if target_image != 0:
+        if target_image != 0 and target_image != 1:
             (x, y) = target_image
             pag.moveTo((x + (random.randint(rx1, rx2))),
                        (y + (random.randint(ry1, ry2))),
@@ -39,6 +37,8 @@ def click_image(needle, haystack=0, loctype='c', button='left', rx1=0, rx2=0, ry
                 mouse.click_right()
             return 1
 
+        elif target_image == 1:
+            logging.error('loctype parameter incorrect, must use c or co)
         elif target_image == 0:
             logging.error('cannot find image ' + (str(image)) + ', ' + (str(tries)))
             time.sleep(float(random.randint(500, 2000)) / 1000)
@@ -167,7 +167,7 @@ def look_for_items():
 
 def look_for_specinv(invtype):
     """Looks for different kinds of special inventory icons on your ship."""
-    if lo.locate('./img/buttons/spec_inv_' + invtype + '.bmp') is not None:
+    if lo.mlocate('./img/buttons/spec_inv_' + invtype + '.bmp', loctype='l') != 0:
         logging.debug('found ' + (str(invtype)) + ' inventory')
         return 1
     else:
@@ -414,7 +414,7 @@ def load_ship_individual():
     """Load ship one item stack at a time."""
     logging.debug('beginning individual loading procedure')
     open_station_inv()
-    items = look_for_items()
+    items = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9, loctype='l')
 
     while items == 1:
         focus_inv_window()
