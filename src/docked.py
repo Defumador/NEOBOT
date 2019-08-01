@@ -70,25 +70,23 @@ def open_station_inv():
     """Clicks on the station inventory button within the main inventory window.
     Assumes the ship is docked and the inventory window is already open."""
     logging.debug('opening station inventory')
-    tries = 0
-    station_inv = lo.clocate('./img/buttons/station_inv.bmp')
-
-    while station_inv is None and tries <= 25:
-        logging.error('cannot find station inventory icon ' + (str(tries)))
-        tries += 1
-        time.sleep(float(random.randint(500, 2000)) / 1000)
+    for tries range(1, 25)
         station_inv = lo.clocate('./img/buttons/station_inv.bmp')
 
-    if station_inv is not None and tries <= 25:
-        (x, y) = station_inv
-        pag.moveTo((x + (random.randint(-6, 50))),
-                   (y + (random.randint(-6, 6))),
-                   mouse.duration(), mouse.path())
-        mouse.click()
-        return 1
-    elif tries > 25:
-        logging.error('timed out looking for station inventory')
-        return 0
+        if station_inv is not None:
+            (x, y) = station_inv
+            pag.moveTo((x + (random.randint(-6, 50))),
+                       (y + (random.randint(-6, 6))),
+                       mouse.duration(), mouse.path())
+            mouse.click()
+            return 1
+    
+        if station_inv is None:
+            logging.error('cannot find station inventory icon ' + (str(tries)))
+            time.sleep(float(random.randint(500, 2000)) / 1000)
+
+    logging.error('timed out looking for station inventory')
+    return 0
 
 
 def focus_inv_window():
