@@ -5,7 +5,7 @@ from src.vars import originx, originy, windowx, windowy
 import pyautogui as pag
 
 
-def mlocate(needle, haystack=0, conf=0.95, loctype='none', grayscale=False):
+def mlocate(needle, haystack=0, conf=0.95, loctype='l', grayscale=False):
     """Searches the haystack image for the needle image, returning a tuple of the needle's
     coordinates within the haystack. If a haystack image is not provided, searches
     the client window or the overview window, as specified by the loctype parameter."""
