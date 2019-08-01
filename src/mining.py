@@ -19,22 +19,22 @@ def activate_miners(module_num):
     for n in range(1, (module_num + 1)):
         keyboard.keypress('f' + (str(n)))
         logging.debug('activating miner ' + (str(n)))
-        out_of_range = miner_out_of_range_popup()
-        tries = 0
-        while out_of_range == 1 and tries <= 25:
-            tries += 1
-            time.sleep(float(random.randint(15000, 30000)) / 1000)
-            out_of_range = miner_out_of_range_popup()
-            if out_of_range == 0 and tries <= 25:
+        
+        for tries in range(1, 25)
+            out_of_range = lo.mlocate('./img/popups/miner_out_of_range.bmp', conf=0.90, grayscale=True)
+            
+            if out_of_range == 0:
                 time.sleep(float(random.randint(0, 3000)) / 1000)
-                logging.debug('activating miner ' + (str(n)))
+                
+            elif out_of_range == 1:
+                logging.debug('out of module range ' + (str(tries)))
+                time.sleep(float(random.randint(15000, 30000)) / 1000)
+                logging.debug('activating miner again ' + (str(n)))
                 keyboard.keypress('f' + (str(n)))
-        if out_of_range == 0 and tries <= 25:
-            continue
-        elif out_of_range == 1 and tries > 25:
-            logging.error('timed out waiting for ship to get within '
+
+        logging.error('timed out waiting for ship to get within '
                           'module range')
-            return 0
+        return 0
     return 1
 
 
@@ -76,23 +76,7 @@ def ship_full_popup(haystack=0):
         logging.debug('inventory not yet full')
         return 0
 
-
-def miner_out_of_range_popup():
-    """Checks if the ship's mining laser is out of range. If it is,
-    orbit the asteroid at a specified distance and try activating the
-    mining laser again in a few seconds."""
-    miner_out_of_range = pag.locateCenterOnScreen(
-        './img/popups/miner_out_of_range.bmp',
-        confidence=0.90,
-        region=(originx, originy, windowx, windowy))
-    while miner_out_of_range is not None:
-        logging.debug('out of module range')
-        return 1
-    if miner_out_of_range is None:
-        logging.debug('within module range')
-        return 0
-
-
+    
 def time_at_site(timer_var):
     """Timeout timer for mining. If, for some reason, ship gets stuck in
     belt, the timer can be used to restart the script after a certain period of
