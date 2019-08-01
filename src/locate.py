@@ -11,7 +11,7 @@ def mlocate(needle, haystack=0, conf=0.95, loctype='l', grayscale=False):
     the client window or the overview window, as specified by the loctype parameter."""
     
     if haystack == 0 and loctype == 'l':
-        locate_var = pag.locateOnScreen(needle, confidence=conf, region=(originx, originy, windowx, windowy), grayscale=False)
+        locate_var = pag.locateOnScreen(needle, confidence=conf, region=(originx, originy, windowx, windowy), grayscale=grayscale)
         if locate_var is not None:
             logging.debug('found image ' + (str(needle)))
             # If the center of the image is not needed, don't return any coordinates.
@@ -22,7 +22,7 @@ def mlocate(needle, haystack=0, conf=0.95, loctype='l', grayscale=False):
             return 0
         
     if haystack == 0 and loctype == 'c':
-        locate_var = pag.locateCenterOnScreen(needle, confidence=conf, region=(originx, originy, windowx, windowy), grayscale=False)
+        locate_var = pag.locateCenterOnScreen(needle, confidence=conf, region=(originx, originy, windowx, windowy), grayscale=grayscale)
         if locate_var is not None:
             logging.debug('found image ' + (str(needle)))
             # Return the xy coordinates for the center of the image, relative to the coordinate plane of the haystack.
@@ -35,7 +35,7 @@ def mlocate(needle, haystack=0, conf=0.95, loctype='l', grayscale=False):
     if haystack == 0 and loctype == 'o':
         overviewx = (originx + (windowx - (int(windowx / 3.8))))
         overviewlx = (int(windowx / 3.8))
-        locate_var = pag.locateOnScreen(needle, confidence=conf, region=(overviewx, originy, overviewlx, windowy), grayscale=False)
+        locate_var = pag.locateOnScreen(needle, confidence=conf, region=(overviewx, originy, overviewlx, windowy), grayscale=grayscale)
         if locate_var is not None:
             logging.debug('found image ' + (str(needle)))
             return 1
@@ -47,7 +47,7 @@ def mlocate(needle, haystack=0, conf=0.95, loctype='l', grayscale=False):
     if haystack == 0 and loctype == 'co':
         overviewx = (originx + (windowx - (int(windowx / 3.8))))
         overviewlx = (int(windowx / 3.8))
-        locate_var = pag.locateCenterOnScreen(needle, confidence=conf, region=(overviewx, originy, overviewlx, windowy), grayscale=False)
+        locate_var = pag.locateCenterOnScreen(needle, confidence=conf, region=(overviewx, originy, overviewlx, windowy), grayscale=grayscale)
         if locate_var is not None:
             logging.debug('found image ' + (str(needle)))
             return locate_var
