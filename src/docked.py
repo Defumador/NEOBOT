@@ -25,25 +25,22 @@ def open_ship_inv():
     """Clicks on the ship's inventory button within the inventory window.
     Assumes the ship is docked and the inventory window is already open."""
     logging.debug('opening ship inventory')
-    tries = 0
-    ship_inv = lo.clocate('./img/buttons/ship_inv.bmp')
-
-    while ship_inv is None and tries <= 25:
-        logging.error('cannot find ship inventory ' + (str(tries)))
-        tries += 1
-        time.sleep(float(random.randint(500, 2000)) / 1000)
+    for tries in range(1, 25)
         ship_inv = lo.clocate('./img/buttons/ship_inv.bmp')
+        if ship_inv is not None:
+            (x, y) = ship_inv
+            pag.moveTo((x + (random.randint(-4, 50))),
+                       (y + (random.randint(-6, 6))),
+                       mouse.duration(), mouse.path())
+            mouse.click()
+            return 1
 
-    if ship_inv is not None and tries <= 25:
-        (x, y) = ship_inv
-        pag.moveTo((x + (random.randint(-4, 50))),
-                   (y + (random.randint(-6, 6))),
-                   mouse.duration(), mouse.path())
-        mouse.click()
-        return 1
-    elif tries > 25:
-        logging.error('timed out looking for ship inventory')
-        return 0
+        elif ship_inv is None:
+            logging.error('cannot find ship inventory ' + (str(tries)))
+            time.sleep(float(random.randint(500, 2000)) / 1000)
+
+    logging.error('timed out looking for ship inventory')
+    return 0
 
 
 def open_specinv(invtype):
