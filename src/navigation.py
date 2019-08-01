@@ -71,39 +71,42 @@ def warp_to_waypoint():
 def wait_for_warp_to_complete():
     """Detects when a warp has started and been
     completed by watching the spedometer."""
-    warp_duration = 1
     # TODO: force ship to wait a minimum period of time while beginning its
     # warp, similar to what tinyminer does to eliminate possible issues.
     
     # Wait for warp to begin by waiting until the speedometer is full. Ship
     # might be stuck on something so this could take an variable amount of
     # time.
-    warping = lo.locate('./img/indicators/warping2.bmp', conf=0.94)
-    while warping is None and warp_duration <= 300:
-        warp_duration += 1
-        logging.debug('waiting for warp to start ' + (str(warp_duration)))
-        time.sleep(float(random.randint(500, 1000)) / 1000)
+    
+    for tries in range(1, 300)
         warping = lo.locate('./img/indicators/warping2.bmp', conf=0.94)
-
-    # Once warp begins, wait for warp to end by waiting for the 'warping'
-    # text on the spedometer to disappear.
-    time.sleep(float(random.randint(3000, 5000)) / 1000)
-    while warping is not None and warp_duration <= 300:
-        warp_duration += 1
-        logging.debug('warping ' + (str(warp_duration)))
-        time.sleep(float(random.randint(1000, 3000)) / 1000)
-        warping = lo.locate('./img/indicators/warping3.bmp', conf=0.9)
-
-    if warping is None and warp_duration <= 300:
-        time.sleep(float(random.randint(1000, 3000)) / 1000)
-        logging.debug('warp completed')
-        return 1
-    else:
-        logging.error('error warping or timed out waiting for warp to \
-                      complete')
-        return 0
-
-
+        
+        if warping is not None:
+            logging.debug('warping')
+            time.sleep(float(random.randint(1000, 3000)) / 1000)
+            
+            # Once warp begins, wait for warp to end by waiting for the 'warping'
+            # text on the spedometer to disappear.
+            for tries in range(1, 150)
+                time.sleep(float(random.randint(1000, 3000)) / 1000)
+                warping_done = lo.locate('./img/indicators/warping3.bmp', conf=0.9)
+                
+                if warping_done is None:
+                    logging.debug('warp completed')
+                    return 1
+                elif warping_done is not None:
+                    logging.debug('waiting for warp to complete ' + (str(tries)))
+                    
+            logging.error('timed out waiting for warp to complete')
+            return 0
+        
+        elif warping is None:
+            logging.debug('waiting for warp to start ' + (str(warp_duration)))
+            time.sleep(float(random.randint(500, 1000)) / 1000)
+            
+    logging.error('timed out waiting for warp to start')
+    return 0
+            
 def wait_for_jump():
     """Waits for a jump by looking for the cyan session-change icon in top left
     corner of the client window. Also checks if the 'low security system warning'
