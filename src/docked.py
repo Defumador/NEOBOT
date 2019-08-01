@@ -10,6 +10,79 @@ from src import mouse, keyboard, locate as lo, keyboard as key
 from src.vars import originx, originy, windowx, windowy, conf
 
 
+
+def click_image(image, randx1=0, randx2=0, randy1=0, randy2=0, button='left', locate='c', haystack=0):
+    """."""
+    logging.debug('clicking ' + (str(image)))
+    for tries in range(1, 10)
+        if locate == 'c':
+            target_image = lo.clocate((str(image)))
+            if target_image is not None:
+                (x, y) = target_image
+                pag.moveTo((x + (random.randint(randx1, randx2))),
+                           (y + (random.randint(randy1, randy2))),
+                           mouse.duration(), mouse.path())
+                if button == 'left':
+                    mouse.click()
+                elif button == 'right':
+                    mouse.click()
+                return 1
+
+            elif target_image is None:
+                logging.error('cannot find image ' + (str(image)) + ', ' + (str(tries)))
+                time.sleep(float(random.randint(500, 2000)) / 1000)
+        elif locate == 'nc'
+            target_image = lo.locate((str(image)))
+            if target_image is not None:
+                (x, y) = target_image
+                pag.moveTo((x + (random.randint(randx1, randx2))),
+                           (y + (random.randint(randy1, randy2))),
+                           mouse.duration(), mouse.path())
+                if button == 'left':
+                    mouse.click()
+                elif button == 'right':
+                    mouse.click()
+                return 1
+
+            elif target_image is None:
+                logging.error('cannot find image ' + (str(image)) + ', ' + (str(tries)))
+                time.sleep(float(random.randint(500, 2000)) / 1000)
+        elif locate == 'o'
+            target_image = lo.olocate((str(image)))
+            if target_image is not None:
+                (x, y) = target_image
+                pag.moveTo((x + (random.randint(randx1, randx2))),
+                           (y + (random.randint(randy1, randy2))),
+                           mouse.duration(), mouse.path())
+                if button == 'left':
+                    mouse.click()
+                elif button == 'right':
+                    mouse.click()
+                return 1
+
+            elif target_image is None:
+                logging.error('cannot find image ' + (str(image)) + ', ' + (str(tries)))
+                time.sleep(float(random.randint(500, 2000)) / 1000)
+        elif locate == 'oc'
+            target_image = lo.oclocate((str(image)))
+            if target_image is not None:
+                (x, y) = target_image
+                pag.moveTo((x + (random.randint(randx1, randx2))),
+                           (y + (random.randint(randy1, randy2))),
+                           mouse.duration(), mouse.path())
+                if button == 'left':
+                    mouse.click()
+                elif button == 'right':
+                    mouse.click()
+                return 1
+
+            elif target_image is None:
+                logging.error('cannot find image ' + (str(image)) + ', ' + (str(tries)))
+                time.sleep(float(random.randint(500, 2000)) / 1000)
+
+    logging.error('timed out looking for image ' + (str(image)))
+    return 0
+
 def is_docked():
     """Checks if the ship is currently docked by looking for the undock
      button."""
