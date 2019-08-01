@@ -164,57 +164,48 @@ def emergency_terminate():
     tries = 0
     confidence = 1
     overview.select_overview_tab('general')
-    station_icon = lo.oclocate('./img/overview/station.bmp', conf=confidence)
-
+   
     # Look for a station to dock at until confidence is <0.85
-    while station_icon is None and tries <= 15:
-        tries += 1
-        confidence -= 0.01
-        logging.debug('looking for station to dock at' + (str(tries)) + ', confidence is '
-                      + (str(confidence)))
-        # Keep time interval relatively short since ship may be in combat.
-        time.sleep(float(random.randint(500, 1000)) / 1000)
+    for tries in range(1, 15):
         station_icon = lo.oclocate('./img/overview/station.bmp', conf=confidence)
         
-    if station_icon is not None and tries <= 15:
-        logging.debug('emergency docking ' + (str(tries)))
-        (x, y) = station_icon
-        pag.moveTo((x + (random.randint(-2, 50))),
-                   (y + (random.randint(-2, 2))),
-                   mouse.duration(), mouse.path())
-        mouse.click()
-        time.sleep(float(random.randint(600, 1200)) / 1000)
-        pag.keyDown('d')
-        time.sleep(float(random.randint(600, 1200)) / 1000)
-        pag.keyUp('d')
-        mouse.move_away('l')
-        if wait_for_dock() == 1:
-            emergency_logout()
-        elif wait_for_dock() == 0:
-            time.sleep(float(random.randint(20000, 40000)) / 1000)
-            emergency_logout()
-        return 0
-
+        if station_icon is not None:
+            logging.debug('emergency docking ' + (str(tries)))
+            (x, y) = station_icon
+            pag.moveTo((x + (random.randint(-2, 50))),
+                       (y + (random.randint(-2, 2))),
+                       mouse.duration(), mouse.path())
+            mouse.click()
+            time.sleep(float(random.randint(600, 1200)) / 1000)
+            pag.keyDown('d')
+            time.sleep(float(random.randint(600, 1200)) / 1000)
+            pag.keyUp('d')
+            mouse.move_away('l')
+            if wait_for_dock() == 1:
+                emergency_logout()
+            elif wait_for_dock() == 0:
+                time.sleep(float(random.randint(20000, 40000)) / 1000)
+                emergency_logout()
+            return 1
+    
+        elif station_icon is None:
+            confidence -= 0.01
+            logging.debug('looking for station to dock at' + (str(tries)) + ', confidence is '
+                          + (str(confidence)))
+            # Keep time interval relatively short since ship may be in combat.
+            time.sleep(float(random.randint(500, 1000)) / 1000)
+        
     # If confidence lowers below threshold, try warping to a planet
     # instead.
-    if station_icon is None and tries > 15:
-        logging.debug('could not find station to emergency dock at, warping to'
-                      'planet instead')
-        tries = 0
-        confidence = 1
-        overview.select_overview_tab('warpto')
+    logging.debug('could not find station to emergency dock at, warping to'
+                  'planet instead')
+    confidence = 1
+    overview.select_overview_tab('warpto')
+    
+    for tries in range(1, 50):
         planet = lo.oclocate('./img/overview/planet.bmp', conf=confidence)
-        while planet is None and tries <= 50:
-            logging.debug('looking for planet ' + (str(tries)) + ', confidence is ' +
-                          (str(confidence)))
-            tries += 1
-            # Lower confidence on every third try.
-            if (tries % 3) == 0:
-                confidence -= 0.01
-            time.sleep(float(random.randint(600, 2000)) / 1000)
-            planet = lo.oclocate('./img/overview/planet.bmp', conf=confidence)
-
-        if planet is not None and tries <= 50:
+        
+        if planet is not None:
             logging.debug('emergency warping to planet')
             (x, y) = planet
             pag.moveTo((x + (random.randint(-2, 50))),
@@ -226,11 +217,19 @@ def emergency_terminate():
             mouse.move_away('l')
             wait_for_warp_to_complete()
             emergency_logout()
-            return 0
-        else:
-            logging.debug('timed out looking for planet')
-            emergency_logout()
-        return 1
+            return 1
+        
+        elif planet is None:
+            logging.debug('looking for planet ' + (str(tries)) + ', confidence is ' +
+                          (str(confidence)))
+            # Lower confidence on every third try.
+            if (tries % 3) == 0:
+                confidence -= 0.01
+            time.sleep(float(random.randint(600, 2000)) / 1000)
+
+    logging.debug('timed out looking for planet')
+    emergency_logout()
+        return 0
 
 
 def emergency_logout():
