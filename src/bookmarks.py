@@ -100,15 +100,12 @@ def iterate_through_bookmarks(target_site_num, total_site_num):
     is not in the current system, or your ship is already there. try
     warping to bookmark X+1."""
 
-    # Try running through bookmarks twice before giving up.
+    # Try running through bookmarks multiple times before giving up.
     for iterations in range(1, 4):
         warping_to_bookmark = warp_to_local_bookmark(target_site_num)
 
-        while warping_to_bookmark == 0 and target_site_num <= total_site_num:
-            target_site_num += 1
-            warping_to_bookmark = warp_to_local_bookmark(target_site_num)
-
-        if warping_to_bookmark == 1 and target_site_num <= total_site_num:
+        for tries in range((target_site_num - 1), total_site_num)
+            if warping_to_bookmark == 1:
             # Once a valid site is found, remember the site number the ship is
             # warping to so script doesn't try warping there again.
             if nav.wait_for_warp_to_complete() == 1:
@@ -116,10 +113,8 @@ def iterate_through_bookmarks(target_site_num, total_site_num):
 
         # If script runs out of bookmarks to check for, it resets the target
         # site to 1 and goes through them again until the 'for' loop completes.
-        elif warping_to_bookmark == 0 and target_site_num > total_site_num:
-            logging.debug('out of sites to check for, starting over' +
+        logging.debug('out of sites to check for, starting over' +
                           (str(iterations)))
-            target_site_num = 1
 
     logging.error('gave up looking for sites to warp to!')
     return 0
