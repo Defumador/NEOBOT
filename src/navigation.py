@@ -3,10 +3,10 @@ import sys
 import time
 import logging
 import random
-import threading
 import traceback
+
 import pyautogui as pag
-# from src.main import stopvar
+
 from src import mouse, keyboard as key, overview, locate as lo
 from src.vars import originx, originy, windowx, windowy
 
@@ -30,13 +30,13 @@ def warp_to_waypoint():
     # TODO: add support for warping to citadels and engineering complexes
     logging.debug('looking for waypoints')
     tries = 0
-    # Speed up image searching by checking right half of eve window only. This
-    # obviously requires the user to place the overview on the right half of
+    # Speed up image searching by looking within overview only. This
+    # obviously requires the user to place the overview on the right side of
     # the client window.
     stargate = lo.oclocate('./img/overview/stargate_waypoint.bmp', conf=0.96)
     station = lo.oclocate('./img/overview/station_waypoint.bmp', conf=0.96)
 
-    # If stargate waypoint not found, look for station waypoint.
+    # If a stargate waypoint is not found, look for a station waypoint.
     while stargate is None and station is None and tries <= 15:
         tries += 1
         time.sleep(float(random.randint(500, 1500)) / 1000)
@@ -47,7 +47,7 @@ def warp_to_waypoint():
     if stargate is not None and tries <= 15:
         logging.debug('found stargate waypoint')
         (x, y) = stargate
-        # Subtract 10 from right edge to prevent script from
+        # Subtract 10 from right edge to prevent mouse from
         # accidentally clicking outside the client window.
         pag.moveTo((x + (random.randint(-8, 30)))), \
         (y + (random.randint(-8, 8))), \
@@ -65,6 +65,8 @@ def warp_to_waypoint():
                    mouse.duration(), mouse.path())
         mouse.click()
         key.keypress('d')
+        # Move mouse to the left side of the client to prevent
+        # tooltips from interfering with image searches.
         mouse.move_away('l')
         return 2
 
@@ -77,8 +79,9 @@ def wait_for_warp_to_complete():
     """Detects when a warp has started and been
     completed by watching the spedometer."""
     warp_duration = 1
-    # TODO: force ship to wait a minimum period of time while beginning to
-    #  warp, similar to what tinyminer does to eliminate possible issues
+    # TODO: force ship to wait a minimum period of time while beginning its
+    # warp, similar to what tinyminer does to eliminate possible issues.
+    
     # Wait for warp to begin by waiting until the speedometer is full. Ship
     # might be stuck on something so this could take an variable amount of
     # time.
@@ -89,14 +92,13 @@ def wait_for_warp_to_complete():
         time.sleep(float(random.randint(500, 1000)) / 1000)
         warping = lo.locate('./img/indicators/warping2.bmp', conf=0.94)
 
-    # Once warp begins, wait for warp to end by waiting for speedometer to
-    # empty.
+    # Once warp begins, wait for warp to end by waiting for the 'warping'
+    # text on the spedometer to disappear.
     time.sleep(float(random.randint(3000, 5000)) / 1000)
     while warping is not None and warp_duration <= 300:
         warp_duration += 1
         logging.debug('warping ' + (str(warp_duration)))
         time.sleep(float(random.randint(1000, 3000)) / 1000)
-        # Look for a different image to determine when the warp as ended.
         warping = lo.locate('./img/indicators/warping3.bmp', conf=0.9)
 
     if warping is None and warp_duration <= 300:
@@ -116,7 +118,7 @@ def wait_for_jump():
     and is preventing the ship from jumping."""
     tries = 0
     # Confidence must be lower than normal since icon is partially
-        # transparent.
+    # transparent.
     while lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55) \
             is None and tries <= 180:
         tries += 1
@@ -149,7 +151,7 @@ def wait_for_jump():
 
 def wait_for_dock():
     """Waits for a dock by looking for the undock button on the right half of the
-    eve client window."""
+    client window."""
     tries = 0
 
     while lo.locate('./img/buttons/undock.bmp', conf=0.91) is None and tries <= 100:
@@ -171,9 +173,9 @@ def emergency_terminate():
     """Looks for the nearest station and docks immediately. Incrementally lowers
     the confidence required to match the station icon each time the loop runs
     in order to increase the chances of a warp. If a station cannot be found after a
-    certain number of checks, warp to the nearest planet. After warp completes,
-    simulate a client disconnection by forcing an unsafe logout in space."""
-    logging.debug('EMERGENCY TERMINATE CALLED !!!')
+    certain number of checks, warps to the nearest planet. After warp completes,
+    simulates a client disconnection by forcing an unsafe logout in space."""
+    logging.warning('EMERGENCY TERMINATE CALLED !!!')
     tries = 0
     confidence = 1
     overview.select_overview_tab('general')
@@ -249,7 +251,6 @@ def emergency_terminate():
 def emergency_logout():
     """Forcefully kill the client session, don't use the 'log off
     safely' feature."""
-    # ALT SHIFT Q
     logging.warning('emergency logout called')
     time.sleep(float(random.randint(1000, 5000)) / 1000)
     pag.keyDown('alt')
