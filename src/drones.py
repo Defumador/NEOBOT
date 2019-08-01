@@ -14,7 +14,7 @@ def launch_drones(drone_num):
         time.sleep(float(random.randint(5, 500)) / 1000)
         key.hotkey('shift', 'l')
 
-        for tries in range(1, 25)
+        for tries in range(1, 25):
             drones_launched = lo.mlocate('./img/indicators/drones/0_drone_in_bay.bmp')
             
             if drones_launched == 1:
@@ -33,7 +33,7 @@ def launch_drones(drone_num):
 
 def are_drones_launched():
     """Checks if any drones are present in the drone bay."""
-    if lo.locate('./img/indicators/drones/0_drone_in_bay.bmp', conf=0.99) is \
+    if lo.mlocate('./img/indicators/drones/0_drone_in_bay.bmp', conf=0.99) is \
             not None:
         logging.debug('drones are in space')
         return 1
@@ -50,7 +50,7 @@ def recall_drones(drone_num):
 
         # Wait for all drones to return to drone bay. Very sensitive to the
         # drones variable. Won't work unless the drones variable is correct.
-        for tries in range(1, 30)
+        for tries in range(1, 30):
             drones_returned = lo.mlocate('./img/indicators/drones/' + (str(drone_num))
                                                 + '_drone_in_bay.bmp', grayscale=True)
 
@@ -62,9 +62,8 @@ def recall_drones(drone_num):
                 logging.info('waiting for drones to return to bay ' + (str(tries)))
                 time.sleep(float(random.randint(1000, 2000)) / 1000)
                 return 0
-            
-        logging.warning('timed out waiting for drones to return '
-                                            + (str(tries)))
+
+        logging.warning('timed out waiting for drones to return')
         return 0
     elif drone_num == 0:
         return 0

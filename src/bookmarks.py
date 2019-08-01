@@ -15,12 +15,14 @@ def set_dest():
     """Issues a 'set destination' command for the lowest-numbered bookmark that
     isn't blacklisted."""
     target_dest = 1
-    dest = lo.clocate('./img/dest/dest' + (str(target_dest)) + '.bmp', conf=0.98)
+    dest = lo.mlocate('./img/dest/dest' + (str(target_dest)) + '.bmp',
+                      conf=0.98, loctype='c')
 
     while dest is None:
         target_dest += 1
         logging.debug('looking for dest ' + (str(target_dest)))
-        dest = lo.clocate('./img/dest/dest' + (str(target_dest)) + '.bmp', conf=0.98)
+        dest = lo.mlocate('./img/dest/dest' + (str(target_dest)) + '.bmp',
+                          conf=0.98, loctype='c')
 
     if dest is not None:
         logging.debug('setting destination waypoint')
@@ -40,17 +42,17 @@ def set_dest():
 def is_home():
     """Checks if the ship is at its home station by looking for a
     gree bookmark starting with '000'."""
-    if lo.locate('./img/dest/at_dest0.bmp') is None:
+    if lo.mlocate('./img/dest/at_dest0.bmp') is None:
         logging.debug('not at home station')
         return 0
-    elif lo.locate('./img/dest/at_dest0.bmp') is not None:
+    elif lo.mlocate('./img/dest/at_dest0.bmp') is not None:
         logging.debug('at home station')
         return 1
 
 
 def set_home():
     """Sets destination to the first bookmark beginning with '000'."""
-    home = lo.clocate('./img/dest/dest0.bmp')
+    home = lo.mlocate('./img/dest/dest0.bmp', loctype='c')
     if home is not None:
         logging.debug('setting home waypoint')
         (x, y) = home
@@ -75,8 +77,8 @@ def iterate_through_bookmarks_rand(total_site_num):
     is not in the current system, or your ship is already there, try warping
     to bookmark Y in the system."""
     target_site_num = (random.randint(1, total_site_num))
-    
-    for iterations in range(1, (total_site_num + 10))
+
+    for iterations in range(1, (total_site_num + 10)):
         warping_to_bookmark = warp_to_local_bookmark(target_site_num)
         
         if warping_to_bookmark == 1:
@@ -87,7 +89,7 @@ def iterate_through_bookmarks_rand(total_site_num):
             target_site_num = (random.randint(1, total_site_num))
 
     # If script randomly checks (total_site_num + 10) bookmarks, give up.
-    logging.error('failed to warp after checking ' + (str(tries)) ' bookmarks)
+    logging.error('failed to warp')
     return 0
 
 
@@ -104,7 +106,7 @@ def iterate_through_bookmarks(target_site_num, total_site_num):
     for iterations in range(1, 4):
         warping_to_bookmark = warp_to_local_bookmark(target_site_num)
 
-        for tries in range((target_site_num - 1), total_site_num)
+        for tries in range((target_site_num - 1), total_site_num):
             if warping_to_bookmark == 1:
             # Once a valid site is found, remember the site number the ship is
             # warping to so script doesn't try warping there again.
@@ -125,7 +127,8 @@ def warp_to_local_bookmark(target_site_num):
     is in the current system. If the ship is already at or near the
     requested bookmark, return the function."""
     # Confidence must be >0.95 because script will confuse 6 with 0.
-    target_site_bookmark = lo.clocate('./img/dest/at_dest' + (str(target_site_num)) + '.bmp', conf=0.98)
+    target_site_bookmark = lo.mlocate('./img/dest/at_dest' + (str(
+        target_site_num)) + '.bmp', conf=0.98, loctype='c')
 
     if target_site_bookmark is not None:
         (x, y) = target_site_bookmark
@@ -133,7 +136,7 @@ def warp_to_local_bookmark(target_site_num):
                    (y + (random.randint(-3, 3))),
                    mouse.duration(), mouse.path())
         mouse.click_right()
-        approach_location = lo.locate(
+        approach_location = lo.mlocate(
             './img/buttons/detect_warp_to_bookmark.bmp', conf=0.90)
 
         # If the 'approach location' option is found in the right-click menu, the ship
@@ -146,7 +149,8 @@ def warp_to_local_bookmark(target_site_num):
         # If the 'approach location' option is not found, look for a 'warp to' option
         # and select it.
         elif approach_location is None:
-            warp_to_site = lo.clocate('./img/buttons/warp_to_bookmark.bmp', conf=0.90)
+            warp_to_site = lo.mlocate('./img/buttons/warp_to_bookmark.bmp',
+                                      conf=0.90, loctype='c')
 
             if warp_to_site is not None:
                 logging.info(
@@ -165,7 +169,7 @@ def warp_to_local_bookmark(target_site_num):
 def dock_at_local_bookmark():
     """Docks at the first bookmark beginning with a '0' in its name, assuming it's
     in the same system as you and the bookmark is a station."""
-    dock = lo.clocate('./img/dest/at_dest0.bmp')
+    dock = lo.mlocate('./img/dest/at_dest0.bmp', loctype='c')
     if dock is not None:
         (x, y) = dock
         pag.moveTo((x + (random.randint(-1, 200))),
@@ -190,12 +194,14 @@ def detect_bookmark_location():
     global n
     n = 0
     # Confidence must be higher than normal or script mistakes dest3 for dest2.
-    at_dest = lo.locate('./img/dest/at_dest' + (str(n)) + '.bmp', conf=0.98)
+    at_dest = lo.mlocate('./img/dest/at_dest' + (str(n)) + '.bmp', conf=0.98,
+                         loctype='c')
 
     while at_dest is None:
         n += 1
         logging.debug('looking if at destination ' + (str(n)))
-        at_dest = lo.locate('./img/dest/at_dest' + (str(n)) + '.bmp', conf=0.98)
+        at_dest = lo.mlocate('./img/dest/at_dest' + (str(n)) + '.bmp',
+                             conf=0.98, loctype='c')
            
         if n == 9 and at_dest is None:
             print('out of destinations to look for')

@@ -16,7 +16,7 @@ sys.setrecursionlimit(9999999)
 def has_route():
     """Checks the top-left corner of the client window to see if a route has actually been
     set by the user."""
-    route_set_var = lo.locate('./img/indicators/detect_route.bmp', conf=0.85)
+    route_set_var = lo.mlocate('./img/indicators/detect_route.bmp', conf=0.85)
     if route_set_var is None:
         logging.error('no route set!')
         sys.exit(0)
@@ -32,23 +32,23 @@ def warp_to_waypoint():
     # Speed up image searching by looking within overview only. This
     # obviously requires the user to place the overview on the right side of
     # the client window.
-    
-    for tries in range(1, 15)
-        stargate = lo.oclocate('./img/overview/stargate_waypoint.bmp', conf=0.96)
+
+    for tries in range(1, 15):
+        stargate = lo.mlocate('./img/overview/stargate_waypoint.bmp', conf=0.96)
         if stargate is not None:
             logging.debug('found stargate waypoint')
             (x, y) = stargate
-            pag.moveTo((x + (random.randint(-8, 30)))), 
-                        (y + (random.randint(-8, 8))), 
-                        mouse.duration(), mouse.path()
+            pag.moveTo((x + (random.randint(-8, 30)))), \
+            (y + (random.randint(-8, 8))), \
+            mouse.duration(), mouse.path()
             mouse.click()
             key.keypress('d')  # 'dock / jump' hotkey.
             # Move mouse to the left side of the client to prevent
             # tooltips from interfering with image searches.
             mouse.move_away('l')
             return 2
-        
-        station = lo.oclocate('./img/overview/station_waypoint.bmp', conf=0.96)
+
+        station = lo.mlocate('./img/overview/station_waypoint.bmp', conf=0.96)
         if station is not None:
             logging.debug('found station waypoint')
             (x, y) = station
@@ -77,9 +77,9 @@ def wait_for_warp_to_complete():
     # Wait for warp to begin by waiting until the speedometer is full. Ship
     # might be stuck on something so this could take an variable amount of
     # time.
-    
-    for tries in range(1, 300)
-        warping = lo.locate('./img/indicators/warping2.bmp', conf=0.94)
+
+    for duration in range(1, 300):
+        warping = lo.mlocate('./img/indicators/warping2.bmp', conf=0.94)
         
         if warping is not None:
             logging.debug('warping')
@@ -87,9 +87,10 @@ def wait_for_warp_to_complete():
             
             # Once warp begins, wait for warp to end by waiting for the 'warping'
             # text on the spedometer to disappear.
-            for tries in range(1, 150)
+            for tries in range(1, 150):
                 time.sleep(float(random.randint(1000, 3000)) / 1000)
-                warping_done = lo.locate('./img/indicators/warping3.bmp', conf=0.9)
+                warping_done = lo.mlocate('./img/indicators/warping3.bmp',
+                                          conf=0.9)
                 
                 if warping_done is None:
                     logging.debug('warp completed')
@@ -101,7 +102,7 @@ def wait_for_warp_to_complete():
             return 0
         
         elif warping is None:
-            logging.debug('waiting for warp to start ' + (str(warp_duration)))
+            logging.debug('waiting for warp to start ' + (str(duration)))
             time.sleep(float(random.randint(500, 1000)) / 1000)
             
     logging.error('timed out waiting for warp to start')
@@ -114,8 +115,9 @@ def wait_for_jump():
     about four minutes."""
     # Confidence must be lower than normal since icon is partially
     # transparent.
-    for tries in range(1, 240)
-        jumped = lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55)
+    for tries in range(1, 240):
+        jumped = lo.mlocate('./img/indicators/session_change_cloaked.bmp',
+                            conf=0.55)
         
         if jumped is not None:
             logging.debug('jump detected')
@@ -123,7 +125,8 @@ def wait_for_jump():
             return 1
         
         elif jumped is None:
-            losec = lo.locate('./img/warnings/low_security_system.bmp', conf=0.9)
+            losec = lo.mlocate('./img/warnings/low_security_system.bmp',
+                               conf=0.9)
             if losec is not None:
                 time.sleep(float(random.randint(2000, 5000)) / 1000)
                 key.keypress('enter')
@@ -141,8 +144,8 @@ def wait_for_jump():
 def wait_for_dock():
     """Waits for a dock by looking for the undock button on the right half of the
     client window."""
-    for tries in range(1, 180)
-        docked = lo.locate('./img/buttons/undock.bmp', conf=0.91)
+    for tries in range(1, 180):
+        docked = lo.mlocate('./img/buttons/undock.bmp', conf=0.91)
         
         if docked is not None:
             logging.debug('detected dock ' + (str(tries)))
@@ -170,7 +173,7 @@ def emergency_terminate():
    
     # Look for a station to dock at until confidence is <0.85
     for tries in range(1, 15):
-        station_icon = lo.oclocate('./img/overview/station.bmp', conf=confidence)
+        station_icon = lo.mlocate('./img/overview/station.bmp', conf=confidence)
         
         if station_icon is not None:
             logging.debug('emergency docking ' + (str(tries)))
@@ -206,7 +209,7 @@ def emergency_terminate():
     overview.select_overview_tab('warpto')
     
     for tries in range(1, 50):
-        planet = lo.oclocate('./img/overview/planet.bmp', conf=confidence)
+        planet = lo.mlocate('./img/overview/planet.bmp', conf=confidence)
         
         if planet is not None:
             logging.debug('emergency warping to planet')
@@ -232,7 +235,7 @@ def emergency_terminate():
 
     logging.debug('timed out looking for planet')
     emergency_logout()
-        return 0
+    return 0
 
 
 def emergency_logout():

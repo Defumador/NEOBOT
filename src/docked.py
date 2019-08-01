@@ -24,7 +24,7 @@ def click_image(needle, haystack=0, loctype='c', button='left', rx1=0, rx2=0, ry
         rx1 / ry1: the minimum x/y value to generate a random variable from.
         rx2 / ry2: the maximum x/y/ value to generate a random variable from."""
     logging.debug('searching for and clicking on ' + (str(needle)))
-    for tries in range(1, 10)
+    for tries in range(1, 10):
         target_image = lo.mlocate(needle=(str(needle)), loctype=loctype, haystack=haystack)
         if target_image != 0 and target_image != 1:
             (x, y) = target_image
@@ -38,19 +38,20 @@ def click_image(needle, haystack=0, loctype='c', button='left', rx1=0, rx2=0, ry
             return 1
 
         elif target_image == 1:
-            logging.error('loctype parameter incorrect, must use c or co)
+            logging.error('loctype parameter incorrect, must use c or co')
         elif target_image == 0:
-            logging.error('cannot find image ' + (str(image)) + ', ' + (str(tries)))
+            logging.error('cannot find image ' + (str(needle)) + ', ' + (str(
+                tries)))
             time.sleep(float(random.randint(500, 2000)) / 1000)
-    
-    logging.error('timed out looking for image to click ' + (str(image)))
+
+    logging.error('timed out looking for image to click ' + (str(needle)))
     return 0
 
 
 def is_docked():
     """Checks if the ship is currently docked by looking for the undock
      button."""
-    if lo.locate('./img/buttons/undock.bmp') is None:
+    if lo.mlocate('./img/buttons/undock.bmp') == 0:
         logging.debug('not docked')
         return 0
     else:
@@ -62,9 +63,9 @@ def open_ship_inv():
     """Clicks on the ship's inventory button within the inventory window.
     Assumes the ship is docked and the inventory window is already open."""
     logging.debug('opening ship inventory')
-    for tries in range(1, 25)
-        ship_inv = lo.clocate('./img/buttons/ship_inv.bmp')
-        if ship_inv is not None:
+    for tries in range(1, 25):
+        ship_inv = lo.mlocate('./img/buttons/ship_inv.bmp', loctype='c')
+        if ship_inv != 0:
             (x, y) = ship_inv
             pag.moveTo((x + (random.randint(-4, 50))),
                        (y + (random.randint(-6, 6))),
@@ -72,7 +73,7 @@ def open_ship_inv():
             mouse.click()
             return 1
 
-        elif ship_inv is None:
+        elif ship_inv == 0:
             logging.error('cannot find ship inventory ' + (str(tries)))
             time.sleep(float(random.randint(500, 2000)) / 1000)
 
@@ -84,10 +85,11 @@ def open_specinv(invtype):
     """Opens the ship's specified special inventory
     (for storing ore, minerals, planetary products etc.)
     Assumes the ship is docked and the inventory window is already open."""
-    logging.debug('opening ' + invtype + ' inventory')  
-    for tries in range(1, 25)
-        spec_inv = lo.clocate('./img/buttons/spec_inv_' + invtype + '.bmp')
-        if spec_inv is not None:
+    logging.debug('opening ' + invtype + ' inventory')
+    for tries in range(1, 25):
+        spec_inv = lo.mlocate('./img/buttons/spec_inv_' + invtype + '.bmp',
+                              loctype='c')
+        if spec_inv != 0:
             (x, y) = spec_inv
             pag.moveTo((x + (random.randint(-4, 50))),
                        (y + (random.randint(-3, 3))),
@@ -95,7 +97,7 @@ def open_specinv(invtype):
             mouse.click()
             return 1
 
-        if spec_inv is None:
+        if spec_inv == 0:
             logging.error('cannot find ' + invtype + ' inventory ' + (str(tries)))
             time.sleep(float(random.randint(500, 2000)) / 1000)
 
@@ -107,18 +109,18 @@ def open_station_inv():
     """Clicks on the station inventory button within the main inventory window.
     Assumes the ship is docked and the inventory window is already open."""
     logging.debug('opening station inventory')
-    for tries range(1, 25)
-        station_inv = lo.clocate('./img/buttons/station_inv.bmp')
+    for tries in range(1, 25):
+        station_inv = lo.mlocate('./img/buttons/station_inv.bmp', loctype='c')
 
-        if station_inv is not None:
+        if station_inv != 0:
             (x, y) = station_inv
             pag.moveTo((x + (random.randint(-6, 50))),
                        (y + (random.randint(-6, 6))),
                        mouse.duration(), mouse.path())
             mouse.click()
             return 1
-    
-        if station_inv is None:
+
+        if station_inv == 0:
             logging.error('cannot find station inventory icon ' + (str(tries)))
             time.sleep(float(random.randint(500, 2000)) / 1000)
 
@@ -132,15 +134,15 @@ def focus_inv_window():
     of the inventory window and positions the mouse cursor relative to those
     buttons to click an inavtive area within the inventory window."""
     tries = 0
-    window = lo.clocate('./img/buttons/station_sorting.bmp')
+    window = lo.mlocate('./img/buttons/station_sorting.bmp', loctype='c')
 
-    while window is None and tries <= 25:
+    while window == 0 and tries <= 25:
         logging.error('cannot find sorting icon ' + (str(tries)))
         tries += 1
         time.sleep(float(random.randint(500, 2000)) / 1000)
-        window = lo.clocate('./img/buttons/station_sorting.bmp')
+        window = lo.mlocate('./img/buttons/station_sorting.bmp', loctype='c')
 
-    if window is not None and tries <= 25:
+    if window != 0 and tries <= 25:
         (x, y) = window
         pag.moveTo((x - (random.randint(0, 250))),
                    (y + (random.randint(60, 300))),
@@ -154,7 +156,7 @@ def focus_inv_window():
 
 def look_for_specinv(invtype):
     """Looks for different kinds of special inventory icons on your ship."""
-    if lo.mlocate('./img/buttons/spec_inv_' + invtype + '.bmp', loctype='l') != 0:
+    if lo.mlocate('./img/buttons/spec_inv_' + invtype + '.bmp') != 0:
         logging.debug('found ' + (str(invtype)) + ' inventory')
         return 1
     else:
@@ -165,7 +167,7 @@ def specinv_warning():
     """Look for a popup indicating the selected inventory items aren't
     compatible with the ship's special inventory. This warning is partially
     transparent so confidence rating must be slightly lower than normal."""
-    if lo.locate('./img/popups/spec_inv.bmp', conf=0.8) is not None:
+    if lo.mlocate('./img/popups/spec_inv.bmp', conf=0.8) != 0:
         logging.debug('detected special inventory warning')
         return 1
     else:
@@ -177,7 +179,7 @@ def set_quant_warning():
     """Check if a 'set quantity' window appears, indicating there isn't enough
     space in the ship's inventory for a full item stack."""
 
-    if lo.locate('./img/popups/set_quant.bmp', conf=0.85) is not None:
+    if lo.mlocate('./img/popups/set_quant.bmp', conf=0.85) != 0:
         logging.debug('detected set quantity warning')
         time.sleep(float(random.randint(100, 800)) / 1000)
         pag.keyDown('enter')
@@ -193,7 +195,7 @@ def not_enough_space_warning():
     """Checks if a 'not enough space' warning appears, indicating the item
     stacks selected will not fit into the ship's inventory, or inventory is
     already full."""
-    if lo.locate('./img/warnings/not_enough_space.bmp') is not None:
+    if lo.mlocate('./img/warnings/not_enough_space.bmp') != 0:
         logging.debug('detected not enough space warning')
         time.sleep(float(random.randint(100, 800)) / 1000)
         pag.keyDown('enter')
@@ -220,29 +222,29 @@ def wait_for_undock():
     # undock action has been confirmed.
     tries = 0
 
-    while lo.olocate('./img/buttons/undocking.bmp', conf=0.8) is None and \
-            tries <= 250:
+    while lo.mlocate('./img/buttons/undocking.bmp', conf=0.8, loctype='o') \
+            == 0 and tries <= 250:
         tries += 1
         logging.debug('waiting for session change to begin ' + (str(tries)))
         time.sleep(int((random.randint(100, 200) / 1000)))
 
-    if lo.olocate('./img/buttons/undocking.bmp', conf=0.8) is not None and \
-            tries <= 250:
+    if lo.mlocate('./img/buttons/undocking.bmp', conf=0.8, loctype='o') != 0 \
+            and tries <= 250:
         logging.debug('session change underway ' + (str(tries)))
 
         # Now wait for the undock to complete by looking for the session
         # change indicator.
         tries = 0
 
-        while lo.locate('./img/indicators/session_change_undocked.bmp',
-                        conf=0.55) is None and tries <= 100:
+        while lo.mlocate('./img/indicators/session_change_undocked.bmp',
+                         conf=0.55) == 0 and tries <= 100:
             tries += 1
             time.sleep(int((random.randint(500, 2000) / 1000)))
             logging.debug('waiting for session change to complete ' +
                           (str(tries)))
 
-        if lo.locate('./img/indicators/session_change_undocked.bmp',
-                     conf=0.55) is not None and tries <= 100:
+        if lo.mlocate('./img/indicators/session_change_undocked.bmp',
+                      conf=0.55) != 0 and tries <= 100:
             logging.debug('undock completed ' + (str(tries)))
             return 1
 
@@ -250,15 +252,15 @@ def wait_for_undock():
         # look for the undock button instead since ship has likely completed
         # an undock, but at this point the session change icon is probably
         # gone.
-        elif lo.locate('./img/indicators/session_change_undocked.bmp',
-                       conf=0.55) is None and tries > 100:
+        elif lo.mlocate('./img/indicators/session_change_undocked.bmp',
+                        conf=0.55) == 0 and tries > 100:
             if is_docked() == 1:
                 logging.error('cannot undock')
                 sys.exit()
             elif is_docked() == 0:
                 logging.warning('undock tentatively completed')
                 return 1
-    elif lo.locate('./img/buttons/undocking.bmp', conf=0.9) is None and \
+    elif lo.mlocate('./img/buttons/undocking.bmp', conf=0.9) == 0 and \
             tries > 25:
         logging.error('timed out waiting for session change')
         sys.exit()
@@ -269,8 +271,9 @@ def drag_to_ship_inv():
     inventory. This function assumed the relevant window is already open."""
     logging.debug('moving item stack to ship inventory')
 
-    station_inv = lo.clocate('./img/indicators/station_inv_name.bmp')
-    if station_inv is None:
+    station_inv = lo.mlocate('./img/indicators/station_inv_name.bmp',
+                             loctype='c')
+    if station_inv == 0:
         logging.critical("can't find name column")
         traceback.print_exc()
         traceback.print_stack()
@@ -278,14 +281,14 @@ def drag_to_ship_inv():
 
     else:
         tries = 0
-        ship_inv = lo.clocate('./img/buttons/ship_inv.bmp')
-        while ship_inv is None and tries <= 25:
+        ship_inv = lo.mlocate('./img/buttons/ship_inv.bmp', loctype='c')
+        while ship_inv == 0 and tries <= 25:
             tries += 1
             logging.critical("can't find ship inventory")
             time.sleep(float(random.randint(1000, 2000)) / 1000)
-            ship_inv = lo.clocate('./img/buttons/ship_inv.bmp')
+            ship_inv = lo.mlocate('./img/buttons/ship_inv.bmp', loctype='c')
 
-        if ship_inv is not None and tries <= 25:
+        if ship_inv != 0 and tries <= 25:
             (x, y) = station_inv
             (sx, sy) = ship_inv
             pag.moveTo((x + (random.randint(-5, 250))),
@@ -306,17 +309,20 @@ def drag_to_ship_specinv(invtype):
     """Drag item stack to ship's special inventory."""
     logging.debug('moving item stack to special inventory')
 
-    station_inv = lo.clocate('./img/indicators/station_inv_name.bmp')
-    if station_inv is not None:
+    station_inv = lo.mlocate('./img/indicators/station_inv_name.bmp',
+                             loctype='c')
+    if station_inv != 0:
         tries = 0
-        spec_inv = lo.clocate('./img/buttons/spec_inv_' + invtype + '.bmp')
-        while spec_inv is None and tries <= 25:
+        spec_inv = lo.mlocate('./img/buttons/spec_inv_' + invtype + '.bmp',
+                              loctype='c')
+        while spec_inv == 0 and tries <= 25:
             tries += 1
             logging.critical("can't find ship inventory")
             time.sleep(float(random.randint(1000, 2000)) / 1000)
-            spec_inv = lo.clocate('./img/buttons/spec_inv_' + invtype + '.bmp')
+            spec_inv = lo.mlocate('./img/buttons/spec_inv_' + invtype + '.bmp',
+                                  loctype='c')
 
-        if spec_inv is not None and tries <= 25:
+        if spec_inv != 0 and tries <= 25:
             (x, y) = station_inv
             (sx, sy) = spec_inv
             pag.moveTo((x + (random.randint(-5, 250))),
@@ -342,7 +348,7 @@ def load_ship_bulk():
     """Load ship by selecting all item stacks and moving all stacks at once."""
     logging.debug('beginning bulk loading procedure')
 
-    if look_for_items() == 0:
+    if lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9) == 1:
         return 0
 
     else:
@@ -377,7 +383,9 @@ def load_ship_bulk():
                     # If no warnings appear, look for more item stacks,
                     # just to be sure the station is empty.
                     if specinvwarning == 0 and setquant == 0 and nospace == 0:
-                        if look_for_items() == 1:
+                        if lo.mlocate(
+                                './img/indicators/station_inv_0_items.bmp',
+                                conf=0.9) == 0:
                             logging.debug('more items remaining')
                             return 0
                         else:
@@ -401,9 +409,9 @@ def load_ship_individual():
     """Load ship one item stack at a time."""
     logging.debug('beginning individual loading procedure')
     open_station_inv()
-    items = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9, loctype='l')
+    noitems = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9)
 
-    while items == 0:
+    while noitems == 0:
         focus_inv_window()
         drag_to_ship_inv()
 
@@ -418,7 +426,8 @@ def load_ship_individual():
             time.sleep(float(random.randint(1500, 3000)) / 1000)
             nospace = not_enough_space_warning()
             setquant = set_quant_warning()
-            items = look_for_items()
+            noitems = lo.mlocate('./img/indicators/station_inv_0_items.bmp',
+                                 conf=0.9)
 
         elif nospace == 0 and setquant == 1:
             return 1
@@ -428,7 +437,8 @@ def load_ship_individual():
         specinv_list = ['ore', 'fleet']
         if nospace == 1:
             for invtype in specinv_list:
-                items = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9, loctype='l')
+                noitems = lo.mlocate(
+                    './img/indicators/station_inv_0_items.bmp', conf=0.9)
                 if look_for_specinv(invtype) == 1:
                     drag_to_ship_specinv(invtype)
 
@@ -436,19 +446,22 @@ def load_ship_individual():
                     specinvwarning = specinv_warning()
                     nospace = not_enough_space_warning()
                     setquant = set_quant_warning()
-                    items = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9, loctype='l')
+                    noitems = lo.mlocate(
+                        './img/indicators/station_inv_0_items.bmp', conf=0.9)
 
                     while specinvwarning == 0 and setquant == 0 and nospace == 0 and \
-                            items == 0:
+                            noitems == 0:
                         drag_to_ship_specinv(invtype)
 
                         time.sleep(float(random.randint(1500, 3000)) / 1000)
                         specinvwarning = specinv_warning()
                         nospace = not_enough_space_warning()
                         setquant = set_quant_warning()
-                        items = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9, loctype='l')
+                        noitems = lo.mlocate(
+                            './img/indicators/station_inv_0_items.bmp',
+                            conf=0.9)
 
-                    if items == 1:
+                    if noitems == 1:
                         logging.debug(
                             'done loading' + (str(invtype)) + 'inventory')
                         return 2
@@ -465,7 +478,7 @@ def load_ship_individual():
         else:
             logging.debug('station empty')
             return 2
-    if items == 1:
+    if noitems == 1:
         logging.debug('station empty')
         return 2
 
@@ -473,9 +486,9 @@ def load_ship_individual():
 def load_ship():
     """Utilize both individual and bulk loading functions to load ship."""
     open_station_inv()
-    items = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9, loctype='l')
+    noitems = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9)
 
-    if items == 0:
+    if noitems == 0:
         lsb = load_ship_bulk()
         if lsb == 2:
             logging.debug('ship loaded entire station inventory')
@@ -496,7 +509,7 @@ def load_ship():
                               'items')
                 return 1
 
-    elif items == 1:
+    elif noitems == 1:
         return 0
 
 
@@ -504,9 +517,9 @@ def unload_ship():
     """Unloads ship inventory and deposits it in the station's inventory."""
     logging.debug('began unloading procedure')
     open_ship_inv()
-    items = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9, loctype='l')
+    noitems = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9)
 
-    if items == 0:
+    if noitems == 0:
         time.sleep(float(random.randint(0, 2000)) / 1000)
         focus_inv_window()
         time.sleep(float(random.randint(0, 2000)) / 1000)
@@ -514,9 +527,10 @@ def unload_ship():
         time.sleep(float(random.randint(0, 2000)) / 1000)
         drag_items_from_ship_inv()
         time.sleep(2)
-        items = look_for_items()
+        noitems = lo.mlocate('./img/indicators/station_inv_0_items.bmp',
+                             conf=0.9)
 
-    if items == 1:
+    if noitems == 1:
         logging.debug('finished unloading main inventory')
 
         specinv_list = ['ore', 'fleet']
@@ -524,9 +538,10 @@ def unload_ship():
             if look_for_specinv(invtype) == 1:
                 time.sleep(float(random.randint(0, 2000)) / 1000)
                 open_specinv(invtype)
-                items = lo.mlocate('./img/indicators/station_inv_0_items.bmp', conf=0.9, loctype='l')
+                noitems = lo.mlocate('./img/indicators/station_inv_0_items.bmp',
+                                     conf=0.9)
 
-                while items == 0:
+                while noitems == 0:
                     time.sleep(float(random.randint(0, 2000)) / 1000)
                     focus_inv_window()
                     time.sleep(float(random.randint(0, 2000)) / 1000)
@@ -537,7 +552,7 @@ def unload_ship():
                     logging.debug('finished unloading ' + (str(invtype)) +
                                   ' inventory')
                     return 1
-                if items == 1:
+                if noitems == 1:
                     logging.debug('finished unloading procedure')
                     return 1
 
@@ -548,8 +563,8 @@ def unload_ship():
 
 def drag_items_from_ship_inv():
     """Clicks and drags all items from ship inventory to station inventory."""
-    (x1, y1) = lo.clocate('./img/indicators/station_inv_name.bmp')
-    (x2, y2) = lo.clocate('./img/buttons/station_inv.bmp')
+    (x1, y1) = lo.mlocate('./img/indicators/station_inv_name.bmp', loctype='c')
+    (x2, y2) = lo.mlocate('./img/buttons/station_inv.bmp', loctype='c')
 
     pag.moveTo((x1 + (random.randint(-5, 250))),
                (y1 + (random.randint(10, 25))),

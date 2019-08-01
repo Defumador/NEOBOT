@@ -1,5 +1,6 @@
 # encoding: utf-8
 import logging
+import sys
 from src.vars import originx, originy, windowx, windowy
 
 import pyautogui as pag

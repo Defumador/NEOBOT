@@ -19,8 +19,8 @@ def activate_miners(module_num):
     for n in range(1, (module_num + 1)):
         keyboard.keypress('f' + (str(n)))
         logging.debug('activating miner ' + (str(n)))
-        
-        for tries in range(1, 25)
+
+        for tries in range(1, 25):
             out_of_range = lo.mlocate('./img/popups/miner_out_of_range.bmp', conf=0.90, grayscale=True)
             
             if out_of_range == 0:
@@ -44,7 +44,8 @@ def no_object_selected_indicator(haystack=0):
     but no 'asteroid depleted' popup appears."""
     # For evidence of an asteroid being destroyed with no 'asteroid depleted'
     # popup, see 2019-07-20_15-23-06 at 2h53m58s
-    no_object = lo.hslocate('./img/indicators/no_object_selected.bmp', haystack=haystack, conf=0.9)
+    no_object = lo.mlocate('./img/indicators/no_object_selected.bmp',
+                           haystack=haystack, conf=0.9)
     if no_object != 0:
         logging.info('target no longer exists')
         return 1
@@ -56,7 +57,8 @@ def no_object_selected_indicator(haystack=0):
 def asteroid_depleted_popup(haystack=0):
     """Checks for popup indicating the asteroid currently being mined has been
     depleted."""
-    depleted = lo.hslocate('./img/popups/asteroid_depleted.bmp', haystack=haystack, conf=0.9)
+    depleted = lo.mlocate('./img/popups/asteroid_depleted.bmp',
+                          haystack=haystack, conf=0.9)
     if depleted != 0:
         logging.debug('asteroid empty')
         return 1
@@ -68,7 +70,8 @@ def asteroid_depleted_popup(haystack=0):
 def ship_full_popup(haystack=0):
     """Checks for momentary popup indicating that the ship's inventory is full.
     This popup lasts about 5 seconds."""
-    ship_full = lo.hslocate('./img/popups/ship_inv_full.bmp', haystack=haystack, conf=0.9)
+    ship_full = lo.mlocate('./img/popups/ship_inv_full.bmp',
+                           haystack=haystack, conf=0.9)
     if ship_full != 0:
         logging.info('inventory full')
         return 1

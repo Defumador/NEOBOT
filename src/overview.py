@@ -19,8 +19,8 @@ def is_jammed(detect_jam, haystack=0):
         olx_jam = (int(windowx / 8))
         # Custom region in lo.locate is useful to reduce the
         # search-space as this function is called frequently.
-        if lo.locate('./img/overview/jammed_overview.bmp',
-                     region=(ox_jam, originy, olx_jam, windowy)) is not None:
+        if pag.locateOnScreen('./img/overview/jammed_overview.bmp',
+                              region=(ox_jam, originy, olx_jam, windowy)) is not None:
             logging.info('ship has been jammed!')
             return 1
         else:
@@ -28,7 +28,8 @@ def is_jammed(detect_jam, haystack=0):
             return 0
         
     elif detect_jam == 1 and haystack != 0:
-        if lo.hslocate('./img/overview/jammed_overview.bmp', haystack, grayscale=True) != 0:
+        if lo.mlocate('./img/overview/jammed_overview.bmp', haystack=haystack,
+                      grayscale=True) != 0:
             logging.info('ship has been jammed!')
             return 1
         else:
@@ -113,7 +114,7 @@ def look_for_ship(npc_list, pc_list, haystack=0):
             if len(npc_list) != 0:
                 conf = 0.98
                 for npc in npc_list:
-                    npc_found = pag.locate(npc, overview, confidence=conf)
+                    npc_found = lo.mlocate(npc, haystack=overview, conf=conf)
                     if npc_found is not None:
                         logging.debug(
                             'found ' + (str(npc)) + ' at ' + (str(npc_found)))
@@ -130,7 +131,7 @@ def look_for_ship(npc_list, pc_list, haystack=0):
             if len(pc_list) != 0:
                 conf = 0.95
                 for pc in pc_list:
-                    pc_found = pag.locate(pc, overview, confidence=conf)
+                    pc_found = lo.mlocate(pc, haystack=overview, conf=conf)
                     if pc_found is not None:
                         logging.debug(
                             'found ' + (str(pc)) + ' at ' + (str(pc_found)))
@@ -144,7 +145,7 @@ def look_for_ship(npc_list, pc_list, haystack=0):
         if len(npc_list) != 0:
                 conf = 0.98
                 for npc in npc_list:
-                    npc_found = lo.hslocate(npc, haystack, conf=conf)
+                    npc_found = lo.mlocate(npc, haystack=haystack, conf=conf)
                     if npc_found != 0:
                         logging.debug(
                             'found ' + (str(npc)) + ' at ' + (str(npc_found)))
@@ -155,7 +156,7 @@ def look_for_ship(npc_list, pc_list, haystack=0):
         if len(pc_list) != 0:
             conf = 0.95
             for pc in pc_list:
-                pc_found = lo.hslocate(pc, haystack, conf=conf)
+                pc_found = lo.mlocate(pc, haystack=haystack, conf=conf)
                 if pc_found != 0:
                     logging.debug(
                         'found ' + (str(pc)) + ' at ' + (str(pc_found)))
@@ -203,14 +204,18 @@ def select_overview_tab(tab):
     
     # Requires very high confidence since the overview tab buttons look only slightly
     # different when selected.
-    selected = lo.locate('./img/overview/' + (str(tab)) + '_overview_tab_selected.bmp', conf=0.998)
+    selected = lo.mlocate('./img/overview/' + (str(tab)) +
+                          '_overview_tab_selected.bmp', conf=0.998,
+                          grayscale=True)
     
     if selected is not None:
         logging.debug('tab ' + (str(tab)) + ' already selected')
         return 1
     
     elif selected is None:
-        unselected = lo.oclocate('./img/overview/' + (str(tab)) + '_overview_tab.bmp')
+        unselected = lo.mlocate('./img/overview/' + (str(tab)) +
+                                '_overview_tab.bmp', loctype='co',
+                                grayscale=True)
         
         if unselected is not None:
             (x, y) = unselected
@@ -249,7 +254,7 @@ def look_for_targets(target1, target2, target3, target4, target5):
         target_list.append(target5)
 
     for t in target_list:
-        target = pag.locate(t, overview, confidence=0.85)
+        target = lo.mlocate(t, haystack=overview, conf=0.85)
         if target is not None:
             logging.debug('found ' + (str(t)) + ' at ' + (str(target)))
             # (x, y, l, w) = target
@@ -270,10 +275,12 @@ def is_target_lockable():
     the selected target is close enough in order to achieve a lock."""
     # High confidence required since greyed-out target lock icon looks
     # so similar to enabled icon.
-    if lo.locate('./img/indicators/target_lock_available.bmp', conf=0.9999) is not None:
+    if lo.mlocate('./img/indicators/target_lock_available.bmp',
+                  conf=0.9999) is not None:
         logging.debug('within targeting range')
         return 1
-    elif lo.locate('./img/indicators/target_lock_available.bmp', conf=0.9999) is None:
+    elif lo.mlocate('./img/indicators/target_lock_available.bmp',
+                    conf=0.9999) is None:
         logging.debug('outside targeting range')
         return 0
 
@@ -283,8 +290,8 @@ def wait_for_target_lock():
     the 'unlock target' icon in the 'selected item' window. While waiting for a
     target lock, switches to the 'general' overview tab and checks for jamming."""
     select_overview_tab('general')
-    
-    for tries in range(1, 50)
+
+    for tries in range(1, 50):
         target_locked = lo.mlocate('./img/indicators/target_lock_attained.bmp', grayscale=True)
         
         if target_locked == 1 and is_jammed(1) == 0:
@@ -328,10 +335,10 @@ def initiate_target_lock(target):
         # Try 5 times to get a target lock.
         for tries in range(1, 6):
             # Limit how long the ship spends approaching its target before giving up 
-            for approachtime in range(1, 50)
+            for approachtime in range(1, 50):
             
                 # Once target is in range, attempt to lock it.
-                if is_target_lockable() == 1 is_jammed(1) == 0:
+                if is_target_lockable() == 1 and is_jammed(1) == 0:
                     logging.debug('try #' + (str(tries)) + ' to lock target')
                     # TODO: select target by hand instead of using hotkey as the
                     #  hotkey no longer works if script changes to general tab
@@ -356,7 +363,7 @@ def initiate_target_lock(target):
             logging.warning('timed out waiting for target to get within range!')
             return 0
 
-        logging.warning('tried ' + (str(tries)) + ' times to lock target but failed')
+        logging.warning('lock target failed')
         return 0
     
     else:
