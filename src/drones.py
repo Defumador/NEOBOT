@@ -5,33 +5,29 @@ import logging
 
 from src import keyboard as key, locate as lo
 
-drones_dict = {1: "1", 2: "2", 3: "3", 4: "4", 5: "5"}
-
 
 def launch_drones(drone_num):
     """Launches drones and waits for them to leave the drone bay. User must
-    custom-set the "launch drones" hotkey to be Shift-l."""
+    manually set the "launch drones" hotkey to be Shift-l."""
     if drone_num != 0:
         logging.info('launching drones')
         time.sleep(float(random.randint(5, 500)) / 1000)
         key.hotkey('shift', 'l')
 
-        tries = 0
-        while lo.locate('./img/indicators/drones/0_drone_in_bay.bmp') is None \
-                and tries <= 25:
-            tries += 1
-            logging.debug('waiting for drones to launch ' + (str(tries)))
-            time.sleep(float(random.randint(500, 2000)) / 1000)
+        for tries in range(1, 25)
+            drones_launched = lo.mlocate('./img/indicators/drones/0_drone_in_bay.bmp')
+            
+            if drones_launched == 1:
+                logging.debug('drones launched ' + (str(tries)))
+                return 1
+            
+            elif drones_launched == 0:
+                logging.debug('waiting for drones to launch ' + (str(tries)))
+                time.sleep(float(random.randint(500, 2000)) / 1000)
 
-        if lo.locate('./img/indicators/drones/0_drone_in_bay.bmp') is not \
-                None and tries <= 25:
-            logging.debug('drones launched ' + (str(tries)))
-            return 1
-
-        else:
-            logging.warning('timed out waiting for drones to launch')
-            return 0
-    else:
+        logging.warning('timed out waiting for drones to launch')
+        return 0
+    elif drone_num == 0:
         return 1
 
 
