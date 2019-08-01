@@ -12,7 +12,7 @@ from src.vars import originx, originy, windowx, windowy
 
 
 def is_jammed(detect_jam, haystack=0):
-    """Checks for an ecm-jamming icon in the overview.
+    """Checks for an ecm-jamming icon within an especially narrow section of the overview.
     If a haystack image is provided, search within that instead."""
     if detect_jam == 1 and haystack == 0:
         ox_jam = (originx + (windowx - (int(windowx / 8))))
@@ -282,25 +282,25 @@ def wait_for_target_lock():
     """Waits until a target has been locked by looking for
     the 'unlock target' icon in the 'selected item' window. While waiting for a
     target lock, switches to the 'general' overview tab and checks for jamming."""
-    tries = 0
     select_overview_tab('general')
-    while lo.locate('./img/indicators/target_lock_attained.bmp') is None \
-            and tries <= 50 and is_jammed(1) == 0:
-        tries += 1
-        logging.debug('waiting for target lock ' + (str(tries)))
-        time.sleep(float(random.randint(1, 5)) / 10)
-
-    if lo.locate('./img/indicators/target_lock_attained.bmp') is not None \
-            and tries <= 50 and is_jammed(1) == 0:
-        logging.debug('target locked')
-        return 1
     
-    elif is_jammed(1) == 1:
-        logging.warning('ship jammed while locking target')
-        return 0
-    elif tries > 50:
-        logging.warning('timed out waiting for target lock')
-        return 0
+    for tries in range(1, 50)
+        target_locked = lo.mlocate('./img/indicators/target_lock_attained.bmp', grayscale=True)
+        
+        if target_locked == 1 and is_jammed(1) == 0:
+            logging.debug('target locked')
+            return 1
+        
+        elif target_locked == 0 and is_jammed(1) == 0:
+            logging.debug('waiting for target lock ' + (str(tries)))
+            time.sleep(float(random.randint(1, 5)) / 10)
+    
+        elif is_jammed(1) == 1:
+            logging.warning('ship jammed while locking target')
+            return 0
+
+    logging.warning('timed out waiting for target lock')
+    return 0
 
 
 def initiate_target_lock(target):
