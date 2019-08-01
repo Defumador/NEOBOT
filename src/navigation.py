@@ -145,21 +145,20 @@ def wait_for_jump():
 def wait_for_dock():
     """Waits for a dock by looking for the undock button on the right half of the
     client window."""
-    tries = 0
-
-    while lo.locate('./img/buttons/undock.bmp', conf=0.91) is None and tries <= 100:
-        tries += 1
-        logging.debug('waiting for dock ' + (str(tries)))
-        time.sleep(float(random.randint(2000, 5000)) / 1000)
+    for tries in range(1, 180)
+        docked = lo.locate('./img/buttons/undock.bmp', conf=0.91)
         
-    if lo.locate('./img/buttons/undock.bmp', conf=0.91) is not None and tries <= 100:
-        logging.debug('detected dock ' + (str(tries)))
-        time.sleep(float(random.randint(500, 3000)) / 1000)
-        return 1
-    
-    elif lo.locate('./img/buttons/undock.bmp', conf=0.91) is None and tries > 100:
-        logging.error('timed out looking for dock ' + (str(tries)))
-        return 0
+        if docked is not None:
+            logging.debug('detected dock ' + (str(tries)))
+            time.sleep(float(random.randint(1000, 3000)) / 1000)
+            return 1
+        
+        elif docked is None:
+            logging.debug('waiting for dock ' + (str(tries)))
+            time.sleep(float(random.randint(2000, 5000)) / 1000)
+            
+    logging.error('timed out waiting for dock')
+    return 0
 
 
 def emergency_terminate():
