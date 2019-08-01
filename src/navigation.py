@@ -113,36 +113,33 @@ def wait_for_warp_to_complete():
 
 def wait_for_jump():
     """Waits for a jump by looking for the cyan session-change icon in top left
-    corner of the client window. If a jump hasn't been detected after
-    50 checks, check if the 'low security system warning' window has appeared
-    and is preventing the ship from jumping."""
+    corner of the client window. Also checks if the 'low security system warning'
+    window has appeared and is preventing the ship from jumping. Times out after
+    about four minutes."""
     tries = 0
     # Confidence must be lower than normal since icon is partially
     # transparent.
     while lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55) \
-            is None and tries <= 180:
+            is None and tries <= 240:
         tries += 1
+        losec = lo.locate('./img/warnings/low_security_system.bmp', conf=0.9)
+
+        if losec is not None:
+            time.sleep(float(random.randint(2000, 5000)) / 1000)
+            key.keypress('enter')
+            continue
+            
         logging.debug('waiting for jump ' + (str(tries)))
-        time.sleep(1)
-
-        if lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55) \
-                is not None and tries >= 50:
-
-            if lo.locate('./img/warnings/low_security_system.bmp', conf=0.9) \
-                    is not None:
-                key.keypress('enter')
-                continue
-            else:
-                continue
+        time.sleep(float(random.randint(5, 20)) / 10)
 
     if lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55) \
-            is not None and tries <= 180:
+            is not None and tries <= 240:
         logging.debug('jump detected ' + (str(tries)))
-        time.sleep(float(random.randint(900, 2400)) / 1000)
+        time.sleep(float(random.randint(1000, 2000)) / 1000)
         return 1
 
     elif lo.locate('./img/indicators/session_change_cloaked.bmp', conf=0.55) \
-            is None and tries > 180:
+            is None and tries > 240:
         logging.error('timed out looking for jump ' + (str(tries)))
         emergency_terminate()
         traceback.print_stack()
