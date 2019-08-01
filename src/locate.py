@@ -14,7 +14,8 @@ def mlocate(needle, haystack=0, conf=0.95, loctype='none', grayscale=False):
         locate_var = pag.locateOnScreen(needle, confidence=conf, region=(originx, originy, windowx, windowy))
         if locate_var is not None:
             logging.debug('found image ' + (str(needle)))
-            return locate_var
+            # If the center of the image is not needed, don't return any coordinates.
+            return 1
         elif locate_var is None:
             logging.debug('cannot find standard image ' + (
                     str(needle) + ' confidence is ' + (str(conf))))
@@ -24,6 +25,7 @@ def mlocate(needle, haystack=0, conf=0.95, loctype='none', grayscale=False):
         locate_var = pag.locateCenterOnScreen(needle, confidence=conf, region=(originx, originy, windowx, windowy))
         if locate_var is not None:
             logging.debug('found image ' + (str(needle)))
+            # Return the xy coordinates for the center of the image, relative to the coordinate plane of the haystack.
             return locate_var
         elif locate_var is None:
             logging.debug('cannot find standard image ' + (
@@ -36,7 +38,7 @@ def mlocate(needle, haystack=0, conf=0.95, loctype='none', grayscale=False):
         locate_var = pag.locateOnScreen(needle, confidence=conf, region=(overviewx, originy, overviewlx, windowy))
         if locate_var is not None:
             logging.debug('found image ' + (str(needle)))
-            return locate_var
+            return 1
         elif locate_var is None:
             logging.debug('cannot find standard image ' + (
                     str(needle) + ' confidence is ' + (str(conf))))
