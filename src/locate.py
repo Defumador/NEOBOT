@@ -42,7 +42,7 @@ def mlocate(needle, haystack=0, conf=0.95, loctype='none', grayscale=False):
                     str(needle) + ' confidence is ' + (str(conf))))
             return 0
         
-    if haystack == 0 and loctype == 'o':
+    if haystack == 0 and loctype == 'co':
         overviewx = (originx + (windowx - (int(windowx / 3.8))))
         overviewlx = (int(windowx / 3.8))
         locate_var = pag.locateCenterOnScreen(needle, confidence=conf, region=(overviewx, originy, overviewlx, windowy))
@@ -54,7 +54,7 @@ def mlocate(needle, haystack=0, conf=0.95, loctype='none', grayscale=False):
                     str(needle) + ' confidence is ' + (str(conf))))
             return 0
         
-    if haystack != 0 and loctype == 'none':
+    if haystack != 0:
         locate_var = pag.locate(needle, haystack, confidence=conf, grayscale=grayscale)
         if locate_var is not None:
             logging.debug('found needle image ' + (str(needle)) + ' within haystack image' + (str(haystack)))
