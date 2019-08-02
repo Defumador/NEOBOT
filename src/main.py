@@ -139,7 +139,8 @@ def miner():
                             continue
 
                     if mng.time_at_site(timer_var) == 1 or \
-                            mng.no_object_selected_indicator() == 1:
+                           lo.mlocate('./img/indicators/no_object_selected.bmp',
+                                                haystack=client, conf=0.9) == 1:
                         drones.recall_drones(drone_num)
                         miner()
 
