@@ -92,7 +92,7 @@ def miner():
                 drones.launch_drones(drone_num)
                 if o.initiate_target_lock(target) == 0:
                     miner()
-                time.sleep(float(random.randint(50, 150)) / 10)
+                time.sleep(float(random.randint(5000, 15000)) / 10)
                 mng.activate_miners(module_num)
                 # If ship inventory isn't full, continue to mine ore and wait
                 # for popups or errors.
@@ -121,7 +121,7 @@ def miner():
                         # Sleep to wait for all mining modules to disable
                         # themselves automatically
                         logging.info('waiting for modules to deactivate')
-                        time.sleep(10)
+                        time.sleep(float(random.randint(10000, 15000)) / 1000)
                         o.select_overview_tab('mining')
                         target = o.look_for_targets(o1, o2, o3, o4, o5)
                         if target == 0:
@@ -133,9 +133,10 @@ def miner():
                             # script from attempting to mine an asteroid that
                             # is too far away.
                             time.sleep(
-                                float(random.randint(50, 150)) / 10)
-                            mng.activate_miners(module_num)
-                            ship_full = mng.ship_full_popup()
+                                float(random.randint(5000, 15000)) / 1000)
+                            mng.activate_miners(module_num)     
+                            ship_full = lo.mlocate('./img/popups/ship_inv_full.bmp',
+                                                        haystack=client, conf=0.9)
                             continue
 
                     if mng.time_at_site(timer_var) == 1 or \
