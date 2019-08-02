@@ -5,14 +5,14 @@ import traceback
 import cProfile
 import logging
 import random
-import yaml
+# import yaml
 
 import tkinter
 from tkinter import ttk
 import pyautogui as pag
 
 from src import docked as doc, drones, navigation as nav, mining as mng, \
-    bookmarks as bkmk, overview as o
+    bookmarks as bkmk, overview as o, locate as lo
 from src.vars import system_mining, originx, originy, windowx, windowy
 
 # TODO: add support for mining drones.
@@ -118,7 +118,7 @@ def miner():
                     time.sleep(1)
                     
                     if lo.mlocate('./img/popups/asteroid_depleted.bmp',
-                                      haystack=client, conf=0.9)) == 1:
+                                  haystack=client, conf=0.9) == 1:
                         # Sleep to wait for all mining modules to disable
                         # themselves automatically
                         logging.info('waiting for modules to deactivate')
@@ -316,7 +316,8 @@ print("windowy =", windowy)
 # GUI #########################################################################
 
 # read user-defined settings from config file ---------------------------------
-with open('./config.yaml.example', 'r') as f:
+'''
+with open('./config.yaml.example') as f:
     config = yaml.safe_load(f)
 
 # convert settings from True/False to 1/0 -----------------------------------
@@ -334,10 +335,9 @@ check_for_player_cruisers_and_battlecruisers = int(check_for_player_cruisers_and
 check_for_player_battleships = int(check_focheck_for_player_battleshipsr_rats == 'true')
 check_for_player_capsules = int(check_for_player_capsules == 'true')
 check_for_ECM_jamming = int(check_for_ECM_jamming == 'true')
-
+'''
 # set default setting values from config file --------------------------------
-gui = tkinter.Tk()
-
+'''
 detect_npcs_gui = tkinter.IntVar()
 detect_npcs_gui.set(check_for_rats)
 
@@ -376,6 +376,40 @@ pc_pod_gui = tkinter.IntVar(check_for_player_capsules)
 
 detect_jam_gui = tkinter.IntVar()
 detect_jam_gui.set(check_for_ECM_jamming)
+'''
+gui = tkinter.Tk()
+detect_npcs_gui = tkinter.IntVar()
+
+npc_frig_dest_gui = tkinter.IntVar()
+npc_cruiser_bc_gui = tkinter.IntVar()
+npc_bs_gui = tkinter.IntVar()
+
+detect_pcs_gui = tkinter.IntVar()
+detect_pcs_gui.set(1)
+
+pc_indy_gui = tkinter.IntVar()
+pc_indy_gui.set(1)
+
+pc_barge_gui = tkinter.IntVar()
+pc_barge_gui.set(1)
+
+pc_frig_dest_gui = tkinter.IntVar()
+pc_frig_dest_gui.set(1)
+
+pc_capindy_freighter_gui = tkinter.IntVar()
+pc_capindy_freighter_gui.set(1)
+
+pc_cruiser_bc_gui = tkinter.IntVar()
+pc_cruiser_bc_gui.set(1)
+
+pc_bs_gui = tkinter.IntVar()
+pc_bs_gui.set(1)
+
+pc_rookie_gui = tkinter.IntVar()
+pc_pod_gui = tkinter.IntVar()
+
+detect_jam_gui = tkinter.IntVar()
+detect_jam_gui.set(1)
 
 # blank text for spacing ----------------------------------------------------
 t = tkinter.Label(text="")
