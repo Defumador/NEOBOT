@@ -292,7 +292,7 @@ def wait_for_target_lock():
     select_overview_tab('general')
 
     for tries in range(1, 50):
-        target_locked = lo.mlocate('./img/indicators/target_lock_attained.bmp', grayscale=True)
+        target_locked = lo.mlocate('./img/indicators/target_lock_attained.bmp')
         
         if target_locked == 1 and is_jammed(1) == 0:
             logging.debug('target locked')
