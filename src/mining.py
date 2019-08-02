@@ -19,22 +19,23 @@ def activate_miners(module_num):
     for n in range(1, (module_num + 1)):
         keyboard.keypress('f' + (str(n)))
         logging.debug('activating miner ' + (str(n)))
-
-        for tries in range(1, 25):
+        out_of_range = lo.mlocate('./img/popups/miner_out_of_range.bmp',
+                                  conf=0.90, grayscale=True)
+        tries = 0
+        while out_of_range == 1 and tries <= 25:
+            tries += 1
+            time.sleep(float(random.randint(15000, 30000)) / 1000)
             out_of_range = lo.mlocate('./img/popups/miner_out_of_range.bmp', conf=0.90, grayscale=True)
-            
-            if out_of_range == 0:
+            if out_of_range == 0 and tries <= 25:
                 time.sleep(float(random.randint(0, 3000)) / 1000)
-                
-            elif out_of_range == 1:
-                logging.debug('out of module range ' + (str(tries)))
-                time.sleep(float(random.randint(15000, 30000)) / 1000)
-                logging.debug('activating miner again ' + (str(n)))
+                logging.debug('activating miner ' + (str(n)))
                 keyboard.keypress('f' + (str(n)))
-
-        logging.error('timed out waiting for ship to get within '
+        if out_of_range == 0 and tries <= 25:
+            continue
+        elif out_of_range == 1 and tries > 25:
+            logging.error('timed out waiting for ship to get within '
                           'module range')
-        return 0
+            return 0
     return 1
 
 
