@@ -314,48 +314,78 @@ print("windowy =", windowy)
 
 # GUI #########################################################################
 
+# read user-defined settings from config file ---------------------------------
+from src.config import check_for_rats, check_for_rat_frigates_and_destroyers,
+check_for_rat_cruisers_and_battlecruisers, check_for_rat_battleships, check_for_players,
+check_for_player_industrials, check_for_player_mining_barges, check_for_player_frigates_and_destroyers,
+check_for_player_capital_industrials_and_freighters, check_for_player_cruisers_and_battlecruisers,
+check_for_player_battleships, check_for_player_capsules, check_for_ECM_jamming
 
+# convert settings from True/False to 1/0 -----------------------------------
+check_for_rats = int(check_for_rats == 'true')
+check_for_rat_frigates_and_destroyers = int(check_for_rat_frigates_and_destroyers == 'true')
+check_for_rat_cruisers_and_battlecruisers = int(check_for_rat_cruisers_and_battlecruisers == 'true')
+check_for_rat_battleships = int(check_for_rat_battleships == 'true')
+check_for_players = int(check_for_players == 'true')
+check_for_player_industrials = int(check_for_player_industrials == 'true')
+check_for_player_mining_barges = int(check_for_player_mining_barges == 'true')
+check_for_player_frigates_and_destroyers = int(check_for_player_frigates_and_destroyers == 'true')
+check_for_player_capital_industrials_and_freighters = int(check_for_player_capital_industrials_and_freighters == 'true')
+check_for_player_cruisers_and_battlecruisers = int(check_for_player_cruisers_and_battlecruisers == 'true')
+check_for_player_battleships = int(check_focheck_for_player_battleshipsr_rats == 'true')
+check_for_player_capsules = int(check_for_player_capsules == 'true')
+check_for_ECM_jamming = int(check_for_ECM_jamming == 'true')
+
+# set default setting values from config file --------------------------------
 gui = tkinter.Tk()
 
 detect_npcs_gui = tkinter.IntVar()
+detect_npcs_gui.set(check_for_rats)
 
 npc_frig_dest_gui = tkinter.IntVar()
+npc_frig_dest_gui.set(check_for_rat_frigates_and_destroyers)
+
 npc_cruiser_bc_gui = tkinter.IntVar()
+npc_cruiser_bc_gui.set(check_for_rat_cruisers_and_battlecruisers)
+
 npc_bs_gui = tkinter.IntVar()
+npc_bs_gui.set(check_for_rat_battleships)
 
 detect_pcs_gui = tkinter.IntVar()
-detect_pcs_gui.set(1)
+detect_pcs_gui.set(check_for_players)
 
 pc_indy_gui = tkinter.IntVar()
-pc_indy_gui.set(1)
+pc_indy_gui.set(check_for_player_industrials)
 
 pc_barge_gui = tkinter.IntVar()
-pc_barge_gui.set(1)
+pc_barge_gui.set(check_for_player_mining_barges)
 
 pc_frig_dest_gui = tkinter.IntVar()
-pc_frig_dest_gui.set(1)
+pc_frig_dest_gui.set(check_for_player_frigates_and_destroyers)
 
 pc_capindy_freighter_gui = tkinter.IntVar()
-pc_capindy_freighter_gui.set(1)
+pc_capindy_freighter_gui.set(check_for_player_capital_industrials_and_freighters)
 
 pc_cruiser_bc_gui = tkinter.IntVar()
-pc_cruiser_bc_gui.set(1)
+pc_cruiser_bc_gui.set(check_for_player_cruisers_and_battlecruisers)
 
 pc_bs_gui = tkinter.IntVar()
-pc_bs_gui.set(1)
+pc_bs_gui.set(check_for_player_battleships)
 
 pc_rookie_gui = tkinter.IntVar()
-pc_pod_gui = tkinter.IntVar()
+pc_pod_gui = tkinter.IntVar(check_for_player_capsules)
 
 detect_jam_gui = tkinter.IntVar()
-detect_jam_gui.set(1)
+detect_jam_gui.set(check_for_ECM_jamming)
 
+# blank text for spacing ----------------------------------------------------
 t = tkinter.Label(text="")
 t.grid(column=0, row=0, columnspan=2, sticky='W', padx=0, pady=0)
 
 t = tkinter.Label(text="")
 t.grid(column=0, row=3, columnspan=2, sticky='W', padx=0, pady=0)
 
+# populate gui with settings ------------------------------------------------
 combo_modules = ttk.Combobox(values=[1, 2, 3, 4])
 combo_modules.current(1)
 combo_modules.grid(column=1, row=4, columnspan=1, sticky='W')
@@ -438,6 +468,8 @@ def start(event):
 
     global detect_npcs, npc_frig_dest, npc_cruiser_bc, npc_bs
 
+    # set the gui variables to reflect the current gui configuration when the user
+    # clicks the start button
     module_num = (int(combo_modules.get()))
     drone_num = (int(combo_drones.get()))
     logging.debug((str(module_num)) + ' modules')
