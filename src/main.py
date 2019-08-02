@@ -5,6 +5,7 @@ import traceback
 import cProfile
 import logging
 import random
+import yaml
 
 import tkinter
 from tkinter import ttk
@@ -315,14 +316,12 @@ print("windowy =", windowy)
 # GUI #########################################################################
 
 # read user-defined settings from config file ---------------------------------
-from src.config import check_for_rats, check_for_rat_frigates_and_destroyers,
-check_for_rat_cruisers_and_battlecruisers, check_for_rat_battleships, check_for_players,
-check_for_player_industrials, check_for_player_mining_barges, check_for_player_frigates_and_destroyers,
-check_for_player_capital_industrials_and_freighters, check_for_player_cruisers_and_battlecruisers,
-check_for_player_battleships, check_for_player_capsules, check_for_ECM_jamming
+with open('./config.yaml.example', 'r') as f:
+    config = yaml.safe_load(f)
 
 # convert settings from True/False to 1/0 -----------------------------------
-check_for_rats = int(check_for_rats == 'true')
+check_for_rats = int(config[check_for_rats] == 'true')
+
 check_for_rat_frigates_and_destroyers = int(check_for_rat_frigates_and_destroyers == 'true')
 check_for_rat_cruisers_and_battlecruisers = int(check_for_rat_cruisers_and_battlecruisers == 'true')
 check_for_rat_battleships = int(check_for_rat_battleships == 'true')
