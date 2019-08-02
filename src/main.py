@@ -100,7 +100,8 @@ def miner():
                 o.select_overview_tab('general')
                 client = pag.screenshot(region=(
                     originx, originy, windowx, windowy))
-                ship_full = mng.ship_full_popup(haystack=client)
+                ship_full = lo.mlocate('./img/popups/ship_inv_full.bmp',
+                           haystack=client, conf=0.9)
 
                 # main mining loop # -------------------------------------------
                 while ship_full == 0:
@@ -110,11 +111,13 @@ def miner():
                     client = pag.screenshot(region=(
                         originx, originy, windowx, windowy))
 
-                    ship_full = mng.ship_full_popup(haystack=client)
+                    ship_full = lo.mlocate('./img/popups/ship_inv_full.bmp',
+                           haystack=client, conf=0.9)
                     timer_var += 1
                     time.sleep(1)
                     
-                    if mng.asteroid_depleted_popup(haystack=client) == 1:
+                    if lo.mlocate('./img/popups/asteroid_depleted.bmp',
+                                      haystack=client, conf=0.9)) == 1:
                         # Sleep to wait for all mining modules to disable
                         # themselves automatically
                         logging.info('waiting for modules to deactivate')
