@@ -39,48 +39,6 @@ def activate_miners(module_num):
     return 1
 
 
-def no_object_selected_indicator(haystack=0):
-    """Checks if the 'selected item' window displays 'no object selected,
-    ' this could be useful in the rare case in which an asteroid is destroyed
-    but no 'asteroid depleted' popup appears."""
-    # For evidence of an asteroid being destroyed with no 'asteroid depleted'
-    # popup, see 2019-07-20_15-23-06 at 2h53m58s
-    no_object = lo.mlocate('./img/indicators/no_object_selected.bmp',
-                           haystack=haystack, conf=0.9)
-    if no_object != 0:
-        logging.info('target no longer exists')
-        return 1
-    elif no_object == 0:
-        logging.debug('target still exists')
-        return 0
-
-
-def asteroid_depleted_popup(haystack=0):
-    """Checks for popup indicating the asteroid currently being mined has been
-    depleted."""
-    depleted = lo.mlocate('./img/popups/asteroid_depleted.bmp',
-                          haystack=haystack, conf=0.9)
-    if depleted != 0:
-        logging.debug('asteroid empty')
-        return 1
-    elif depleted == 0:
-        logging.debug('asteroid still available')
-        return 0
-
-
-def ship_full_popup(haystack=0):
-    """Checks for momentary popup indicating that the ship's inventory is full.
-    This popup lasts about 5 seconds."""
-    ship_full = lo.mlocate('./img/popups/ship_inv_full.bmp',
-                           haystack=haystack, conf=0.9)
-    if ship_full != 0:
-        logging.info('inventory full')
-        return 1
-    elif ship_full == 0:
-        logging.debug('inventory not yet full')
-        return 0
-
-    
 def time_at_site(timer_var):
     """Timeout timer for mining. If, for some reason, ship gets stuck in
     belt, the timer can be used to restart the script after a certain period of
