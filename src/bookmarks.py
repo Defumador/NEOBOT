@@ -18,13 +18,13 @@ def set_dest():
     dest = lo.mlocate('./img/dest/dest' + (str(target_dest)) + '.bmp',
                       conf=0.98, loctype='c')
 
-    while dest is None:
+    while dest == 0:
         target_dest += 1
         logging.debug('looking for dest ' + (str(target_dest)))
         dest = lo.mlocate('./img/dest/dest' + (str(target_dest)) + '.bmp',
                           conf=0.98, loctype='c')
 
-    if dest is not None:
+    if dest != 0:
         logging.debug('setting destination waypoint')
         (x, y) = dest
         pag.moveTo((x + (random.randint(-1, 200))),
@@ -42,10 +42,10 @@ def set_dest():
 def is_home():
     """Checks if the ship is at its home station by looking for a
     gree bookmark starting with '000'."""
-    if lo.mlocate('./img/dest/at_dest0.bmp') is None:
+    if lo.mlocate('./img/dest/at_dest0.bmp') == 0:
         logging.debug('not at home station')
         return 0
-    elif lo.mlocate('./img/dest/at_dest0.bmp') is not None:
+    elif lo.mlocate('./img/dest/at_dest0.bmp') != 0:
         logging.debug('at home station')
         return 1
 
@@ -53,7 +53,7 @@ def is_home():
 def set_home():
     """Sets destination to the first bookmark beginning with '000'."""
     home = lo.mlocate('./img/dest/dest0.bmp', loctype='c')
-    if home is not None:
+    if home != 0:
         logging.debug('setting home waypoint')
         (x, y) = home
         pag.moveTo((x + (random.randint(-1, 200))),
@@ -130,7 +130,7 @@ def warp_to_local_bookmark(target_site_num):
     target_site_bookmark = lo.mlocate('./img/dest/at_dest' + (str(
         target_site_num)) + '.bmp', conf=0.98, loctype='c')
 
-    if target_site_bookmark is not None:
+    if target_site_bookmark != 0:
         (x, y) = target_site_bookmark
         pag.moveTo((x + (random.randint(10, 200))),
                    (y + (random.randint(-3, 3))),
@@ -141,18 +141,18 @@ def warp_to_local_bookmark(target_site_num):
 
         # If the 'approach location' option is found in the right-click menu, the ship
         # is already near the bookmark.
-        if approach_location is not None:
+        if approach_location != 0:
             logging.debug('already at bookmark ' + (str(target_site_bookmark)))
             keyboard.keypress('esc')  # Close right-click menu.
             return 0
 
         # If the 'approach location' option is not found, look for a 'warp to' option
         # and select it.
-        elif approach_location is None:
+        elif approach_location == 0:
             warp_to_site = lo.mlocate('./img/buttons/warp_to_bookmark.bmp',
                                       conf=0.90, loctype='c')
 
-            if warp_to_site is not None:
+            if warp_to_site != 0:
                 logging.info(
                     'warping to bookmark ' + (str(target_site_bookmark)))
                 pag.moveRel((0 + (random.randint(10, 80))),
@@ -161,7 +161,7 @@ def warp_to_local_bookmark(target_site_num):
                 mouse.click()
                 time.sleep(float(random.randint(1500, 1800)) / 1000)
                 return 1
-            elif warp_to_site is None:
+            elif warp_to_site == 0:
                 logging.error('unable to warp to target site, is ship docked?')
                 return 0
 
@@ -170,7 +170,7 @@ def dock_at_local_bookmark():
     """Docks at the first bookmark beginning with a '0' in its name, assuming it's
     in the same system as you and the bookmark is a station."""
     dock = lo.mlocate('./img/dest/at_dest0.bmp', loctype='c')
-    if dock is not None:
+    if dock != 0:
         (x, y) = dock
         pag.moveTo((x + (random.randint(-1, 200))),
                    (y + (random.randint(-3, 3))),
@@ -197,16 +197,16 @@ def detect_bookmark_location():
     at_dest = lo.mlocate('./img/dest/at_dest' + (str(n)) + '.bmp', conf=0.98,
                          loctype='c')
 
-    while at_dest is None:
+    while at_dest == 0:
         n += 1
         logging.debug('looking if at destination ' + (str(n)))
         at_dest = lo.mlocate('./img/dest/at_dest' + (str(n)) + '.bmp',
                              conf=0.98, loctype='c')
-           
-        if n == 9 and at_dest is None:
+
+        if n == 9 and at_dest == 0:
             print('out of destinations to look for')
             return -1
-    if at_dest is not None:
+    if at_dest != 0:
         logging.debug('at dest ' + (str(n)))
         return n
 
@@ -217,7 +217,7 @@ def blacklist_station():
     This will prevent other functions from identifying the bookmark
     as a potential site."""
     at_dest = detect_bookmark_location()
-    if at_dest is not None:
+    if at_dest != 0:
         logging.debug('blacklisting station')
         at_dest = pag.locateCenterOnScreen(
             ('./img/dest/at_dest' + (str(n)) + '.bmp'),
@@ -265,14 +265,14 @@ def blacklist_local_bookmark():
         region=(originx, originy, windowx, windowy))
 
     # If bookmark exists, check right-click menu.
-    while bookmark_to_blacklist is not None:
+    while bookmark_to_blacklist != 0:
 
         bookmark_to_blacklist = pag.locateCenterOnScreen(
             ('./img/dest/at_dest' + (str(bookmark)) + '.bmp'),
             confidence=0.95,
             region=(originx, originy, windowx, windowy))
 
-        if bookmark_to_blacklist is not None:
+        if bookmark_to_blacklist != 0:
 
             (bookmark_to_blacklistx), (
                 bookkmark_to_blacklisty) = bookmark_to_blacklist
@@ -293,7 +293,7 @@ def blacklist_local_bookmark():
                 region=(originx, originy, windowx, windowy))
 
             # If 'approach location' is present, blacklist that bookmark.
-            if at_bookmark is not None:
+            if at_bookmark != 0:
                 logging.debug('blacklisting bookmark ' + (str(bookmark)))
                 time.sleep(float(random.randint(1000, 2000)) / 1000)
                 keyboard.keypress('esc')
@@ -321,13 +321,13 @@ def blacklist_local_bookmark():
 
             # If 'approach location' is not present,
             # close the right-click menu and check the next bookmark.
-            if at_bookmark is None:
+            if at_bookmark == 0:
                 logging.debug('not at bookmark ' + (str(bookmark)))
                 keyboard.keypress('esc')
                 bookmark += 1
                 continue
 
-        elif bookmark_to_blacklist is None:
+        elif bookmark_to_blacklist == 0:
             logging.warning('out of bookmarks to look for')
             return 0
 

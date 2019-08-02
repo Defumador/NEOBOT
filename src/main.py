@@ -15,6 +15,7 @@ from src import docked as doc, drones, navigation as nav, mining as mng, \
 from src.vars import system_mining, originx, originy, windowx, windowy
 
 # TODO: add support for mining drones.
+# TODO: add ability to save default settings config using an ini file
 
 # TODO: for mining script, add a user-defined sleep variable that waits for
 # a short duration between the ship locking a target and the ship activating

@@ -9,6 +9,8 @@ import pyautogui as pag
 from src import mouse, keyboard, locate as lo, keyboard as key
 from src.vars import originx, originy, windowx, windowy, conf
 
+logging.basicConfig(format='(%(asctime)s) %(funcName)s - %('
+                           'message)s', level=logging.DEBUG)
 
 def click_image(needle, haystack=0, loctype='c', button='left', rx1=0, rx2=0, ry1=0, ry2=0):
     """Moves the mouse to the provided needle image and clicks on it. If a haystack is provided, searches for the

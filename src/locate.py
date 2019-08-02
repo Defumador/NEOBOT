@@ -14,7 +14,8 @@ def mlocate(needle, haystack=0, conf=0.95, loctype='l', grayscale=False):
     if haystack == 0 and loctype == 'l':
         locate_var = pag.locateOnScreen(needle, confidence=conf, region=(originx, originy, windowx, windowy), grayscale=grayscale)
         if locate_var is not None:
-            logging.debug('found image ' + (str(needle)))
+            logging.debug('found image ' + (str(needle)) + ', ' + (str(
+                locate_var)))
             # If the center of the image is not needed, don't return any coordinates.
             return 1
         elif locate_var is None:
@@ -25,7 +26,8 @@ def mlocate(needle, haystack=0, conf=0.95, loctype='l', grayscale=False):
     if haystack == 0 and loctype == 'c':
         locate_var = pag.locateCenterOnScreen(needle, confidence=conf, region=(originx, originy, windowx, windowy), grayscale=grayscale)
         if locate_var is not None:
-            logging.debug('found image ' + (str(needle)))
+            logging.debug('found image ' + (str(needle)) + ', ' + (str(
+                locate_var)))
             # Return the xy coordinates for the center of the image, relative to the coordinate plane of the haystack.
             return locate_var
         elif locate_var is None:
@@ -38,7 +40,8 @@ def mlocate(needle, haystack=0, conf=0.95, loctype='l', grayscale=False):
         overviewlx = (int(windowx / 3.8))
         locate_var = pag.locateOnScreen(needle, confidence=conf, region=(overviewx, originy, overviewlx, windowy), grayscale=grayscale)
         if locate_var is not None:
-            logging.debug('found image ' + (str(needle)))
+            logging.debug('found image ' + (str(needle)) + ', ' + (str(
+                locate_var)))
             return 1
         elif locate_var is None:
             logging.debug('cannot find standard image ' + (
@@ -50,7 +53,8 @@ def mlocate(needle, haystack=0, conf=0.95, loctype='l', grayscale=False):
         overviewlx = (int(windowx / 3.8))
         locate_var = pag.locateCenterOnScreen(needle, confidence=conf, region=(overviewx, originy, overviewlx, windowy), grayscale=grayscale)
         if locate_var is not None:
-            logging.debug('found image ' + (str(needle)))
+            logging.debug('found image ' + (str(needle)) + ', ' + (str(
+                locate_var)))
             return locate_var
         elif locate_var is None:
             logging.debug('cannot find standard image ' + (
@@ -60,7 +64,9 @@ def mlocate(needle, haystack=0, conf=0.95, loctype='l', grayscale=False):
     if haystack != 0:
         locate_var = pag.locate(needle, haystack, confidence=conf, grayscale=grayscale)
         if locate_var is not None:
-            logging.debug('found needle image ' + (str(needle)) + ' within haystack image' + (str(haystack)))
+            logging.debug('found needle  ' + (str(needle)) + ' within '
+                                                             'haystack' + (
+                              str(haystack)) + ', ' + (str(locate_var)))
             return locate_var
         else:
             logging.debug('cannot find image ' + (

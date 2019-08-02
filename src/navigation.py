@@ -17,7 +17,7 @@ def has_route():
     """Checks the top-left corner of the client window to see if a route has actually been
     set by the user."""
     route_set_var = lo.mlocate('./img/indicators/detect_route.bmp', conf=0.85)
-    if route_set_var is None:
+    if route_set_var == 0:
         logging.error('no route set!')
         sys.exit(0)
     else:
@@ -35,7 +35,7 @@ def warp_to_waypoint():
 
     for tries in range(1, 15):
         stargate = lo.mlocate('./img/overview/stargate_waypoint.bmp', conf=0.96)
-        if stargate is not None:
+        if stargate != 0:
             logging.debug('found stargate waypoint')
             (x, y) = stargate
             pag.moveTo((x + (random.randint(-8, 30)))), \
@@ -49,7 +49,7 @@ def warp_to_waypoint():
             return 2
 
         station = lo.mlocate('./img/overview/station_waypoint.bmp', conf=0.96)
-        if station is not None:
+        if station != 0:
             logging.debug('found station waypoint')
             (x, y) = station
             pag.moveTo((x + (random.randint(-8, 30))),
@@ -60,7 +60,7 @@ def warp_to_waypoint():
             mouse.move_away('l')
             return 2
 
-        if stargate is None and station is None:
+        if stargate == 0 and station == 0:
             time.sleep(float(random.randint(500, 1500)) / 1000)
             logging.debug('looking for waypoints ' + (str(tries)))
         
@@ -80,8 +80,8 @@ def wait_for_warp_to_complete():
 
     for duration in range(1, 300):
         warping = lo.mlocate('./img/indicators/warping2.bmp', conf=0.94)
-        
-        if warping is not None:
+
+        if warping != 0:
             logging.debug('warping')
             time.sleep(float(random.randint(1000, 3000)) / 1000)
             
@@ -91,17 +91,17 @@ def wait_for_warp_to_complete():
                 time.sleep(float(random.randint(1000, 3000)) / 1000)
                 warping_done = lo.mlocate('./img/indicators/warping3.bmp',
                                           conf=0.9)
-                
-                if warping_done is None:
+
+                if warping_done == 0:
                     logging.debug('warp completed')
                     return 1
-                elif warping_done is not None:
+                elif warping_done != 0:
                     logging.debug('waiting for warp to complete ' + (str(tries)))
                     
             logging.error('timed out waiting for warp to complete')
             return 0
-        
-        elif warping is None:
+
+        elif warping == 0:
             logging.debug('waiting for warp to start ' + (str(duration)))
             time.sleep(float(random.randint(500, 1000)) / 1000)
             
@@ -118,16 +118,16 @@ def wait_for_jump():
     for tries in range(1, 240):
         jumped = lo.mlocate('./img/indicators/session_change_cloaked.bmp',
                             conf=0.55)
-        
-        if jumped is not None:
+
+        if jumped != 0:
             logging.debug('jump detected')
             time.sleep(float(random.randint(1000, 2000)) / 1000)
             return 1
-        
-        elif jumped is None:
+
+        elif jumped == 0:
             losec = lo.mlocate('./img/warnings/low_security_system.bmp',
                                conf=0.9)
-            if losec is not None:
+            if losec != 0:
                 time.sleep(float(random.randint(2000, 5000)) / 1000)
                 key.keypress('enter')
                 continue
@@ -146,13 +146,13 @@ def wait_for_dock():
     client window."""
     for tries in range(1, 180):
         docked = lo.mlocate('./img/buttons/undock.bmp', conf=0.91)
-        
-        if docked is not None:
+
+        if docked != 0:
             logging.debug('detected dock ' + (str(tries)))
             time.sleep(float(random.randint(1000, 3000)) / 1000)
             return 1
-        
-        elif docked is None:
+
+        elif docked == 0:
             logging.debug('waiting for dock ' + (str(tries)))
             time.sleep(float(random.randint(2000, 5000)) / 1000)
             
@@ -174,8 +174,8 @@ def emergency_terminate():
     # Look for a station to dock at until confidence is <0.85
     for tries in range(1, 15):
         station_icon = lo.mlocate('./img/overview/station.bmp', conf=confidence)
-        
-        if station_icon is not None:
+
+        if station_icon != 0:
             logging.debug('emergency docking ' + (str(tries)))
             (x, y) = station_icon
             pag.moveTo((x + (random.randint(-2, 50))),
@@ -193,8 +193,8 @@ def emergency_terminate():
                 time.sleep(float(random.randint(20000, 40000)) / 1000)
                 emergency_logout()
             return 1
-    
-        elif station_icon is None:
+
+        elif station_icon == 0:
             confidence -= 0.01
             logging.debug('looking for station to dock at' + (str(tries)) + ', confidence is '
                           + (str(confidence)))
@@ -210,8 +210,8 @@ def emergency_terminate():
     
     for tries in range(1, 50):
         planet = lo.mlocate('./img/overview/planet.bmp', conf=confidence)
-        
-        if planet is not None:
+
+        if planet != 0:
             logging.debug('emergency warping to planet')
             (x, y) = planet
             pag.moveTo((x + (random.randint(-2, 50))),
@@ -224,8 +224,8 @@ def emergency_terminate():
             wait_for_warp_to_complete()
             emergency_logout()
             return 1
-        
-        elif planet is None:
+
+        elif planet == 0:
             logging.debug('looking for planet ' + (str(tries)) + ', confidence is ' +
                           (str(confidence)))
             # Lower confidence on every third try.

@@ -115,7 +115,7 @@ def look_for_ship(npc_list, pc_list, haystack=0):
                 conf = 0.98
                 for npc in npc_list:
                     npc_found = lo.mlocate(npc, haystack=overview, conf=conf)
-                    if npc_found is not None:
+                    if npc_found != 0:
                         logging.debug(
                             'found ' + (str(npc)) + ' at ' + (str(npc_found)))
                         # Break up the tuple so mouse can point at icon for debugging.
@@ -132,7 +132,7 @@ def look_for_ship(npc_list, pc_list, haystack=0):
                 conf = 0.95
                 for pc in pc_list:
                     pc_found = lo.mlocate(pc, haystack=overview, conf=conf)
-                    if pc_found is not None:
+                    if pc_found != 0:
                         logging.debug(
                             'found ' + (str(pc)) + ' at ' + (str(pc_found)))
                         return 1
@@ -207,24 +207,24 @@ def select_overview_tab(tab):
     selected = lo.mlocate('./img/overview/' + (str(tab)) +
                           '_overview_tab_selected.bmp', conf=0.998,
                           grayscale=True)
-    
-    if selected is not None:
+
+    if selected != 0:
         logging.debug('tab ' + (str(tab)) + ' already selected')
         return 1
-    
-    elif selected is None:
+
+    elif selected == 0:
         unselected = lo.mlocate('./img/overview/' + (str(tab)) +
                                 '_overview_tab.bmp', loctype='co',
                                 grayscale=True)
-        
-        if unselected is not None:
+
+        if unselected != 0:
             (x, y) = unselected
             pag.moveTo((x + (random.randint(-12, 12))),
                        (y + (random.randint(-6, 6))),
                        mouse.duration(), mouse.path())
             mouse.click()
             return 1
-        elif unselected is None:
+        elif unselected == 0:
             logging.error('unable to find overview tabs')
             return 0
 
@@ -263,7 +263,7 @@ def look_for_targets(target1, target2, target3, target4, target5):
             #           (y + originy),
             #           1, mouse.path())
             return target
-        elif target is None:
+        elif target == 0:
             logging.debug('target ' + (str(t)) + ' not found')
 
     logging.info('no targets found')
@@ -276,11 +276,11 @@ def is_target_lockable():
     # High confidence required since greyed-out target lock icon looks
     # so similar to enabled icon.
     if lo.mlocate('./img/indicators/target_lock_available.bmp',
-                  conf=0.9999) is not None:
+                  conf=0.9999) != 0:
         logging.debug('within targeting range')
         return 1
     elif lo.mlocate('./img/indicators/target_lock_available.bmp',
-                    conf=0.9999) is None:
+                    conf=0.9999) == 0:
         logging.debug('outside targeting range')
         return 0
 
@@ -315,7 +315,7 @@ def initiate_target_lock(target):
     selected target and attempts to lock the target once ship is close
     enough. Tries multiple times to lock the target before giving up. Checks
     for jamming attempts while approaching the target."""
-    if target is not None:
+    if target != 0:
         # Break apart tuple into coordinates.
         (x, y, l, w) = target
         # Adjust coordinates for screen.
