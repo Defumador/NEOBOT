@@ -142,14 +142,15 @@ def miner():
                             # is too far away.
                             time.sleep(
                                 float(random.randint(5000, 15000)) / 1000)
-                            mng.activate_miners(module_num)     
-                            ship_full = lo.mlocate('./img/popups/ship_inv_full.bmp',
-                                                        haystack=client, conf=0.9)
+                            mng.activate_miners(module_num)
+                            ship_full = lo.mlocate(
+                                './img/popups/ship_inv_full.bmp',
+                                haystack=client, conf=0.9)
                             continue
 
-                    if mng.time_at_site(timer_var) == 1 or \
-                           lo.mlocate('./img/indicators/no_object_selected.bmp',
-                                                haystack=client, conf=0.9) == 1:
+                    if mng.time_at_site(timer_var) == 1 or lo.mlocate(
+                            './img/indicators/no_object_selected.bmp',
+                            haystack=client, conf=0.9) == 1:
                         drones.recall_drones(drone_num)
                         miner()
 
@@ -509,8 +510,8 @@ def start(event):
 
     global detect_npcs, npc_frig_dest, npc_cruiser_bc, npc_bs
 
-    # set the gui variables to reflect the current gui configuration when the user
-    # clicks the start button
+    # set the gui variables to reflect the current gui configuration when the
+    # user clicks the start button
     module_num = (int(combo_modules.get()))
     drone_num = (int(combo_drones.get()))
     logging.debug((str(module_num)) + ' modules')
