@@ -1,4 +1,6 @@
 # encoding: utf-8
+# import pyximport
+# pyximport.install(pyimport=True)
 import logging
 import sys
 from src.vars import originx, originy, windowx, windowy

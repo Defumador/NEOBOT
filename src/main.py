@@ -1,4 +1,6 @@
 # encoding: utf-8
+# import pyximport
+# pyximport.install(pyimport=True)
 import sys
 import time
 import traceback
@@ -121,7 +123,6 @@ def miner():
                     ship_full = lo.mlocate('./img/popups/ship_inv_full.bmp',
                            haystack=client, conf=0.9)
                     timer_var += 1
-                    time.sleep(1)
                     
                     if lo.mlocate('./img/popups/asteroid_depleted.bmp',
                                   haystack=client, conf=0.9) == 1:

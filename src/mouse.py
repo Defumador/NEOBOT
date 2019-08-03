@@ -1,4 +1,6 @@
 # encoding: utf-8
+# import pyximport
+# pyximport.install(pyimport=True)
 import time
 import random
 import pyautogui as pag
@@ -43,8 +45,9 @@ def bezmove():
     for point in zip(*(i.astype(int) for i in points)):
         pag.platformModule._moveTo(*point)
         time.sleep(timeout)
-    
-#################################################################################
+
+
+################################################################################
 
 
 def move_away(direction):

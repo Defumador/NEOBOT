@@ -1,4 +1,6 @@
 # encoding: utf-8
+# import pyximport
+# pyximport.install(pyimport=True)
 import time
 import random
 import sys
