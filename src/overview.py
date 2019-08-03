@@ -4,9 +4,7 @@
 import random
 import time
 import logging
-
 import pyautogui as pag
-
 from src import mouse, keyboard, locate as lo
 from src.vars import originx, originy, windowx, windowy
 
@@ -14,15 +12,17 @@ from src.vars import originx, originy, windowx, windowy
 
 
 def is_jammed(detect_jam, haystack=0):
-    """Checks for an ecm-jamming icon within an especially narrow section of the overview.
-    If a haystack image is provided, search within that instead."""
+    """Checks for an ecm-jamming icon within an especially narrow section of
+    the overview. If a haystack image is provided, search within that
+    instead."""
     if detect_jam == 1 and haystack == 0:
         ox_jam = (originx + (windowx - (int(windowx / 8))))
         olx_jam = (int(windowx / 8))
         # Custom region in lo.locate is useful to reduce the
         # search-space as this function is called frequently.
         if pag.locateOnScreen('./img/overview/jammed_overview.bmp',
-                              region=(ox_jam, originy, olx_jam, windowy)) is not None:
+                              region=(ox_jam, originy, olx_jam, windowy)) is \
+                not None:
             logging.info('ship has been jammed!')
             return 1
         else:
@@ -41,10 +41,11 @@ def is_jammed(detect_jam, haystack=0):
     elif detect_jam == 0:
         return 0
 
-    
-def build_ship_list(detect_npcs_var, npc_frig_dest,
-                npc_cruiser_bc, detect_pcs_var, pc_indy, pc_barge, pc_frig_dest,
-               pc_cruiser_bc, pc_bs, pc_capindy_freighter, pc_rookie, pc_pod):
+
+def build_ship_list(detect_npcs_var, npc_frig_dest, npc_cruiser_bc,
+                    detect_pcs_var, pc_indy, pc_barge, pc_frig_dest,
+                    pc_cruiser_bc, pc_bs, pc_capindy_freighter, pc_rookie,
+                    pc_pod):
     """Builds a list of npc ship icons and a list of player ship icons,
     through which the 'look_for_ship' function can iterate and
     check if any of those icons are present in the overview."""
@@ -106,7 +107,8 @@ def look_for_ship(npc_list, pc_list, haystack=0):
     # This is about twice as fast as searching a 1024x768 client window.
 
     if haystack == 0:
-        # If no haystack image is given, take and use a screenshot of the overview.
+        # If no haystack image is given, take and use a screenshot of the
+        # overview.
         if len(npc_list) != 0 or len(pc_list) != 0:
             overview = pag.screenshot(
                 region=((originx + (windowx - (int(windowx / 3.8)))),
@@ -120,11 +122,14 @@ def look_for_ship(npc_list, pc_list, haystack=0):
                     if npc_found != 0:
                         logging.debug(
                             'found ' + (str(npc)) + ' at ' + (str(npc_found)))
-                        # Break up the tuple so mouse can point at icon for debugging.
+                        # Break up the tuple so mouse can point at icon for
+                        # debugging.
                         # (x, y, t, w) = hostile_npc_found
-                        # Coordinates must compensate for the altered coordinate-space
+                        # Coordinates must compensate for the altered
+                        # coordinate-space
                         # of the screenshot.
-                        # pag.moveTo((x + (originx + (windowx - (int(windowx / 2))))),
+                        # pag.moveTo((x + (originx +
+                        # (windowx - (int(windowx / 2))))),
                         #           (y + originy),
                         #           0, mouse.path())
                         return 1
@@ -145,15 +150,15 @@ def look_for_ship(npc_list, pc_list, haystack=0):
         
     elif haystack != 0:
         if len(npc_list) != 0:
-                conf = 0.98
-                for npc in npc_list:
-                    npc_found = lo.mlocate(npc, haystack=haystack, conf=conf)
-                    if npc_found != 0:
-                        logging.debug(
-                            'found ' + (str(npc)) + ' at ' + (str(npc_found)))
-                        logging.info('unwanted npc detected')
-                        return 1
-                logging.debug('passed npc check')
+            conf = 0.98
+            for npc in npc_list:
+                npc_found = lo.mlocate(npc, haystack=haystack, conf=conf)
+                if npc_found != 0:
+                    logging.debug(
+                        'found ' + (str(npc)) + ' at ' + (str(npc_found)))
+                    logging.info('unwanted npc detected')
+                    return 1
+            logging.debug('passed npc check')
 
         if len(pc_list) != 0:
             conf = 0.95
@@ -201,11 +206,12 @@ def focus_overview():
 
 def select_overview_tab(tab):
     """Switches to the specified overview tab. If the specified tab is already
-    selected, this function does nothing. Assumes the default overview configuration."""
+    selected, this function does nothing. Assumes the default overview
+    configuration."""
     logging.debug('focusing ' + (str(tab)) + ' tab')
-    
-    # Requires very high confidence since the overview tab buttons look only slightly
-    # different when selected.
+
+    # Requires very high confidence since the overview tab buttons look only
+    # slightly different when selected.
     selected = lo.mlocate('./img/overview/' + (str(tab)) +
                           '_overview_tab_selected.bmp', conf=0.998,
                           grayscale=True)
@@ -273,8 +279,9 @@ def look_for_targets(target1, target2, target3, target4, target5):
 
 
 def is_target_lockable():
-    """Looks for a highlighted 'target this object' icon in the 'selected item' window, indicating
-    the selected target is close enough in order to achieve a lock."""
+    """Looks for a highlighted 'target this object' icon in the 'selected
+    item' window, indicating the selected target is close enough in order to
+    achieve a lock."""
     # High confidence required since greyed-out target lock icon looks
     # so similar to enabled icon.
     if lo.mlocate('./img/indicators/target_lock_available.bmp',
@@ -290,7 +297,8 @@ def is_target_lockable():
 def wait_for_target_lock():
     """Waits until a target has been locked by looking for
     the 'unlock target' icon in the 'selected item' window. While waiting for a
-    target lock, switches to the 'general' overview tab and checks for jamming."""
+    target lock, switches to the 'general' overview tab and checks for
+    jamming."""
     select_overview_tab('general')
 
     for tries in range(1, 50):
@@ -336,7 +344,8 @@ def initiate_target_lock(target):
         
         # Try 5 times to get a target lock.
         for tries in range(1, 6):
-            # Limit how long the ship spends approaching its target before giving up 
+            # Limit how long the ship spends approaching its target before
+            # giving up
             for approachtime in range(1, 50):
             
                 # Once target is in range, attempt to lock it.
@@ -355,7 +364,8 @@ def initiate_target_lock(target):
                     if target_locked == 1:
                         return 1
                     elif target_locked == 0:
-                        # if wait_for_target_lock() times out, continue the outer 'for' loop and try locking
+                        # if wait_for_target_lock() times out, continue the
+                        # outer 'for' loop and try locking
                         # target again
                         break
                         
