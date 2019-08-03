@@ -2,12 +2,9 @@
 # import pyximport
 # pyximport.install(pyimport=True)
 import random
-import sys
 import time
 import logging
-
 import pyautogui as pag
-
 from src import mouse, keyboard, navigation as nav, locate as lo
 from src.navigation import wait_for_dock
 from src.vars import originx, originy, windowx, windowy, conf
@@ -110,15 +107,15 @@ def iterate_through_bookmarks(target_site_num, total_site_num):
 
         for tries in range((target_site_num - 1), total_site_num):
             if warping_to_bookmark == 1:
-                # Once a valid site is found, remember the site number the ship is
-                # warping to so script doesn't try warping there again.
+                # Once a valid site is found, remember the site number the
+                # ship is warping to so script doesn't try warping there again.
                 if nav.wait_for_warp_to_complete() == 1:
                     return 1
 
         # If script runs out of bookmarks to check for, it resets the target
         # site to 1 and goes through them again until the 'for' loop completes.
         logging.debug('out of sites to check for, starting over' +
-                          (str(iterations)))
+                      (str(iterations)))
 
     logging.error('gave up looking for sites to warp to!')
     return 0
@@ -141,15 +138,15 @@ def warp_to_local_bookmark(target_site_num):
         approach_location = lo.mlocate(
             './img/buttons/detect_warp_to_bookmark.bmp', conf=0.90)
 
-        # If the 'approach location' option is found in the right-click menu, the ship
-        # is already near the bookmark.
+        # If the 'approach location' option is found in the right-click
+        # menu, the ship is already near the bookmark.
         if approach_location != 0:
             logging.debug('already at bookmark ' + (str(target_site_bookmark)))
             keyboard.keypress('esc')  # Close right-click menu.
             return 0
 
-        # If the 'approach location' option is not found, look for a 'warp to' option
-        # and select it.
+        # If the 'approach location' option is not found, look for a 'warp
+        # to' option and select it.
         elif approach_location == 0:
             warp_to_site = lo.mlocate('./img/buttons/warp_to_bookmark.bmp',
                                       conf=0.90, loctype='c')
@@ -169,8 +166,8 @@ def warp_to_local_bookmark(target_site_num):
 
 
 def dock_at_local_bookmark():
-    """Docks at the first bookmark beginning with a '0' in its name, assuming it's
-    in the same system as you and the bookmark is a station."""
+    """Docks at the first bookmark beginning with a '0' in its name,
+    assuming it's in the same system as you and the bookmark is a station."""
     dock = lo.mlocate('./img/dest/at_dest0.bmp', loctype='c')
     if dock != 0:
         (x, y) = dock
@@ -212,7 +209,9 @@ def detect_bookmark_location():
         logging.debug('at dest ' + (str(n)))
         return n
 
+
 # The below blacklisting functions have had little testing.
+
 
 def blacklist_station():
     """Blacklists the first green bookmark by editing its name.
