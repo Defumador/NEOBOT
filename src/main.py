@@ -109,6 +109,7 @@ def miner():
 
                 # main mining loop # -------------------------------------------
                 while ship_full == 0:
+                    time.sleep(1)
                     logging.debug('loop START -----')
                     # overview = pag.screenshot(region=(
                     #    (originx + (windowx - (int(windowx / 3.8)))),
