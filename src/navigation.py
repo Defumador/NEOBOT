@@ -6,18 +6,14 @@ import time
 import logging
 import random
 import traceback
-
 import pyautogui as pag
-
 from src import mouse, keyboard as key, overview, locate as lo
-from src.vars import originx, originy, windowx, windowy
-
 sys.setrecursionlimit(9999999)
 
 
 def has_route():
-    """Checks the top-left corner of the client window to see if a route has actually been
-    set by the user."""
+    """Checks the top-left corner of the client window to see if a route has
+     actually been set by the user."""
     route_set_var = lo.mlocate('./img/indicators/detect_route.bmp', conf=0.85)
     if route_set_var == 0:
         logging.error('no route set!')
@@ -27,8 +23,9 @@ def has_route():
 
 
 def warp_to_waypoint():
-    """Clicks on the current waypoint and uses the warp hotkey to warp to waypoint.
-     Currently only supports warping to stargate and station waypoints."""
+    """Clicks on the current waypoint and uses the warp hotkey to warp to
+    waypoint. Currently only supports warping to stargate and station
+    waypoints."""
     # TODO: add support for warping to citadels and engineering complexes
     logging.debug('looking for waypoints')
     # Speed up image searching by looking within overview only. This
@@ -86,9 +83,9 @@ def wait_for_warp_to_complete():
         if warping != 0:
             logging.debug('warping')
             time.sleep(float(random.randint(1000, 3000)) / 1000)
-            
-            # Once warp begins, wait for warp to end by waiting for the 'warping'
-            # text on the spedometer to disappear.
+
+            # Once warp begins, wait for warp to end by waiting for the
+            # 'warping' text on the spedometer to disappear.
             for tries in range(1, 150):
                 time.sleep(float(random.randint(1000, 3000)) / 1000)
                 warping_done = lo.mlocate('./img/indicators/warping3.bmp',
@@ -98,7 +95,8 @@ def wait_for_warp_to_complete():
                     logging.debug('warp completed')
                     return 1
                 elif warping_done != 0:
-                    logging.debug('waiting for warp to complete ' + (str(tries)))
+                    logging.debug('waiting for warp to complete ' +
+                                  (str(tries)))
                     
             logging.error('timed out waiting for warp to complete')
             return 0
@@ -109,12 +107,13 @@ def wait_for_warp_to_complete():
             
     logging.error('timed out waiting for warp to start')
     return 0
-            
+
+
 def wait_for_jump():
     """Waits for a jump by looking for the cyan session-change icon in top left
-    corner of the client window. Also checks if the 'low security system warning'
-    window has appeared and is preventing the ship from jumping. Times out after
-    about four minutes."""
+    corner of the client window. Also checks if the 'low security system
+    warning' window has appeared and is preventing the ship from jumping.
+    Times out after about four minutes."""
     # Confidence must be lower than normal since icon is partially
     # transparent.
     for tries in range(1, 240):
@@ -144,8 +143,8 @@ def wait_for_jump():
 
 
 def wait_for_dock():
-    """Waits for a dock by looking for the undock button on the right half of the
-    client window."""
+    """Waits for a dock by looking for the undock button on the right half
+    of the client window."""
     for tries in range(1, 180):
         docked = lo.mlocate('./img/buttons/undock.bmp', conf=0.91)
 
@@ -165,11 +164,11 @@ def wait_for_dock():
 def emergency_terminate():
     """Looks for the nearest station and docks immediately. Incrementally lowers
     the confidence required to match the station icon each time the loop runs
-    in order to increase the chances of a warp. If a station cannot be found after a
-    certain number of checks, warps to the nearest planet. After warp completes,
-    simulates a client disconnection by forcing an unsafe logout in space."""
+    in order to increase the chances of a warp. If a station cannot be found
+    after a certain number of checks, warps to the nearest planet. After warp
+    completes, simulates a client disconnection by forcing an unsafe logout
+    in space."""
     logging.warning('EMERGENCY TERMINATE CALLED !!!')
-    tries = 0
     confidence = 1
     overview.select_overview_tab('general')
    
@@ -198,8 +197,8 @@ def emergency_terminate():
 
         elif station_icon == 0:
             confidence -= 0.01
-            logging.debug('looking for station to dock at' + (str(tries)) + ', confidence is '
-                          + (str(confidence)))
+            logging.debug('looking for station to dock at' + (str(tries)) +
+                          ', confidence is ' + (str(confidence)))
             # Keep time interval relatively short since ship may be in combat.
             time.sleep(float(random.randint(500, 1000)) / 1000)
         
@@ -228,8 +227,8 @@ def emergency_terminate():
             return 1
 
         elif planet == 0:
-            logging.debug('looking for planet ' + (str(tries)) + ', confidence is ' +
-                          (str(confidence)))
+            logging.debug('looking for planet ' + (str(tries)) +
+                          ', confidence is ' + (str(confidence)))
             # Lower confidence on every third try.
             if (tries % 3) == 0:
                 confidence -= 0.01
