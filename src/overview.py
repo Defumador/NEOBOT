@@ -340,9 +340,15 @@ def initiate_target_lock(target):
                 # Once target is in range, attempt to lock it.
                 if is_target_lockable() == 1 and is_jammed(1) == 0:
                     logging.debug('try #' + (str(tries)) + ' to lock target')
-                    # TODO: select target by hand instead of using hotkey as the
-                    #  hotkey no longer works if script changes to general tab
-                    #  before locking target
+                    lock_icon = lo.mlocate(
+                        './img/indicators/target_lock_available.bmp',
+                        loctype='c', grayscale=True)
+                    (x, y) = lock_icon
+                    pag.moveTo((x + (random.randint(-10, 10))),
+                               (y + (random.randint(-10, 10))),
+                               mouse.duration(), mouse.path())
+                    mouse.click()
+                    mouse.move_away('l')
                     target_locked = wait_for_target_lock()
                     if target_locked == 1:
                         return 1
