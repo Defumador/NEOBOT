@@ -53,15 +53,18 @@ def move_away(direction):
     to prevent tooltips from interfering with the script."""
     time.sleep(float(random.randint(0, 500)) / 1000)
     if direction == 'r':
-        pag.moveTo((random.randint(0, (windowy - 100))),
-                   (random.randint(0, ((windowx - 100) - (windowx / 2)))),
+        print('right')
+        pag.moveTo((random.randint(
+            ((windowx - 100) - (windowx / 2)), (windowx - 100))),
+            (random.randint(10, (windowy - 100))),
                    duration(), path())
         time.sleep(float(random.randint(0, 500)) / 1000)
         return
 
     elif direction == 'l':
-        pag.moveTo((random.randint(0, (windowy - 100))),
-                   (random.randint(0, ((windowx - 100) / 2))),
+        print('left')
+        pag.moveTo((random.randint(10, ((windowx - 100) - (windowx / 2)))),
+                   (random.randint(10, (windowy - 100))),
                    duration(), path())
         time.sleep(float(random.randint(0, 500)) / 1000)
         return 
