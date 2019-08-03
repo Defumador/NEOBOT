@@ -45,7 +45,7 @@ def warp_to_waypoint():
             key.keypress('d')  # 'dock / jump' hotkey.
             # Move mouse to the left side of the client to prevent
             # tooltips from interfering with image searches.
-            mouse.move_away('l')
+            mouse.move_to_neutral()
             return 2
 
         station = lo.mlocate('./img/overview/station_waypoint.bmp', conf=0.96)
@@ -57,7 +57,7 @@ def warp_to_waypoint():
                        mouse.duration(), mouse.path())
             mouse.click()
             key.keypress('d')
-            mouse.move_away('l')
+            mouse.move_to_neutral()
             return 2
 
         if stargate == 0 and station == 0:
@@ -186,7 +186,7 @@ def emergency_terminate():
             pag.keyDown('d')
             time.sleep(float(random.randint(600, 1200)) / 1000)
             pag.keyUp('d')
-            mouse.move_away('l')
+            mouse.move_to_neutral()
             if wait_for_dock() == 1:
                 emergency_logout()
             elif wait_for_dock() == 0:
@@ -220,7 +220,7 @@ def emergency_terminate():
             mouse.click()
             time.sleep(float(random.randint(600, 1200)) / 1000)
             key.keypress('s')
-            mouse.move_away('l')
+            mouse.move_to_neutral()
             wait_for_warp_to_complete()
             emergency_logout()
             return 1

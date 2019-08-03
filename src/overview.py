@@ -348,7 +348,7 @@ def initiate_target_lock(target):
                                (y + (random.randint(-10, 10))),
                                mouse.duration(), mouse.path())
                     mouse.click()
-                    mouse.move_away('l')
+                    mouse.move_to_neutral()
                     target_locked = wait_for_target_lock()
                     if target_locked == 1:
                         return 1

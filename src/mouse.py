@@ -2,7 +2,7 @@
 import time
 import random
 import pyautogui as pag
-from src.vars import windowx, windowy
+from src.vars import originx, originy, windowx, windowy
 
 #####################################################################
 # Bezier curve movement testing
@@ -67,8 +67,18 @@ def move_away(direction):
                    (random.randint(10, (windowy - 100))),
                    duration(), path())
         time.sleep(float(random.randint(0, 500)) / 1000)
-        return 
-    
+        return
+
+
+def move_to_neutral():
+    """Moves the mouse to a 'neutral zone', away from any buttons or tooltop
+    icons that could get in the way of the script. Designed for the miner()
+    gui layout."""
+    pag.moveTo((originx + (random.randint(50, 300))),
+               (originy + (random.randint(300, 500))),
+               duration(), path())
+    return 1
+
 
 def click():
     """Clicks the primary mouse button, waiting both before and after for a
