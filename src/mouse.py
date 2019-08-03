@@ -8,7 +8,8 @@ from src.vars import originx, originy, windowx, windowy
 
 #####################################################################
 # Bezier curve movement testing
-# from https://stackoverflow.com/questions/44467329/pyautogui-mouse-movement-with-bezier-curve
+# from https://stackoverflow.com/questions/44467329
+# /pyautogui-mouse-movement-with-bezier-curve
 
 import scipy
 from scipy import interpolate
@@ -34,7 +35,7 @@ def bezmove():
 
     # Approximate using Bezier spline.
     degree = 3 if cp > 3 else cp - 1  # Degree of b-spline. 3 is recommended.
-                                      # Must be less than number of control points.
+    # Must be less than number of control points.
     tck, u = scipy.interpolate.splprep([x, y], k=degree)
     u = scipy.linspace(0, 1, num=max(pag.size()))
     points = scipy.interpolate.splev(u, tck)
@@ -60,7 +61,7 @@ def move_away(direction):
         pag.moveTo((random.randint(
             ((windowx - 100) - (windowx / 2)), (windowx - 100))),
             (random.randint(10, (windowy - 100))),
-                   duration(), path())
+            duration(), path())
         time.sleep(float(random.randint(0, 500)) / 1000)
         return
 
@@ -112,7 +113,8 @@ def path():
     """Randomizes the movement behavior of the mouse cursor as it moves to a
     new location."""
     # TODO: implement bezier-curve mouse behavior
-    # https://stackoverflow.com/questions/44467329/pyautogui-mouse-movement-with-bezier-curve
+    # https://stackoverflow.com/questions/44467329
+    # /pyautogui-mouse-movement-with-bezier-curve
     rand = random.randint(1, 22)
     
     if rand == 1:
