@@ -93,7 +93,7 @@ def miner():
                 drones.launch_drones(drone_num)
                 if o.initiate_target_lock(target) == 0:
                     miner()
-                time.sleep(float(random.randint(5000, 15000)) / 10)
+                time.sleep(float(random.randint(5000, 15000)) / 1000)
                 mng.activate_miners(module_num)
                 # If ship inventory isn't full, continue to mine ore and wait
                 # for popups or errors.
