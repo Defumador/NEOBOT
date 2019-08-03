@@ -6,6 +6,7 @@ import cProfile
 import logging
 import random
 # import yaml
+from PIL import ImageOps
 
 import tkinter
 from tkinter import ttk
@@ -108,11 +109,13 @@ def miner():
 
                 # main mining loop # -------------------------------------------
                 while ship_full == 0:
-                    overview = pag.screenshot(region=(
-                        (originx + (windowx - (int(windowx / 3.8)))),
-                        originy, (int(windowx / 3.8)), windowy))
+                    logging.debug('loop START -----')
+                    # overview = pag.screenshot(region=(
+                    #    (originx + (windowx - (int(windowx / 3.8)))),
+                    #    originy, (int(windowx / 3.8)), windowy))
                     client = pag.screenshot(region=(
                         originx, originy, windowx, windowy))
+                    overview = ImageOps.crop(client, (755, 0, 0, 0))
 
                     ship_full = lo.mlocate('./img/popups/ship_inv_full.bmp',
                            haystack=client, conf=0.9)
@@ -153,6 +156,7 @@ def miner():
                             or o.is_jammed(detect_jam, haystack=overview) == 1:
                         drones.recall_drones(drone_num)
                         miner()
+                    logging.info('loop END -----')
                 # end of main mining loop --------------------------------------
 
                 if ship_full == 1:
