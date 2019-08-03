@@ -6,30 +6,35 @@ import random
 import sys
 import logging
 import traceback
-
 import pyautogui as pag
 from src import mouse, keyboard, locate as lo, keyboard as key
-from src.vars import originx, originy, windowx, windowy, conf
 
 logging.basicConfig(format='(%(asctime)s) %(funcName)s - %('
                            'message)s', level=logging.DEBUG)
 
+
 def click_image(needle, haystack=0, loctype='c', button='left', rx1=0, rx2=0, ry1=0, ry2=0):
-    """Moves the mouse to the provided needle image and clicks on it. If a haystack is provided, searches for the
-    provided image within the haystack. If a haystack is not provided, searches within an area defined by
+    """Moves the mouse to the provided needle image and clicks on it. If a
+    haystack is provided, searches for the provided image within the
+    haystack. If a haystack is not provided, searches within an area defined by
     the loctype parameter.
     parameters:
-        needle: a filepath to the image to search for, relative to the script's working directory
-        haystack: the image to search for the needle within. Must be a PIL image variable.
-        loctype: if the haystack parameter is 0, this parameter is used to create a haystack.
-            c: (default) searches client for the xy center of the needle. Returns x,y coordinates
+        needle: a filepath to the image to search for, relative to the
+        script's working directory
+        haystack: the image to search for the needle within. Must be a PIL
+        image variable.
+        loctype: if the haystack parameter is 0, this parameter is used to
+        create a haystack.
+            c: (default) searches client for the xy center of the needle.
+            Returns x,y coordinates
             co: Searches the overview for the xy center of the needle.
         button: the mouse button to click when the script locates the image.
         rx1 / ry1: the minimum x/y value to generate a random variable from.
         rx2 / ry2: the maximum x/y/ value to generate a random variable from."""
     logging.debug('searching for and clicking on ' + (str(needle)))
     for tries in range(1, 10):
-        target_image = lo.mlocate(needle=(str(needle)), loctype=loctype, haystack=haystack)
+        target_image = lo.mlocate(needle=(str(needle)), loctype=loctype,
+                                  haystack=haystack)
         if target_image != 0 and target_image != 1:
             (x, y) = target_image
             pag.moveTo((x + (random.randint(rx1, rx2))),
@@ -102,7 +107,8 @@ def open_specinv(invtype):
             return 1
 
         if spec_inv == 0:
-            logging.error('cannot find ' + invtype + ' inventory ' + (str(tries)))
+            logging.error('cannot find ' + invtype + ' inventory ' +
+                          (str(tries)))
             time.sleep(float(random.randint(500, 2000)) / 1000)
 
     logging.error('timed out looking for ' + invtype + ' inventory')
@@ -453,8 +459,8 @@ def load_ship_individual():
                     noitems = lo.mlocate(
                         './img/indicators/station_inv_0_items.bmp', conf=0.9)
 
-                    while specinvwarning == 0 and setquant == 0 and nospace == 0 and \
-                            noitems == 0:
+                    while specinvwarning == 0 and setquant == 0 \
+                            and nospace == 0 and noitems == 0:
                         drag_to_ship_specinv(invtype)
 
                         time.sleep(float(random.randint(1500, 3000)) / 1000)
