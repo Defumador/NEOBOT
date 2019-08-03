@@ -31,16 +31,6 @@ def launch_drones(drone_num):
         return 1
 
 
-def are_drones_launched():
-    """Checks if any drones are present in the drone bay."""
-    if lo.mlocate('./img/indicators/drones/0_drone_in_bay.bmp', conf=0.99) is \
-            not None:
-        logging.debug('drones are in space')
-        return 1
-    else:
-        return 0
-
-
 def recall_drones(drone_num):
     """Recalls drones and waits for them to return to the drone bay."""
     if drone_num != 0:

@@ -74,7 +74,9 @@ def miner():
     logging.info('beginning run ' + (str(runs_var)))
     
     while doc.is_docked() == 0 and unsuitable_site <= total_sites:
-        if drones.are_drones_launched() == 1:
+        # Check if ship has any drones in space.
+        if lo.mlocate('./img/indicators/drones/0_drone_in_bay.bmp',
+                      conf=0.99) == 1:
             o.focus_client()
             drones.recall_drones(drone_num)
         if bkmk.iterate_through_bookmarks_rand(total_sites) == 1:
