@@ -1,20 +1,19 @@
 # encoding: utf-8
 # import pyximport
 # pyximport.install(pyimport=True)
+import logging
 import time
 import random
 import pyautogui as pag
+from src import locate as lo
 from src.vars import originx, originy, windowx, windowy
 
-#####################################################################
+################################################################################
 # Bezier curve movement testing
 # from https://stackoverflow.com/questions/44467329
 # /pyautogui-mouse-movement-with-bezier-curve
-
 import scipy
 from scipy import interpolate
-
-
 def bezmove():
     # This function is currently not implemented as it is not yet working.
     cp = random.randint(3, 5)  # Number of control points. Must be at least 2.
@@ -47,8 +46,52 @@ def bezmove():
         pag.platformModule._moveTo(*point)
         time.sleep(timeout)
 
-
 ################################################################################
+
+
+def click_image(needle, haystack=0, loctype='c', button='left', rx1=0,
+                rx2=0, ry1=0, ry2=0):
+    """Moves the mouse to the provided needle image and clicks on it. If a
+    haystack is provided, searches for the provided image within the
+    haystack. If a haystack is not provided, searches within an area defined by
+    the loctype parameter.
+    parameters:
+        needle: a filepath to the image to search for, relative to the
+        script's working directory
+        haystack: the image to search for the needle within. Must be a PIL
+        image variable.
+        loctype: if the haystack parameter is 0, this parameter is used to
+        create a haystack.
+            c: (default) searches client for the xy center of the needle.
+            Returns x,y coordinates
+            co: Searches the overview for the xy center of the needle.
+        button: the mouse button to click when the script locates the image.
+        rx1 / ry1: the minimum x/y value to generate a random variable from.
+        rx2 / ry2: the maximum x/y/ value to generate a random variable from."""
+    logging.debug('searching for and clicking on ' + (str(needle)))
+    for tries in range(1, 10):
+        target_image = lo.mlocate(needle=needle, loctype=loctype,
+                                  haystack=haystack)
+        if target_image != 0 and target_image != 1:
+            (x, y) = target_image
+            pag.moveTo((x + (random.randint(rx1, rx2))),
+                       (y + (random.randint(ry1, ry2))),
+                       duration(), path())
+            if button == 'left':
+                click()
+            elif button == 'right':
+                click_right()
+            return 1
+
+        elif target_image == 1:
+            logging.error('loctype parameter incorrect, must use c or co')
+        elif target_image == 0:
+            logging.error('cannot find image ' + (str(needle)) + ', ' + (str(
+                tries)))
+            time.sleep(float(random.randint(500, 2000)) / 1000)
+
+    logging.error('timed out looking for image to click ' + (str(needle)))
+    return 0
 
 
 def move_away(direction):
