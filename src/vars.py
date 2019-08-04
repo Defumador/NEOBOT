@@ -38,6 +38,8 @@ system_mining = 1  # Tell the miner script if you're mining in the same
 window_resolutionx = 1024
 window_resolutiony = 768
 
+# TODO: check for client after clicking 'start' button, not after beginning
+#  script
 # Get the coordinates of the eve client window and restrict image searching to
 # within these boundaries.
 # search for the eve neocom logo in top left corner of the eve client window.

@@ -322,10 +322,11 @@ print("originy =", originy)
 print("windowx =", windowx)
 print("windowy =", windowy)
 
-# GUI #########################################################################
+# GUI ##########################################################################
+gui = tkinter.Tk()
 
-# read user-defined settings from config file ---------------------------------
-'''
+# load config file -------------------------------------------------------------
+
 with open('./config.yaml.example') as f:
     config = yaml.safe_load(f)
 
@@ -374,14 +375,14 @@ npc_bs_gui.set(config['check_for_rat_battleships'])
 detect_jam_gui = tkinter.IntVar()
 detect_jam_gui.set(config['check_for_ECM_jamming'])
 
-# blank text for spacing ----------------------------------------------------
+# blank text for spacing -------------------------------------------------------
 t = tkinter.Label(text="")
 t.grid(column=0, row=0, columnspan=2, sticky='W', padx=0, pady=0)
 
 t = tkinter.Label(text="")
 t.grid(column=0, row=3, columnspan=2, sticky='W', padx=0, pady=0)
 
-# populate gui with settings ------------------------------------------------
+# populate gui with settings ---------------------------------------------------
 combo_modules = ttk.Combobox(values=[1, 2, 3, 4])
 # Subtract 1 since counting starts at 0.
 combo_modules.current((config['number_of_mining_lasers'] - 1))
@@ -437,14 +438,13 @@ npc_frig_dest = tkinter.Checkbutton(text='npc frig/dest check',
                                     variable=npc_frig_dest_gui)
 npc_frig_dest.grid(column=1, row=12, columnspan=1, sticky='W')
 
-npc_cruiser_bc = tkinter.Checkbutton(text='npc bs check',
+npc_cruiser_bc = tkinter.Checkbutton(text='npc cruiser/bc check',
                                      variable=npc_cruiser_bc_gui)
 npc_cruiser_bc.grid(column=0, row=13, columnspan=1, sticky='W')
 
-
-# self.npc_bs = tkinter.Checkbutton(self, text='npc bs check',
-#                                    variable=npc_bs_gui)
-# self.npc_bs.grid(column=1, row=10, columnspan=1, sticky='W')
+npc_bs = tkinter.Checkbutton(text='npc bs check BROKEN',
+                             variable=npc_bs_gui)
+npc_bs.grid(column=1, row=13, columnspan=1, sticky='W')
 
 t = tkinter.Label(text="")
 t.grid(column=0, row=14, columnspan=2, sticky='W', padx=0, pady=0)
