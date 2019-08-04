@@ -1,13 +1,13 @@
 # encoding: utf-8
 # import pyximport
 # pyximport.install(pyimport=True)
-import time
+import logging
 import random
 import sys
-import logging
+import time
 import traceback
 import pyautogui as pag
-from src import mouse, keyboard, locate as lo, keyboard as key
+from src import keyboard as key, locate as lo, mouse
 
 logging.basicConfig(format='(%(asctime)s) %(funcName)s - %('
                            'message)s', level=logging.DEBUG)
@@ -180,7 +180,7 @@ def wait_for_undock():
     logging.info('undocking')
     pag.keyDown('ctrl')
     time.sleep(float(random.randint(100, 800)) / 1000)
-    keyboard.keypress('u')
+    key.keypress('u')
     time.sleep(float(random.randint(100, 800)) / 1000)
     pag.keyUp('ctrl')
 
@@ -489,7 +489,7 @@ def unload_ship():
         time.sleep(float(random.randint(0, 2000)) / 1000)
         focus_inv_window()
         time.sleep(float(random.randint(0, 2000)) / 1000)
-        keyboard.hotkey('ctrl', 'a')
+        key.hotkey('ctrl', 'a')
         time.sleep(float(random.randint(0, 2000)) / 1000)
         drag_items_from_ship_inv()
         time.sleep(2)
@@ -511,7 +511,7 @@ def unload_ship():
                     time.sleep(float(random.randint(0, 2000)) / 1000)
                     focus_inv_window()
                     time.sleep(float(random.randint(0, 2000)) / 1000)
-                    keyboard.hotkey('ctrl', 'a')
+                    key.hotkey('ctrl', 'a')
                     time.sleep(float(random.randint(0, 2000)) / 1000)
                     drag_items_from_ship_inv()
                     time.sleep(float(random.randint(0, 2000)) / 1000)

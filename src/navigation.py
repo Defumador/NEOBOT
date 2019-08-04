@@ -1,13 +1,13 @@
 # encoding: utf-8
 # import pyximport
 # pyximport.install(pyimport=True)
-import sys
-import time
 import logging
 import random
+import sys
+import time
 import traceback
 import pyautogui as pag
-from src import mouse, keyboard as key, overview, locate as lo
+from src import keyboard as key, locate as lo, mouse, overview as o
 sys.setrecursionlimit(9999999)
 
 
@@ -170,7 +170,7 @@ def emergency_terminate():
     in space."""
     logging.warning('EMERGENCY TERMINATE CALLED !!!')
     confidence = 1
-    overview.select_overview_tab('general')
+    o.select_overview_tab('general')
    
     # Look for a station to dock at until confidence is <0.85
     for tries in range(1, 15):
@@ -207,7 +207,7 @@ def emergency_terminate():
     logging.debug('could not find station to emergency dock at, warping to'
                   'planet instead')
     confidence = 1
-    overview.select_overview_tab('warpto')
+    o.select_overview_tab('warpto')
     
     for tries in range(1, 50):
         planet = lo.mlocate('./img/overview/planet.bmp', conf=confidence)

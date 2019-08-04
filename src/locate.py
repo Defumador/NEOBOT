@@ -3,8 +3,8 @@
 # pyximport.install(pyimport=True)
 import logging
 import sys
-from src.vars import originx, originy, windowx, windowy
 import pyautogui as pag
+from src.vars import originx, originy, windowx, windowy
 
 
 def mlocate(needle, haystack=0, conf=0.95, loctype='l', grayscale=False):

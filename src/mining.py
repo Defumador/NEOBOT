@@ -1,11 +1,11 @@
 # encoding: utf-8
 # import pyximport
 # pyximport.install(pyimport=True)
-import time
-import sys
-import random
 import logging
-from src import keyboard, locate as lo
+import random
+import sys
+import time
+from src import keyboard as key, locate as lo
 sys.setrecursionlimit(9999999)
 
 
@@ -14,7 +14,7 @@ def activate_miners(module_num):
     If the module is out of range, script will try to wait until ship gets
     within range before activating any more modules."""
     for n in range(1, (module_num + 1)):
-        keyboard.keypress('f' + (str(n)))
+        key.keypress('f' + (str(n)))
         logging.debug('activating miner ' + (str(n)))
         out_of_range = lo.mlocate('./img/popups/miner_out_of_range.bmp',
                                   conf=0.90, grayscale=True)
@@ -27,7 +27,7 @@ def activate_miners(module_num):
             if out_of_range == 0 and tries <= 25:
                 time.sleep(float(random.randint(0, 3000)) / 1000)
                 logging.debug('activating miner ' + (str(n)))
-                keyboard.keypress('f' + (str(n)))
+                key.keypress('f' + (str(n)))
         if out_of_range == 0 and tries <= 25:
             continue
         elif out_of_range == 1 and tries > 25:

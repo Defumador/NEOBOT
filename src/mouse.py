@@ -2,11 +2,14 @@
 # import pyximport
 # pyximport.install(pyimport=True)
 import logging
-import time
+import sys
 import random
+import time
 import pyautogui as pag
 from src import locate as lo
 from src.vars import originx, originy, windowx, windowy
+
+sys.setrecursionlimit(9999999)
 
 ################################################################################
 # Bezier curve movement testing
@@ -45,7 +48,6 @@ def bezmove():
     for point in zip(*(i.astype(int) for i in points)):
         pag.platformModule._moveTo(*point)
         time.sleep(timeout)
-
 ################################################################################
 
 
@@ -85,9 +87,10 @@ def click_image(needle, haystack=0, loctype='c', button='left', rx1=0,
 
         elif target_image == 1:
             logging.error('loctype parameter incorrect, must use c or co')
+            sys.exit()
         elif target_image == 0:
-            logging.error('cannot find image ' + (str(needle)) + ', ' + (str(
-                tries)))
+            logging.error('cant find image to click on ' + (str(needle)) + ', '
+                          + (str(tries)))
             time.sleep(float(random.randint(500, 2000)) / 1000)
 
     logging.error('timed out looking for image to click ' + (str(needle)))

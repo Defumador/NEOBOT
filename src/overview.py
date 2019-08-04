@@ -1,12 +1,15 @@
 # encoding: utf-8
 # import pyximport
 # pyximport.install(pyimport=True)
-import random
-import time
 import logging
+import random
+import sys
+import time
 import pyautogui as pag
-from src import mouse, keyboard, locate as lo
+from src import keyboard as key, locate as lo, mouse
 from src.vars import originx, originy, windowx, windowy
+
+sys.setrecursionlimit(9999999)
 
 # TODO: function to sort overview by distance
 
@@ -338,7 +341,7 @@ def initiate_target_lock(target):
         # Press 'keep at range' hotkey. This is used instead
         # 'orbit' because if another mining ship depletes the asteroid,
         # your ship will continue flying forever in a straight line.
-        keyboard.keypress('e')
+        key.keypress('e')
         # Change to the general tab to detect jamming.
         select_overview_tab('general')
         

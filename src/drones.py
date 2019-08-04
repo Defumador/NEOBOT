@@ -1,9 +1,9 @@
 # encoding: utf-8
 # import pyximport
 # pyximport.install(pyimport=True)
+import logging
 import random
 import time
-import logging
 from src import keyboard as key, locate as lo
 
 

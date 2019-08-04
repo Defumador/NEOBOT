@@ -1,11 +1,11 @@
 # encoding: utf-8
 # import pyximport
 # pyximport.install(pyimport=True)
+import logging
 import random
 import time
-import logging
 import pyautogui as pag
-from src import mouse, keyboard, navigation as nav, locate as lo
+from src import keyboard as key, locate as lo, mouse, navigation as nav
 from src.navigation import wait_for_dock
 from src.vars import originx, originy, windowx, windowy, conf
 
@@ -142,7 +142,7 @@ def warp_to_local_bookmark(target_site_num):
         # menu, the ship is already near the bookmark.
         if approach_location != 0:
             logging.debug('already at bookmark ' + (str(target_site_bookmark)))
-            keyboard.keypress('esc')  # Close right-click menu.
+            key.keypress('esc')  # Close right-click menu.
             return 0
 
         # If the 'approach location' option is not found, look for a 'warp
@@ -297,7 +297,7 @@ def blacklist_local_bookmark():
             if at_bookmark != 0:
                 logging.debug('blacklisting bookmark ' + (str(bookmark)))
                 time.sleep(float(random.randint(1000, 2000)) / 1000)
-                keyboard.keypress('esc')
+                key.keypress('esc')
                 mouse.click()
                 # Click once to focus entry, then double-click the entry to
                 # edit.
@@ -324,7 +324,7 @@ def blacklist_local_bookmark():
             # close the right-click menu and check the next bookmark.
             if at_bookmark == 0:
                 logging.debug('not at bookmark ' + (str(bookmark)))
-                keyboard.keypress('esc')
+                key.keypress('esc')
                 bookmark += 1
                 continue
 
@@ -357,8 +357,8 @@ def blacklist_set_bookmark(target_site):
     time.sleep(float(random.randint(5, 50)) / 1000)
     mouse.click()
     time.sleep(float(random.randint(3000, 4000)) / 1000)
-    keyboard.keypress('home')
-    keyboard.keypress('b')
+    key.keypress('home')
+    key.keypress('b')
     time.sleep(float(random.randint(0, 1000)) / 1000)
-    keyboard.keypress('enter')
+    key.keypress('enter')
     return 1

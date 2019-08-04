@@ -1,22 +1,23 @@
 # encoding: utf-8
 # import pyximport
 # pyximport.install(pyimport=True)
-import sys
-import time
-import traceback
 import cProfile
 import logging
 import random
+import sys
+import time
+import traceback
+
 # import yaml
 from PIL import ImageOps
 
+import pyautogui as pag
 import tkinter
 from tkinter import ttk
-import pyautogui as pag
 
-from src import docked as doc, drones, navigation as nav, mining as mng, \
-    bookmarks as bkmk, overview as o, locate as lo
-from src.vars import system_mining, originx, originy, windowx, windowy
+from src import bookmarks as bkmk, docked as doc, drones, locate as lo, \
+    mining as mng, navigation as nav, overview as o
+from src.vars import originx, originy, system_mining, windowx, windowy
 
 # TODO: add support for mining drones.
 # TODO: add ability to save default settings config using an ini file
