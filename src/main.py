@@ -8,7 +8,7 @@ import sys
 import time
 import traceback
 
-# import yaml
+import yaml
 from PIL import ImageOps
 
 import pyautogui as pag
@@ -322,7 +322,6 @@ print("originy =", originy)
 print("windowx =", windowx)
 print("windowy =", windowy)
 
-
 # GUI #########################################################################
 
 # read user-defined settings from config file ---------------------------------
@@ -330,96 +329,50 @@ print("windowy =", windowy)
 with open('./config.yaml.example') as f:
     config = yaml.safe_load(f)
 
-# convert settings from True/False to 1/0 -----------------------------------
-check_for_rats = int(config[check_for_rats] == 'true')
-
-check_for_rat_frigates_and_destroyers = int(check_for_rat_frigates_and_destroyers == 'true')
-check_for_rat_cruisers_and_battlecruisers = int(check_for_rat_cruisers_and_battlecruisers == 'true')
-check_for_rat_battleships = int(check_for_rat_battleships == 'true')
-check_for_players = int(check_for_players == 'true')
-check_for_player_industrials = int(check_for_player_industrials == 'true')
-check_for_player_mining_barges = int(check_for_player_mining_barges == 'true')
-check_for_player_frigates_and_destroyers = int(check_for_player_frigates_and_destroyers == 'true')
-check_for_player_capital_industrials_and_freighters = int(check_for_player_capital_industrials_and_freighters == 'true')
-check_for_player_cruisers_and_battlecruisers = int(check_for_player_cruisers_and_battlecruisers == 'true')
-check_for_player_battleships = int(check_focheck_for_player_battleshipsr_rats == 'true')
-check_for_player_capsules = int(check_for_player_capsules == 'true')
-check_for_ECM_jamming = int(check_for_ECM_jamming == 'true')
-'''
-# set default setting values from config file --------------------------------
-'''
-detect_npcs_gui = tkinter.IntVar()
-detect_npcs_gui.set(check_for_rats)
-
-npc_frig_dest_gui = tkinter.IntVar()
-npc_frig_dest_gui.set(check_for_rat_frigates_and_destroyers)
-
-npc_cruiser_bc_gui = tkinter.IntVar()
-npc_cruiser_bc_gui.set(check_for_rat_cruisers_and_battlecruisers)
-
-npc_bs_gui = tkinter.IntVar()
-npc_bs_gui.set(check_for_rat_battleships)
+# set default setting values from config file ----------------------------------
 
 detect_pcs_gui = tkinter.IntVar()
-detect_pcs_gui.set(check_for_players)
+detect_pcs_gui.set(config['check_for_players'])
 
 pc_indy_gui = tkinter.IntVar()
-pc_indy_gui.set(check_for_player_industrials)
+pc_indy_gui.set(config['check_for_player_industrials'])
 
 pc_barge_gui = tkinter.IntVar()
-pc_barge_gui.set(check_for_player_mining_barges)
+pc_barge_gui.set(config['check_for_player_mining_barges'])
 
 pc_frig_dest_gui = tkinter.IntVar()
-pc_frig_dest_gui.set(check_for_player_frigates_and_destroyers)
+pc_frig_dest_gui.set(config['check_for_player_frigates_and_destroyers'])
 
 pc_capindy_freighter_gui = tkinter.IntVar()
-pc_capindy_freighter_gui.set(check_for_player_capital_industrials_and_freighters)
+pc_capindy_freighter_gui.set(
+    config['check_for_player_capital_industrials_and_freighters'])
 
 pc_cruiser_bc_gui = tkinter.IntVar()
-pc_cruiser_bc_gui.set(check_for_player_cruisers_and_battlecruisers)
+pc_cruiser_bc_gui.set(config['check_for_player_cruisers_and_battlecruisers'])
 
 pc_bs_gui = tkinter.IntVar()
-pc_bs_gui.set(check_for_player_battleships)
+pc_bs_gui.set(config['check_for_player_battleships'])
 
 pc_rookie_gui = tkinter.IntVar()
-pc_pod_gui = tkinter.IntVar(check_for_player_capsules)
+pc_rookie_gui.set(config['check_for_player_rookie_ships'])
 
-detect_jam_gui = tkinter.IntVar()
-detect_jam_gui.set(check_for_ECM_jamming)
-'''
-gui = tkinter.Tk()
-detect_npcs_gui = tkinter.IntVar()
-
-npc_frig_dest_gui = tkinter.IntVar()
-npc_cruiser_bc_gui = tkinter.IntVar()
-npc_bs_gui = tkinter.IntVar()
-
-detect_pcs_gui = tkinter.IntVar()
-detect_pcs_gui.set(1)
-
-pc_indy_gui = tkinter.IntVar()
-pc_indy_gui.set(1)
-
-pc_barge_gui = tkinter.IntVar()
-pc_barge_gui.set(1)
-
-pc_frig_dest_gui = tkinter.IntVar()
-pc_frig_dest_gui.set(1)
-
-pc_capindy_freighter_gui = tkinter.IntVar()
-pc_capindy_freighter_gui.set(1)
-
-pc_cruiser_bc_gui = tkinter.IntVar()
-pc_cruiser_bc_gui.set(1)
-
-pc_bs_gui = tkinter.IntVar()
-pc_bs_gui.set(1)
-
-pc_rookie_gui = tkinter.IntVar()
 pc_pod_gui = tkinter.IntVar()
+pc_pod_gui.set(config['check_for_player_capsules'])
+
+detect_npcs_gui = tkinter.IntVar()
+detect_npcs_gui.set(config['check_for_rats'])
+
+npc_frig_dest_gui = tkinter.IntVar()
+npc_frig_dest_gui.set(config['check_for_rat_frigates_and_destroyers'])
+
+npc_cruiser_bc_gui = tkinter.IntVar()
+npc_cruiser_bc_gui.set(config['check_for_rat_cruisers_and_battlecruisers'])
+
+npc_bs_gui = tkinter.IntVar()
+npc_bs_gui.set(config['check_for_rat_battleships'])
 
 detect_jam_gui = tkinter.IntVar()
-detect_jam_gui.set(1)
+detect_jam_gui.set(config['check_for_ECM_jamming'])
 
 # blank text for spacing ----------------------------------------------------
 t = tkinter.Label(text="")
@@ -430,14 +383,15 @@ t.grid(column=0, row=3, columnspan=2, sticky='W', padx=0, pady=0)
 
 # populate gui with settings ------------------------------------------------
 combo_modules = ttk.Combobox(values=[1, 2, 3, 4])
-combo_modules.current(1)
+# Subtract 1 since counting starts at 0.
+combo_modules.current((config['number_of_mining_lasers'] - 1))
 combo_modules.grid(column=1, row=4, columnspan=1, sticky='W')
 combo_modules.config(width='4', height='10')
 label_mininglasers = tkinter.Label(text="mining lasers")
 label_mininglasers.grid(column=0, row=4, columnspan=1, sticky='W', padx=20)
 
 combo_drones = ttk.Combobox(values=[0, 1, 2, 3, 4, 5])
-combo_drones.current(2)
+combo_drones.current(config['number_of_drones'])
 combo_drones.grid(column=1, row=5, columnspan=1, sticky='W')
 combo_drones.config(width='4', height='10')
 label_drones = tkinter.Label(text="drones")
