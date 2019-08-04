@@ -11,7 +11,26 @@ def mlocate(needle, haystack=0, conf=0.95, loctype='l', grayscale=False):
     """Searches the haystack image for the needle image, returning a tuple
     of the needle's coordinates within the haystack. If a haystack image is
     not provided, searches the client window or the overview window,
-    as specified by the loctype parameter."""
+    as specified by the loctype parameter.
+    parameters:
+        needle: The image to search for. Must be a PIL image object.
+        haystack: The image to search within. By default this is not set,
+        causing the mlocate function to capture and search the client window.
+        conf: The confidence value required to match the image successfully.
+        By default this is 0.95.
+        loctype: The method mlocate will use to search for images. If a
+        haystack is provided, this parameter is not used.
+            l: Search the client window, returning a '1' if the image is
+            found.
+            c: Search the client window for the xy center of the image,
+            returning the xy coordinates of the image's center relative to
+            the client window.
+            o: Same as 'l', except searches the overview, assuming it's
+            docked on the right side of the client window.
+            oc: Same as 'c', but for the overivew.
+        grayscale: Whether or not to convert the screenshot or haystack to
+        grayscale before searching within it. Speeds up searching by about
+        30%. Defaults to False."""
     if haystack != 0:
         locate_var = pag.locate(needle, haystack, confidence=conf,
                                 grayscale=grayscale)
