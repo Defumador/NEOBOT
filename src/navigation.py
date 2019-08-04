@@ -62,7 +62,7 @@ def warp_to_waypoint():
         if stargate == 0 and station == 0:
             time.sleep(float(random.randint(500, 1500)) / 1000)
             logging.debug('looking for waypoints ' + (str(tries)))
-        
+
     logging.error('no waypoints found')
     return 0
 
@@ -72,7 +72,7 @@ def wait_for_warp_to_complete():
     completed by watching the spedometer."""
     # TODO: force ship to wait a minimum period of time while beginning its
     # warp, similar to what tinyminer does to eliminate possible issues.
-    
+
     # Wait for warp to begin by waiting until the speedometer is full. Ship
     # might be stuck on something so this could take an variable amount of
     # time.
@@ -97,14 +97,14 @@ def wait_for_warp_to_complete():
                 elif warping_done != 0:
                     logging.debug('waiting for warp to complete ' +
                                   (str(tries)))
-                    
+
             logging.error('timed out waiting for warp to complete')
             return 0
 
         elif warping == 0:
             logging.debug('waiting for warp to start ' + (str(duration)))
             time.sleep(float(random.randint(500, 1000)) / 1000)
-            
+
     logging.error('timed out waiting for warp to start')
     return 0
 
@@ -132,7 +132,7 @@ def wait_for_jump():
                 time.sleep(float(random.randint(2000, 5000)) / 1000)
                 key.keypress('enter')
                 continue
-            
+
             logging.debug('waiting for jump ' + (str(tries)))
             time.sleep(float(random.randint(5, 20)) / 10)
 
@@ -156,7 +156,7 @@ def wait_for_dock():
         elif docked == 0:
             logging.debug('waiting for dock ' + (str(tries)))
             time.sleep(float(random.randint(2000, 5000)) / 1000)
-            
+
     logging.error('timed out waiting for dock')
     return 0
 
@@ -171,7 +171,7 @@ def emergency_terminate():
     logging.warning('EMERGENCY TERMINATE CALLED !!!')
     confidence = 1
     o.select_overview_tab('general')
-   
+
     # Look for a station to dock at until confidence is <0.85
     for tries in range(1, 15):
         station_icon = lo.mlocate('./img/overview/station.bmp', conf=confidence)
@@ -201,14 +201,14 @@ def emergency_terminate():
                           ', confidence is ' + (str(confidence)))
             # Keep time interval relatively short since ship may be in combat.
             time.sleep(float(random.randint(500, 1000)) / 1000)
-        
+
     # If confidence lowers below threshold, try warping to a planet
     # instead.
     logging.debug('could not find station to emergency dock at, warping to'
                   'planet instead')
     confidence = 1
     o.select_overview_tab('warpto')
-    
+
     for tries in range(1, 50):
         planet = lo.mlocate('./img/overview/planet.bmp', conf=confidence)
 
