@@ -8,7 +8,6 @@ import time
 import pyautogui as pag
 from src import locate as lo
 from src.vars import originx, originy, windowx, windowy
-
 sys.setrecursionlimit(9999999)
 
 ################################################################################

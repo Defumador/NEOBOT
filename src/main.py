@@ -108,7 +108,7 @@ def miner():
                 client = pag.screenshot(region=(
                     originx, originy, windowx, windowy))
                 ship_full = lo.mlocate('./img/popups/ship_inv_full.bmp',
-                           haystack=client, conf=0.9)
+                                       haystack=client, conf=0.9)
 
                 # main mining loop # -------------------------------------------
                 while ship_full == 0:
@@ -122,7 +122,7 @@ def miner():
                     overview = ImageOps.crop(client, (755, 0, 0, 0))
 
                     ship_full = lo.mlocate('./img/popups/ship_inv_full.bmp',
-                           haystack=client, conf=0.9)
+                                           haystack=client, conf=0.9)
                     timer_var += 1
                     
                     if lo.mlocate('./img/popups/asteroid_depleted.bmp',
@@ -327,7 +327,7 @@ gui = tkinter.Tk()
 
 # load config file -------------------------------------------------------------
 
-with open('./config.yaml.example') as f:
+with open('./config.yaml') as f:
     config = yaml.safe_load(f)
 
 # set default setting values from config file ----------------------------------

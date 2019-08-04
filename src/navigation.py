@@ -38,8 +38,8 @@ def warp_to_waypoint():
             logging.debug('found stargate waypoint')
             (x, y) = stargate
             pag.moveTo((x + (random.randint(-8, 30)))), \
-            (y + (random.randint(-8, 8))), \
-            mouse.duration(), mouse.path()
+                      (y + (random.randint(-8, 8))), \
+                mouse.duration(), mouse.path()
             mouse.click()
             key.keypress('d')  # 'dock / jump' hotkey.
             # Move mouse to the left side of the client to prevent
