@@ -28,7 +28,53 @@ LONGTERM FEATURES:
     - gui logging https://github
     .com/beenje/tkinter-logging-text-widget/blob/master/main.py
 
+features 
+        - rename wait_for_warp_to_complete to detect_warp_loop
+        - rename warp_to_waypoint to initiate_waypoint_jump
+        - split warp_to_waypoint into "detect_waypoint" , "initiate_waypoint_jump" "initiate_waypoint_dock" and "initiate_waypoint_warp"
+        - rename at_home_check to detect_at_home
+        - rename route_set to detect_route
+        - rename set_dest to set_dest_bookmark_1
+        
+        - rename check_for_players to detect_pcs
+        - rename check_for_enemies to detect_npcs
+        
+        - rename warp_to_specific_system_bookmark to initiate_bookmark_warp
+        - rename dock_at_station_bookmark to initiate_bookmark_dock
+        ---perhaps add initiate_bookmark_jump
+        
+        - combine docked_check and detect_dock --> create a detect_dock_loop and a detect_dock
+        
+        - move functions from mining.py to overview.py and popups.py
+        - combine trave_to_bookmark func and autopilot func
+        ---perhaps distinguish between 'travel_to_local_bookmark' and 'travel_to_remote_bookmark' referring to bookmarks that are in the system and those that aren't
+        
+        - python
+            - template matching
+                - https://pythonspot.com/object-detection-with-templates/
+                - https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_imgproc/py_template_matching/py_template_matching.html
+                - https://stackoverflow.com/questions/29605119/fast-template-matching-using-pyramids-in-python
+                - https://stackoverflow.com/questions/10168686/image-processing-algorithm-improvement-for-coca-cola-can-recognition?rq=1
+                - https://www.geeksforgeeks.org/template-matching-using-opencv-in-python/
+                - https://pythonspot.com/object-detection-with-templates/
+                - https://pyautogui.readthedocs.io/en/latest/screenshot.html#the-locate-functions
+            - create function for sorting overview by distance
 
+        - every time script warps out due to a player entering grid, increase a “player warp out” variable. If it goes over 3,
+        dock and wait for a random period of time because the script is obviously being followed by a player.
+        If the script mines, docks, and unloads normally, reset the counter after each trip 
+        - Implement eve launcher support into script, so script can automate both logon and logoff,
+        while also having long periods of logged-off activity 
+        - Pyautogui locatecenteronscreen pass "grayscale = true" for 30% speedup in image searching 
+
+management 
+    - See if bot will run on linux box 
+
+Compile script 
+    - nutika - https://nuitka.net/pages/overview.html
+    - https://medium.com/dreamcatcher-its-blog/making-an-stand-alone-executable-from-a-python-script-using-pyinstaller-d1df9170e263 
+    - Use PIA to test eve multiboxing, make sure to sign up to PIA while on a VPN 
+    
 Raising errors 
 
 Use "raise runetimeerror('text')" to terminate and show traceback 
