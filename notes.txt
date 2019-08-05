@@ -29,6 +29,99 @@ LONGTERM FEATURES:
     .com/beenje/tkinter-logging-text-widget/blob/master/main.py
 
 
+Raising errors 
+
+Use "raise runetimeerror('text')" to terminate and show traceback 
+
+use "import traceback, 
+
+traceback.print_exc()" 
+
+"traceback.print_stack()" 
+
+ 
+
+Obfuscation 
+
+Github.com/csvoss/onelinerizer 
+
+Github.com/astrand/pyobfuscate 
+
+Nutika.net 
+
+ 
+
+Modules 
+
+Add path: sys.path.append(r'C:/users/austin') 
+
+ 
+
+multithreading 
+
+https://www.tutorialspoint.com/python/python_multithreading.htm 
+
+ 
+
+Making bots 
+
+https://www.smartspate.com/how-to-write-a-bot-in-python-for-online-games/ 
+
+https://github.com/PyUserInput/PyUserInput 
+
+https://www.reddit.com/r/programming/comments/7wivfv/reverse_engineering_a_mmorpg_bot_to_find/ 
+
+ 
+
+ 
+
+Haulter-style icon for traveler script: white silhouette of side view of gallente iteron hauler facing right against black background with square light grey border 
+
+ 
+
+Mining frigate icon for miner script: yellow silhouette of top view of ORE venture facing up against black background with square yellow border 
+
+ 
+
+# Take screenshot 
+
+Import numpy as np 
+
+Import pyautogui 
+
+Import imutils 
+
+Import cv2 
+
+ 
+
+Image = pyautogui.screenshot() 
+
+Image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR) 
+
+ 
+
+----------- 
+
+ 
+
+#search for image within screenshot 
+
+Needle = autopy.bitmap.Bitmap.open('needle.png') 
+
+ 
+
+While True: 
+
+Haystack = autopy.bitmap.capture_screen() 
+
+Found = haystack.find_every_bitmap(needle) 
+
+Print(found) 
+
+ 
+
+--------- 
 
 
 multi-client support
