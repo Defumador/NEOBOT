@@ -3,6 +3,10 @@
 # pyximport.install(pyimport=True)
 import sys
 import pyautogui as pag
+import yaml
+# set high recursion limit for functions that call themselves.
+sys.setrecursionlimit(9999999)
+conf = 0.95
 
 # CUSTOM CONFIGS THAT MUST BE SET MANUALLY ON THE EVE CLIENT
 # HOTKEYS
@@ -20,28 +24,9 @@ import pyautogui as pag
 # drones should be set to 'agressive'
 # click on hamburger menu in top left corner of drone window > agressive
 
-gotosite = 0
-
-# timervar = 0
-
-sys.setrecursionlimit(9999999)  # set high recursion limit for functions that
-# call themselves.
-
-conf = 0.95
-
-#target_lock_time = 2  # Seconds (rounded up) current ship takes to lock a
-# target on average.
-
 system_mining = 1  # Tell the miner script if you're mining in the same
 # system you're storing your ore in. 1 is yes, 0 is no.
 
-window_resolutionx = 1024
-window_resolutiony = 768
-
-# TODO: check for client after clicking 'start' button, not after beginning
-#  script
-# Get the coordinates of the eve client window and restrict image searching to
-# within these boundaries.
 # search for the eve neocom logo in top left corner of the eve client window.
 # This will become the origin of the coordinate system.
 origin = pag.locateCenterOnScreen('./img/buttons/neocom.bmp', confidence=0.90)
@@ -57,6 +42,10 @@ else:
 # than its top right corner.
 originx -= 20
 originy -= 20
-windowx = window_resolutionx
-windowy = window_resolutiony
 
+# Read config file and get client resolution.
+with open('./config.yaml') as f:
+    config = yaml.safe_load(f)
+
+windowx = config['client_width']
+windowy = config['client_height']
