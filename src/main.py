@@ -476,6 +476,8 @@ detect_jam.grid(column=0, row=15, columnspan=1, sticky='W')
 
 t = tkinter.Label(text="")
 t.grid(column=0, row=16, columnspan=2, sticky='W', padx=0, pady=0)
+t = tkinter.Label(text="")
+t.grid(column=0, row=18, columnspan=2, sticky='W', padx=0, pady=0)
 
 
 def start(event):
@@ -541,10 +543,32 @@ def start(event):
     return
 
 
-startbutton = tkinter.Button(text="start")
+def start_navigator(event):
+    """Starts the navigator() script."""
+    navigator()
+    return
+
+
+def start_collector(event):
+    """Starts the collector() script."""
+    collector()
+    return
+
+
+startbutton = tkinter.Button(text="start miner")
 startbutton.grid(column=0, row=1, columnspan=2)
 startbutton.bind("<ButtonRelease-1>", start)
 startbutton.config(width='10', height='1', padx=5, pady=0)
+
+navigatorbutton = tkinter.Button(text="start navigator")
+navigatorbutton.grid(column=0, row=17, columnspan=1)
+navigatorbutton.bind("<ButtonRelease-1>", start_navigator)
+navigatorbutton.config(width='12', height='1', padx=10, pady=0)
+
+collectorbutton = tkinter.Button(text="start collector")
+collectorbutton.grid(column=1, row=17, columnspan=1)
+collectorbutton.bind("<ButtonRelease-1>", start_collector)
+collectorbutton.config(width='12', height='1', padx=10, pady=0)
 '''
 termbutton = tkinter.Button(text="stopper", command=stopper)
 termbutton.grid(column=0, row=2, sticky='W')
