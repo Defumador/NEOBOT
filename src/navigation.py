@@ -12,8 +12,10 @@ sys.setrecursionlimit(9999999)
 
 
 def has_route():
+    # TODO: fix this function, the detect_route image doesn't exist
     """Checks the top-left corner of the client window to see if a route has
      actually been set by the user."""
+    return
     route_set_var = lo.mlocate('./img/indicators/detect_route.bmp', conf=0.85)
     if route_set_var == 0:
         logging.error('no route set!')
