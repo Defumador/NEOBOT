@@ -8,22 +8,6 @@ import yaml
 sys.setrecursionlimit(9999999)
 conf = 0.95
 
-# CUSTOM CONFIGS THAT MUST BE SET MANUALLY ON THE EVE CLIENT
-# HOTKEYS
-# general tab > exit station > ctrl-u
-# drones tab > launch drones > shift-l
-
-# OVERVIEW
-# default warpto tab should have only planets and stations, nothing else
-# default mining tab should have only asteroids, nothing else
-# default general tab should have stations, gates, and ships, nothing else
-
-# MISC
-# for mining, default orbit distance must be within the range of mining lasers
-# right click on item > orbit > set default
-# drones should be set to 'agressive'
-# click on hamburger menu in top left corner of drone window > agressive
-
 system_mining = 1  # Tell the miner script if you're mining in the same
 # system you're storing your ore in. 1 is yes, 0 is no.
 

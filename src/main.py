@@ -20,13 +20,14 @@ from src import bookmarks as bkmk, docked as doc, drones, locate as lo, \
 from src.vars import originx, originy, system_mining, windowx, windowy
 
 # TODO: add support for mining drones.
+
 # TODO: add ability to save default settings config using an ini file
 
-# TODO: for mining script, add a user-defined sleep variable that waits for
-# a short duration between the ship locking a target and the ship activating
-# its mining lasers. This is to prevent the ship from constantly attempting
-# to activate its lasers on a target that has been locked but is not yet in
-# range, which can look suspicious.
+# TODO: for mining script, add a user-defined sleep variable that waits for a
+#  short duration between the ship locking a target and the ship activating
+#  its mining lasers. This is to prevent the ship from constantly attempting
+#  to activate its lasers on a target that has been locked but is not yet in
+#  range, which can look suspicious.
 
 sys.setrecursionlimit(9999999)
 playerfound = 0
@@ -43,6 +44,23 @@ playerfound = 0
 # A 'site' is just shorthand for a user-set numbered bookmark that the ship can
 # warp to, usually an asteroid belt.
 
+# CUSTOM CONFIGS THAT MUST BE SET MANUALLY ON THE EVE CLIENT ###################
+
+# HOTKEYS ----------------------------------------------------------------------
+# general tab > exit station > ctrl-u
+# drones tab > launch drones > shift-l
+
+# OVERVIEW ---------------------------------------------------------------------
+# default warpto tab should have only planets and stations, nothing else
+# default mining tab should have only asteroids, nothing else
+# default general tab should have stations, gates, and ships, nothing else
+
+# MISC -------------------------------------------------------------------------
+# for mining, default orbit distance must be within the range of mining lasers
+# right click on item > orbit > set default
+# drones should be set to 'agressive'
+# click on hamburger menu in top left corner of drone window > agressive
+
 ################################################################################
 
 # These variables are for the mining script only -------------------------------
@@ -56,7 +74,10 @@ runs_var = 1
 
 # MAIN SCRIPTS #################################################################
 
+
 def miner():
+    """An automatic mining script."""
+
     # Ores to mine, in order of priority.
     o1 = './img/overview/ore_types/plagioclase.bmp'
     o2 = './img/overview/ore_types/pyroxeres.bmp'
@@ -325,12 +346,12 @@ print("windowy =", windowy)
 # GUI ##########################################################################
 gui = tkinter.Tk()
 
-# load config file -------------------------------------------------------------
+# Load config file. ------------------------------------------------------------
 
 with open('./config.yaml') as f:
     config = yaml.safe_load(f)
 
-# set default setting values from config file ----------------------------------
+# Set default setting values from config file. ---------------------------------
 
 detect_pcs_gui = tkinter.IntVar()
 detect_pcs_gui.set(config['check_for_players'])
@@ -458,6 +479,7 @@ t.grid(column=0, row=16, columnspan=2, sticky='W', padx=0, pady=0)
 
 
 def start(event):
+    """Starts the main miner() script."""
     global drone_num, module_num, detect_jam
 
     global detect_pcs, pc_indy, pc_barge, pc_frig_dest, \
@@ -465,8 +487,8 @@ def start(event):
 
     global detect_npcs, npc_frig_dest, npc_cruiser_bc, npc_bs
 
-    # set the gui variables to reflect the current gui configuration when the
-    # user clicks the start button
+    # Set the gui variables to reflect the current gui configuration when the
+    # user clicks the start button.
     module_num = (int(combo_modules.get()))
     drone_num = (int(combo_drones.get()))
     logging.debug((str(module_num)) + ' modules')
