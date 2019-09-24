@@ -9,6 +9,9 @@
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+.idea/misc.xml
+.idea/PyCharm.iml
+.idea/*
 
 # Generated files
 .idea/**/contentModel.xml
