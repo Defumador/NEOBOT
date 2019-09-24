@@ -32,37 +32,6 @@ from src.vars import originx, originy, system_mining, windowx, windowy
 sys.setrecursionlimit(9999999)
 playerfound = 0
 
-# TERMINOLOGY ##################################################################
-
-# A 'warning' is a persistent dialogue window that appears in the center of
-# the screen and dims the rest of the screen. Warnings can only be dismissed
-# with an explicit keystroke or button click from the user.
-
-# A 'popup' is a partially transparent block of text that appears in the
-# main play area for about five seconds.
-
-# A 'site' is just shorthand for a user-set numbered bookmark that the ship can
-# warp to, usually an asteroid belt.
-
-# CUSTOM CONFIGS THAT MUST BE SET MANUALLY ON THE EVE CLIENT ###################
-
-# HOTKEYS ----------------------------------------------------------------------
-# general tab > exit station > ctrl-u
-# drones tab > launch drones > shift-l
-
-# OVERVIEW ---------------------------------------------------------------------
-# default warpto tab should have only planets and stations, nothing else
-# default mining tab should have only asteroids, nothing else
-# default general tab should have stations, gates, and ships, nothing else
-
-# MISC -------------------------------------------------------------------------
-# for mining, default orbit distance must be within the range of mining lasers
-# right click on item > orbit > set default
-# drones should be set to 'agressive'
-# click on hamburger menu in top left corner of drone window > agressive
-
-################################################################################
-
 # These variables are for the mining script only -------------------------------
 # Total number of saved bookmark locations. This variable is set by the user.
 total_sites = 10

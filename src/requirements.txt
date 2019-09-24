@@ -1,0 +1,53 @@
+
+# USER CONFIGURATION REQUIREMENTS
+
+
+# PYTHON PACKAGES ##############################################################
+opencv_python
+pyscreeze
+numpy
+pyautogui
+pymsgbox
+pytweening
+pyaml
+xlib
+PIL / Pillow (Windows)
+scrot (Linux)
+
+
+# EVE ONLINE CLIENT CONFIGURATION ##############################################
+
+# HOTKEYS ----------------------------------------------------------------------
+# General tab > exit station > ctrl-u
+# Drones tab > launch drones > shift-l
+
+# OVERVIEW ---------------------------------------------------------------------
+# Default warpto tab should have only planets and stations, nothing else
+# Default mining tab should have only asteroids, nothing else
+# Default general tab should have stations, gates, and ships, nothing else
+
+# MISC -------------------------------------------------------------------------
+# For mining, default orbit distance must be within the range of mining lasers
+    # Right click on item > orbit > set default
+
+# Drones should be set to 'aggressive'
+    # Click on hamburger menu in top left corner of drone window > aggressive
+
+# All bookmarks must be coordinates, not saved locations. If the bookmark is a
+saved location, the "look at" option will be the first drop-down item, causing
+the script to click the incorrect option.
+
+
+# TERMINOLOGY ##################################################################
+
+# A 'warning' is a persistent dialogue window that appears in the center of
+# the screen and dims the rest of the screen. Warnings can only be dismissed
+# with an explicit keystroke or button click from the user.
+
+# A 'popup' is a partially transparent block of text that appears in the
+# main play area for about five seconds.
+
+# A 'site' is just shorthand for a user-set numbered bookmark that the ship can
+# warp to, usually an asteroid belt.
+
+################################################################################
