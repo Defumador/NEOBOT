@@ -3,14 +3,16 @@
 
 
 # PYTHON PACKAGES ##############################################################
-opencv_python
-pyscreeze
+cython
 numpy
+opencv_python
 pyautogui
 pymsgbox
+pyscreeze
 pytweening
 pyaml
 xlib
+
 PIL / Pillow (Windows)
 scrot (Linux)
 
