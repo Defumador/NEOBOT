@@ -1,7 +1,6 @@
 # encoding: utf-8
-import pyximport
-
-pyximport.install(pyimport=True)
+# import pyximport
+# pyximport.install(pyimport=True)
 import time
 import random
 import pyautogui
