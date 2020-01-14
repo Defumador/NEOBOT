@@ -75,3 +75,5 @@ fabric.properties
 
 .idea/workspace.xml
 /lib/test.png
+
+src/__pycache__/
